@@ -1,4 +1,4 @@
-// ── SEISMIC WAVE ANIMATION ──
+//   SEISMIC WAVE ANIMATION  
 function createWave(canvasId, side) {
     var canvas = document.getElementById(canvasId);
     if (!canvas) return;
@@ -67,7 +67,7 @@ function createWave(canvasId, side) {
     loop();
 }
 
-// ── RING RIPPLE ANIMATION ──
+//   RING RIPPLE ANIMATION  
 (function() {
     var c = document.getElementById('rings-canvas');
     if (!c) return;
@@ -97,7 +97,7 @@ function createWave(canvasId, side) {
     draw();
 })();
 
-// ── FLOATING PARTICLES ──
+//   FLOATING PARTICLES  
 (function() {
     var c = document.getElementById('particles');
     if (!c) return;
@@ -139,7 +139,7 @@ function createWave(canvasId, side) {
     draw();
 })();
 
-// ── PASSWORD TOGGLE ──
+//   PASSWORD TOGGLE  
 function togglePwd() {
     var i = document.getElementById('pwd');
     if (i) i.type = i.type === 'password' ? 'text' : 'password';
@@ -155,7 +155,7 @@ function togglePwdConf() {
     if (i) i.type = i.type === 'password' ? 'text' : 'password';
 }
 
-// ── BUBBLE DIALOGS ──
+//   BUBBLE DIALOGS  
 (function() {
     var loginMessages = [
         '¡Hola! Soy SismoBot 🌋',
@@ -198,7 +198,7 @@ function togglePwdConf() {
     }, 4000);
 })();
 
-// ── VALIDACIÓN REGISTRO ──
+//   VALIDACIÓN REGISTRO  
 document.addEventListener('DOMContentLoaded', function() {
     var form = document.querySelector('form[action="?url=register"]');
     if (form) {
@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// ── INIT WAVES ──
+//   INIT WAVES  
 document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('wave-left')) {
         createWave('wave-left', 'left');

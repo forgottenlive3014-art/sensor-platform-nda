@@ -65,6 +65,7 @@ $routeMap = [
     'school'     => ['SchoolController', 'index'],
     'chat-api'   => ['ChatController', 'send'],
     'earthquakes'=> ['MainController', 'earthquakes'],
+    'resources'   => ['MainController', 'recursos'], 
 ];
 
 if (isset($routeMap[$controller])) {

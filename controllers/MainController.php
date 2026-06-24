@@ -19,5 +19,13 @@ class MainController {
             jsonResponse(['error' => 'Could not fetch earthquake data'], 500);
         }
     }
+
+    public function recursos() {
+        $data = [
+            'title' => 'Recursos - NDA',
+            'user' => currentUser()
+        ];
+        view('resources', $data);
+    }
 }
 ?>

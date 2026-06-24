@@ -45,6 +45,7 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
     <a href="?url=monitoreo">Monitoreo</a>
     <a href="?url=blog">Blog</a>
     <a href="?url=juegos">Juegos</a>
+    <a href="?url=resources">Recursos</a>
     <a href="?url=quehacer">¿Qué hacer AHORA?</a>
     <a href="?url=acercade">Acerca de NDA</a>
   </div>
@@ -58,7 +59,7 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
       <span id="themeIco">🌙</span>
     </button>
     
-    <!-- ===== PHP SESSION AUTH ===== -->
+    <!--   PHP SESSION AUTH   -->
     <?php if (isset($_SESSION['user_id']) && isset($_SESSION['user_name'])): ?>
       <!-- Usuario logueado - Mostrar menú -->
       <div class="nav-user-menu" id="navUserMenu" style="display:flex">
@@ -110,10 +111,10 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
   </div>
 </nav>
 
-<!-- ========== CONTENIDO PRINCIPAL ========== -->
+<!--   CONTENIDO PRINCIPAL   -->
 <?= $content ?? '' ?>
 
-<!-- ========== FOOTER ========== -->
+<!--   FOOTER   -->
 <footer class="footer">
   <div class="wrap">
     <div class="ft-inner">

@@ -25,9 +25,9 @@ class AuthController {
         $user = $stmt->fetch();
         
         if ($user && hash('sha256', $password) === $user['contra']) {
-            // ===== GUARDAR SESIÓN =====
+            //   GUARDAR SESIÓN  
             $_SESSION['user_id'] = $user['usuarios_id'];
-            $_SESSION['user_name'] = $user['nombre'];  // ← Esto es lo que muestra el layout
+            $_SESSION['user_name'] = $user['nombre'];
             $_SESSION['user_email'] = $user['email'];
             $_SESSION['user_role'] = $user['role'];
             
@@ -50,7 +50,7 @@ class AuthController {
         $name = $_POST['name'] ?? '';
         $email = $_POST['email'] ?? '';
         $password = $_POST['password'] ?? '';
-        $role = $_POST['role'] ?? 'user';  // ← Valor por defecto 'user'
+        $role = $_POST['role'] ?? 'user';
         
         // Validaciones
         if (empty($name) || empty($email) || empty($password)) {
@@ -84,14 +84,14 @@ class AuthController {
         // Obtener el ID del nuevo usuario
         $userId = $db->lastInsertId();
         
-        // ===== INICIAR SESIÓN AUTOMÁTICAMENTE =====
+        //   INICIAR SESIÓN AUTOMÁTICAMENTE  
         $_SESSION['user_id'] = $userId;
         $_SESSION['user_name'] = $name;  // ← Esto es lo que muestra el layout
         $_SESSION['user_email'] = $email;
         $_SESSION['user_role'] = $role;
         
         $_SESSION['success'] = '¡Cuenta creada exitosamente! Bienvenido ' . $name;
-        redirect('home');  // ← IMPORTANTE: Redirigir a home, no a login
+        redirect('home'); 
     }
     
     public function logout() {
