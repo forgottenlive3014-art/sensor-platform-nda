@@ -3087,113 +3087,10 @@ function updateRTMStats(quakes) {
 //  33. AUTH SYSTEM
   
 
-let currentUser = null;
-let registeredUsers = JSON.parse(localStorage.getItem('ndaUsers') || '[]');
-
-function openAuth(tab) {
-    document.getElementById('authOverlay').classList.add('open');
-    switchAuthTab(tab || 'login');
-}
-
-function closeAuth() {
-    document.getElementById('authOverlay').classList.remove('open');
-}
-
-function handleAuthOverlayClick(e) {
-    if (e.target === document.getElementById('authOverlay')) closeAuth();
-}
-
-function switchAuthTab(tab) {
-    const loginForm = document.getElementById('formLogin');
-    const regForm = document.getElementById('formRegister');
-    const tabL = document.getElementById('tabLogin');
-    const tabR = document.getElementById('tabRegister');
-
-    if (tab === 'login') {
-        loginForm.style.display = 'flex';
-        regForm.style.display = 'none';
-        tabL.classList.add('on');
-        tabR.classList.remove('on');
-    } else {
-        loginForm.style.display = 'none';
-        regForm.style.display = 'flex';
-        tabR.classList.add('on');
-        tabL.classList.remove('on');
-    }
-}
-
-let selectedRole = 'alumno';
-
-function selectRole(el) {
-    document.querySelectorAll('.role-opt').forEach(r => r.classList.remove('on'));
-    el.classList.add('on');
-    selectedRole = el.dataset.role;
-}
-
-function showAuthMsg(id, msg, type) {
-    const el = document.getElementById(id);
-    el.textContent = msg;
-    el.className = 'auth-msg ' + type;
-    el.style.display = 'block';
-    setTimeout(() => { el.style.display = 'none'; }, 3500);
-}
-
-function doLogin() {
-    const email = document.getElementById('loginEmail').value.trim();
-    const pwd = document.getElementById('loginPwd').value;
-
-    if (!email || !pwd) return showAuthMsg('loginMsg', 'Completa todos los campos.', 'err');
-
-    if (email === 'admin@nda.edu.sv' && pwd === 'admin123') {
-        loginSuccess({ name: 'Administrador NDA', email, role: 'admin' });
-        return;
-    }
-
-    const user = registeredUsers.find(u => u.email === email && u.pwd === pwd);
-    if (!user) return showAuthMsg('loginMsg', 'Correo o contraseña incorrectos.', 'err');
-    loginSuccess(user);
-}
-
-function doRegister() {
-    const name = document.getElementById('regName').value.trim();
-    const email = document.getElementById('regEmail').value.trim();
-    const pwd = document.getElementById('regPwd').value;
-
-    if (!name || !email || !pwd) return showAuthMsg('registerMsg', 'Completa todos los campos.', 'err');
-    if (pwd.length < 6) return showAuthMsg('registerMsg', 'La contraseña debe tener al menos 6 caracteres.', 'err');
-    if (registeredUsers.find(u => u.email === email)) return showAuthMsg('registerMsg', 'Este correo ya está registrado.',
-        'err');
-
-    const user = { name, email, pwd, role: selectedRole };
-    registeredUsers.push(user);
-    localStorage.setItem('ndaUsers', JSON.stringify(registeredUsers));
-
-    showAuthMsg('registerMsg', '¡Cuenta creada! Iniciando sesión…', 'ok');
-    setTimeout(() => loginSuccess(user), 1200);
-}
-
-function loginSuccess(user) {
-    currentUser = user;
-    closeAuth();
-    document.getElementById('navAuthBtns').style.display = 'none';
-    document.getElementById('navUserMenu').style.display = 'flex';
-
-    const initials = user.name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
-    document.getElementById('navAvatar').textContent = initials;
-    document.getElementById('navUserName').textContent = user.name.split(' ')[0];
-
-    if (['admin', 'docente'].includes(user.role)) {
-        document.getElementById('mobNav').insertAdjacentHTML('beforeend',
-            `<a href="#colegio" onclick="openSchoolModule()">🏫 Módulo Colegio</a>`);
-    }
-}
-
 function logout() {
-    currentUser = null;
-    document.getElementById('navAuthBtns').style.display = 'flex';
-    document.getElementById('navUserMenu').style.display = 'none';
-    document.getElementById('colegio').style.display = 'none';
-    closeUserDD();
+    if (confirm('¿Seguro que quieres cerrar sesión?')) {
+        window.location.href = '?url=logout';  // Redirige al logout PHP
+    }
 }
 
 function toggleUserDD() {
@@ -3208,6 +3105,12 @@ document.addEventListener('click', e => {
     const menu = document.getElementById('navUserMenu');
     if (menu && !menu.contains(e.target)) closeUserDD();
 });
+
+function logout() {
+    if (confirm('¿Seguro que quieres cerrar sesión?')) {
+        window.location.href = '?url=logout';  // Redirige al logout PHP
+    }
+}
 
   
 //  34. SCHOOL MODULE

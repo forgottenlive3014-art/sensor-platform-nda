@@ -1,7 +1,7 @@
 <?php
 class ChatController {
     
-    private $apiKey = "xxxxxxxxxxxxxxxxxxxx";
+    private $apiKey = "";
     private $model = "llama-3.3-70b-versatile";
     private $url = "https://api.groq.com/openai/v1/chat/completions";
     

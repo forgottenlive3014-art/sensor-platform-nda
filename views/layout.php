@@ -9,68 +9,106 @@
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;600;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
-<link rel="stylesheet" href="assets/css/style.css"></head>
+<link rel="stylesheet" href="assets/css/style.css">
+
+<link rel="stylesheet" href="assets/css/auth.css">
+</head>
 <body>
 
 <!-- FLOATING SEISMIC PARTICLES -->
 <div class="seismic-particles" id="seismicParticles" aria-hidden="true"></div>
 
+
+<?php
+// Iniciar sesión
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+$isLoggedIn = isset($_SESSION['user_id']) && isset($_SESSION['user_name']);
+$userName = $isLoggedIn ? $_SESSION['user_name'] : 'Usuario';
+$userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
+?>
+
 <!-- NAVBAR -->
 <nav class="nav" id="nav">
   <a class="nav-brand" href="?url=home">
     <div class="nda-logo-wave">
-      <a class="nav-brand" href="?url=home">
-  <img src="assets/media/img/logo.png" alt="Logo NDA" style="height:40px; width:auto;">
-  <span class="nda-logo-text">NDA</span>
-</a>
+      <img src="assets/media/img/logo.png" alt="Logo NDA" style="height:40px; width:auto;">
+      <span class="nda-logo-text">NDA</span>
+    </div>
   </a>
+  
   <div class="nav-links">
-    <a href="?url=home#sismos">Sismos</a>
-    <a href="?url=home#placas">Placas</a>
-    <a href="?url=home#timeline">Historia</a>
-    <a href="?url=home#luna">Luna</a>
-    <a href="?url=home#mapa">Mapa</a>
-    <a href="?url=home#clima">Clima</a>
-    <a href="?url=home#tsunamis">Tsunamis</a>
-    <a href="?url=home#juegos">Juegos</a>
-    <a href="?url=home#prevencion">Prevención</a>
-    <a href="?url=home#ahora">¿Qué hacer?</a>
+    <a href="?url=home">Inicio</a>
+    <a href="?url=reportes">Sismos</a>
+    <a href="?url=monitoreo">Monitoreo</a>
+    <a href="?url=blog">Blog</a>
+    <a href="?url=juegos">Juegos</a>
+    <a href="?url=quehacer">¿Qué hacer AHORA?</a>
+    <a href="?url=acercade">Acerca de NDA</a>
   </div>
+  
   <div class="nav-right">
-    <div class="nav-alert" id="navAlert"><span class="ad"></span><span id="navAlertText">Sistema Activo</span></div>
-    <button class="theme-btn" id="themeBtn" title="Cambiar tema"><span id="themeIco">🌙</span></button>
-    <div id="navAuthBtns" style="display:flex;gap:6px">
-      <button class="btn-out" style="padding:6px 14px;font-size:.76rem" onclick="openAuth('login')">Iniciar sesión</button>
-      <button class="btn-acc" style="padding:6px 14px;font-size:.76rem" onclick="openAuth('register')">Registrarse</button>
+    <div class="nav-alert" id="navAlert">
+      <span class="ad"></span>
+      <span id="navAlertText">Sistema Activo</span>
     </div>
-    <div class="nav-user-menu" id="navUserMenu" style="display:none">
-      <div class="nav-user" id="navUserBadge" style="cursor:pointer" onclick="toggleUserDD()">
-        <div class="nav-avatar" id="navAvatar">?</div>
-        <span id="navUserName">Usuario</span>
-        <span style="font-size:.6rem;color:var(--text3)">▾</span>
+    <button class="theme-btn" id="themeBtn" title="Cambiar tema">
+      <span id="themeIco">🌙</span>
+    </button>
+    
+    <!-- ===== PHP SESSION AUTH ===== -->
+    <?php if (isset($_SESSION['user_id']) && isset($_SESSION['user_name'])): ?>
+      <!-- Usuario logueado - Mostrar menú -->
+      <div class="nav-user-menu" id="navUserMenu" style="display:flex">
+        <div class="nav-user" id="navUserBadge" style="cursor:pointer" onclick="toggleUserDD()">
+          <div class="nav-avatar" id="navAvatar">
+            <?= strtoupper(substr($_SESSION['user_name'], 0, 1)) ?>
+          </div>
+          <span id="navUserName"><?= htmlspecialchars($_SESSION['user_name']) ?></span>
+          <span style="font-size:.6rem;color:var(--text3)">▾</span>
+        </div>
+        <div class="nav-user-dd" id="navUserDD">
+          <div class="nud-item" onclick="openSchoolModule()">🏫 Módulo Colegio</div>
+          <div class="nud-item" onclick="closeUserDD()">👤 Mi Perfil</div>
+          <div class="nud-item danger" onclick="logout()">↩ Cerrar sesión</div>
+        </div>
       </div>
-      <div class="nav-user-dd" id="navUserDD">
-        <div class="nud-item" onclick="openSchoolModule()">🏫 Módulo Colegio</div>
-        <div class="nud-item" onclick="closeUserDD()">👤 Mi Perfil</div>
-        <div class="nud-item danger" onclick="logout()">↩ Cerrar sesión</div>
+      
+      <!-- Ocultar botones de login/register -->
+      <div id="navAuthBtns" style="display:none">
+        <a href="?url=login" class="btn-out" style="padding:6px 14px;font-size:.76rem;text-decoration:none;">Iniciar sesión</a>
+        <a href="?url=register" class="btn-acc" style="padding:6px 14px;font-size:.76rem;text-decoration:none;">Registrarse</a>
       </div>
-    </div>
-    <button class="nav-ham" id="hamBtn"><span></span><span></span><span></span></button>
+      
+    <?php else: ?>
+      <!-- Usuario NO logueado - Mostrar botones -->
+      <div id="navAuthBtns" style="display:flex;gap:6px">
+        <a href="?url=login" class="btn-out" style="padding:6px 14px;font-size:.76rem;text-decoration:none;">Iniciar sesión</a>
+        <a href="?url=register" class="btn-acc" style="padding:6px 14px;font-size:.76rem;text-decoration:none;">Registrarse</a>
+      </div>
+      
+      <!-- Ocultar menú de usuario -->
+      <div class="nav-user-menu" id="navUserMenu" style="display:none">
+        <div class="nav-user" id="navUserBadge" style="cursor:pointer" onclick="toggleUserDD()">
+          <div class="nav-avatar" id="navAvatar">?</div>
+          <span id="navUserName">Usuario</span>
+          <span style="font-size:.6rem;color:var(--text3)">▾</span>
+        </div>
+        <div class="nav-user-dd" id="navUserDD">
+          <div class="nud-item" onclick="openSchoolModule()">🏫 Módulo Colegio</div>
+          <div class="nud-item" onclick="closeUserDD()">👤 Mi Perfil</div>
+          <div class="nud-item danger" onclick="logout()">↩ Cerrar sesión</div>
+        </div>
+      </div>
+    <?php endif; ?>
+    
+    <button class="nav-ham" id="hamBtn">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
-<div class="mob-nav" id="mobNav">
-  <a href="?url=home#sismos">Sismos</a>
-  <a href="?url=home#placas">Placas Tectónicas</a>
-  <a href="?url=home#timeline">Historia</a>
-  <a href="?url=home#luna">Fases Lunares</a>
-  <a href="?url=home#mapa">Mapa de Peligros</a>
-  <a href="?url=home#clima">Clima</a>
-  <a href="?url=home#tsunamis">Tsunamis</a>
-  <a href="?url=home#juegos">Juegos</a>
-  <a href="?url=home#prevencion">Prevención</a>
-  <a href="?url=home#arduino">Arduino</a>
-  <a href="?url=home#ahora">¿Qué hacer AHORA?</a>
-</div>
 
 <!-- ========== CONTENIDO PRINCIPAL ========== -->
 <?= $content ?? '' ?>
@@ -108,6 +146,7 @@
 
 
 <script src="<?= asset('js/app.js') ?>"></script>
+<script src="<?= asset('js/auth.js') ?>"></script>
 
 </body>
 </html>

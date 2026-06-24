@@ -360,7 +360,7 @@ ob_start();
         <div class="moon-canvas-wr"><canvas id="moonCv" width="170" height="170"></canvas><div class="moon-glow-el" id="moonGlowEl"></div></div>
         <div class="moon-name" id="moonName">Calculando…</div>
         <div class="moon-date-str" id="moonDateStr"></div>
-        <div class="moon-next-date" id="moonNextDate">⏰ Próxima: —</div>
+        <div class="moon-next-date" id="moonNextDate"> Próxima: —</div>
         <div class="moon-cycle" style="margin-top:12px"><div class="mc-lbl"><span>Ciclo Lunar</span><span id="moonPct">—%</span></div><div class="mc-track"><div class="mc-fill" id="moonFill"></div></div></div>
         <div class="moon-phases-mini"><div class="mpm" onclick="setMoonPhase(0)"><span class="mpm-i">🌑</span>Nueva</div><div class="mpm" onclick="setMoonPhase(2)"><span class="mpm-i">🌓</span>Creciente</div><div class="mpm" onclick="setMoonPhase(4)"><span class="mpm-i">🌕</span>Llena</div><div class="mpm" onclick="setMoonPhase(6)"><span class="mpm-i">🌗</span>Menguante</div></div>
       </div>
@@ -425,7 +425,7 @@ ob_start();
             </svg>
           </div>
           <div class="evac-info-body">
-            <h4>🏃 Protocolo de Evacuación — El Salvador</h4>
+            <h4> Protocolo de Evacuación — El Salvador</h4>
             <ul><li>Sismo fuerte en zona costera de El Salvador: corre tierra adentro <strong>sin esperar alerta</strong>.</li><li>Busca terreno elevado a <strong>mínimo 30m</strong> sobre el nivel del mar (Cerro El Picacho, alturas de Jayaque).</li><li>El retiro del mar en playas como El Tunco = tsunami llegando. Huye <strong>inmediatamente</strong>.</li><li>Nunca regreses hasta <strong>autorización oficial del MARN o Protección Civil</strong>.</li></ul>
             <div class="coast-risks" style="margin-top:12px"><span class="cr-chip crc-r">La Libertad</span><span class="cr-chip crc-r">Acajutla</span><span class="cr-chip crc-r">Usulután</span><span class="cr-chip crc-o">El Espino</span><span class="cr-chip crc-o">Jiquilisco</span><span class="cr-chip crc-o">La Unión</span></div>
           </div>
@@ -529,40 +529,6 @@ ob_start();
   </div>
 </section>
 
-<!-- AUTH MODAL -->
-<div class="auth-overlay" id="authOverlay" onclick="handleAuthOverlayClick(event)">
-  <div class="auth-box">
-    <div class="auth-hd">
-      <div class="auth-logo">
-        <svg width="34" height="15" viewBox="0 0 50 22" fill="none">
-          <polyline points="1,11 5,11 7,3 9,19 11,8 13,14 15,11 19,11" stroke="#ff5500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <line x1="22" y1="11" x2="30" y2="11" stroke="#ff9200" stroke-width="1.5" stroke-linecap="round"/>
-          <polyline points="30,11 33,6 36,11" stroke="#ff9200" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <span style="font-family:var(--fd);font-weight:900;font-size:1rem;background:linear-gradient(90deg,#ff5500,#ff9200);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">NDA</span>
-        <span style="font-size:.72rem;color:var(--text3)">Natural Disaster Alert</span>
-      </div>
-      <div class="auth-tabs"><button class="auth-tab on" id="tabLogin" onclick="switchAuthTab('login')">Iniciar sesión</button><button class="auth-tab" id="tabRegister" onclick="switchAuthTab('register')">Registrarse</button></div>
-      <button class="auth-close" onclick="closeAuth()">✕</button>
-    </div>
-    <div id="formLogin" class="auth-form">
-      <div class="auth-msg" id="loginMsg"></div>
-      <div class="auth-field"><label>Correo electrónico</label><input type="email" id="loginEmail" placeholder="tu@correo.com"/></div>
-      <div class="auth-field"><label>Contraseña</label><input type="password" id="loginPwd" placeholder="••••••••"/></div>
-      <button class="auth-btn-main" onclick="doLogin()">Ingresar →</button>
-      <p style="text-align:center;font-size:.75rem;color:var(--text3)">¿No tienes cuenta? <span style="color:var(--acc);cursor:pointer" onclick="switchAuthTab('register')">Regístrate aquí</span></p>
-    </div>
-    <div id="formRegister" class="auth-form" style="display:none">
-      <div class="auth-msg" id="registerMsg"></div>
-      <div class="auth-field"><label>Nombre completo</label><input type="text" id="regName" placeholder="Ej: Ana García"/></div>
-      <div class="auth-field"><label>Correo electrónico</label><input type="email" id="regEmail" placeholder="tu@correo.com"/></div>
-      <div class="auth-field"><label>Contraseña</label><input type="password" id="regPwd" placeholder="Mínimo 6 caracteres"/></div>
-      <div class="auth-field"><label>Tipo de usuario</label><div class="auth-role-row"><div class="role-opt on" data-role="alumno" onclick="selectRole(this)"><span class="ro-ico">🎒</span>Alumno</div><div class="role-opt" data-role="docente" onclick="selectRole(this)"><span class="ro-ico">📚</span>Docente</div><div class="role-opt" data-role="padre" onclick="selectRole(this)"><span class="ro-ico">👨‍👩‍👧</span>Padre/Madre</div><div class="role-opt" data-role="admin" onclick="selectRole(this)"><span class="ro-ico">🛡</span>Administrador</div></div></div>
-      <button class="auth-btn-main" onclick="doRegister()">Crear cuenta →</button>
-      <p style="text-align:center;font-size:.75rem;color:var(--text3)">¿Ya tienes cuenta? <span style="color:var(--acc);cursor:pointer" onclick="switchAuthTab('login')">Inicia sesión</span></p>
-    </div>
-  </div>
-</div>
 
 <!-- SCHOOL MODULE -->
 <section class="sec sec-dark" id="colegio" style="display:none">
