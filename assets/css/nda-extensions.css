@@ -1,0 +1,276 @@
+/* ================================================================
+   NDA — Extensiones visuales (Fase 2/Integracion real)
+   Este archivo NUNCA declara --bg / --bg2 / --bg3 / --bg4 ni ningun
+   color de fondo global: esos valores permanecen exactamente como
+   estan en style.css. Todo aqui es capa de superficie (vidrio,
+   tarjetas, estados) que se dibuja ENCIMA del fondo existente.
+   ================================================================ */
+
+:root {
+    /* Escala de severidad del Design System (Fase 2) — unica fuente de
+       verdad de color para sismos, sensor, alertas escolares y sistema. */
+    --state-seguro: #335C67;
+    --state-informativo: #597D4F;
+    --state-precaucion: #BFB749;
+    --state-alerta: #C2441C;
+    --state-emergencia: #D91A2A;
+
+    --glass-bg: rgba(8, 20, 34, 0.55);
+    --glass-border: rgba(255, 255, 255, 0.14);
+    --glass-blur: 16px;
+}
+
+[data-theme="light"] {
+    --state-seguro: #3E6D78;
+    --state-informativo: #6BA15A;
+    --state-precaucion: #F2C94C;
+    --state-alerta: #E86A2A;
+    --state-emergencia: #FF3B3F;
+
+    --glass-bg: rgba(255, 255, 255, 0.55);
+    --glass-border: rgba(0, 0, 0, 0.10);
+}
+
+/* ---------------------------------------------------------------
+   Utilidad de superficie de vidrio — estandar para paneles nuevos
+   (notificaciones, dashboards). No reemplaza tarjetas existentes,
+   se usa solo en componentes nuevos para no romper nada ya construido.
+   --------------------------------------------------------------- */
+.nda-glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    border-radius: var(--rl, 18px);
+    box-shadow: var(--shl, 0 8px 52px rgba(0,0,0,0.4));
+}
+
+/* ---------------------------------------------------------------
+   Campana de notificaciones
+   --------------------------------------------------------------- */
+.nda-notif-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid var(--border, rgba(255,255,255,.1));
+    background: transparent;
+    color: var(--text, #f6f4ef);
+    cursor: pointer;
+    transition: background var(--tr, .28s) var(--ez, ease);
+}
+.nda-notif-btn:hover { background: var(--card2, rgba(255,255,255,.06)); }
+
+.nda-notif-dot {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--state-informativo);
+    border: 2px solid var(--bg, #021526);
+    display: none;
+}
+.nda-notif-dot.has-unread { display: block; }
+/* Cuando hay una notificacion de severidad alta, la campana misma
+   "respira" en rojo — el mismo lenguaje de estado que el chatbot
+   flotante (ver seccion 5 del Design System). */
+.nda-notif-btn.severity-alerta .nda-notif-dot,
+.nda-notif-btn.severity-alerta { color: var(--state-alerta); }
+.nda-notif-btn.severity-emergencia .nda-notif-dot { background: var(--state-emergencia); }
+.nda-notif-btn.severity-emergencia {
+    animation: nda-pulse-emergencia 1.4s ease-in-out infinite;
+}
+
+@keyframes nda-pulse-emergencia {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(217,26,42,0.35); }
+    50% { box-shadow: 0 0 0 8px rgba(217,26,42,0); }
+}
+
+.nda-notif-panel {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 320px;
+    max-height: 420px;
+    overflow-y: auto;
+    padding: 8px;
+    z-index: 200;
+    display: none;
+}
+.nda-notif-panel.open { display: block; }
+
+.nda-notif-item {
+    display: flex;
+    gap: 10px;
+    padding: 10px 8px;
+    border-radius: 10px;
+    border-left: 3px solid var(--state-informativo);
+    margin-bottom: 6px;
+    font-family: var(--fn, 'Space Grotesk', sans-serif);
+    font-size: 0.86rem;
+    color: var(--text, #f6f4ef);
+}
+.nda-notif-item.unread { background: var(--card2, rgba(255,255,255,.05)); }
+.nda-notif-item[data-severidad="precaucion"] { border-left-color: var(--state-precaucion); }
+.nda-notif-item[data-severidad="alerta"] { border-left-color: var(--state-alerta); }
+.nda-notif-item[data-severidad="emergencia"] { border-left-color: var(--state-emergencia); }
+.nda-notif-item[data-severidad="seguro"] { border-left-color: var(--state-seguro); }
+
+.nda-notif-empty {
+    padding: 24px 12px;
+    text-align: center;
+    color: var(--text3, #6a7a85);
+    font-size: 0.85rem;
+}
+
+.nda-notif-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--border, rgba(255,255,255,.1));
+    padding-bottom: 6px;
+}
+.nda-notif-tab {
+    flex: 1;
+    background: none;
+    border: none;
+    padding: 6px 8px;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    color: var(--text3, #6a7a85);
+    cursor: pointer;
+    font-family: var(--fn, 'Space Grotesk', sans-serif);
+}
+.nda-notif-tab.active {
+    color: var(--text, #f6f4ef);
+    background: var(--card2, rgba(255,255,255,.08));
+    font-weight: 600;
+}
+.nda-notif-pagination {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 4px 2px;
+    font-size: 0.78rem;
+    color: var(--text3, #6a7a85);
+}
+.nda-notif-pagination button {
+    background: var(--card2, rgba(255,255,255,.08));
+    border: none;
+    border-radius: 6px;
+    padding: 4px 10px;
+    color: var(--text, #f6f4ef);
+    cursor: pointer;
+}
+.nda-notif-pagination button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ---------------------------------------------------------------
+   Avisos en la página (reemplazan alert()/confirm() del navegador)
+   --------------------------------------------------------------- */
+.nda-toast-container {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 340px;
+}
+.nda-toast {
+    background: var(--glass-bg, rgba(8,20,34,.9));
+    border: 1px solid var(--glass-border, rgba(255,255,255,.14));
+    backdrop-filter: blur(var(--glass-blur, 16px));
+    color: var(--text, #f6f4ef);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.86rem;
+    line-height: 1.4;
+    box-shadow: 0 8px 24px rgba(0,0,0,.35);
+    opacity: 0;
+    transform: translateX(30px);
+    transition: opacity .2s, transform .2s;
+}
+.nda-toast.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+.nda-toast-msg { flex: 1; word-break: break-word; white-space: pre-wrap; }
+.nda-toast-close {
+    background: none;
+    border: none;
+    color: var(--text3, #9fb0b8);
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.nda-toast-close:hover { color: var(--text, #f6f4ef); }
+
+.nda-confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 8, 16, 0.6);
+    backdrop-filter: blur(3px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity .2s;
+}
+.nda-confirm-overlay.show { opacity: 1; }
+.nda-confirm-box {
+    background: var(--bg2, #0b1c2e);
+    border: 1px solid var(--glass-border, rgba(255,255,255,.14));
+    border-radius: 16px;
+    padding: 22px 24px;
+    max-width: 380px;
+    width: calc(100% - 40px);
+    box-shadow: 0 20px 50px rgba(0,0,0,.5);
+    transform: scale(0.96);
+    transition: transform .2s;
+}
+.nda-confirm-overlay.show .nda-confirm-box { transform: scale(1); }
+.nda-confirm-box p {
+    color: var(--text, #f6f4ef);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0 0 18px;
+    white-space: pre-wrap;
+}
+.nda-confirm-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* ---------------------------------------------------------------
+   Chatbot en modo emergencia — respuesta directa, sin decoracion
+   (ver Design System, seccion 4: "cuanto mas grave, menos decorativo").
+   --------------------------------------------------------------- */
+.ndabot-bubble-emergency {
+    background: var(--state-emergencia) !important;
+    color: #fff !important;
+    font-weight: 600;
+    border: none !important;
+}
+
+.ndabot-emergency-flash {
+    animation: nda-emergency-flash 0.4s ease-in-out 2;
+}
+@keyframes nda-emergency-flash {
+    0%, 100% { box-shadow: none; }
+    50% { box-shadow: 0 0 0 3px var(--state-emergencia); }
+}

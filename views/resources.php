@@ -5,7 +5,7 @@ ob_start();
 
 <div class="resources-page">
     <div class="wrap" style="padding-top: 80px; padding-bottom: 60px;">
-        
+
         <!-- Encabezado -->
         <div style="text-align: center; margin-bottom: 40px;">
             <h1 style="font-size: 2.5rem; font-weight: 900; background: linear-gradient(135deg, #f97316, #ff5500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block;">
@@ -28,7 +28,7 @@ ob_start();
 
         <!-- Grid de PDFs -->
         <div class="resources-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px;">
-            
+
             <!--   EVACUACIÓN ESCOLAR   -->
             <div class="resource-card" data-category="evacuacion" style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: transform 0.2s, box-shadow 0.2s;">
                 <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
@@ -47,10 +47,10 @@ ob_start();
                 </div>
                 <div style="display: flex; gap: 8px;">
                     <a href="assets/media/guias/Evacuacion escolar.pdf" target="_blank" style="flex: 1; background: linear-gradient(135deg, #f97316, #ea6c0a); color: #fff; border: none; border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-align: center; text-decoration: none; cursor: pointer; transition: opacity 0.2s;">
-                        📥 Ver PDF
+                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Ver PDF
                     </a>
                     <a href="assets/media/guias/Evacuacion escolar.pdf" download style="background: var(--card2); color: var(--text1); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-decoration: none; cursor: pointer; transition: background 0.2s;">
-                        ⬇
+                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
                     </a>
                 </div>
             </div>
@@ -73,10 +73,10 @@ ob_start();
                 </div>
                 <div style="display: flex; gap: 8px;">
                     <a href="assets/media/guias/Evacuacion escolarnCartilla-Guia-de-evacuacion-Escolar-1.pdf" target="_blank" style="flex: 1; background: linear-gradient(135deg, #f97316, #ea6c0a); color: #fff; border: none; border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-align: center; text-decoration: none; cursor: pointer; transition: opacity 0.2s;">
-                        📥 Ver PDF
+                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Ver PDF
                     </a>
                     <a href="assets/media/guias/Evacuacion escolarnCartilla-Guia-de-evacuacion-Escolar-1.pdf" download style="background: var(--card2); color: var(--text1); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-decoration: none; cursor: pointer; transition: background 0.2s;">
-                        ⬇
+                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
                     </a>
                 </div>
             </div>
@@ -99,10 +99,10 @@ ob_start();
                 </div>
                 <div style="display: flex; gap: 8px;">
                     <a href="assets/media/guias/Mochila emergencia.pdf" target="_blank" style="flex: 1; background: linear-gradient(135deg, #f97316, #ea6c0a); color: #fff; border: none; border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-align: center; text-decoration: none; cursor: pointer; transition: opacity 0.2s;">
-                        📥 Ver PDF
+                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Ver PDF
                     </a>
                     <a href="assets/media/guias/Mochila emergencia.pdf" download style="background: var(--card2); color: var(--text1); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-decoration: none; cursor: pointer; transition: background 0.2s;">
-                        ⬇
+                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
                     </a>
                 </div>
             </div>
@@ -125,10 +125,10 @@ ob_start();
                 </div>
                 <div style="display: flex; gap: 8px;">
                     <a href="assets/media/guias/Mochila emergencia2.pdf" target="_blank" style="flex: 1; background: linear-gradient(135deg, #f97316, #ea6c0a); color: #fff; border: none; border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-align: center; text-decoration: none; cursor: pointer; transition: opacity 0.2s;">
-                        📥 Ver PDF
+                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Ver PDF
                     </a>
                     <a href="assets/media/guias/Mochila emergencia2.pdf" download style="background: var(--card2); color: var(--text1); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-decoration: none; cursor: pointer; transition: background 0.2s;">
-                        ⬇
+                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
                     </a>
                 </div>
             </div>
@@ -151,10 +151,10 @@ ob_start();
                 </div>
                 <div style="display: flex; gap: 8px;">
                     <a href="assets/media/guias/Plan familiar.pdf" target="_blank" style="flex: 1; background: linear-gradient(135deg, #f97316, #ea6c0a); color: #fff; border: none; border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-align: center; text-decoration: none; cursor: pointer; transition: opacity 0.2s;">
-                        📥 Ver PDF
+                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Ver PDF
                     </a>
                     <a href="assets/media/guias/Plan familiar.pdf" download style="background: var(--card2); color: var(--text1); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-decoration: none; cursor: pointer; transition: background 0.2s;">
-                        ⬇
+                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
                     </a>
                 </div>
             </div>
@@ -177,10 +177,10 @@ ob_start();
                 </div>
                 <div style="display: flex; gap: 8px;">
                     <a href="assets/media/guias/plan familiar(1).pdf" target="_blank" style="flex: 1; background: linear-gradient(135deg, #f97316, #ea6c0a); color: #fff; border: none; border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-align: center; text-decoration: none; cursor: pointer; transition: opacity 0.2s;">
-                        📥 Ver PDF
+                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Ver PDF
                     </a>
                     <a href="assets/media/guias/plan familiar(1).pdf" download style="background: var(--card2); color: var(--text1); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-decoration: none; cursor: pointer; transition: background 0.2s;">
-                        ⬇
+                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
                     </a>
                 </div>
             </div>
@@ -203,10 +203,10 @@ ob_start();
                 </div>
                 <div style="display: flex; gap: 8px;">
                     <a href="assets/media/guias/Preparacion ante sismos.pdf" target="_blank" style="flex: 1; background: linear-gradient(135deg, #f97316, #ea6c0a); color: #fff; border: none; border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-align: center; text-decoration: none; cursor: pointer; transition: opacity 0.2s;">
-                        📥 Ver PDF
+                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Ver PDF
                     </a>
                     <a href="assets/media/guias/Preparacion ante sismos.pdf" download style="background: var(--card2); color: var(--text1); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-decoration: none; cursor: pointer; transition: background 0.2s;">
-                        ⬇
+                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
                     </a>
                 </div>
             </div>
@@ -229,10 +229,10 @@ ob_start();
                 </div>
                 <div style="display: flex; gap: 8px;">
                     <a href="assets/media/guias/Protocolo lluvias.pdf" target="_blank" style="flex: 1; background: linear-gradient(135deg, #f97316, #ea6c0a); color: #fff; border: none; border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-align: center; text-decoration: none; cursor: pointer; transition: opacity 0.2s;">
-                        📥 Ver PDF
+                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Ver PDF
                     </a>
                     <a href="assets/media/guias/Protocolo lluvias.pdf" download style="background: var(--card2); color: var(--text1); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-decoration: none; cursor: pointer; transition: background 0.2s;">
-                        ⬇
+                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
                     </a>
                 </div>
             </div>
@@ -255,10 +255,10 @@ ob_start();
                 </div>
                 <div style="display: flex; gap: 8px;">
                     <a href="assets/media/guias/Protocolo lluvias2.pdf" target="_blank" style="flex: 1; background: linear-gradient(135deg, #f97316, #ea6c0a); color: #fff; border: none; border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-align: center; text-decoration: none; cursor: pointer; transition: opacity 0.2s;">
-                        📥 Ver PDF
+                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Ver PDF
                     </a>
                     <a href="assets/media/guias/Protocolo lluvias2.pdf" download style="background: var(--card2); color: var(--text1); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-decoration: none; cursor: pointer; transition: background 0.2s;">
-                        ⬇
+                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
                     </a>
                 </div>
             </div>

@@ -1,18 +1,95 @@
-  
+
 //  NDA - Natural Disaster Alert
 //  TODOS LOS SCRIPTS ORDENADOS
-  
 
-  
+
+
+//  0. AVISOS EN LA PÁGINA (reemplaza alert()/confirm() nativos del navegador)
+
+
+// Contenedor de toasts (esquina superior derecha). Se crea una sola vez.
+function ndaToastContainer() {
+    var el = document.getElementById('ndaToastContainer');
+    if (!el) {
+        el = document.createElement('div');
+        el.id = 'ndaToastContainer';
+        el.className = 'nda-toast-container';
+        document.body.appendChild(el);
+    }
+    return el;
+}
+
+// Reemplaza alert(): muestra un aviso no bloqueante dentro de la página.
+function ndaAlert(message, type) {
+    type = type || 'info';
+    var container = ndaToastContainer();
+    var toast = document.createElement('div');
+    toast.className = 'nda-toast nda-toast-' + type;
+    toast.innerHTML = '<span class="nda-toast-msg">' + message + '</span><button class="nda-toast-close" aria-label="Cerrar">&times;</button>';
+    container.appendChild(toast);
+    requestAnimationFrame(function () { toast.classList.add('show'); });
+
+    function remove() {
+        toast.classList.remove('show');
+        setTimeout(function () { toast.remove(); }, 200);
+    }
+    toast.querySelector('.nda-toast-close').addEventListener('click', remove);
+    setTimeout(remove, 5000);
+}
+
+// Reemplaza confirm(): devuelve una Promise<boolean> con un dialogo dentro
+// de la página (no la ventana predeterminada del navegador).
+function ndaConfirm(message) {
+    return new Promise(function (resolve) {
+        var overlay = document.createElement('div');
+        overlay.className = 'nda-confirm-overlay';
+        overlay.innerHTML =
+            '<div class="nda-confirm-box">' +
+            '<p>' + message + '</p>' +
+            '<div class="nda-confirm-actions">' +
+            '<button class="btn-acc nda-confirm-yes">Aceptar</button>' +
+            '<button class="btn-out nda-confirm-no">Cancelar</button>' +
+            '</div></div>';
+        document.body.appendChild(overlay);
+        requestAnimationFrame(function () { overlay.classList.add('show'); });
+
+        function close(result) {
+            overlay.classList.remove('show');
+            setTimeout(function () { overlay.remove(); }, 200);
+            resolve(result);
+        }
+        overlay.querySelector('.nda-confirm-yes').addEventListener('click', function () { close(true); });
+        overlay.querySelector('.nda-confirm-no').addEventListener('click', function () { close(false); });
+        overlay.addEventListener('click', function (e) { if (e.target === overlay) close(false); });
+    });
+}
+
+// ensureCesiumLoaded() vive en el <head> de views/layout.php (ver ahi el
+// porque): tiene que estar disponible antes de que se ejecute hero-globe.js,
+// que corre embebido en home.php antes de que este mismo archivo cargue.
+
+
 //  1. THEME & NAV
-  
 
-let dark = true;
+
+function syncThemeIcon() {
+    var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    var moon = document.getElementById('themeIcoMoon');
+    var sun = document.getElementById('themeIcoSun');
+    if (moon && sun) {
+        moon.style.display = isLight ? 'none' : 'block';
+        sun.style.display = isLight ? 'block' : 'none';
+    }
+}
+syncThemeIcon();
 
 document.getElementById('themeBtn').onclick = () => {
-    dark = !dark;
-    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
-    document.getElementById('themeIco').textContent = dark ? '🌙' : '☀️';
+    var current = document.documentElement.getAttribute('data-theme');
+    var next = current === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('nda-theme', next); } catch (e) {}
+    document.cookie = 'nda_theme=' + next + ';path=/;max-age=31536000;SameSite=Lax';
+    syncThemeIcon();
 };
 
 document.getElementById('hamBtn').onclick = () => {
@@ -29,12 +106,51 @@ window.addEventListener('scroll', () => {
 
 stBtn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
+// Si el navegador restaura esta pagina desde la cache (boton "Atras"
+// tras cerrar sesion), forzamos una recarga para pedir el estado real.
+window.addEventListener('pageshow', function (e) {
+    if (e.persisted) {
+        window.location.reload();
+    }
+});
+
+  
+//  1B. BANNER DE SIMULACRO EN VIVO (visible en todo el sitio)
+  
+
+(function () {
+    if (!window.__ndaHasInstitution) return;
+
+    var banner = document.getElementById('drillAlertBanner');
+    var text = document.getElementById('drillAlertText');
+    if (!banner) return;
+
+    async function checkActiveAlert() {
+        try {
+            var res = await fetch('?url=school/active-alert');
+            var data = await res.json();
+            if (data.active && data.drill) {
+                text.textContent = 'Simulacro en curso: ' + data.drill.nombre + ' (' + data.drill.tipo + ')';
+                banner.style.display = 'flex';
+                document.body.classList.add('has-drill-banner');
+            } else {
+                banner.style.display = 'none';
+                document.body.classList.remove('has-drill-banner');
+            }
+        } catch (e) { /* silencioso: no interrumpir la navegacion */ }
+    }
+
+    checkActiveAlert();
+    setInterval(checkActiveAlert, 20000);
+})();
+
   
 //  2. HERO CANVAS - SEISMIC WAVE BACKGROUND
   
 
 (function() {
     const c = document.getElementById('hcv');
+    if (!c) return;
     const ctx = c.getContext('2d');
 
     function resize() {
@@ -345,6 +461,13 @@ async function loadQuakes() {
         document.getElementById('hm-max').textContent = maxM.toFixed(1);
         document.getElementById('hm-depth').textContent = avgD;
 
+        const activEl = document.getElementById('h3d-actividad-reciente');
+        if (activEl) {
+            activEl.textContent = h24 > 0
+                ? `${h24} sismo${h24 === 1 ? '' : 's'} registrados en las últimas 24 horas cerca de El Salvador, con magnitud máxima de ${maxM.toFixed(1)}.`
+                : 'Sin sismos significativos registrados cerca de El Salvador en las últimas 24 horas.';
+        }
+
         // Side stats
         document.getElementById('sc-last').textContent = 'M' + maxM.toFixed(1);
         document.getElementById('sc-24h').textContent = h24;
@@ -426,7 +549,7 @@ document.getElementById('refreshQ').onclick = loadQuakes;
         ctx.fillText('Placa de Cocos', 18, 80);
         ctx.fillStyle = 'rgba(45,143,255,.6)';
         ctx.font = '10px Space Grotesk,sans-serif';
-        ctx.fillText('→ ' + Math.round(shift + 8) + 'cm/año', 18, 100);
+        ctx.fillText('➡️ ' + Math.round(shift + 8) + 'cm/año', 18, 100);
 
         // Caribbean plate
         ctx.fillStyle = 'rgba(0,212,176,.15)';
@@ -744,15 +867,15 @@ function renderTL() {
                 </div>
             </div>
             <div class="tld-info">
-                <div class="tld-badge">📅 ${e.year}</div>
+                <div class="tld-badge"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> ${e.year}</div>
                 <h3>${e.title}</h3>
                 <p>${e.desc}</p>
                 <div class="tld-tags">${e.tags.map(t => `<span class="tlt ${t.c}">${t.t}</span>`).join('')}</div>
                 <div style="font-size:.76rem;color:var(--text3);margin-bottom:12px">📍 ${e.region}</div>
                 <div class="tld-stats">${e.stats.map(s => `<div class="tlds"><div class="tlds-v">${s.v}</div><div class="tlds-l">${s.l}</div></div>`).join('')}</div>
                 <div class="tld-nav">
-                    ${tlActive > 0 ? `<button class="tldn-btn" onclick="setTL(${tlActive - 1})">← Anterior</button>` : ''}
-                    ${tlActive < tlData.length - 1 ? `<button class="tldn-btn" onclick="setTL(${tlActive + 1})">Siguiente →</button>` : ''}
+                    ${tlActive > 0 ? `<button class="tldn-btn" onclick="setTL(${tlActive - 1})"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Anterior</button>` : ''}
+                    ${tlActive < tlData.length - 1 ? `<button class="tldn-btn" onclick="setTL(${tlActive + 1})">Siguiente ➡️</button>` : ''}
                 </div>
             </div>
         </div>
@@ -764,332 +887,7 @@ window.setTL = function(i) {
     renderTL();
 };
 
-  
-//  10. ARDUINO DEMO
-  
 
-let ardRunning = false,
-    ardT = 0,
-    ardSimAnim = null;
-let ardPhase = 0,
-    ardPhaseT = 0;
-
-const ardPhases = [
-    { label: 'Normal', g: 0.05, cls: '', color: 'var(--teal)', level: 'normal',
-        todo: ['Sistema monitoreando continuamente.', 'Vibración ambiental normal. Sin riesgo.'] },
-    { label: 'Leve', g: 0.18, cls: 'la', color: 'var(--teal)', level: 'normal',
-        todo: ['Mantente calmado.', 'Aléjate de objetos que puedan caer.'] },
-    { label: 'Moderado', g: 0.45, cls: 'wa', color: 'var(--acc3)', level: 'warning',
-        todo: ['⚠️ Posible actividad sísmica.', 'Agáchate, cúbrete y sostenete bajo mesa sólida.', 'Aléjate de ventanas.'] },
-    { label: 'FUERTE', g: 0.82, cls: 'da', color: 'var(--acc2)', level: 'alert',
-        todo: ['🚨 ALERTA SÍSMICA DETECTADA', 'AGÁCHATE — CÚBRETE — SOSTENETE', 'Permanece bajo mesa hasta que pare.',
-            'NO corras a la calle durante el sismo.'] },
-    { label: 'MUY FUERTE', g: 1.24, cls: 'da', color: 'var(--acc2)', level: 'alert',
-        todo: ['🚨 SISMO GRAVE — EVACUA', 'Busca zona de reunión exterior.', 'Aléjate de edificios, cables y árboles.',
-            'Llama al 911 si hay heridos.'] },
-    { label: 'Disminuyendo', g: 0.55, cls: 'wa', color: 'var(--acc3)', level: 'warning',
-        todo: ['Permanece en posición de protección.', 'Espera réplicas.', 'Escucha instrucciones de autoridades.'] },
-    { label: 'Débil', g: 0.22, cls: 'la', color: 'var(--teal)', level: 'normal',
-        todo: ['Sismo en disminución.', 'Verifica tu entorno por daños.'] },
-    { label: 'Normal', g: 0.04, cls: '', color: 'var(--teal)', level: 'normal',
-        todo: ['Sistema volviendo a estado normal.', 'Evalúa daños. Reporta a autoridades.'] }
-];
-
-let ardData = Array(200).fill(60);
-
-(function() {
-    const c = document.getElementById('ardSg');
-    if (!c) return;
-    const ctx = c.getContext('2d');
-
-    function resize() {
-        c.width = c.offsetWidth;
-        c.height = 120;
-    }
-    resize();
-    window.addEventListener('resize', resize);
-
-    function draw() {
-        ctx.clearRect(0, 0, c.width, c.height);
-        ctx.fillStyle = '#080c18';
-        ctx.fillRect(0, 0, c.width, c.height);
-
-        ctx.strokeStyle = 'rgba(255,255,255,.03)';
-        ctx.lineWidth = 1;
-        for (let y = 0; y < c.height; y += 20) {
-            ctx.beginPath();
-            ctx.moveTo(0, y);
-            ctx.lineTo(c.width, y);
-            ctx.stroke();
-        }
-
-        const ph = ardRunning ? ardPhases[ardPhase] : ardPhases[0];
-        const amp = ph.g * c.height * 0.45;
-        const noise = (Math.random() - 0.5) * amp * 2 +
-            Math.sin(ardT * 0.1) * amp * 0.8 +
-            Math.sin(ardT * 0.21) * amp * 0.4;
-
-        ardData.push(c.height / 2 + noise);
-        ardData.shift();
-
-        const step = c.width / ardData.length;
-
-        // Fill
-        const fg = ctx.createLinearGradient(0, 0, 0, c.height);
-        fg.addColorStop(0, 'rgba(0,212,176,0)');
-        fg.addColorStop(0.5, `rgba(0,212,176,${ph.g * 0.12})`);
-        fg.addColorStop(1, 'rgba(0,212,176,0)');
-        ctx.beginPath();
-        ctx.fillStyle = fg;
-        ardData.forEach((v, i) => {
-            i === 0 ? ctx.moveTo(0, v) : ctx.lineTo(i * step, v);
-        });
-        ctx.lineTo(c.width, c.height);
-        ctx.lineTo(0, c.height);
-        ctx.closePath();
-        ctx.fill();
-
-        // Wave line
-        ctx.beginPath();
-        ctx.strokeStyle = ph.level === 'alert' ? '#ff2d4a' : ph.level === 'warning' ? '#ff9900' : '#00d4b0';
-        ctx.lineWidth = 1.8;
-        ardData.forEach((v, i) => {
-            i === 0 ? ctx.moveTo(0, v) : ctx.lineTo(i * step, v);
-        });
-        ctx.stroke();
-
-        // G value
-        const gVal = Math.abs(noise / (c.height * 0.45)) * ph.g + ph.g * 0.1;
-        document.getElementById('aiVal').textContent = Math.max(0.01, gVal).toFixed(2) + ' G';
-        document.getElementById('aiVal').style.color = ph.level === 'alert' ? '#ff2d4a' : ph.level === 'warning' ? '#ff9900' :
-            '#00d4b0';
-
-        // Bars
-        const bars = document.getElementById('aiBars').children;
-        Array.from(bars).forEach((bar, i) => {
-            const baseH = Math.max(5, Math.min(95, (Math.abs(noise) * 1.5 + ph.g * 80 + (Math.random() - 0.5) * 20) * (i *
-                0.12 + 0.7)));
-            bar.style.height = baseH + '%';
-            bar.className = 'ai-bar ' + ph.cls;
-        });
-
-        ardT++;
-        requestAnimationFrame(draw);
-    }
-    draw();
-})();
-
-// Arduino 3D sensor model
-(function() {
-    const c = document.getElementById('ardModel');
-    if (!c) return;
-    const ctx = c.getContext('2d');
-    let t = 0;
-
-    function resize() {
-        c.width = c.offsetWidth;
-        c.height = 200;
-    }
-    resize();
-    window.addEventListener('resize', resize);
-
-    function draw() {
-        const W = c.width,
-            H = c.height;
-        ctx.clearRect(0, 0, W, H);
-        ctx.fillStyle = '#080c18';
-        ctx.fillRect(0, 0, W, H);
-
-        const ph = ardRunning ? ardPhases[ardPhase] : ardPhases[0];
-        const shk = ph.g * 15;
-        const cx = W * 0.5 + Math.sin(t * 0.08) * shk * 0.8,
-            cy = H * 0.5 + Math.cos(t * 0.1) * shk * 0.5;
-        const angle = Math.sin(t * 0.06) * shk * 0.04;
-
-        ctx.save();
-        ctx.translate(cx, cy);
-        ctx.rotate(angle);
-
-        // Arduino board
-        ctx.fillStyle = '#1a5c2a';
-        ctx.strokeStyle = 'rgba(0,212,176,.5)';
-        ctx.lineWidth = 1.5;
-        ctx.fillRect(-55, -32, 110, 64);
-        ctx.strokeRect(-55, -32, 110, 64);
-
-        // MPU-6050 chip
-        ctx.fillStyle = '#0a0a0a';
-        ctx.fillRect(-20, -15, 40, 30);
-        ctx.strokeStyle = 'rgba(45,143,255,.6)';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(-20, -15, 40, 30);
-        ctx.fillStyle = 'rgba(45,143,255,.8)';
-        ctx.font = 'bold 7px Space Grotesk,sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('MPU-6050', 0, 3);
-        ctx.textAlign = 'left';
-
-        // Axis indicators
-        const axisColor = { x: '#ff4d1a', y: '#00d4b0', z: '#2d8fff' };
-
-        ctx.strokeStyle = axisColor.x;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(30 + Math.sin(t * 0.08) * shk, 0);
-        ctx.stroke();
-        ctx.fillStyle = axisColor.x;
-        ctx.font = 'bold 9px Space Grotesk,sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('X', 34 + Math.sin(t * 0.08) * shk, 4);
-
-        ctx.strokeStyle = axisColor.y;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(0, -30 + Math.cos(t * 0.1) * shk);
-        ctx.stroke();
-        ctx.fillStyle = axisColor.y;
-        ctx.fillText('Y', 0, -34 + Math.cos(t * 0.1) * shk);
-
-        ctx.strokeStyle = axisColor.z;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(20 + Math.sin(t * 0.07) * shk * 0.5, -20 + Math.cos(t * 0.09) * shk * 0.5);
-        ctx.stroke();
-        ctx.fillStyle = axisColor.z;
-        ctx.fillText('Z', 24 + Math.sin(t * 0.07) * shk * 0.5, -22);
-        ctx.textAlign = 'left';
-
-        // LED
-        const ledColor = ph.level === 'alert' ? '#ff2d4a' : ph.level === 'warning' ? '#ff9900' : '#22c55e';
-        ctx.fillStyle = ledColor;
-        ctx.beginPath();
-        ctx.arc(45, 25, 6, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = 'rgba(255,255,255,.1)';
-        ctx.beginPath();
-        ctx.arc(45, 25, 10, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Pins
-        ctx.fillStyle = 'rgba(255,200,50,.6)';
-        for (let i = 0; i < 8; i++) {
-            ctx.fillRect(-54 + i * 12, -31, 2, 5);
-            ctx.fillRect(-54 + i * 12, 27, 2, 5);
-        }
-
-        ctx.restore();
-
-        // Axis labels
-        ctx.fillStyle = 'rgba(255,255,255,.3)';
-        ctx.font = '10px Space Grotesk,sans-serif';
-        ctx.fillText(
-            `Eje X: ${(Math.sin(t * 0.08) * shk * 0.06).toFixed(3)}G  Eje Y: ${(Math.cos(t * 0.1) * shk * 0.06).toFixed(3)}G  Eje Z: ${(Math.sin(t * 0.13) * shk * 0.04 + 0.98).toFixed(3)}G`,
-            8, H - 10
-        );
-
-        t++;
-        requestAnimationFrame(draw);
-    }
-    draw();
-})();
-
-function ardAddLog(msg, cls = '') {
-    const log = document.getElementById('ardLog');
-    const el = document.createElement('div');
-    el.className = 'ald ' + cls;
-    el.textContent = '[' + new Date().toLocaleTimeString('es-SV') + '] ' + msg;
-    log.appendChild(el);
-    log.scrollTop = log.scrollHeight;
-}
-
-function ardUpdateStatus() {
-    const ph = ardPhases[ardPhase];
-    const dot = document.getElementById('aapDot');
-    const txt = document.getElementById('aapText');
-    document.getElementById('aapTime').textContent = new Date().toLocaleTimeString('es-SV');
-
-    if (ph.level === 'alert') {
-        dot.className = 'aap-status-dot alert';
-        txt.textContent = '⚠️ ALERTA SÍSMICA ACTIVA';
-        txt.style.color = 'var(--acc2)';
-    } else if (ph.level === 'warning') {
-        dot.className = 'aap-status-dot';
-        dot.style.background = 'var(--acc3)';
-        txt.textContent = '⚡ Actividad Detectada';
-        txt.style.color = 'var(--acc3)';
-    } else {
-        dot.className = 'aap-status-dot';
-        dot.style.background = 'var(--teal)';
-        txt.textContent = '✓ Sistema en Estado Normal';
-        txt.style.color = 'var(--text2)';
-    }
-
-    const wt = document.getElementById('wtSteps');
-    const ph2 = ardPhases[ardPhase];
-    wt.innerHTML = ph2.todo.map(s =>
-        `<div class="wts ${ph2.level === 'alert' ? 'danger' : 'safe'}">
-            <span class="wts-icon">${ph2.level === 'alert' ? '⚠️' : ph2.level === 'warning' ? '⚡' : '✓'}</span>
-            ${s}
-        </div>`
-    ).join('');
-}
-
-let ardInterval = null;
-
-document.getElementById('ardSimBtn').onclick = function() {
-    if (ardRunning) return;
-    ardRunning = true;
-    ardPhase = 0;
-    ardPhaseT = 0;
-    this.disabled = true;
-    this.textContent = '⏳ Simulando…';
-    ardAddLog('Iniciando secuencia de simulación sísmica…', 'i');
-
-    const phaseLabels = [
-        'Vibración leve detectada', 'Señal creciente — actividad sísmica',
-        '⚠️ UMBRAL DE ALERTA SUPERADO — 0.8G', '🚨 SISMO FUERTE DETECTADO — evacuación',
-        'Señal disminuyendo…', 'Actividad residual', 'Vuelta a estado normal', 'Simulación completada'
-    ];
-    const phaseCls = ['i', 'i', 'w', 'c', 'w', 'i', 'i', 'i'];
-    let pi = 0;
-
-    ardInterval = setInterval(() => {
-        if (pi < ardPhases.length) {
-            ardPhase = pi;
-            ardAddLog(phaseLabels[pi], phaseCls[pi]);
-            ardUpdateStatus();
-            pi++;
-        } else {
-            clearInterval(ardInterval);
-            ardRunning = false;
-            document.getElementById('ardSimBtn').disabled = false;
-            document.getElementById('ardSimBtn').textContent = '▶ Simular Alerta';
-            ardPhase = 0;
-            ardUpdateStatus();
-        }
-    }, 1400);
-};
-
-document.getElementById('ardResetBtn').onclick = function() {
-    clearInterval(ardInterval);
-    ardRunning = false;
-    ardPhase = 0;
-    document.getElementById('ardSimBtn').disabled = false;
-    document.getElementById('ardSimBtn').textContent = '▶ Simular Alerta';
-    ardData = Array(200).fill(60);
-    document.getElementById('ardLog').innerHTML = '<div class="ald i">🟢 Sistema reiniciado</div>';
-    ardUpdateStatus();
-};
-
-ardUpdateStatus();
-setInterval(() => {
-    if (!ardRunning) document.getElementById('aapTime').textContent = new Date().toLocaleTimeString('es-SV');
-}, 1000);
-
-  
 //  11. LEAFLET MAP
   
 
@@ -1121,7 +919,7 @@ function initMap() {
         { lat: 13.4433, lng: -88.2694, name: 'Volcán San Miguel', act: true }
     ].forEach(v => L.circleMarker([v.lat, v.lng], { radius: 9, color: v.act ? '#ff9500' : '#555',
             fillColor: v.act ? '#ff9500' : '#333', fillOpacity: .8, weight: 2 })
-        .bindPopup(`<b>${v.act ? '🔴 Activo' : '⚪ Inactivo'}</b><br>${v.name}<br><small>Fuente: MARN</small>`)
+        .bindPopup(`<b>${v.act ? '<span style="display:inline-block;width:0.55em;height:0.55em;border-radius:50%;background:var(--red);vertical-align:0.05em"></span> Activo' : '<span style="display:inline-block;width:0.55em;height:0.55em;border-radius:50%;background:var(--text3);vertical-align:0.05em"></span> Inactivo'}</b><br>${v.name}<br><small>Fuente: MARN</small>`)
         .addTo(vLayer2));
 
     fLayer2 = L.layerGroup();
@@ -1202,16 +1000,16 @@ async function loadWeather() {
 
         const wmo = {
             0: ['☀️', 'Despejado'],
-            1: ['🌤', 'Mayormente despejado'],
-            2: ['⛅', 'Parcialmente nublado'],
-            3: ['☁️', 'Nublado'],
-            45: ['🌫', 'Niebla'],
-            51: ['🌦', 'Llovizna'],
-            61: ['🌧', 'Lluvia ligera'],
-            63: ['🌧', 'Lluvia moderada'],
-            65: ['⛈', 'Lluvia intensa'],
-            80: ['🌦', 'Chubascos'],
-            95: ['⛈', 'Tormenta']
+            1: ['👥', 'Mayormente despejado'],
+            2: ['👥', 'Parcialmente nublado'],
+            3: ['<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M17.5 19a4.5 4.5 0 0 0 0-9 6 6 0 0 0-11.3-1.5A5 5 0 0 0 6 19z"/></svg>', 'Nublado'],
+            45: ['<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="3" y1="8" x2="21" y2="8"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="16" x2="21" y2="16"/></svg>', 'Niebla'],
+            51: ['❄️', 'Llovizna'],
+            61: ['🌧️', 'Lluvia ligera'],
+            63: ['🌧️', 'Lluvia moderada'],
+            65: ['⛈️', 'Lluvia intensa'],
+            80: ['❄️', 'Chubascos'],
+            95: ['⛈️', 'Tormenta']
         };
 
         const results = await Promise.all(cities.map(c =>
@@ -1225,7 +1023,7 @@ async function loadWeather() {
         const container = document.getElementById('weatherCities');
         container.innerHTML = results.map(r => {
             const cur = r.data.current;
-            const w = wmo[cur.weather_code] || ['🌤', 'Variable'];
+            const w = wmo[cur.weather_code] || ['👥', 'Variable'];
             const max = r.data.daily?.temperature_2m_max?.[0] || '—';
             const min = r.data.daily?.temperature_2m_min?.[0] || '—';
             const dirs = ['N', 'NE', 'E', 'SE', 'S', 'SO', 'O', 'NO'];
@@ -1239,8 +1037,8 @@ async function loadWeather() {
                 <div class="wc-temp">${Math.round(cur.temperature_2m)}<span style="font-size:1.2rem">°C</span></div>
                 <div class="wc-desc">${w[1]} · Humedad ${cur.relative_humidity_2m}%</div>
                 <div class="wc-meta">
-                    <span>↑${Math.round(max)}° ↓${Math.round(min)}°</span>
-                    <span>💨 ${Math.round(cur.wind_speed_10m)} km/h ${dir}</span>
+                    <span><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>${Math.round(max)}° ⬇️${Math.round(min)}°</span>
+                    <span><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M9.6 4.6a2 2 0 1 1 1.4 3.4H2M12.6 19.4a2 2 0 1 0 1.4-3.4H2M17.6 8.6a2.5 2.5 0 1 1 1.8 4.4H2"/></svg> ${Math.round(cur.wind_speed_10m)} km/h ${dir}</span>
                     <span>${extra}</span>
                 </div>
             </div>`;
@@ -1406,7 +1204,7 @@ async function loadSun() {
             ctx.font = 'bold 10px Space Grotesk,sans-serif';
             ctx.textAlign = 'center';
             const labelY = sy > 30 ? sy - 16 : sy + 24;
-            ctx.fillText(`☀ ${hh}:${mm}`, sx, labelY);
+            ctx.fillText(`☀️ ${hh}:${mm}`, sx, labelY);
             ctx.textAlign = 'left';
             ctx.restore();
         }
@@ -1521,7 +1319,7 @@ async function loadSun() {
         const el = document.getElementById('radarStatus');
         if (!el) return;
         if (precipMm > 15) {
-            el.textContent = '⚠ Lluvia intensa';
+            el.textContent = '⚠️ Lluvia intensa';
             el.className = 'chip r';
         } else if (precipMm > 3) {
             el.textContent = '● Lluvia ligera';
@@ -1544,26 +1342,26 @@ async function loadSun() {
     const currentPhaseRaw = ((now - known) / 864e5 / synodic) % 1;
 
     const phases = [
-        { name: '🌑 Luna Nueva', key: 'new', emoji: '🌑', tideType: 'spring', tideLabel: 'Marea Viva', fishing: 'Alta',
+        { name: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="12" cy="12" r="9" fill="currentColor"/></svg> Luna Nueva', key: 'new', emoji: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="12" cy="12" r="9" fill="currentColor"/></svg>', tideType: 'spring', tideLabel: 'Marea Viva', fishing: 'Alta',
             risk: 'Alto', desc: 'Alineación Sol-Luna-Tierra. Mareas vivas máximas. Pesca muy activa.' },
-        { name: '🌒 Creciente Iluminante', key: 'waxCrescent', emoji: '🌒', tideType: 'moderate',
+        { name: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor" opacity="0.5"/><circle cx="12" cy="12" r="9"/></svg> Creciente Iluminante', key: 'waxCrescent', emoji: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor" opacity="0.5"/><circle cx="12" cy="12" r="9"/></svg>', tideType: 'moderate',
             tideLabel: 'Marea Moderada', fishing: 'Media', risk: 'Bajo',
             desc: 'Luna se aleja de la alineación solar. Mareas descendiendo gradualmente.' },
-        { name: '🌓 Cuarto Creciente', key: 'firstQuarter', emoji: '🌓', tideType: 'neap', tideLabel: 'Marea Muerta',
+        { name: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/><circle cx="12" cy="12" r="9"/></svg> Cuarto Creciente', key: 'firstQuarter', emoji: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/><circle cx="12" cy="12" r="9"/></svg>', tideType: 'neap', tideLabel: 'Marea Muerta',
             fishing: 'Baja', risk: 'Bajo',
             desc: 'Ángulo 90° con el Sol. Mareas muertas — menor variación. Buena navegación.' },
-        { name: '🌔 Gibosa Creciente', key: 'waxGibbous', emoji: '🌔', tideType: 'moderate',
+        { name: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" opacity="0.85"/><circle cx="12" cy="12" r="9"/></svg> Gibosa Creciente', key: 'waxGibbous', emoji: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" opacity="0.85"/><circle cx="12" cy="12" r="9"/></svg>', tideType: 'moderate',
             tideLabel: 'Marea Moderada', fishing: 'Media', risk: 'Bajo',
             desc: 'Luna casi llena. Fuerza gravitacional creciendo. Mareas aumentando.' },
-        { name: '🌕 Luna Llena', key: 'full', emoji: '🌕', tideType: 'spring', tideLabel: 'Marea Viva', fishing: 'Alta',
+        { name: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="12" cy="12" r="9"/></svg> Luna Llena', key: 'full', emoji: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="12" cy="12" r="9"/></svg>', tideType: 'spring', tideLabel: 'Marea Viva', fishing: 'Alta',
             risk: 'Muy Alto', desc: 'Alineación opuesta pero igualmente fuerte. Mareas vivas máximas del mes.' },
-        { name: '🌖 Gibosa Menguante', key: 'wanGibbous', emoji: '🌖', tideType: 'moderate',
+        { name: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" opacity="0.5"/><circle cx="12" cy="12" r="9"/></svg> Gibosa Menguante', key: 'wanGibbous', emoji: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" opacity="0.5"/><circle cx="12" cy="12" r="9"/></svg>', tideType: 'moderate',
             tideLabel: 'Marea Moderada', fishing: 'Media', risk: 'Bajo',
             desc: 'Luna pos-llena. Mareas disminuyendo paulatinamente.' },
-        { name: '🌗 Cuarto Menguante', key: 'lastQuarter', emoji: '🌗', tideType: 'neap', tideLabel: 'Marea Muerta',
+        { name: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/><circle cx="12" cy="12" r="9"/></svg> Cuarto Menguante', key: 'lastQuarter', emoji: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/><circle cx="12" cy="12" r="9"/></svg>', tideType: 'neap', tideLabel: 'Marea Muerta',
             fishing: 'Baja', risk: 'Bajo',
             desc: 'Ángulo 90° opuesto. Segunda marea muerta del ciclo. Aguas calmadas.' },
-        { name: '🌘 Menguante', key: 'wanCrescent', emoji: '🌘', tideType: 'low', tideLabel: 'Marea Baja',
+        { name: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor" opacity="0.85"/><circle cx="12" cy="12" r="9"/></svg> Menguante', key: 'wanCrescent', emoji: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor" opacity="0.85"/><circle cx="12" cy="12" r="9"/></svg>', tideType: 'low', tideLabel: 'Marea Baja',
             fishing: 'Baja', risk: 'Bajo',
             desc: 'Luna casi nueva. Fuerza gravitacional mínima. Preparando próxima luna nueva.' },
     ];
@@ -1868,7 +1666,7 @@ async function loadSun() {
         ctx.fillText('Placa de Cocos', 8, H * 0.9);
         ctx.fillText('Placa del Caribe', W * 0.55, H * 0.88);
         ctx.fillStyle = 'rgba(80,180,255,.8)';
-        ctx.fillText('→ Tsunami propagándose', W * 0.02, H * 0.37);
+        ctx.fillText('➡️ Tsunami propagándose', W * 0.02, H * 0.37);
 
         t++;
         requestAnimationFrame(draw);
@@ -1885,11 +1683,11 @@ const prepData = {
         color: '#2d8fff',
         title: '⏰ Antes del Sismo',
         steps: [
-            { i: '🗺', t: 'Identifica rutas de evacuación y puntos de reunión familiar.' },
+            { i: '🗺️', t: 'Identifica rutas de evacuación y puntos de reunión familiar.' },
             { i: '🎒', t: 'Prepara mochila de emergencia con agua, comida y documentos.' },
             { i: '🏠', t: 'Asegura muebles y objetos que puedan caerse.' },
             { i: '📞', t: 'Establece un plan de comunicación familiar.' },
-            { i: '🔧', t: 'Aprende a cerrar gas, agua y electricidad.' }
+            { i: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M14.7 6.3a4 4 0 1 0-5.4 5.4L2 19l3 3 7.3-7.3a4 4 0 0 0 5.4-5.4l-2.83 2.83-2-2z"/></svg>', t: 'Aprende a cerrar gas, agua y electricidad.' }
         ],
         checklist: ['Mochila lista', 'Rutas conocidas', 'Documentos seguros', 'Plan familiar acordado',
             'Números memorizados'
@@ -1899,9 +1697,9 @@ const prepData = {
         color: '#ff9900',
         title: '⚡ Durante el Sismo',
         steps: [
-            { i: '🪑', t: 'AGÁCHATE bajo mesa sólida o junto a pared interior.' },
-            { i: '🛡', t: 'CÚBRETE la cabeza y cuello con tus brazos.' },
-            { i: '✊', t: 'SOSTENETE hasta que el sismo termine.' },
+            { i: '📦', t: 'AGÁCHATE bajo mesa sólida o junto a pared interior.' },
+            { i: '🛡️', t: 'CÚBRETE la cabeza y cuello con tus brazos.' },
+            { i: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="12" cy="13" r="6"/><path d="M9 8V5a1 1 0 0 1 2 0v2M13 8V4a1 1 0 0 1 2 0v3"/></svg>', t: 'SOSTENETE hasta que el sismo termine.' },
             { i: '🚫', t: 'NO corras ni uses ascensores durante el temblor.' },
             { i: '🚫', t: 'Aléjate de ventanas, vitrinas y estanterías.' }
         ],
@@ -1913,10 +1711,10 @@ const prepData = {
         color: '#22c55e',
         title: '✅ Después del Sismo',
         steps: [
-            { i: '🔍', t: 'Verifica lesiones propias y aplica primeros auxilios básicos.' },
-            { i: '🔥', t: 'Revisa incendios, fugas de gas o daños estructurales.' },
+            { i: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>', t: 'Verifica lesiones propias y aplica primeros auxilios básicos.' },
+            { i: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 2s5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 1-3s1 2 2 2c1.5 0 2-1.5 2-3 0-2.5-2-4-2-4s2-1 2-2z"/></svg>', t: 'Revisa incendios, fugas de gas o daños estructurales.' },
             { i: '📻', t: 'Escucha radio oficial para instrucciones de autoridades.' },
-            { i: '🏃', t: 'Evacúa ordenadamente si hay daños visibles en el edificio.' },
+            { i: '🧭', t: 'Evacúa ordenadamente si hay daños visibles en el edificio.' },
             { i: '⚠️', t: 'Espera réplicas y permanece alerta 72 horas.' }
         ],
         checklist: ['Verificar lesiones', 'Revisar gas y luz', 'Radio oficial encendida', 'Evacuar si hay daños',
@@ -1925,13 +1723,13 @@ const prepData = {
     },
     coast: {
         color: '#00d4b0',
-        title: '🌊 En la Costa — Tsunami',
+        title: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M2 12c1.5-1.5 3-1.5 4.5 0s3 1.5 4.5 0 3-1.5 4.5 0 3 1.5 4.5 0"/><path d="M2 18c1.5-1.5 3-1.5 4.5 0s3 1.5 4.5 0 3-1.5 4.5 0 3 1.5 4.5 0"/></svg> En la Costa — Tsunami',
         steps: [
-            { i: '🌊', t: 'Sismo largo en la costa: CORRE tierra adentro INMEDIATAMENTE.' },
-            { i: '⛰', t: 'Busca terreno elevado a mínimo 30m sobre el nivel del mar.' },
+            { i: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M2 12c1.5-1.5 3-1.5 4.5 0s3 1.5 4.5 0 3-1.5 4.5 0 3 1.5 4.5 0"/><path d="M2 18c1.5-1.5 3-1.5 4.5 0s3 1.5 4.5 0 3-1.5 4.5 0 3 1.5 4.5 0"/></svg>', t: 'Sismo largo en la costa: CORRE tierra adentro INMEDIATAMENTE.' },
+            { i: '🏔️', t: 'Busca terreno elevado a mínimo 30m sobre el nivel del mar.' },
             { i: '🚫', t: 'NUNCA te quedes a observar el retiro del mar.' },
-            { i: '📡', t: 'Escucha alertas del SINAPRED y autoridades.' },
-            { i: '🐟', t: 'Si estás en bote, navega a aguas profundas.' }
+            { i: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M4 4l16 16M12 8a4 4 0 0 1 4 4M12 4a8 8 0 0 1 8 8"/><circle cx="6" cy="18" r="2"/></svg>', t: 'Escucha alertas del SINAPRED y autoridades.' },
+            { i: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M2 12s4-6 11-6c5 0 9 3 9 6s-4 6-9 6c-7 0-11-6-11-6z"/><circle cx="17" cy="11" r="0.6" fill="currentColor"/></svg>', t: 'Si estás en bote, navega a aguas profundas.' }
         ],
         checklist: ['Rutas evacuación costera', 'Zonas elevadas identificadas', 'No acampar en playas bajas',
             'Radio a pilas disponible', 'Nunca observar retiro del mar'
@@ -1961,7 +1759,7 @@ function renderPrep() {
                 <div class="pcl-hdr">📋 Lista de Verificación <span class="chip t" id="pclCount" style="margin-left:4px">${checked.size}/${p.checklist.length}</span></div>
                 ${p.checklist.map((item, i) =>
                     `<div class="pcli${checked.has(i) ? ' done' : ''}" onclick="togPCL(${i})" id="pcl${i}">
-                        <div class="pcli-box">${checked.has(i) ? '✓' : ''}</div>
+                        <div class="pcli-box">${checked.has(i) ? '✅' : ''}</div>
                         <div class="pcli-text">${item}</div>
                     </div>`
                 ).join('')}
@@ -1976,7 +1774,7 @@ window.togPCL = function(i) {
     s.has(i) ? s.delete(i) : s.add(i);
     const el = document.getElementById('pcl' + i);
     el.classList.toggle('done', s.has(i));
-    el.querySelector('.pcli-box').textContent = s.has(i) ? '✓' : '';
+    el.querySelector('.pcli-box').textContent = s.has(i) ? '✅' : '';
     const cnt = document.getElementById('pclCount');
     if (cnt) cnt.textContent = `${s.size}/${prepData[prepActive].checklist.length}`;
 };
@@ -2045,7 +1843,7 @@ function drawPrepCanvas(mode) {
         ctx.lineWidth = 2;
         ctx.strokeRect(W * 0.32, H * 0.28, W * 0.36, H * 0.38);
         ctx.font = '32px';
-        ctx.fillText('🪑', W * 0.42, H * 0.52);
+        ctx.fillText('📦', W * 0.42, H * 0.52);
         ctx.fillStyle = 'rgba(255,255,255,.35)';
         ctx.font = '10px Space Grotesk,sans-serif';
         ctx.fillText('▶ AGÁCHATE — CÚBRETE — SOSTENETE', W * 0.1, H * 0.86);
@@ -2062,9 +1860,9 @@ function drawPrepCanvas(mode) {
         ctx.fillRect(0, H * 0.73, W, H * 0.07);
         ctx.fillStyle = 'rgba(255,255,255,.35)';
         ctx.font = '10px Space Grotesk,sans-serif';
-        ctx.fillText('✓ Verifica daños y escucha instrucciones oficiales', W * 0.08, H * 0.86);
+        ctx.fillText('✅ Verifica daños y escucha instrucciones oficiales', W * 0.08, H * 0.86);
     } else {
-        ctx.fillText('🌊 Costa Pacífica — Protocolo Tsunami', 10, 22);
+        ctx.fillText('<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M2 12c1.5-1.5 3-1.5 4.5 0s3 1.5 4.5 0 3-1.5 4.5 0 3 1.5 4.5 0"/><path d="M2 18c1.5-1.5 3-1.5 4.5 0s3 1.5 4.5 0 3-1.5 4.5 0 3 1.5 4.5 0"/></svg> Costa Pacífica — Protocolo Tsunami', 10, 22);
         ctx.fillStyle = '#001f4d';
         ctx.fillRect(0, H * 0.55, W, H * 0.45);
         for (let i = 0; i < 4; i++) {
@@ -2082,7 +1880,7 @@ function drawPrepCanvas(mode) {
         ctx.arc(W * 0.7, H * 0.28, 18, 0, Math.PI * 2);
         ctx.fill();
         ctx.font = '14px';
-        ctx.fillText('⛰', W * 0.66, H * 0.32);
+        ctx.fillText('🏔️', W * 0.66, H * 0.32);
         ctx.fillStyle = 'rgba(255,255,255,.35)';
         ctx.font = '10px Space Grotesk,sans-serif';
         ctx.fillText('▲ Evacúa hacia terrenos elevados (30m+)', W * 0.1, H * 0.86);
@@ -2099,30 +1897,30 @@ const bpCategories = [
             { i: '💧', n: 'Agua (3L por persona/día)' },
             { i: '🥫', n: 'Comida enlatada (3 días)' },
             { i: '🍫', n: 'Barras energéticas' },
-            { i: '🥤', n: 'Pastillas purificadoras' }
+            { i: '💊', n: 'Pastillas purificadoras' }
         ] },
     { id: 'med', icon: '🩹', title: 'Suministros Médicos', accent: '#ff4d6a',
         items: [
             { i: '🩹', n: 'Botiquín primeros auxilios' },
             { i: '💊', n: 'Medicamentos personales' },
-            { i: '🩺', n: 'Manual de primeros auxilios' },
+            { i: '📖', n: 'Manual de primeros auxilios' },
             { i: '🧴', n: 'Antiséptico y alcohol gel' }
         ] },
     { id: 'docs', icon: '📋', title: 'Documentos', accent: '#ff8c00',
         items: [
             { i: '📋', n: 'Copia de documentos (DUI)' },
-            { i: '💰', n: 'Efectivo en billetes' },
-            { i: '📱', n: 'Cargador portátil (batería)' },
+            { i: '💵', n: 'Efectivo en billetes' },
+            { i: '🔌', n: 'Cargador portátil (batería)' },
             { i: '📞', n: 'Lista de contactos impresos' }
         ] },
     { id: 'tools', icon: '🔦', title: 'Herramientas de Emergencia', accent: '#00d4b0',
         items: [
             { i: '🔦', n: 'Linterna y pilas extra' },
             { i: '📻', n: 'Radio a pilas (MARN)' },
-            { i: '🪦', n: 'Silbato de rescate' },
-            { i: '🧥', n: 'Ropa y poncho impermeable' },
+            { i: '📯', n: 'Silbato de rescate' },
+            { i: '👕', n: 'Ropa y poncho impermeable' },
             { i: '🔑', n: 'Copia de llaves' },
-            { i: '🗺', n: 'Mapa impreso de El Salvador' }
+            { i: '🗺️', n: 'Mapa impreso de El Salvador' }
         ] }
 ];
 
@@ -2164,7 +1962,7 @@ function renderBP() {
                     return `<div class="bp-item${on ? ' ticked' : ''}" onclick="togBPItem('${key}')">
                         <span class="bp-item-icon">${item.i}</span>
                         <span class="bp-item-name">${item.n}</span>
-                        <span class="bp-item-chk">${on ? '✓' : ''}</span>
+                        <span class="bp-item-chk">${on ? '✅' : ''}</span>
                     </div>`;
                 }).join('')}
             </div>
@@ -2260,7 +2058,7 @@ function showTQ() {
     if (tIdx >= qs.length) { showTRes(); return; }
     tAnswered = false;
     const q = qs[tIdx];
-    const lvN = { easy: '🟢 Básico', medium: '🟡 Intermedio', hard: '🔴 Avanzado' };
+    const lvN = { easy: '<span style="display:inline-block;width:0.55em;height:0.55em;border-radius:50%;background:var(--green);vertical-align:0.05em"></span> Básico', medium: '<span style="display:inline-block;width:0.55em;height:0.55em;border-radius:50%;background:var(--acc4);vertical-align:0.05em"></span> Intermedio', hard: '<span style="display:inline-block;width:0.55em;height:0.55em;border-radius:50%;background:var(--red);vertical-align:0.05em"></span> Avanzado' };
     document.getElementById('triGame').innerHTML = `
         <div class="tg-hdr">
             <span>${lvN[tLv]}</span>
@@ -2290,7 +2088,7 @@ window.ansT = function(idx) {
     document.getElementById('tfb').innerHTML = `
         <div class="tg-fb ${idx === q.c ? 'c' : 'w'}">
             ${idx === q.c ? '✅ ¡Correcto!' : '❌ Incorrecto.'} ${q.e}
-            <button class="btn-acc" style="margin-top:9px;font-size:.76rem;padding:6px 14px" onclick="nextT()">Siguiente →</button>
+            <button class="btn-acc" style="margin-top:9px;font-size:.76rem;padding:6px 14px" onclick="nextT()">Siguiente ➡️</button>
         </div>
     `;
 };
@@ -2304,7 +2102,7 @@ function showTRes() {
     document.getElementById('triGame').style.display = 'none';
     const total = trivQ[tLv].length,
         pct = Math.round(tScore / total * 100);
-    const ico = pct === 100 ? '🏆' : pct >= 80 ? '🌟' : pct >= 60 ? '👍' : '📚';
+    const ico = pct === 100 ? '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M17 5h3a2 2 0 0 1-2 4M7 5H4a2 2 0 0 0 2 4"/></svg>' : pct >= 80 ? '⭐' : pct >= 60 ? '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M7 11v10H4a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1zM7 11l4-8a2 2 0 0 1 4 2l-1 5h6a2 2 0 0 1 2 2.6l-2.5 7A2 2 0 0 1 17.6 21H7"/></svg>' : '🧑‍🏫';
     const res = document.getElementById('triRes');
     res.style.display = 'block';
     res.innerHTML = `
@@ -2313,7 +2111,7 @@ function showTRes() {
         <div class="tr-score">${tScore}/${total}</div>
         <p style="color:var(--text2);margin:10px 0">${pct >= 80 ? '¡Excelente! Dominas el tema.' : 'Sigue aprendiendo sobre preparación.'}</p>
         <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-            <button class="btn-acc" onclick="rT()">↺ Reintentar</button>
+            <button class="btn-acc" onclick="rT()"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> Reintentar</button>
             <button class="btn-out" onclick="chLv()">Cambiar nivel</button>
         </div>
     `;
@@ -2333,7 +2131,7 @@ window.chLv = function() {
 };
 
 window.fd = function(f) {
-    alert('📥 Descargando: ' + f + '\n\nEste archivo se descargaría desde los servidores del MINED/MARN en producción.');
+    ndaAlert('📤 Descargando: ' + f + ' — este archivo se descargaría desde los servidores del MINED/MARN en producción.');
 };
 
   
@@ -2501,7 +2299,7 @@ window.setIntensity = function(level, btn) {
     blds.forEach(b => b.classList.remove('shake'));
 
     if (level === 'leve') {
-        if (statusEl) { statusEl.textContent = '✓ SACUDIDA LEVE';
+        if (statusEl) { statusEl.textContent = '✅ SACUDIDA LEVE';
             statusEl.className = 'shake-status'; }
         if (rangeEl) rangeEl.textContent = 'M 1.0 – 3.4';
     } else if (level === 'moderado') {
@@ -2510,7 +2308,7 @@ window.setIntensity = function(level, btn) {
         if (rangeEl) rangeEl.textContent = 'M 3.5 – 5.9';
         blds.forEach((b, i) => { if (i % 2 === 0) b.classList.add('shake'); });
     } else {
-        if (statusEl) { statusEl.textContent = '🚨 SISMO FUERTE — EVACUACIÓN';
+        if (statusEl) { statusEl.textContent = '🔔 SISMO FUERTE — EVACUACIÓN';
             statusEl.className = 'shake-status danger'; }
         if (rangeEl) rangeEl.textContent = 'M 6.0+';
         blds.forEach(b => b.classList.add('shake'));
@@ -2524,8 +2322,8 @@ window.setIntensity = function(level, btn) {
 const bpItems3d = [
     { i: '💧', n: 'Agua 3L' }, { i: '🥫', n: 'Comida' }, { i: '🔦', n: 'Linterna' }, { i: '🔋', n: 'Pilas' },
     { i: '🩹', n: 'Botiquín' }, { i: '📋', n: 'Documentos' }, { i: '💊', n: 'Medicinas' }, { i: '📻', n: 'Radio' },
-    { i: '🔑', n: 'Llaves' }, { i: '💰', n: 'Efectivo' }, { i: '🧥', n: 'Ropa' }, { i: '📱', n: 'Cargador' },
-    { i: '🪦', n: 'Silbato' }, { i: '🗺', n: 'Mapa SV' }, { i: '🧴', n: 'Sanitizante' }, { i: '🪛', n: 'Navaja' }
+    { i: '🔑', n: 'Llaves' }, { i: '💵', n: 'Efectivo' }, { i: '👕', n: 'Ropa' }, { i: '🔌', n: 'Cargador' },
+    { i: '📯', n: 'Silbato' }, { i: '🗺️', n: 'Mapa SV' }, { i: '🧴', n: 'Sanitizante' }, { i: '🔪', n: 'Navaja' }
 ];
 
 const bpSet3d = new Set();
@@ -2739,7 +2537,7 @@ function drawEvacStatic(c, waveX) {
     ctx.fillStyle = '#fff';
     ctx.font = '18px serif';
     ctx.textAlign = 'center';
-    ctx.fillText('🏃', personX, personY);
+    ctx.fillText('🧭', personX, personY);
 
     if (waveX === 0) {
         ctx.fillStyle = 'rgba(255,255,255,.5)';
@@ -2782,13 +2580,13 @@ window.startEvacSim = function() {
             if (statusEl) {
                 const prog = waveX / c.width;
                 if (prog < 0.3) statusEl.textContent = '⚡ Tsunami detectado — evacuando…';
-                else if (prog < 0.7) statusEl.textContent = '🏃 Corriendo hacia zona segura…';
-                else statusEl.textContent = '✓ ¡Zona segura alcanzada!';
+                else if (prog < 0.7) statusEl.textContent = '🧭 Corriendo hacia zona segura…';
+                else statusEl.textContent = '✅ ¡Zona segura alcanzada!';
             }
         } else {
             tsEvacRunning = false;
             clearInterval(tsEvacTicker);
-            if (statusEl) statusEl.textContent = `✓ ¡Evacuación exitosa en ${timerEl ? timerEl.textContent : '—'}!`;
+            if (statusEl) statusEl.textContent = `✅ ¡Evacuación exitosa en ${timerEl ? timerEl.textContent : '—'}!`;
         }
     }
     animate();
@@ -2872,10 +2670,10 @@ function showRichterQ() {
     if (rqIdx >= richterQuestions.length) {
         const pct = Math.round(rqScore / richterQuestions.length * 100);
         container.innerHTML = `<div style="text-align:center;padding:16px">
-            <div style="font-size:2.5rem;margin-bottom:8px">${pct >= 80 ? '🏆' : pct >= 60 ? '🌟' : '📚'}</div>
+            <div style="font-size:2.5rem;margin-bottom:8px">${pct >= 80 ? '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M17 5h3a2 2 0 0 1-2 4M7 5H4a2 2 0 0 0 2 4"/></svg>' : pct >= 60 ? '⭐' : '🧑‍🏫'}</div>
             <div class="rg-score">${rqScore}/${richterQuestions.length}</div>
             <p style="color:var(--text2);margin:10px 0">${pct >= 80 ? '¡Excelente! Estás preparado para El Salvador.' : 'Sigue aprendiendo sobre sismos salvadoreños.'}</p>
-            <button class="btn-acc" onclick="startRichterGame()">↺ Jugar de nuevo</button>
+            <button class="btn-acc" onclick="startRichterGame()"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> Jugar de nuevo</button>
         </div>`;
         return;
     }
@@ -2903,7 +2701,7 @@ window.answerRQ = function(idx) {
     });
 
     document.getElementById('rqFeedback').innerHTML =
-        `<div class="rg-explain">${idx === q.c ? '✅' : '❌'} ${q.exp} <br><br><button class="btn-acc" style="font-size:.76rem;padding:6px 14px;margin-top:6px" onclick="rqNext()">Siguiente →</button></div>`;
+        `<div class="rg-explain">${idx === q.c ? '✅' : '❌'} ${q.exp} <br><br><button class="btn-acc" style="font-size:.76rem;padding:6px 14px;margin-top:6px" onclick="rqNext()">Siguiente ➡️</button></div>`;
 };
 
 window.rqNext = function() {
@@ -2960,8 +2758,8 @@ function renderEvacGrid() {
                 cell === 'D' ? 'danger' : 'path';
             const extra = isSelected ? 'selected' : '';
             const ico = cell === 'S' ? '🏠' :
-                cell === 'E' ? '⛰' :
-                cell === 'D' ? '🌊' : '';
+                cell === 'E' ? '🏔️' :
+                cell === 'D' ? '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M2 12c1.5-1.5 3-1.5 4.5 0s3 1.5 4.5 0 3-1.5 4.5 0 3 1.5 4.5 0"/><path d="M2 18c1.5-1.5 3-1.5 4.5 0s3 1.5 4.5 0 3-1.5 4.5 0 3 1.5 4.5 0"/></svg>' : '';
             return `<div class="evg-cell ${cls} ${extra}" onclick="evacClick(${r},${c})">${ico}</div>`;
         }).join('')
     ).join('');
@@ -2973,7 +2771,7 @@ window.evacClick = function(r, c) {
     if (cell === 'W') return;
 
     if (cell === 'D') {
-        document.getElementById('evacMsg').textContent = '💀 ¡Tocaste el tsunami! Reinicia.';
+        document.getElementById('evacMsg').textContent = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="12" cy="11" r="8"/><circle cx="9" cy="10" r="1.2" fill="currentColor"/><circle cx="15" cy="10" r="1.2" fill="currentColor"/><path d="M9 19v2M15 19v2"/></svg> ¡Tocaste el tsunami! Reinicia.';
         clearInterval(evacTimerI);
         evacDone = true;
         evacMoves.push([r, c]);
@@ -2997,7 +2795,7 @@ window.evacClick = function(r, c) {
 //  31. MEMORY GAME
   
 
-const memSymbols = ['💧', '🔦', '🩹', '📻', '🎒', '🗺', '💊', '🔋'];
+const memSymbols = ['💧', '🔦', '🩹', '📻', '🎒', '🗺️', '💊', '🔋'];
 let memCards = [],
     memFlipped = [],
     memMatched = new Set(),
@@ -3087,9 +2885,11 @@ function updateRTMStats(quakes) {
 //  33. AUTH SYSTEM
   
 
-function logout() {
-    if (confirm('¿Seguro que quieres cerrar sesión?')) {
-        window.location.href = '?url=logout';  // Redirige al logout PHP
+async function logout() {
+    if (await ndaConfirm('¿Seguro que quieres cerrar sesión?')) {
+        // replace() no deja la pagina actual en el historial, asi que
+        // el boton "Atras" no puede regresar a una vista de sesion activa.
+        window.location.replace('?url=logout');
     }
 }
 
@@ -3105,365 +2905,6 @@ document.addEventListener('click', e => {
     const menu = document.getElementById('navUserMenu');
     if (menu && !menu.contains(e.target)) closeUserDD();
 });
-
-function logout() {
-    if (confirm('¿Seguro que quieres cerrar sesión?')) {
-        window.location.href = '?url=logout';  // Redirige al logout PHP
-    }
-}
-
-  
-//  34. SCHOOL MODULE
-  
-
-const schoolData = {
-    alumnos: [
-        { id: 1, name: 'Carlos Martínez', grado: '10°A', tutor: 'Prof. López', estado: 'activo' },
-        { id: 2, name: 'María González', grado: '10°A', tutor: 'Prof. López', estado: 'activo' },
-        { id: 3, name: 'José Ramírez', grado: '11°B', tutor: 'Prof. Flores', estado: 'activo' },
-        { id: 4, name: 'Ana Hernández', grado: '10°A', tutor: 'Prof. López', estado: 'activo' },
-        { id: 5, name: 'Luis Pérez', grado: '11°B', tutor: 'Prof. Flores', estado: 'activo' },
-        { id: 6, name: 'Sofía Torres', grado: '9°C', tutor: 'Prof. Mena', estado: 'activo' },
-        { id: 7, name: 'Diego Salinas', grado: '9°C', tutor: 'Prof. Mena', estado: 'activo' },
-        { id: 8, name: 'Valeria Cruz', grado: '10°A', tutor: 'Prof. López', estado: 'activo' },
-    ],
-    docentes: [
-        { id: 1, name: 'Prof. Ana López', materia: 'Ciencias', aula: '10°A', ruta: 'R-1', tel: '7788-0001' },
-        { id: 2, name: 'Prof. Marco Flores', materia: 'Matemáticas', aula: '11°B', ruta: 'R-2', tel: '7788-0002' },
-        { id: 3, name: 'Prof. Elena Mena', materia: 'Lenguaje', aula: '9°C', ruta: 'R-1', tel: '7788-0003' },
-        { id: 4, name: 'Prof. Roberto Díaz', materia: 'Sociales', aula: '12°D', ruta: 'R-3', tel: '7788-0004' },
-    ],
-    rutas: [
-        { id: 'R-1', nombre: 'Ruta Norte', descripcion: 'Pabellón A → Pasillo norte → Cancha → Punto 1',
-            estado: 'despejada', color: '#00d4b0' },
-        { id: 'R-2', nombre: 'Ruta Sur', descripcion: 'Pabellón B → Salida sur → Jardín → Punto 2',
-            estado: 'despejada', color: '#3d9bff' },
-        { id: 'R-3', nombre: 'Ruta Este', descripcion: 'Pabellón C → Pasilllo este → Portón → Punto 3',
-            estado: 'bloqueada', color: '#ff9900' },
-    ],
-    incidentes: [],
-    simulacros: [
-        { id: 1, fecha: '2025-03-15', tipo: 'Sísmico', duracion: '4:32', aulas: 8, issues: 'Ruta R-3 obstruida',
-            nota: 'Buen tiempo de evacuación' },
-        { id: 2, fecha: '2024-10-22', tipo: 'Incendio', duracion: '5:10', aulas: 8, issues: 'Ninguno',
-            nota: 'Simulacro completado exitosamente' },
-    ]
-};
-
-let pasList = schoolData.alumnos.map(a => ({ ...a, status: 'pendiente' }));
-
-function openSchoolModule() {
-    if (!currentUser) { openAuth('login'); return; }
-    closeUserDD();
-
-    const sec = document.getElementById('colegio');
-    sec.style.display = 'block';
-
-    const roleMap = { admin: '🛡 Administrador', docente: '📚 Docente', alumno: '🎒 Alumno',
-        padre: '👨‍👩‍👧 Padre/Madre' };
-    const badge = document.getElementById('schoolRoleBadge');
-    badge.textContent = roleMap[currentUser.role] || currentUser.role;
-    badge.className = 'sh-role-badge ' + currentUser.role;
-
-    const tabs = document.getElementById('schoolTabsBar');
-    if (currentUser.role === 'alumno') {
-        tabs.querySelectorAll('.school-tab').forEach(t => {
-            if (!['dashboard', 'evacuacion'].includes(t.textContent.trim().toLowerCase().replace(/[^a-z]/g, '')))
-                t.style.display = 'none';
-        });
-    } else if (currentUser.role === 'padre') {
-        tabs.querySelectorAll('.school-tab').forEach(t => {
-            if (!['dashboard', 'evacuación'].includes(t.textContent.trim().toLowerCase())) t.style.display =
-                'none';
-        });
-    }
-
-    sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    showSchoolTab('dashboard', tabs.querySelector('.school-tab.on') || tabs.querySelector('.school-tab'));
-}
-
-function showSchoolTab(tab, btn) {
-    document.querySelectorAll('.school-tab').forEach(t => t.classList.remove('on'));
-    if (btn) btn.classList.add('on');
-
-    const content = document.getElementById('schoolContent');
-    const templates = {
-        dashboard: renderDashboard,
-        alumnos: renderAlumnos,
-        docentes: renderDocentes,
-        evacuacion: renderEvacuacion,
-        paselista: renderPaseLista,
-        incidentes: renderIncidentes,
-        simulacros: renderSimulacros
-    };
-
-    if (templates[tab]) content.innerHTML = templates[tab]();
-    if (tab === 'evacuacion') initSchoolEvacMap();
-}
-
-function renderDashboard() {
-    return `<div class="admin-stats">
-        <div class="ast"><div class="ast-ico">🎒</div><div class="ast-val">${schoolData.alumnos.length}</div><div class="ast-lbl">Alumnos</div></div>
-        <div class="ast"><div class="ast-ico">📚</div><div class="ast-val">${schoolData.docentes.length}</div><div class="ast-lbl">Docentes</div></div>
-        <div class="ast"><div class="ast-ico">🗺</div><div class="ast-val">${schoolData.rutas.length}</div><div class="ast-lbl">Rutas Evacuación</div></div>
-        <div class="ast"><div class="ast-ico">🔔</div><div class="ast-val">${schoolData.simulacros.length}</div><div class="ast-lbl">Simulacros</div></div>
-    </div>
-    <div class="school-table-wrap" style="margin-bottom:16px">
-        <div class="school-table-hdr"><h4>📋 Estado de Rutas de Evacuación</h4></div>
-        <table class="school-table"><thead><tr><th>Ruta</th><th>Nombre</th><th>Descripción</th><th>Estado</th></tr></thead><tbody>
-        ${schoolData.rutas.map(r => `<tr><td><strong>${r.id}</strong></td><td>${r.nombre}</td><td>${r.descripcion}</td><td><span class="st-badge ${r.estado === 'despejada' ? 'ok' : 'warn'}">${r.estado}</span></td></tr>`).join('')}
-        </tbody></table>
-    </div>
-    <div class="school-table-wrap">
-        <div class="school-table-hdr"><h4>🔔 Últimos Simulacros</h4></div>
-        <table class="school-table"><thead><tr><th>Fecha</th><th>Tipo</th><th>Tiempo</th><th>Observaciones</th></tr></thead><tbody>
-        ${schoolData.simulacros.map(s => `<tr><td>${s.fecha}</td><td>${s.tipo}</td><td style="color:var(--teal);font-weight:700">${s.duracion}</td><td style="color:var(--text3);font-size:.78rem">${s.nota}</td></tr>`).join('')}
-        </tbody></table>
-    </div>`;
-}
-
-function renderAlumnos() {
-    return `<div class="school-table-wrap">
-        <div class="school-table-hdr">
-            <h4>🎒 Lista de Alumnos (${schoolData.alumnos.length})</h4>
-            <button class="btn-acc" style="font-size:.74rem;padding:6px 14px" onclick="addAlumnoPrompt()">+ Agregar</button>
-        </div>
-        <table class="school-table"><thead><tr><th>#</th><th>Nombre</th><th>Grado/Sección</th><th>Docente Tutor</th><th>Estado</th></tr></thead><tbody>
-        ${schoolData.alumnos.map(a => `<tr><td style="color:var(--text3)">${a.id}</td><td><strong>${a.name}</strong></td><td>${a.grado}</td><td>${a.tutor}</td><td><span class="st-badge ok">${a.estado}</span></td></tr>`).join('')}
-        </tbody></table>
-    </div>`;
-}
-
-function renderDocentes() {
-    return `<div class="school-table-wrap">
-        <div class="school-table-hdr">
-            <h4>📚 Docentes (${schoolData.docentes.length})</h4>
-            <button class="btn-acc" style="font-size:.74rem;padding:6px 14px" onclick="addDocentePrompt()">+ Agregar</button>
-        </div>
-        <table class="school-table"><thead><tr><th>Nombre</th><th>Materia</th><th>Aula</th><th>Ruta Evacuación</th><th>Teléfono</th></tr></thead><tbody>
-        ${schoolData.docentes.map(d => `<tr><td><strong>${d.name}</strong></td><td>${d.materia}</td><td>${d.aula}</td><td><span class="st-badge ok">${d.ruta}</span></td><td style="font-family:monospace">${d.tel}</td></tr>`).join('')}
-        </tbody></table>
-    </div>`;
-}
-
-function renderEvacuacion() {
-    return `<div class="school-map-wrap">
-        <div class="phdr"><span class="ldot"></span>Plano del Colegio — Rutas de Evacuación</div>
-        <div id="schoolEvacMap"></div>
-        <div class="evac-legend">
-            <div class="evl-item"><div class="evl-dot" style="background:#00d4b0"></div>Ruta despejada</div>
-            <div class="evl-item"><div class="evl-dot" style="background:#ff9900"></div>Ruta bloqueada</div>
-            <div class="evl-item"><div class="evl-dot" style="background:#22c55e"></div>Punto de reunión</div>
-            <div class="evl-item"><div class="evl-dot" style="background:#e63946"></div>Zona peligro</div>
-        </div>
-    </div>
-    <div class="g3" style="gap:14px">
-    ${schoolData.rutas.map(r => `<div class="card" style="padding:14px">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <div style="width:10px;height:10px;border-radius:50%;background:${r.color}"></div>
-            <strong style="font-size:.88rem">${r.id} — ${r.nombre}</strong>
-            <span class="st-badge ${r.estado === 'despejada' ? 'ok' : 'warn'}" style="margin-left:auto">${r.estado}</span>
-        </div>
-        <p style="font-size:.78rem;color:var(--text2)">${r.descripcion}</p>
-    </div>`).join('')}
-    </div>`;
-}
-
-function renderPaseLista() {
-    return `<div class="pase-lista-wrap">
-        <div class="school-table-hdr">
-            <h4>✅ Pase de Lista — Emergencia</h4>
-            <div style="display:flex;gap:8px;align-items:center">
-                <span style="font-size:.76rem;color:var(--teal)" id="paseSummary">Toca cada alumno para marcar estado</span>
-                <button class="btn-acc" style="font-size:.73rem;padding:5px 12px" onclick="exportPaseLista()">⬇ Exportar</button>
-            </div>
-        </div>
-        <div style="display:flex;gap:8px;padding:10px 14px;border-bottom:1px solid var(--border);flex-wrap:wrap">
-            <span style="font-size:.74rem;color:var(--text3)">Toca para cambiar estado:</span>
-            <span style="font-size:.72rem;padding:3px 9px;border-radius:100px;background:rgba(0,212,176,.1);color:var(--teal);border:1px solid rgba(0,212,176,.2)">✓ Presente</span>
-            <span style="font-size:.72px;padding:3px 9px;border-radius:100px;background:rgba(230,57,70,.1);color:var(--acc2);border:1px solid rgba(230,57,70,.2)">✗ Ausente</span>
-            <span style="font-size:.72rem;padding:3px 9px;border-radius:100px;background:rgba(255,153,0,.1);color:var(--acc3);border:1px solid rgba(255,153,0,.2)">⚠ Herido</span>
-        </div>
-        <div class="pl-grid" id="paseGrid">
-        ${pasList.map((a, i) => `<div class="pl-student" onclick="cyclePase(${i})" id="pal-${i}">
-            <div class="pl-stu-ico">🎒</div>
-            <div class="pl-stu-name">${a.name.split(' ')[0]}<br><span style="font-size:.6rem;color:var(--text3)">${a.name.split(' ')[1] || ''}</span></div>
-            <div class="pl-stu-status" id="pasSt-${i}">—</div>
-        </div>`).join('')}
-        </div>
-    </div>`;
-}
-
-function cyclePase(i) {
-    const states = ['pendiente', 'presente', 'ausente', 'herido'];
-    const next = { pendiente: 'presente', presente: 'ausente', ausente: 'herido', herido: 'presente' };
-    pasList[i].status = next[pasList[i].status];
-
-    const el = document.getElementById('pal-' + i);
-    const st = document.getElementById('pasSt-' + i);
-    el.className = 'pl-student ' + (pasList[i].status !== 'pendiente' ? pasList[i].status : '');
-    const labels = { pendiente: '—', presente: '✓ Presente', ausente: '✗ Ausente', herido: '⚠ Herido' };
-    st.textContent = labels[pasList[i].status];
-
-    const p = pasList.filter(s => s.status === 'presente').length;
-    const a = pasList.filter(s => s.status === 'ausente').length;
-    const h = pasList.filter(s => s.status === 'herido').length;
-    const sum = document.getElementById('paseSummary');
-    if (sum) sum.innerHTML =
-        `✓ <span style="color:var(--teal)">${p} presentes</span> · ✗ <span style="color:var(--acc2)">${a} ausentes</span> · ⚠ <span style="color:var(--acc3)">${h} heridos</span>`;
-}
-
-function exportPaseLista() {
-    let txt = 'PASE DE LISTA — NDA Colegio\n' + new Date().toLocaleString('es-SV') + '\n\n';
-    pasList.forEach(a => { txt += `${a.name} | ${a.grado} | ${a.status.toUpperCase()}\n`; });
-    const blob = new Blob([txt], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'pase_lista_nda.txt';
-    a.click();
-}
-
-function renderIncidentes() {
-    return `<div class="incident-form">
-        <h4 style="font-family:var(--fd);font-weight:700;margin-bottom:14px">⚠ Reportar Incidente</h4>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-            <div class="inc-field">
-                <label>Tipo de Incidente</label>
-                <select id="incTipo">
-                    <option>Ruta bloqueada</option>
-                    <option>Objeto caído</option>
-                    <option>Alumno lesionado</option>
-                    <option>Espacio dañado</option>
-                    <option>Falla estructural</option>
-                    <option>Otro</option>
-                </select>
-            </div>
-            <div class="inc-field">
-                <label>Ubicación</label>
-                <input type="text" id="incLugar" placeholder="Ej: Pasillo norte, Pabellón B"/>
-            </div>
-        </div>
-        <div class="inc-field">
-            <label>Descripción</label>
-            <textarea id="incDesc" rows="3" placeholder="Describe el incidente con detalle..."></textarea>
-        </div>
-        <button class="btn-acc" style="font-size:.82rem;padding:9px 20px" onclick="addIncidente()">➕ Registrar Incidente</button>
-    </div>
-    <div class="inc-log" id="incLog" style="margin-top:18px">
-        <div style="font-size:.78rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">📋 Incidentes Registrados</div>
-        ${schoolData.incidentes.length === 0 ? '<div style="font-size:.82rem;color:var(--text3);padding:14px;text-align:center">No hay incidentes registrados.</div>' :
-            schoolData.incidentes.map(inc => `<div class="inc-entry">
-                <div class="inc-entry-hd"><span class="inc-entry-type">${inc.tipo}</span><span class="inc-entry-time">${inc.hora}</span></div>
-                <div style="font-size:.74rem;color:var(--acc3);margin-bottom:3px">📍 ${inc.lugar}</div>
-                <div class="inc-entry-desc">${inc.desc}</div>
-            </div>`).join('')}
-    </div>`;
-}
-
-function addIncidente() {
-    const tipo = document.getElementById('incTipo').value;
-    const lugar = document.getElementById('incLugar').value.trim();
-    const desc = document.getElementById('incDesc').value.trim();
-
-    if (!lugar || !desc) { alert('Completa ubicación y descripción.'); return; }
-
-    schoolData.incidentes.unshift({ tipo, lugar, desc, hora: new Date().toLocaleTimeString('es-SV') });
-    document.getElementById('incDesc').value = '';
-    document.getElementById('incLugar').value = '';
-    showSchoolTab('incidentes', null);
-}
-
-function renderSimulacros() {
-    return `<div class="school-table-hdr" style="background:var(--card2);border-radius:var(--r) var(--r) 0 0;padding:12px 16px;margin-bottom:0">
-        <h4>🔔 Historial de Simulacros</h4>
-        <button class="btn-acc" style="font-size:.74rem;padding:6px 14px" onclick="addSimulacroPrompt()">+ Nuevo</button>
-    </div>
-    <div class="drill-history">
-    ${schoolData.simulacros.map(s => `<div class="drill-item">
-        <div class="drill-item-hd">
-            <div class="drill-item-title">Simulacro ${s.tipo} — ${s.fecha}</div>
-            <div class="drill-item-date">${s.fecha}</div>
-        </div>
-        <div class="drill-stats">
-            <div class="drill-stat"><div class="drill-stat-val">${s.duracion}</div><div class="drill-stat-lbl">Tiempo evacuación</div></div>
-            <div class="drill-stat"><div class="drill-stat-val">${s.aulas}</div><div class="drill-stat-lbl">Aulas evacuadas</div></div>
-            <div class="drill-stat" style="flex:2;text-align:left"><div style="font-size:.74rem;color:var(--acc3);margin-bottom:2px">Problemas: ${s.issues}</div><div style="font-size:.74rem;color:var(--text3)">${s.nota}</div></div>
-        </div>
-    </div>`).join('')}
-    </div>`;
-}
-
-function addAlumnoPrompt() {
-    const name = prompt('Nombre completo del alumno:');
-    if (!name) return;
-    const grado = prompt('Grado y sección (ej: 10°A):');
-    if (!grado) return;
-    schoolData.alumnos.push({ id: schoolData.alumnos.length + 1, name, grado, tutor: 'Por asignar', estado: 'activo' });
-    pasList = schoolData.alumnos.map(a => ({ ...a, status: 'pendiente' }));
-    showSchoolTab('alumnos', null);
-}
-
-function addDocentePrompt() {
-    const name = prompt('Nombre del docente (ej: Prof. Juan García):');
-    if (!name) return;
-    const materia = prompt('Materia que imparte:');
-    if (!materia) return;
-    schoolData.docentes.push({ id: schoolData.docentes.length + 1, name, materia, aula: 'Por asignar', ruta: 'R-1',
-        tel: '0000-0000' });
-    showSchoolTab('docentes', null);
-}
-
-function addSimulacroPrompt() {
-    const tipo = prompt('Tipo de simulacro (ej: Sísmico, Incendio):');
-    if (!tipo) return;
-    const dur = prompt('Tiempo de evacuación (ej: 4:30):') || '—';
-    const nota = prompt('Observaciones generales:') || 'Sin observaciones';
-    const today = new Date().toISOString().split('T')[0];
-    schoolData.simulacros.unshift({ id: schoolData.simulacros.length + 1, fecha: today, tipo, duracion: dur,
-        aulas: schoolData.docentes.length, issues: 'Por registrar', nota });
-    showSchoolTab('simulacros', null);
-}
-
-function initSchoolEvacMap() {
-    setTimeout(() => {
-        const el = document.getElementById('schoolEvacMap');
-        if (!el) return;
-        if (el._leaflet_id) return;
-
-        const map = L.map('schoolEvacMap', { zoomControl: true, scrollWheelZoom: false }).setView([13.692, -89.218],
-            17);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OSM' }).addTo(map);
-
-        const schoolBounds = [
-            [13.6928, -89.2188],
-            [13.6928, -89.2172],
-            [13.6912, -89.2172],
-            [13.6912, -89.2188]
-        ];
-        L.polygon(schoolBounds, { color: '#2d8fff', fillColor: 'rgba(45,143,255,.07)', weight: 2 }).addTo(map)
-            .bindPopup('🏫 Centro Escolar NDA');
-
-        const mp = [
-            [13.6930, -89.2180],
-            [13.6910, -89.2175],
-            [13.6920, -89.2165]
-        ];
-        mp.forEach((p, i) => L.circleMarker(p, { radius: 9, color: '#22c55e', fillColor: '#22c55e', fillOpacity: .8 })
-            .addTo(map).bindPopup(`🟢 Punto de reunión ${i + 1}`));
-
-        L.circleMarker([13.6915, -89.2185], { radius: 8, color: '#e63946', fillColor: '#e63946', fillOpacity: .6 })
-            .addTo(map).bindPopup('🔴 Zona de riesgo');
-
-        schoolData.rutas.forEach(r => {
-            const clr = r.estado === 'despejada' ? '#00d4b0' : '#ff9900';
-            L.polyline([
-                [13.6920, -89.2185],
-                [13.6928, -89.2178]
-            ], { color: clr, weight: 4, dashArray: '8,4' }).addTo(map).bindPopup(`${r.id}: ${r.nombre}`);
-        });
-    }, 200);
-}
 
   
 //  35. ¿QUÉ HACER AHORA?
@@ -3482,44 +2923,44 @@ function toggleAhora(card) {
 
 const cbKnowledge = [
     { k: ['hola', 'hey', 'buenas', 'saludos'],
-        r: '¡Hola! Soy el Asistente NDA 🤖 Estoy aquí para ayudarte con información sobre sismos, evacuación, el sistema y preparación ante desastres. ¿En qué puedo ayudarte?',
+        r: '¡Hola! Soy el Asistente NDA <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><rect x="4" y="8" width="16" height="12" rx="2"/><circle cx="9" cy="14" r="1.3"/><circle cx="15" cy="14" r="1.3"/><line x1="12" y1="4" x2="12" y2="8"/><circle cx="12" cy="3" r="1"/></svg> Estoy aquí para ayudarte con información sobre sismos, evacuación, el sistema y preparación ante desastres. ¿En qué puedo ayudarte?',
         chips: ['¿Qué hacer en un sismo?', '¿Cómo registrarme?', 'Rutas de evacuación'] },
     { k: ['sismo', 'terremoto', 'tiembla', 'movimiento', 'cuando tiembla'],
-        r: '🌋 **Durante un sismo:** Caer, cubrirse y agarrarse. Protege tu cabeza debajo de un escritorio o mesa resistente. Aléjate de ventanas y objetos colgantes. No corras hacia afuera mientras tiembla. Al terminar, ve al punto de reunión designado.',
+        r: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M8 21l4-13 4 13"/><circle cx="12" cy="6" r="1.4"/><path d="M12 6l-1.5 3M12 6l1.5 3"/></svg> **Durante un sismo:** Caer, cubrirse y agarrarse. Protege tu cabeza debajo de un escritorio o mesa resistente. Aléjate de ventanas y objetos colgantes. No corras hacia afuera mientras tiembla. Al terminar, ve al punto de reunión designado.',
         chips: ['¿Qué es la escala Richter?', 'Puntos de reunión', '¿Qué hacer después?'] },
     { k: ['tsunami', 'ola', 'mar', 'costa', 'playa'],
-        r: '🌊 **Si hay amenaza de tsunami:** Un sismo fuerte cerca de la costa ES la alerta. Muévete INMEDIATAMENTE a tierra alta (mínimo 30m sobre el nivel del mar). Si el mar retrocede anormalmente, tienes pocos minutos. No esperes alerta oficial.',
+        r: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M2 12c1.5-1.5 3-1.5 4.5 0s3 1.5 4.5 0 3-1.5 4.5 0 3 1.5 4.5 0"/><path d="M2 18c1.5-1.5 3-1.5 4.5 0s3 1.5 4.5 0 3-1.5 4.5 0 3 1.5 4.5 0"/></svg> **Si hay amenaza de tsunami:** Un sismo fuerte cerca de la costa ES la alerta. Muévete INMEDIATAMENTE a tierra alta (mínimo 30m sobre el nivel del mar). Si el mar retrocede anormalmente, tienes pocos minutos. No esperes alerta oficial.',
         chips: ['Zonas costeras en riesgo', 'Protocolo de evacuación'] },
     { k: ['mochila', 'kit', 'emergencia', 'preparar', 'necesito'],
         r: '🎒 **Tu mochila de emergencia debe incluir:** Agua (3L por persona por día para 3 días), alimentos no perecederos, linterna y radio a pilas, botiquín básico, documentos importantes en bolsa plástica, dinero en efectivo y lista de números de emergencia.',
         chips: ['¿Dónde guardar la mochila?', 'Números de emergencia'] },
     { k: ['evacuación', 'evacuar', 'ruta', 'salida', 'punto reunión'],
-        r: '🗺 **Rutas de evacuación:** El sistema NDA incluye un módulo de colegio donde los docentes pueden ver las rutas asignadas y hacer pase de lista. Conoce la ruta de tu institución ANTES de una emergencia. Practica con simulacros.',
+        r: '🗺️ **Rutas de evacuación:** El sistema NDA incluye un módulo de colegio donde los docentes pueden ver las rutas asignadas y hacer pase de lista. Conoce la ruta de tu institución ANTES de una emergencia. Practica con simulacros.',
         chips: ['Módulo Colegio', 'Simulacros'] },
     { k: ['registrar', 'registro', 'crear cuenta', 'cómo entrar', 'login'],
         r: '👤 **Para registrarte:** Haz clic en "Registrarse" en la barra de navegación. Puedes entrar como alumno, docente, padre/madre o administrador. El módulo de colegio está disponible para docentes y administradores.',
         chips: ['¿Qué puede hacer cada rol?', 'Ir a registro'] },
     { k: ['admin', 'administrador', 'docente', 'alumno', 'padre', 'rol'],
-        r: '🛡 **Roles en NDA:**\n• **Administrador:** Gestión total del módulo colegio, alumnos, docentes, incidentes y simulacros.\n• **Docente:** Pase de lista, ver rutas y reportar incidentes.\n• **Alumno:** Acceso a información y sección de evacuación.\n• **Padre/Madre:** Información general y estado del estudiante.',
+        r: '🛡️ **Roles en NDA:**\n• **Administrador:** Gestión total del módulo colegio, alumnos, docentes, incidentes y simulacros.\n• **Docente:** Pase de lista, ver rutas y reportar incidentes.\n• **Alumno:** Acceso a información y sección de evacuación.\n• **Padre/Madre:** Información general y estado del estudiante.',
         chips: ['Módulo Colegio', '¿Cómo registro a mi hijo?'] },
     { k: ['marn', 'usgs', 'datos', 'tiempo real', 'api'],
-        r: '📡 **Fuentes de datos:** NDA usa datos en tiempo real del USGS (sismos globales y regionales), Open-Meteo (clima), y datos astronómicos de la API sunrise-sunset. Los datos se actualizan automáticamente al cargar la página.',
+        r: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M4 4l16 16M12 8a4 4 0 0 1 4 4M12 4a8 8 0 0 1 8 8"/><circle cx="6" cy="18" r="2"/></svg> **Fuentes de datos:** NDA usa datos en tiempo real del USGS (sismos globales y regionales), Open-Meteo (clima), y datos astronómicos de la API sunrise-sunset. Los datos se actualizan automáticamente al cargar la página.',
         chips: ['¿Con qué frecuencia se actualiza?', 'Monitor sísmico'] },
     { k: ['magnitud', 'richter', 'escala', 'intensidad'],
         r: '📊 **Escala de Magnitud:** La escala Richter mide la energía liberada: M1-2 (imperceptible), M3-4 (leve, puede sentirse), M5 (moderado, posibles daños), M6 (fuerte, daños estructurales), M7+ (gran terremoto). El terremoto de El Salvador de 2001 fue M7.7.',
         chips: ['Historia sísmica El Salvador', 'Simulador sísmico'] },
     { k: ['clima', 'temperatura', 'lluvia', 'tiempo', 'meteorolog'],
-        r: '🌤 La sección de **Clima** muestra temperatura en tiempo real de varias ciudades de El Salvador usando la API Open-Meteo. También incluye el arco solar (salida y puesta del sol), precipitación mensual y radar meteorológico.',
+        r: '👥 La sección de **Clima** muestra temperatura en tiempo real de varias ciudades de El Salvador usando la API Open-Meteo. También incluye el arco solar (salida y puesta del sol), precipitación mensual y radar meteorológico.',
         chips: ['¿Cuándo es temporada de lluvias?', 'Riesgo de inundaciones'] },
     { k: ['luna', 'fase', 'marea', 'lunar'],
-        r: '🌕 La sección de **Fases Lunares** explica el ciclo lunar completo y su influencia en las mareas del Pacífico salvadoreño. Puedes explorar las 8 fases y ver cómo afectan la actividad pesquera y el riesgo costero.',
+        r: '🌙 La sección de **Fases Lunares** explica el ciclo lunar completo y su influencia en las mareas del Pacífico salvadoreño. Puedes explorar las 8 fases y ver cómo afectan la actividad pesquera y el riesgo costero.',
         chips: ['Mareas vivas', 'Impacto en pesca'] },
     { k: ['volcan', 'erupcion', 'izalco', 'santa ana'],
         r: '🌋 El Salvador tiene **26 volcanes**, varios activos. El más famoso es el Volcán Izalco ("El Faro del Pacífico"). Ante actividad volcánica: sigue instrucciones del MARN, cubre nariz y boca ante ceniza, y sigue las rutas de evacuación oficiales.',
         chips: ['Volcanes activos', '¿Qué hacer ante ceniza?'] },
-    { k: ['arduino', 'sensor', 'maqueta', 'demo'],
-        r: '🔬 La sección **Arduino/Demo** muestra cómo un sensor de vibración conectado a una maqueta puede simular alertas sísmicas. Al detectar movimiento, envía la intensidad aproximada a la página. Es solo una demostración educativa, no un sistema oficial.',
-        chips: ['¿Cómo funciona el sensor?', 'Ver demo Arduino'] },
+    { k: ['arduino', 'sensor', 'monitoreo', 'maqueta'],
+        r: '📟 La sección **Monitoreo** explica cómo se integrará una maqueta de sensor Arduino (MPU-6050): detecta vibración en 3 ejes y, cuando el hardware esté conectado, sus lecturas llegarán en tiempo real a esta plataforma. Por ahora se muestra el diagrama de funcionamiento y los componentes del sistema.',
+        chips: ['¿Cómo funciona el sensor?', 'Ver sección de Monitoreo'] },
     { k: ['trivia', 'juego', 'preguntas', 'quiz'],
         r: '🎯 La **Zona de Trivia** tiene preguntas sobre desastres naturales con 3 niveles de dificultad (Básico, Intermedio, Avanzado). Los **Juegos Educativos** incluyen: Quiz de Richter, Ruta de Evacuación y Memoria Sísmica. ¡Aprende jugando!',
         chips: ['Ir a Trivia', 'Ir a Juegos'] },
@@ -3543,7 +2984,7 @@ function toggleChatbot() {
         if (!cbInitialized) {
             cbInitialized = true;
             addCbMsg('bot',
-                '¡Hola! 👋 Soy el **Asistente Virtual NDA**. Puedo ayudarte con información sobre sismos, tsunamis, evacuación, el módulo de colegio y cómo usar la plataforma. ¿En qué te ayudo?',
+                '¡Hola! <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em"><path d="M18 11V6a2 2 0 0 0-4 0M14 10V4a2 2 0 0 0-4 0v2M10 10.5V6a2 2 0 0 0-4 0v10c0 4 3 7 7 7h1a6 6 0 0 0 6-6v-4a2 2 0 0 0-4 0"/></svg> Soy el **Asistente Virtual NDA**. Puedo ayudarte con información sobre sismos, tsunamis, evacuación, el módulo de colegio y cómo usar la plataforma. ¿En qué te ayudo?',
                 ['¿Qué hacer en un sismo?', 'Módulo Colegio', 'Números de emergencia', 'Mochila de emergencia']
             );
         }
@@ -3625,7 +3066,7 @@ function processCbMsg(text) {
     }
 
     if (lower.includes('ir a juegos')) {
-        addCbMsg('bot', '🎮 ¡Yendo a los juegos educativos!', []);
+        addCbMsg('bot', '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><rect x="2" y="7" width="20" height="10" rx="4"/><line x1="7" y1="10" x2="7" y2="14"/><line x1="5" y1="12" x2="9" y2="12"/><circle cx="16" cy="10.5" r="1"/><circle cx="18.5" cy="13" r="1"/></svg> ¡Yendo a los juegos educativos!', []);
         setTimeout(() => document.getElementById('juegos')?.scrollIntoView({ behavior: 'smooth' }), 400);
         return;
     }
@@ -3637,7 +3078,7 @@ function processCbMsg(text) {
         }
     }
 
-    addCbMsg('bot', 'Hmm, no tengo información exacta sobre eso 🤔 Pero puedo ayudarte con estos temas:', [
+    addCbMsg('bot', 'Hmm, no tengo información exacta sobre eso <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em"><circle cx="12" cy="12" r="10"/><path d="M9 10a3 3 0 0 1 5-2M9 15h4"/></svg> Pero puedo ayudarte con estos temas:', [
         '¿Qué hacer en un sismo?', 'Tsunami y evacuación', 'Números de emergencia', 'Módulo Colegio',
         'Mochila de emergencia'
     ]);

@@ -6,7 +6,12 @@ usuarios_id INT PRIMARY KEY AUTO_INCREMENT,
 nombre VARCHAR(100),
 email VARCHAR(100) UNIQUE,
 contra VARCHAR(255),
-role ENUM('admin', 'user') DEFAULT 'user',
+role ENUM('user','admin','director','docente','alumno','padre','administrativo') DEFAULT 'user',
+institucion_id INT NULL,
+estado_institucional ENUM('ninguno','pendiente','aprobado','rechazado') DEFAULT 'ninguno',
+telefono VARCHAR(20) NULL,
+materia VARCHAR(100) NULL,
+foto_perfil VARCHAR(255) NULL,
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -16,7 +21,30 @@ nombre VARCHAR(100),
 correo VARCHAR(255),
 telefono VARCHAR(20),
 logo VARCHAR(255),
+direccion VARCHAR(255) NULL,
+lat DECIMAL(10,7) NULL,
+lng DECIMAL(10,7) NULL,
+director_id INT NULL,
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE usuarios
+ADD CONSTRAINT fk_usuarios_institucion
+FOREIGN KEY (institucion_id) REFERENCES instituciones(instituciones_id) ON DELETE SET NULL;
+
+-- Solicitudes de personal/comunidad para unirse a una institucion existente.
+-- El director (o admin) las aprueba o rechaza desde el modulo de gestion escolar.
+CREATE TABLE solicitudes_institucion (
+solicitudes_institucion_id INT PRIMARY KEY AUTO_INCREMENT,
+usuarios_id INT,
+instituciones_id INT,
+rol_solicitado ENUM('docente','alumno','padre','administrativo') NOT NULL,
+estado ENUM('pendiente','aprobado','rechazado') DEFAULT 'pendiente',
+mensaje VARCHAR(255) NULL,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+resolved_at TIMESTAMP NULL,
+FOREIGN KEY (usuarios_id) REFERENCES usuarios(usuarios_id) ON DELETE CASCADE,
+FOREIGN KEY (instituciones_id) REFERENCES instituciones(instituciones_id) ON DELETE CASCADE
 );
 
 CREATE TABLE aulas (
@@ -61,6 +89,7 @@ rutas_evacuacion_id INT PRIMARY KEY AUTO_INCREMENT,
 nombre VARCHAR(100),
 descripcion TEXT,
 instituciones_id INT,
+estado VARCHAR(20) DEFAULT 'despejada',
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 FOREIGN KEY (instituciones_id) REFERENCES instituciones(instituciones_id) ON DELETE CASCADE
 );
@@ -80,18 +109,129 @@ nombre VARCHAR(100),
 fecha DATE,
 hora TIME,
 instituciones_id INT,
+estado ENUM('programado','activo','finalizado') DEFAULT 'programado',
+descripcion VARCHAR(255) NULL,
+tipo VARCHAR(50) DEFAULT 'Sísmico',
+activado_at TIMESTAMP NULL,
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 FOREIGN KEY (instituciones_id) REFERENCES instituciones(instituciones_id) ON DELETE CASCADE
+);
+
+CREATE TABLE incidentes (
+incidentes_id INT PRIMARY KEY AUTO_INCREMENT,
+tipo VARCHAR(50) NOT NULL,
+descripcion TEXT,
+ubicacion VARCHAR(150) NULL,
+imagen VARCHAR(255) NULL,
+usuario_id INT,
+instituciones_id INT NULL,
+prioridad ENUM('baja','media','alta') DEFAULT 'media',
+estado ENUM('abierto','resuelto') DEFAULT 'abierto',
+resuelto_at TIMESTAMP NULL,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (usuario_id) REFERENCES usuarios(usuarios_id) ON DELETE SET NULL,
+FOREIGN KEY (instituciones_id) REFERENCES instituciones(instituciones_id) ON DELETE CASCADE
+);
+
+CREATE TABLE croquis_institucion (
+croquis_institucion_id INT PRIMARY KEY AUTO_INCREMENT,
+instituciones_id INT UNIQUE,
+imagen VARCHAR(255) NULL,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+FOREIGN KEY (instituciones_id) REFERENCES instituciones(instituciones_id) ON DELETE CASCADE
+);
+
+CREATE TABLE puntos_croquis (
+puntos_croquis_id INT PRIMARY KEY AUTO_INCREMENT,
+instituciones_id INT,
+tipo ENUM('encuentro','zona_segura','extintor','botiquin','salida','otro') DEFAULT 'otro',
+nombre VARCHAR(100),
+descripcion VARCHAR(255) NULL,
+pos_x DECIMAL(5,2) NOT NULL,
+pos_y DECIMAL(5,2) NOT NULL,
+creado_por INT NULL,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (instituciones_id) REFERENCES instituciones(instituciones_id) ON DELETE CASCADE,
+FOREIGN KEY (creado_por) REFERENCES usuarios(usuarios_id) ON DELETE SET NULL
+);
+
+CREATE TABLE corcho_notas (
+corcho_notas_id INT PRIMARY KEY AUTO_INCREMENT,
+instituciones_id INT,
+usuarios_id INT,
+texto VARCHAR(280) NOT NULL,
+color VARCHAR(20) DEFAULT 'amarillo',
+pos_x DECIMAL(5,2) DEFAULT 10,
+pos_y DECIMAL(5,2) DEFAULT 10,
+rotacion DECIMAL(4,1) DEFAULT 0,
+visibilidad VARCHAR(150) DEFAULT 'todos',
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (instituciones_id) REFERENCES instituciones(instituciones_id) ON DELETE CASCADE,
+FOREIGN KEY (usuarios_id) REFERENCES usuarios(usuarios_id) ON DELETE CASCADE
+);
+
+CREATE TABLE blog_riesgos (
+blog_riesgos_id INT PRIMARY KEY AUTO_INCREMENT,
+instituciones_id INT NOT NULL,
+usuarios_id INT NOT NULL,
+titulo VARCHAR(150) NOT NULL,
+descripcion TEXT NOT NULL,
+ubicacion VARCHAR(150) NULL,
+imagen VARCHAR(255) NULL,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (instituciones_id) REFERENCES instituciones(instituciones_id) ON DELETE CASCADE,
+FOREIGN KEY (usuarios_id) REFERENCES usuarios(usuarios_id) ON DELETE CASCADE
+);
+
+-- Lecturas del sensor de vibracion (Arduino -> Processing -> PHP).
+-- Es un demostrador educativo, NO un sistema oficial de alerta temprana.
+CREATE TABLE lecturas_sensor (
+lecturas_sensor_id INT PRIMARY KEY AUTO_INCREMENT,
+intensidad DECIMAL(5,2) NOT NULL,
+nivel ENUM('normal','precaucion','alerta') DEFAULT 'normal',
+eje_x DECIMAL(6,3) NULL,
+eje_y DECIMAL(6,3) NULL,
+eje_z DECIMAL(6,3) NULL,
+fuente VARCHAR(40) DEFAULT 'arduino-processing',
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE asistencia_simulacros (
 asistencia_simulacros_id INT PRIMARY KEY AUTO_INCREMENT,
 simulacros_id INT,
 estudiantes_id INT,
-estado ENUM('presente', 'ausente', 'lesionado') DEFAULT 'presente',
+estado ENUM('presente', 'ausente', 'herido') DEFAULT 'presente',
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+UNIQUE KEY uniq_simulacro_estudiante (simulacros_id, estudiantes_id),
 FOREIGN KEY (simulacros_id) REFERENCES simulacros(simulacros_id) ON DELETE CASCADE,
 FOREIGN KEY (estudiantes_id) REFERENCES estudiantes(estudiantes_id) ON DELETE CASCADE
+);
+
+-- Relación Padre <-> Estudiante: un padre ve a sus hijos, un estudiante
+-- puede tener más de un padre/encargado vinculado.
+CREATE TABLE padres_estudiantes (
+padres_estudiantes_id INT PRIMARY KEY AUTO_INCREMENT,
+padre_usuario_id INT NOT NULL,
+estudiante_id INT NOT NULL,
+parentesco VARCHAR(30) DEFAULT 'padre/madre',
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+UNIQUE KEY uniq_padre_estudiante (padre_usuario_id, estudiante_id),
+FOREIGN KEY (padre_usuario_id) REFERENCES usuarios(usuarios_id) ON DELETE CASCADE,
+FOREIGN KEY (estudiante_id) REFERENCES estudiantes(estudiantes_id) ON DELETE CASCADE
+);
+
+-- Noticias internas: comunicados del director/admin institucional hacia
+-- su comunidad, o globales si los publica el Admin General.
+CREATE TABLE noticias_internas (
+noticias_internas_id INT PRIMARY KEY AUTO_INCREMENT,
+instituciones_id INT NULL,
+usuarios_id INT NOT NULL,
+titulo VARCHAR(150) NOT NULL,
+contenido TEXT NOT NULL,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (instituciones_id) REFERENCES instituciones(instituciones_id) ON DELETE CASCADE,
+FOREIGN KEY (usuarios_id) REFERENCES usuarios(usuarios_id) ON DELETE CASCADE
 );
 
 CREATE TABLE items_mochila (
@@ -268,7 +408,7 @@ INSERT INTO asistencia_simulacros (simulacros_id, estudiantes_id, estado) VALUES
 (1, 4, 'ausente'),
 (1, 5, 'presente'),
 (1, 6, 'presente'),
-(1, 7, 'lesionado'),
+(1, 7, 'herido'),
 (1, 8, 'presente'),
 -- Simulacro 2 (simulacros_id = 2)
 (2, 1, 'presente'),

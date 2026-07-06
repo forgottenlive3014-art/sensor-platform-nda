@@ -1,0 +1,146 @@
+// ============================================================
+// WIZARD DE REGISTRO — NDA
+// Controla los 4 pasos: tipo de cuenta, rol, institución, datos.
+// ============================================================
+(function () {
+    var form = document.getElementById('registerForm');
+    if (!form) return;
+
+    var fAccountType = document.getElementById('fAccountType');
+    var fInstRole = document.getElementById('fInstRole');
+    var fInstitucionId = document.getElementById('fInstitucionId');
+    var fInstName = document.getElementById('fInstName');
+
+    var wizInstCreate = document.getElementById('wizInstCreate');
+    var wizInstJoin = document.getElementById('wizInstJoin');
+    var wizInstList = document.getElementById('wizInstList');
+    var wizInstSearch = document.getElementById('fInstSearch');
+    var wizInstSelected = document.getElementById('wizInstSelected');
+
+    var currentStep = 1;
+    var accountType = 'general';
+    var instRole = '';
+
+    function showStep(step) {
+        currentStep = step;
+        document.querySelectorAll('.wiz-screen').forEach(function (el) {
+            el.classList.toggle('on', parseInt(el.dataset.screen, 10) === step);
+        });
+        document.querySelectorAll('.wiz-step').forEach(function (el) {
+            var n = parseInt(el.dataset.wizDot, 10);
+            el.classList.toggle('on', n <= step);
+        });
+    }
+
+    // ---------- PASO 1: tipo de cuenta ----------
+    var typeCards = document.querySelectorAll('[data-account-type]');
+    var next1 = document.querySelector('[data-next="1"]');
+    typeCards.forEach(function (card) {
+        card.addEventListener('click', function () {
+            typeCards.forEach(function (c) { c.classList.remove('sel'); });
+            card.classList.add('sel');
+            accountType = card.dataset.accountType;
+            fAccountType.value = accountType;
+            next1.disabled = false;
+        });
+    });
+    next1.addEventListener('click', function () {
+        if (accountType === 'general') {
+            // Cuenta general: nos saltamos rol e institución.
+            showStep(4);
+        } else {
+            showStep(2);
+        }
+    });
+
+    // ---------- PASO 2: rol institucional ----------
+    var roleCards = document.querySelectorAll('[data-inst-role]');
+    var next2 = document.querySelector('[data-next="2"]');
+    roleCards.forEach(function (card) {
+        card.addEventListener('click', function () {
+            roleCards.forEach(function (c) { c.classList.remove('sel'); });
+            card.classList.add('sel');
+            instRole = card.dataset.instRole;
+            fInstRole.value = instRole;
+            next2.disabled = false;
+        });
+    });
+    document.querySelector('[data-back="1"]').addEventListener('click', function () { showStep(1); });
+    next2.addEventListener('click', function () {
+        if (instRole === 'director') {
+            wizInstCreate.style.display = 'block';
+            wizInstJoin.style.display = 'none';
+        } else {
+            wizInstCreate.style.display = 'none';
+            wizInstJoin.style.display = 'block';
+        }
+        showStep(3);
+    });
+
+    // ---------- PASO 3: institución ----------
+    document.querySelector('[data-back="2"]').addEventListener('click', function () { showStep(2); });
+
+    document.querySelector('[data-next="3"]').addEventListener('click', function () {
+        if (instRole === 'director') {
+            if (!fInstName.value.trim()) {
+                fInstName.focus();
+                ndaAlert('Ingresa el nombre de la institución.');
+                return;
+            }
+        } else {
+            if (!fInstitucionId.value) {
+                ndaAlert('Selecciona la institución a la que perteneces.');
+                return;
+            }
+        }
+        showStep(4);
+    });
+
+    if (wizInstList) {
+        wizInstList.addEventListener('click', function (e) {
+            var item = e.target.closest('.wiz-inst-item');
+            if (!item) return;
+            document.querySelectorAll('.wiz-inst-item').forEach(function (i) { i.classList.remove('sel'); });
+            item.classList.add('sel');
+            fInstitucionId.value = item.dataset.id;
+            wizInstSelected.textContent = 'Seleccionada: ' + item.dataset.name;
+        });
+    }
+
+    if (wizInstSearch) {
+        wizInstSearch.addEventListener('input', function () {
+            var q = wizInstSearch.value.toLowerCase();
+            document.querySelectorAll('.wiz-inst-item').forEach(function (item) {
+                var name = (item.dataset.name || '').toLowerCase();
+                item.style.display = name.indexOf(q) !== -1 ? 'flex' : 'none';
+            });
+        });
+    }
+
+    // ---------- PASO 4: volver ----------
+    document.querySelector('[data-back="3"]').addEventListener('click', function () {
+        if (accountType === 'general') {
+            showStep(1);
+        } else {
+            showStep(3);
+        }
+    });
+
+    // ---------- VALIDACIÓN FINAL ----------
+    form.addEventListener('submit', function (e) {
+        var pwd = form.querySelector('input[name="password"]');
+        var confirm = form.querySelector('input[name="password_confirm"]');
+        if (pwd.value !== confirm.value) {
+            e.preventDefault();
+            ndaAlert('Las contraseñas no coinciden.');
+            confirm.focus();
+            return false;
+        }
+        if (pwd.value.length < 6) {
+            e.preventDefault();
+            ndaAlert('La contraseña debe tener al menos 6 caracteres.');
+            pwd.focus();
+            return false;
+        }
+    });
+})();

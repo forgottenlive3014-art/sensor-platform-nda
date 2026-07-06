@@ -37,9 +37,9 @@ function createWave(canvasId, side) {
             var my = (pts[i - 1].y + pts[i].y) / 2;
             ctx.quadraticCurveTo(pts[i - 1].x, pts[i - 1].y, mx, my);
         }
-        ctx.strokeStyle = 'rgba(249,115,22,0.12)';
+        ctx.strokeStyle = 'rgba(242,159,5,0.12)';
         ctx.lineWidth = 8;
-        ctx.shadowColor = '#f97316';
+        ctx.shadowColor = '#c98a3d';
         ctx.shadowBlur = 18;
         ctx.stroke();
 
@@ -50,7 +50,7 @@ function createWave(canvasId, side) {
             var my2 = (pts[j - 1].y + pts[j].y) / 2;
             ctx.quadraticCurveTo(pts[j - 1].x, pts[j - 1].y, mx2, my2);
         }
-        ctx.strokeStyle = 'rgba(249,115,22,0.55)';
+        ctx.strokeStyle = 'rgba(242,159,5,0.55)';
         ctx.lineWidth = 2;
         ctx.shadowBlur = 8;
         ctx.stroke();
@@ -87,7 +87,7 @@ function createWave(canvasId, side) {
             var alpha = (1 - phase) * 0.5;
             ctx.beginPath();
             ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
-            ctx.strokeStyle = 'rgba(249,115,22,' + alpha + ')';
+            ctx.strokeStyle = 'rgba(242,159,5,' + alpha + ')';
             ctx.lineWidth = 1.5;
             ctx.stroke();
         }
@@ -114,7 +114,7 @@ function createWave(canvasId, side) {
             vx: (Math.random() - 0.5) * 0.3,
             vy: (Math.random() - 0.5) * 0.3,
             alpha: Math.random() * 0.5 + 0.1,
-            color: Math.random() > 0.6 ? '#f97316' : '#3b9eff',
+            color: Math.random() > 0.6 ? '#c98a3d' : '#5b8e9a',
         });
     }
 
@@ -158,19 +158,19 @@ function togglePwdConf() {
 //   BUBBLE DIALOGS  
 (function() {
     var loginMessages = [
-        '¡Hola! Soy SismoBot 🌋',
-        'Monitoreo sismos en tiempo real 📡',
-        'Recibe alertas importantes 🚨',
-        'Información confiable y verificada ✅',
-        '¿En qué te ayudo hoy? 💬'
+        '¡Hola! Soy SismoBot.',
+        'Monitoreo sismos en tiempo real.',
+        'Recibe alertas importantes.',
+        'Información confiable y verificada.',
+        '¿En qué te ayudo hoy?'
     ];
 
     var registerMessages = [
-        'Únete y protege tu comunidad 🧡',
-        'Crea tu cuenta y comienza ahora 🚀',
-        'Monitoreo 24/7 para tu seguridad 🛡️',
-        'Datos oficiales en un solo lugar 📊',
-        'Tu seguridad es nuestra prioridad ⭐'
+        'Únete y protege tu comunidad.',
+        'Crea tu cuenta y comienza ahora.',
+        'Monitoreo 24/7 para tu seguridad.',
+        'Datos oficiales en un solo lugar.',
+        'Tu seguridad es nuestra prioridad.'
     ];
 
     var loginIndex = 0;
@@ -199,29 +199,8 @@ function togglePwdConf() {
 })();
 
 //   VALIDACIÓN REGISTRO  
-document.addEventListener('DOMContentLoaded', function() {
-    var form = document.querySelector('form[action="?url=register"]');
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            var pwd = form.querySelector('input[name="password"]');
-            var confirm = form.querySelector('input[name="password_confirm"]');
-            if (pwd && confirm) {
-                if (pwd.value !== confirm.value) {
-                    e.preventDefault();
-                    alert('Las contraseñas no coinciden.');
-                    confirm.focus();
-                    return false;
-                }
-                if (pwd.value.length < 6) {
-                    e.preventDefault();
-                    alert('La contraseña debe tener al menos 6 caracteres.');
-                    pwd.focus();
-                    return false;
-                }
-            }
-        });
-    }
-});
+// (La validación del formulario de registro ahora vive en register-wizard.js,
+// junto con la lógica de pasos del wizard.)
 
 //   INIT WAVES  
 document.addEventListener('DOMContentLoaded', function() {

@@ -34,6 +34,7 @@ ob_start();
         <?php endif; ?>
 
         <form method="POST" action="?url=login">
+            <?= csrfField() ?>
             <div class="auth-field">
                 <label>Correo electrónico</label>
                 <div class="auth-inp-wrap">
@@ -103,9 +104,10 @@ ob_start();
                 <span class="auth-bubble-ico">
                     <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
                 </span>
-                <div class="auth-bubble-title">SismoBot <span>dice...</span></div>
+                <div class="auth-bubble-title">¿Qué verás en NDA? <span></span></div>
             </div>
-            <p class="auth-bubble-desc" id="bubbleTextLogin">¡Hola! Soy SismoBot 🌋</p>
+            <p class="auth-bubble-desc" id="bubbleTextLogin"> - Sismógrafo en tiemo real con  Arduino.       
+                - Información sobre la prevención de sismos</p>
             <div class="auth-bubble-foot">
                 <div class="auth-dots">
                     <span class="auth-dot on"></span>

@@ -10,33 +10,34 @@
 }
 
 /* ---------- VARIABLES ---------- */
+/* Paleta oficial NDA — "Modo Oscuro 1" (por defecto) */
 :root {
-    --bg: #0b0e17;
-    --bg2: #0e1220;
-    --bg3: #131828;
-    --bg4: #182030;
-    --card: #14192a;
-    --card2: #1a2035;
-    --card3: #202840;
+    --bg: #021526;
+    --bg2: #04192c;
+    --bg3: #071f33;
+    --bg4: #0b273f;
+    --card: #081422;
+    --card2: #0d2032;
+    --card3: #16293c;
     --border: rgba(255, 255, 255, 0.07);
     --border2: rgba(255, 255, 255, 0.13);
     --border3: rgba(255, 255, 255, 0.22);
-    --text: #e8ecf5;
-    --text2: #8fa3c0;
-    --text3: #4a607a;
-    --text4: #2d3f55;
-    --acc: #ff4d1a;
-    --acc2: #ff2d4a;
-    --acc3: #ff9900;
-    --acc4: #ffcc00;
-    --teal: #00d4b0;
-    --blue: #2d8fff;
-    --purple: #7c3aed;
-    --green: #16c65e;
-    --red: #e63946;
-    --gA: rgba(255, 77, 26, 0.18);
-    --gT: rgba(0, 212, 176, 0.13);
-    --gB: rgba(45, 143, 255, 0.13);
+    --text: #f6f4ef;
+    --text2: #8ba0b3;
+    --text3: #56708a;
+    --text4: #35495d;
+    --acc: #c98a3d;
+    --acc2: #b8433f;
+    --acc3: #a85736;
+    --acc4: #c9a63f;
+    --teal: #3d7d73;
+    --blue: #3d6f8f;
+    --purple: #6b73a0;
+    --green: #5c7a54;
+    --red: #b8433f;
+    --gA: rgba(201, 138, 61, 0.16);
+    --gT: rgba(61, 125, 115, 0.13);
+    --gB: rgba(61, 111, 143, 0.13);
     --sh: 0 4px 32px rgba(0, 0, 0, 0.55);
     --shl: 0 8px 52px rgba(0, 0, 0, 0.65);
     --r: 12px;
@@ -47,29 +48,42 @@
     --fd: 'Unbounded', sans-serif;
     --ez: cubic-bezier(0.4, 0, 0.2, 1);
     --tr: 0.28s;
+    /* Superficies de las paginas de login/registro */
+    --auth-wrap-bg: #021526;
+    --auth-card-bg: rgba(8, 20, 34, 0.92);
+    --auth-input-bg: #081422;
+    --auth-social-bg: #081422;
+    --auth-bubble-bg: rgba(8, 20, 34, 0.88);
+    --auth-glow: rgba(201, 138, 61, 0.22);
 }
 
 /* ---------- TEMA CLARO ---------- */
 [data-theme="light"] {
-    --bg: #f0f2f9;
-    --bg2: #e5e9f4;
-    --bg3: #d8dff0;
-    --bg4: #ccd4e8;
+    --bg: #f6f4ef;
+    --bg2: #ece9e1;
+    --bg3: #e2ded3;
+    --bg4: #d6d1c4;
     --card: #ffffff;
-    --card2: #f4f6fc;
-    --card3: #eaeefc;
+    --card2: #faf8f3;
+    --card3: #f0ede5;
     --border: rgba(0, 0, 0, 0.07);
     --border2: rgba(0, 0, 0, 0.13);
     --border3: rgba(0, 0, 0, 0.22);
-    --text: #0d1220;
-    --text2: #3a5070;
-    --text3: #7a8fa8;
-    --text4: #b0c0d8;
-    --gA: rgba(255, 77, 26, 0.07);
-    --gT: rgba(0, 180, 150, 0.07);
-    --gB: rgba(45, 143, 255, 0.07);
+    --text: #1a2d3b;
+    --text2: #314350;
+    --text3: #6a7a85;
+    --text4: #9aa7ae;
+    --gA: rgba(201, 138, 61, 0.08);
+    --gT: rgba(61, 125, 115, 0.07);
+    --gB: rgba(61, 111, 143, 0.07);
     --sh: 0 4px 24px rgba(0, 0, 0, 0.09);
     --shl: 0 8px 40px rgba(0, 0, 0, 0.14);
+    --auth-wrap-bg: #f6f4ef;
+    --auth-card-bg: rgba(255, 255, 255, 0.92);
+    --auth-input-bg: #faf8f3;
+    --auth-social-bg: #ffffff;
+    --auth-bubble-bg: rgba(255, 255, 255, 0.92);
+    --auth-glow: rgba(201, 138, 61, 0.16);
 }
 
 /* ---------- BASE ---------- */
@@ -118,6 +132,15 @@ button {
     font-family: var(--fn);
 }
 
+/* Los navegadores NO heredan la tipografia del body en controles de
+   formulario por defecto — sin esto, selects/inputs/textareas caen
+   a la fuente del sistema y rompen la consistencia tipografica. */
+input, select, textarea, optgroup, option {
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+}
+
 canvas {
     display: block;
 }
@@ -132,7 +155,7 @@ canvas {
     display: flex;
     align-items: center;
     padding: 0 24px;
-    background: rgba(11, 14, 23, 0.92);
+    background: rgba(2, 21, 38, 0.92);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);
@@ -140,7 +163,7 @@ canvas {
     gap: 0;
 }
 [data-theme="light"] .nav {
-    background: rgba(240, 242, 249, 0.93);
+    background: rgba(246, 244, 239, 0.93);
 }
 .nav.scrolled {
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
@@ -217,7 +240,7 @@ canvas {
     border-radius: 100px;
     font-size: 0.72rem;
     font-weight: 600;
-    color: #e63946;
+    color: var(--red);
     cursor: pointer;
     transition: all var(--tr);
 }
@@ -228,7 +251,7 @@ canvas {
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: #e63946;
+    background: var(--red);
     animation: blink 0.9s ease-in-out infinite;
 }
 
@@ -1587,109 +1610,47 @@ canvas {
     border-color: var(--border3);
 }
 
-/* ---------- ARDUINO SECTION ---------- */
-.arduino-layout {
-    display: grid;
-    grid-template-columns: 1fr 380px;
-    gap: 22px;
-    align-items: start;
+/* ---------- MONITOREO (mockup CSS del futuro sensor Arduino) ---------- */
+.ard-flow {
+    display: flex;
+    align-items: stretch;
+    gap: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
 }
-
-.ard-panel {
+.ard-flow-step {
+    flex: 1 1 180px;
+    max-width: 220px;
     background: var(--card);
     border: 1px solid var(--border2);
     border-radius: var(--r);
-    overflow: hidden;
-}
-.ard-visual {
-    background: var(--bg3);
-    height: 120px;
-    position: relative;
-    overflow: hidden;
-}
-#ardSg {
-    width: 100%;
-    height: 100%;
-}
-
-.ard-intensity {
-    padding: 14px 16px;
-    border-top: 1px solid var(--border);
-}
-.ai-lbl {
-    font-size: 0.68rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--text3);
-    margin-bottom: 10px;
-}
-.ai-bars {
+    padding: 18px 16px;
+    text-align: center;
     display: flex;
-    gap: 4px;
-    height: 36px;
-    align-items: flex-end;
+    flex-direction: column;
+    gap: 6px;
 }
-.ai-bar {
-    flex: 1;
-    background: var(--bg3);
-    border-radius: 2px 2px 0 0;
-    border: 1px solid var(--border);
-    transition: all 0.1s;
+.ard-flow-step strong {
+    color: var(--text);
+    font-size: 0.85rem;
 }
-.ai-bar.la {
-    background: var(--teal);
-    border-color: var(--teal);
-}
-.ai-bar.wa {
-    background: var(--acc3);
-    border-color: var(--acc3);
-}
-.ai-bar.da {
-    background: var(--acc2);
-    border-color: var(--acc2);
-}
-.ai-val {
-    font-family: var(--fd);
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--teal);
-    margin-top: 6px;
-    transition: color var(--tr);
-}
-
-.ard-log {
-    max-height: 150px;
-    overflow-y: auto;
-    font-family: monospace;
-    font-size: 0.74rem;
-    background: var(--bg);
-    border-radius: var(--rs);
-    padding: 10px 12px;
-    margin: 0 16px 14px;
-    border: 1px solid var(--border);
-}
-.ald {
-    color: var(--text3);
-    padding: 3px 0;
-    border-bottom: 1px solid var(--border);
+.ard-flow-step span {
+    color: var(--text2);
+    font-size: 0.76rem;
     line-height: 1.5;
 }
-.ald.i { color: var(--teal); }
-.ald.w { color: var(--acc3); }
-.ald.c { color: var(--acc2); }
-
-.ard-controls {
-    display: flex;
-    gap: 10px;
-    padding: 0 16px 16px;
+.ard-flow-icon {
+    font-size: 1.8rem;
+    line-height: 1;
+    margin-bottom: 4px;
 }
-.ard-controls .btn-acc,
-.ard-controls .btn-out {
-    flex: 1;
+.ard-flow-arrow {
+    display: flex;
+    align-items: center;
     justify-content: center;
-    font-size: 0.8rem;
-    padding: 9px;
+    font-size: 1.2rem;
+    color: var(--text3);
+    flex: 0 0 auto;
 }
 
 .ard-info {
@@ -2234,6 +2195,17 @@ canvas {
     border-radius: var(--r);
     overflow: hidden;
 }
+.moon3d-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    overflow: hidden;
+    margin-top: 14px;
+}
+#moon3dContainer {
+    width: 100%;
+    height: 260px;
+}
 #tideCv {
     width: 100%;
     height: 100px;
@@ -2382,7 +2354,7 @@ canvas {
     color: var(--text2);
 }
 .evac-info-body ul li::before {
-    content: '↗';
+    content: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>';
     color: var(--teal);
     font-weight: 700;
     flex-shrink: 0;
@@ -3345,7 +3317,9 @@ canvas {
     cursor: pointer;
     transition: background var(--tr);
     border-bottom: 1px solid var(--border);
+    text-decoration: none;
 }
+.nud-item svg { flex-shrink: 0; opacity: .85; }
 .nud-item:last-child {
     border-bottom: none;
 }
@@ -3357,7 +3331,14 @@ canvas {
     color: var(--acc2);
 }
 .nud-item.danger:hover {
-    background: rgba(230, 57, 70, 0.08);
+    background: rgba(255, 59, 63, 0.08);
+}
+.nav-school-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--acc) !important;
+    font-weight: 700;
 }
 
 /* ---------- SCHOOL MODULE ---------- */
@@ -3378,7 +3359,7 @@ canvas {
     overflow: hidden;
 }
 .school-header-bar::before {
-    content: '🏫';
+    content: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1.1 2.7 3 6 3s6-1.9 6-3v-5"/></svg>';
     position: absolute;
     right: 24px;
     top: 50%;
@@ -4575,6 +4556,23 @@ canvas {
     color: var(--acc);
     border: 1px solid rgba(255, 77, 26, 0.22);
 }
+.mec-badge.active {
+    background: rgba(184, 67, 63, 0.12);
+    color: var(--acc2);
+    border: 1px solid rgba(184, 67, 63, 0.28);
+}
+.mec-badge.dormant {
+    background: var(--card2);
+    color: var(--text3);
+    border: 1px solid var(--border2);
+}
+
+/* ---------- VOLCANES ---------- */
+.volcano-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+}
 
 .tide-label-bar {
     display: flex;
@@ -4699,6 +4697,16 @@ canvas {
     overflow: hidden;
     margin-bottom: 28px;
     position: relative;
+    /* Este panel simula una pantalla de monitoreo y se mantiene oscuro
+       en ambos temas a proposito — por eso forzamos texto claro aqui
+       en vez de depender de las variables --text que cambian con el tema. */
+    color: #e8ecf5;
+}
+.rt-monitor-hero .rtm-sub,
+.rt-monitor-hero .rtm-stat-lbl,
+.rt-monitor-hero .int-label,
+.rt-monitor-hero .int-btn {
+    color: rgba(232, 236, 245, 0.72);
 }
 .rt-monitor-hero::before {
     content: '';
@@ -4957,7 +4965,7 @@ canvas {
     transform-style: preserve-3d;
 }
 .bp-face::before {
-    content: '🎒';
+    content: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em"><path d="M6 4h9l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M9 12h6M9 16h6"/></svg>';
     position: absolute;
     top: -18px;
     left: 50%;
@@ -5522,7 +5530,8 @@ canvas {
     .plates-grid { grid-template-columns: 1fr; }
     .g2, .g3, .g4 { grid-template-columns: 1fr; }
     .moon-layout { grid-template-columns: 1fr; }
-    .arduino-layout { grid-template-columns: 1fr; }
+    .ard-flow { flex-direction: column; }
+    .ard-flow-arrow { transform: rotate(90deg); }
     .weather-cities { grid-template-columns: 1fr; }
     .weather-bottom { grid-template-columns: 1fr; }
     .weather-extra { grid-template-columns: 1fr; }
@@ -5655,4 +5664,329 @@ canvas {
     padding: 12px 16px 14px;
     background: #1a2332;
     flex-shrink: 0;
+}
+/* ---------- BANNER GLOBAL: SIMULACRO EN VIVO ---------- */
+.drill-alert-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9500;
+    background: var(--red);
+    color: #fff;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 16px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    animation: drillBannerPulse 1.6s ease-in-out infinite;
+}
+@keyframes drillBannerPulse {
+    0%, 100% { background: var(--red); }
+    50% { background: var(--acc3); }
+}
+body.has-drill-banner .nav {
+    top: 40px;
+}
+body.has-drill-banner {
+    padding-top: 40px;
+}
+
+/* ---------- LANGUAGE TOGGLE ---------- */
+.lang-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--card2);
+    border: 1px solid var(--border2);
+    color: var(--text2);
+    border-radius: 100px;
+    padding: 6px 10px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: border-color var(--tr), color var(--tr);
+}
+.lang-btn:hover {
+    border-color: var(--acc);
+    color: var(--acc);
+}
+/* Oculta la barra superior que inyecta Google Translate para no duplicar UI */
+.goog-te-banner-frame, .skiptranslate > iframe { display: none !important; }
+body { top: 0 !important; }
+.goog-tooltip, .goog-tooltip:hover { display: none !important; }
+.goog-text-highlight { background: none !important; box-shadow: none !important; }
+
+/* ---------- CHATBOT FLOTANTE (todo el sitio) ---------- */
+.ndabot { position: fixed; bottom: 24px; right: 24px; z-index: 9400; }
+.ndabot-fab {
+    width: 60px; height: 60px; border-radius: 50%; border: none; cursor: pointer;
+    background: linear-gradient(135deg, var(--acc), var(--acc3));
+    box-shadow: 0 10px 30px var(--gA);
+    display: flex; align-items: center; justify-content: center;
+    position: relative; transition: transform 0.2s;
+    padding: 0;
+    overflow: hidden;
+}
+.ndabot-fab img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.ndabot-fab:hover { transform: scale(1.08); }
+.ndabot-fab.active { transform: scale(0.94); }
+.ndabot-fab-dot {
+    position: absolute; top: 2px; right: 2px; width: 13px; height: 13px;
+    border-radius: 50%; background: var(--green); border: 2px solid var(--bg);
+}
+
+.ndabot-panel {
+    position: absolute; bottom: 74px; right: 0;
+    width: 360px; max-width: calc(100vw - 32px);
+    height: 500px; max-height: 70vh;
+    background: var(--card); border: 1px solid var(--border2); border-radius: var(--rl);
+    box-shadow: var(--shl);
+    display: flex; flex-direction: column; overflow: hidden;
+    opacity: 0; transform: translateY(16px) scale(0.97); pointer-events: none;
+    transition: opacity 0.2s var(--ez), transform 0.2s var(--ez);
+}
+.ndabot-panel.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
+
+.ndabot-head {
+    display: flex; align-items: center; gap: 10px; padding: 14px 16px;
+    background: var(--card2); border-bottom: 1px solid var(--border);
+}
+.ndabot-head img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; }
+.ndabot-head strong { display: block; font-size: 0.85rem; color: var(--text); font-family: var(--fd); }
+.ndabot-head span { font-size: 0.68rem; color: var(--text3); }
+.ndabot-close {
+    margin-left: auto; background: none; border: none; color: var(--text3); cursor: pointer;
+    display: flex; padding: 4px;
+}
+.ndabot-close:hover { color: var(--text); }
+
+.ndabot-messages { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.ndabot-msg { display: flex; flex-direction: column; max-width: 85%; }
+.ndabot-msg.user { align-self: flex-end; align-items: flex-end; }
+.ndabot-msg.bot { align-self: flex-start; align-items: flex-start; }
+.ndabot-bubble {
+    padding: 9px 13px; border-radius: 14px; font-size: 0.82rem; line-height: 1.5;
+    white-space: pre-wrap;
+}
+.ndabot-msg.user .ndabot-bubble { background: linear-gradient(135deg, var(--acc), var(--acc3)); color: #fff; border-bottom-right-radius: 4px; }
+.ndabot-msg.bot .ndabot-bubble { background: var(--card2); color: var(--text); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+.ndabot-navigate {
+    margin-top: 5px; font-size: 0.74rem; font-weight: 700; color: var(--acc);
+    text-decoration: none; padding: 5px 10px; border: 1px solid var(--acc); border-radius: 100px;
+}
+.ndabot-navigate:hover { background: var(--gA); }
+
+.ndabot-typing span {
+    display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: var(--text3);
+    margin-right: 3px; animation: ndabotTyping 1s infinite;
+}
+.ndabot-typing span:nth-child(2) { animation-delay: 0.15s; }
+.ndabot-typing span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes ndabotTyping { 0%, 60%, 100% { opacity: 0.3; } 30% { opacity: 1; } }
+
+.ndabot-suggestions { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 14px 10px; }
+.ndabot-suggestions button {
+    background: var(--card2); border: 1px solid var(--border2); color: var(--text2);
+    font-size: 0.7rem; padding: 6px 10px; border-radius: 100px; cursor: pointer;
+    transition: border-color var(--tr), color var(--tr);
+}
+.ndabot-suggestions button:hover { border-color: var(--acc); color: var(--acc); }
+
+.ndabot-input { display: flex; gap: 8px; padding: 12px 14px; border-top: 1px solid var(--border); }
+.ndabot-input input {
+    flex: 1; background: var(--card2); border: 1px solid var(--border2); border-radius: 100px;
+    padding: 9px 14px; font-size: 0.82rem; color: var(--text); outline: none; font-family: var(--fn);
+}
+.ndabot-input input:focus { border-color: var(--acc); }
+.ndabot-input button {
+    width: 36px; height: 36px; border-radius: 50%; border: none; cursor: pointer;
+    background: linear-gradient(135deg, var(--acc), var(--acc3)); color: #fff;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.ndabot-clear {
+    background: none; border: none; color: var(--text3); font-size: 0.68rem; cursor: pointer;
+    padding: 0 14px 10px; text-align: left; text-decoration: underline;
+}
+.ndabot-clear:hover { color: var(--acc2); }
+
+@media (max-width: 480px) {
+    .ndabot { right: 14px; bottom: 14px; }
+    .ndabot-panel { width: calc(100vw - 28px); right: -6px; }
+}
+
+/* ============================================================
+   HERO 3D — Globo sismico con scroll (Three.js / globe.gl)
+   ============================================================ */
+.hero3d {
+    position: relative;
+}
+.hero3d-spacer {
+    height: 200vh;
+}
+.hero3d-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#globeViz {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transition: opacity 0.5s var(--ez);
+}
+#globeViz canvas {
+    outline: none;
+}
+.hero3d-leaflet {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s var(--ez);
+    filter: saturate(0.85);
+}
+.hero3d-leaflet.visible {
+    pointer-events: auto;
+}
+[data-theme="light"] .hero3d-leaflet { filter: saturate(0.8) brightness(1.03); }
+.hero3d-vignette {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 70% 60% at 50% 105%, var(--bg) 0%, transparent 60%),
+        linear-gradient(180deg, rgba(2, 21, 38, 0.35) 0%, transparent 25%, transparent 75%, var(--bg) 100%);
+    pointer-events: none;
+}
+[data-theme="light"] .hero3d-vignette {
+    background:
+        radial-gradient(ellipse 70% 60% at 50% 105%, var(--bg) 0%, transparent 60%),
+        linear-gradient(180deg, rgba(246, 244, 239, 0.5) 0%, transparent 25%, transparent 75%, var(--bg) 100%);
+}
+
+.h3d-phase {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s var(--ez);
+    padding-top: var(--nh);
+}
+.h3d-phase.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Fase 1: contenido original del hero */
+.h3d-phase1-inner {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 40px;
+    align-items: center;
+    width: 100%;
+}
+.h3d-phase1-inner .hero-cta a,
+.h3d-phase1-inner .hero-pills,
+.h3d-phase1-inner .hero-sub {
+    pointer-events: auto;
+}
+
+/* Fase 2 y 3: etiqueta de región */
+.h3d-region-label {
+    text-align: center;
+    max-width: 560px;
+    padding: 0 20px;
+}
+.h3d-region-eyebrow {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--acc);
+    margin-bottom: 10px;
+}
+.h3d-region-label h2 {
+    font-family: var(--fd);
+    font-size: clamp(1.6rem, 4vw, 2.6rem);
+    color: var(--text);
+    margin-bottom: 12px;
+    line-height: 1.25;
+}
+.h3d-region-label p {
+    color: var(--text2);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+.h3d-phase-3 {
+    flex-direction: column;
+    gap: 26px;
+    padding-bottom: 40px;
+}
+.h3d-region-label-sv h2 {
+    font-size: clamp(1.3rem, 3vw, 1.9rem);
+}
+
+.h3d-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    max-width: 1100px;
+    width: 100%;
+    padding: 0 24px;
+    pointer-events: auto;
+}
+.h3d-card {
+    background: var(--auth-card-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border2);
+    border-radius: var(--r);
+    padding: 16px;
+}
+.h3d-card-ico {
+    display: inline-flex;
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    background: var(--gA);
+    color: var(--acc);
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+.h3d-card strong {
+    display: block;
+    font-family: var(--fd);
+    font-size: 0.82rem;
+    color: var(--text);
+    margin-bottom: 6px;
+    line-height: 1.3;
+}
+.h3d-card p {
+    font-size: 0.76rem;
+    color: var(--text2);
+    line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+    .h3d-phase1-inner { grid-template-columns: 1fr; text-align: center; }
+    .h3d-phase1-inner .hi-right { display: none; }
+    .h3d-cards { grid-template-columns: 1fr 1fr; }
+    .hero3d-spacer { height: 260vh; }
+}
+@media (max-width: 560px) {
+    .h3d-cards { grid-template-columns: 1fr; padding: 0 16px; }
 }

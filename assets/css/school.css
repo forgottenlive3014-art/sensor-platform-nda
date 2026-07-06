@@ -1,0 +1,1028 @@
+/* ============================================
+   SCHOOL MODULE - SismoNDA
+   ============================================ */
+
+.school-module {
+    padding: 100px 30px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* ─── HEADER ─── */
+.school-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--card);
+    border-radius: 16px;
+    padding: 24px 30px;
+    border: 1px solid var(--border);
+    margin-bottom: 24px;
+}
+.school-header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.school-header-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: var(--gA);
+    color: var(--acc);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.school-header h1 {
+    font-family: var(--fd);
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text);
+}
+.school-header-sub {
+    color: var(--text3);
+    font-size: 0.85rem;
+}
+.school-role-badge {
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+.school-role-badge.admin {
+    background: rgba(124, 58, 237, 0.15);
+    color: var(--purple);
+    border: 1px solid rgba(124, 58, 237, 0.3);
+}
+.school-role-badge.docente {
+    background: rgba(45, 143, 255, 0.12);
+    color: var(--blue);
+    border: 1px solid rgba(45, 143, 255, 0.28);
+}
+.school-role-badge.alumno {
+    background: rgba(0, 212, 176, 0.1);
+    color: var(--teal);
+    border: 1px solid rgba(0, 212, 176, 0.22);
+}
+.school-role-badge.padre {
+    background: rgba(22, 198, 94, 0.1);
+    color: var(--green);
+    border: 1px solid rgba(22, 198, 94, 0.22);
+}
+
+/* ─── TABS ─── */
+/* ─── LAYOUT: sidebar + contenido ─── */
+.school-body {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.school-tabs {
+    /* Antes: barra horizontal de tabs. Ahora: sidebar vertical fija a la
+       izquierda. Se conserva el nombre de la clase porque school.js no la
+       referencia directamente (solo usa .school-tab y .school-panel), así
+       que este cambio es puramente visual, sin tocar el JS. */
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: var(--card);
+    border-radius: 12px;
+    padding: 10px;
+    border: 1px solid var(--border);
+    margin-bottom: 0;
+    flex-wrap: nowrap;
+    flex: 0 0 220px;
+    position: sticky;
+    top: 90px;
+    max-height: calc(100vh - 110px);
+    overflow-y: auto;
+}
+.school-content {
+    flex: 1 1 auto;
+    min-width: 0; /* evita que las tablas anchas empujen el layout */
+}
+.school-tab {
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--text3);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: var(--fn);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: flex-start;
+    text-align: left;
+    width: 100%;
+    position: relative;
+}
+.school-tab:hover {
+    color: var(--text);
+    background: var(--bg3);
+}
+.school-tab.active {
+    background: var(--acc);
+    color: #fff;
+}
+.school-tab i {
+    font-size: 0.9rem;
+}
+.school-emoji {
+    font-size: 1rem;
+    line-height: 1;
+    flex: 0 0 auto;
+}
+
+@media (max-width: 900px) {
+    /* En pantallas angostas, la sidebar vuelve a ser una barra horizontal
+       con scroll, en vez de forzar un layout de columna apretado. */
+    .school-body {
+        flex-direction: column;
+    }
+    .school-tabs {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        position: static;
+        max-height: none;
+        width: 100%;
+        flex: 1 1 auto;
+    }
+    .school-tab {
+        width: auto;
+        white-space: nowrap;
+    }
+}
+
+/* ─── PANELS ─── */
+.school-panel {
+    display: none;
+    animation: fadeUp 0.3s ease;
+}
+.school-panel.active {
+    display: block;
+}
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── STATS ─── */
+.school-stats {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+}
+.school-stat {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid var(--border);
+    transition: all 0.25s;
+}
+.school-stat:hover {
+    border-color: var(--border2);
+    transform: translateY(-2px);
+    box-shadow: var(--sh);
+}
+.school-stat-icon {
+    color: var(--acc);
+    display: flex;
+    justify-content: center;
+    margin-bottom: 6px;
+}
+.school-stat-number {
+    font-family: var(--fd);
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text);
+}
+.school-stat-label {
+    font-size: 0.72rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* ─── GRIDS ─── */
+.school-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* ─── CARDS ─── */
+.school-card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid var(--border);
+}
+.school-card h3 {
+    font-family: var(--fd);
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 14px;
+    color: var(--text);
+}
+
+/* ─── TABLES ─── */
+.school-table-wrap {
+    background: var(--card);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+}
+.school-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.school-table th {
+    background: var(--bg3);
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text3);
+}
+.school-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.85rem;
+    color: var(--text2);
+}
+.school-table tr:last-child td {
+    border-bottom: none;
+}
+.school-table tr:hover td {
+    background: var(--bg2);
+    color: var(--text);
+}
+.text-center {
+    text-align: center;
+}
+
+/* ─── PANEL HEADER ─── */
+.school-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.school-panel-header h3 {
+    font-family: var(--fd);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+}
+.school-panel-header h3 i {
+    color: var(--acc);
+}
+
+/* ─── BUTTONS ─── */
+.school-btn {
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: var(--fn);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.school-btn.primary {
+    background: var(--acc);
+    color: #fff;
+}
+.school-btn.primary:hover {
+    background: var(--acc2);
+    transform: translateY(-1px);
+}
+.school-btn.secondary {
+    background: var(--bg3);
+    color: var(--text2);
+    border: 1px solid var(--border);
+}
+.school-btn.secondary:hover {
+    background: var(--card2);
+    color: var(--text);
+}
+
+.school-select {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg3);
+    color: var(--text);
+    font-size: 0.85rem;
+    font-family: var(--fn);
+    outline: none;
+}
+
+/* ─── ROUTE CARDS ─── */
+.school-route-card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 18px;
+    border: 1px solid var(--border);
+    transition: all 0.25s;
+}
+.school-route-card:hover {
+    border-color: var(--border2);
+    transform: translateY(-2px);
+    box-shadow: var(--sh);
+}
+.school-route-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+.school-route-icon {
+    font-size: 1.4rem;
+}
+.school-route-header h4 {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text);
+    flex: 1;
+}
+.school-route-status {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 100px;
+}
+.school-route-status.despejada {
+    background: rgba(0, 212, 176, 0.1);
+    color: var(--teal);
+    border: 1px solid rgba(0, 212, 176, 0.2);
+}
+.school-route-status.bloqueada {
+    background: rgba(255, 153, 0, 0.1);
+    color: var(--acc3);
+    border: 1px solid rgba(255, 153, 0, 0.2);
+}
+.school-route-status.peligro {
+    background: rgba(230, 57, 70, 0.1);
+    color: var(--acc2);
+    border: 1px solid rgba(230, 57, 70, 0.2);
+}
+
+/* ─── INCIDENT LIST ─── */
+.school-incident-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.school-incident-item {
+    background: var(--card);
+    border-radius: 10px;
+    padding: 14px 18px;
+    border: 1px solid var(--border);
+}
+.school-incident-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+.school-incident-type {
+    font-weight: 700;
+    color: var(--acc3);
+}
+.school-incident-time {
+    font-size: 0.72rem;
+    color: var(--text3);
+}
+.school-incident-location {
+    font-size: 0.78rem;
+    color: var(--acc3);
+    margin-bottom: 4px;
+}
+.school-incident-desc {
+    font-size: 0.85rem;
+    color: var(--text2);
+}
+.school-incident-resolved {
+    color: var(--teal);
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* ─── ATTENDANCE ─── */
+.school-attendance-status {
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+.school-attendance-status.presente {
+    background: rgba(0, 212, 176, 0.1);
+    color: var(--teal);
+    border: 1px solid rgba(0, 212, 176, 0.2);
+}
+.school-attendance-status.ausente {
+    background: rgba(230, 57, 70, 0.1);
+    color: var(--acc2);
+    border: 1px solid rgba(230, 57, 70, 0.2);
+}
+.school-attendance-status.herido {
+    background: rgba(255, 153, 0, 0.1);
+    color: var(--acc3);
+    border: 1px solid rgba(255, 153, 0, 0.2);
+}
+.school-attendance-status.pendiente {
+    background: var(--bg3);
+    color: var(--text3);
+    border: 1px solid var(--border2);
+}
+
+.school-attendance-btn {
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg3);
+    color: var(--text2);
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: var(--fn);
+}
+.school-attendance-btn:hover {
+    border-color: var(--border2);
+    color: var(--text);
+}
+.school-attendance-btn.active {
+    background: var(--teal);
+    color: #fff;
+    border-color: var(--teal);
+}
+.school-attendance-btn.danger.active {
+    background: var(--acc2);
+    border-color: var(--acc2);
+}
+.school-attendance-btn.warning.active {
+    background: var(--acc3);
+    border-color: var(--acc3);
+}
+
+.school-attendance-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+/* ─── MODALS ─── */
+.school-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.school-modal.open {
+    display: flex;
+}
+.school-modal-content {
+    background: var(--card);
+    border-radius: 16px;
+    max-width: 500px;
+    width: 100%;
+    border: 1px solid var(--border2);
+    box-shadow: var(--shl);
+}
+.school-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+}
+.school-modal-header h3 {
+    font-family: var(--fd);
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text);
+}
+.school-modal-close {
+    background: none;
+    border: none;
+    color: var(--text3);
+    font-size: 1.4rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.school-modal-close:hover {
+    color: var(--text);
+}
+.school-modal-body {
+    padding: 24px;
+}
+
+/* ─── FORM ─── */
+.school-form-group {
+    margin-bottom: 16px;
+}
+.school-form-group label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text2);
+    margin-bottom: 4px;
+}
+.school-form-group input,
+.school-form-group textarea,
+.school-form-group select {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border2);
+    background: var(--bg3);
+    color: var(--text);
+    font-size: 0.9rem;
+    font-family: var(--fn);
+    outline: none;
+    transition: border-color 0.2s;
+}
+.school-form-group input:focus,
+.school-form-group textarea:focus,
+.school-form-group select:focus {
+    border-color: var(--acc);
+}
+.school-form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* ─── REPORTES ─── */
+.school-report-card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid var(--border);
+}
+.school-report-card h4 {
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--text);
+}
+.school-report-stat {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.85rem;
+    color: var(--text2);
+}
+.school-report-stat .value {
+    font-weight: 700;
+    color: var(--text);
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 1200px) {
+    .school-stats {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media (max-width: 992px) {
+    .school-grid-2 {
+        grid-template-columns: 1fr;
+    }
+    .school-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 768px) {
+    .school-module {
+        padding: 80px 16px 30px;
+    }
+    .school-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    .school-header-left {
+        flex-direction: column;
+        text-align: center;
+    }
+    .school-tabs {
+        gap: 2px;
+    }
+    .school-tab {
+        font-size: 0.75rem;
+        padding: 8px 12px;
+    }
+    .school-tab span {
+        display: none;
+    }
+    .school-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .school-modal-content {
+        max-width: 100%;
+        margin: 10px;
+    }
+}
+/* ============================================================
+   NUEVO: badge de pestaña, estado de simulacro
+   ============================================================ */
+.school-tab-badge {
+    background: var(--red);
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 100px;
+    margin-left: auto;
+}
+.school-hint {
+    font-size: 0.82rem;
+    color: var(--text3);
+    margin-bottom: 16px;
+    line-height: 1.6;
+}
+.school-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 16px;
+}
+.school-pagination-info {
+    font-size: 0.8rem;
+    color: var(--text3);
+}
+.school-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+.school-toggle-all {
+    font-size: 0.8rem;
+    color: var(--text2);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+.drill-status {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 100px;
+    white-space: nowrap;
+}
+.drill-status.planned { background: var(--card2); color: var(--text2); border: 1px solid var(--border2); }
+.drill-status.active { background: rgba(255, 59, 63, 0.15); color: var(--red); animation: drillPulse 1.4s ease-in-out infinite; }
+.drill-status.done { background: rgba(107, 161, 90, 0.15); color: var(--green); }
+@keyframes drillPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* ============================================================
+   SECCIONES
+   ============================================================ */
+.sections-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+.section-group h4 {
+    font-family: var(--fd);
+    font-size: 0.95rem;
+    color: var(--text);
+    margin-bottom: 12px;
+}
+.section-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+}
+.section-card {
+    background: var(--card2);
+    border: 1.5px solid var(--border2);
+    border-radius: 12px;
+    padding: 14px;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s;
+}
+.section-card:hover {
+    border-color: var(--acc);
+    transform: translateY(-2px);
+}
+.section-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+.section-card-top strong {
+    font-family: var(--fd);
+    font-size: 0.85rem;
+    color: var(--text);
+}
+.section-count {
+    font-size: 0.68rem;
+    color: var(--text3);
+    background: var(--card3);
+    padding: 2px 8px;
+    border-radius: 100px;
+}
+.section-teacher {
+    font-size: 0.75rem;
+    color: var(--text2);
+}
+
+/* ============================================================
+   CROQUIS INTERACTIVO
+   ============================================================ */
+.croquis-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 16px;
+    font-size: 0.75rem;
+    color: var(--text2);
+}
+.croquis-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.croquis-dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    display: inline-block;
+    border: 2px solid var(--card);
+    box-shadow: 0 0 0 1px var(--border2);
+}
+.croquis-dot.encuentro, .croquis-marker.encuentro { background: var(--green); }
+.croquis-dot.zona_segura, .croquis-marker.zona_segura { background: var(--blue); }
+.croquis-dot.extintor, .croquis-marker.extintor { background: var(--red); }
+.croquis-dot.botiquin, .croquis-marker.botiquin { background: var(--acc4); }
+.croquis-dot.salida, .croquis-marker.salida { background: var(--acc3); }
+.croquis-dot.otro, .croquis-marker.otro { background: var(--purple); }
+
+.croquis-board {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: var(--rl);
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.croquis-empty {
+    text-align: center;
+    padding: 40px;
+    color: var(--text3);
+}
+.croquis-image-wrap {
+    position: relative;
+    width: 100%;
+    line-height: 0;
+    cursor: crosshair;
+}
+.croquis-image-wrap img {
+    width: 100%;
+    display: block;
+    user-select: none;
+}
+.croquis-marker {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+}
+.croquis-marker-tooltip {
+    display: none;
+    position: absolute;
+    bottom: 130%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 0.72rem;
+    color: var(--text2);
+    white-space: nowrap;
+    box-shadow: var(--shl);
+    z-index: 10;
+}
+.croquis-marker-tooltip strong { color: var(--text); }
+.croquis-marker-tooltip a { color: var(--red); font-size: 0.68rem; }
+.croquis-marker:hover .croquis-marker-tooltip { display: block; }
+
+/* ============================================================
+   TABLERO DE CORCHO
+   ============================================================ */
+.corkboard {
+    position: relative;
+    min-height: 420px;
+    background:
+        repeating-linear-gradient(0deg, rgba(0,0,0,0.03) 0, rgba(0,0,0,0.03) 1px, transparent 1px, transparent 3px),
+        var(--card3);
+    border: 10px solid var(--card2);
+    border-radius: 10px;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.25);
+    overflow: hidden;
+}
+.corkboard-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 420px;
+    color: var(--text3);
+    font-size: 0.85rem;
+}
+.sticky-note {
+    position: absolute;
+    width: 168px;
+    min-height: 150px;
+    padding: 16px 14px 30px;
+    border-radius: 3px;
+    box-shadow: 3px 6px 14px rgba(0,0,0,0.3);
+    font-size: 0.8rem;
+    line-height: 1.4;
+    color: #2b2b1e;
+    transition: transform 0.15s;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+}
+.sticky-note:hover {
+    transform: scale(1.04) rotate(0deg) !important;
+    z-index: 5;
+}
+.sticky-note.dragging {
+    cursor: grabbing;
+    z-index: 20;
+    box-shadow: 6px 12px 24px rgba(0,0,0,0.45);
+    transition: none;
+}
+.sticky-note p {
+    word-break: break-word;
+    font-family: 'Space Grotesk', sans-serif;
+}
+.sticky-note-author {
+    position: absolute;
+    bottom: 8px;
+    right: 12px;
+    font-size: 0.65rem;
+    opacity: 0.65;
+}
+.sticky-note-del {
+    position: absolute;
+    top: 4px;
+    right: 6px;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    color: rgba(0,0,0,0.35);
+}
+.sticky-note-del:hover { color: rgba(0,0,0,0.7); }
+.sticky-note.amarillo { background: #fff3a0; }
+.sticky-note.naranja { background: #ffd08a; }
+.sticky-note.verde { background: #c9f2a8; }
+.sticky-note.azul { background: #a8e3f2; }
+.sticky-note.rosa { background: #f7b8d4; }
+
+.note-color-picker {
+    display: flex;
+    gap: 10px;
+}
+.note-color-picker input { display: none; }
+.note-swatch {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: block;
+    border: 2px solid transparent;
+    cursor: pointer;
+}
+.note-color-picker input:checked + .note-swatch {
+    border-color: var(--acc);
+}
+.note-swatch.amarillo { background: #fff3a0; }
+.note-swatch.naranja { background: #ffd08a; }
+.note-swatch.verde { background: #c9f2a8; }
+.note-swatch.azul { background: #a8e3f2; }
+.note-swatch.rosa { background: #f7b8d4; }
+
+.note-visibility-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    align-items: center;
+    font-size: 0.8rem;
+    color: var(--text2);
+}
+.note-visibility-picker label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+#noteVisRoles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+}
+
+/* ============================================================
+   SOLICITUDES DE INGRESO
+   ============================================================ */
+.requests-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.request-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    background: var(--card2);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 16px 18px;
+    flex-wrap: wrap;
+}
+.request-card strong {
+    color: var(--text);
+    font-size: 0.9rem;
+    margin-right: 8px;
+}
+.request-role {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--acc);
+    background: var(--gA);
+    padding: 2px 9px;
+    border-radius: 100px;
+}
+.request-message {
+    font-size: 0.78rem;
+    color: var(--text2);
+    font-style: italic;
+    margin-top: 6px;
+}
+.request-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+/* ============================================================
+   FOTO DE DAÑO EN INCIDENTES
+   ============================================================ */
+.school-incident-photo {
+    width: 100%;
+    max-height: 160px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    cursor: zoom-in;
+}
+
+.section-teacher-select {
+    width: 100%;
+    background: var(--card3);
+    border: 1px solid var(--border2);
+    border-radius: 7px;
+    color: var(--text2);
+    font-size: 0.72rem;
+    padding: 5px 7px;
+    margin-top: 4px;
+    font-family: var(--fn);
+}

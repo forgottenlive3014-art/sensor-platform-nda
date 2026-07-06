@@ -1,0 +1,66 @@
+<?php
+$title = $title ?? 'Gestión Escolar';
+$user = $user ?? null;
+$stats = $stats ?? [];
+$students = $students ?? [];
+$drills = $drills ?? [];
+$routes = $routes ?? [];
+$incidents = $incidents ?? [];
+$isSchoolAdmin = $isSchoolAdmin ?? false;
+$isSchoolStaff = $isSchoolStaff ?? false;
+ob_start();
+?>
+<link rel="stylesheet" href="<?= asset('css/school.css') ?>">
+
+<div class="school-module">
+
+    <?php include __DIR__ . '/../partials/_header.php'; ?>
+
+    <!-- ==================== TABS (sidebar) ==================== -->
+    <div class="school-body">
+    <div class="school-tabs school-sidebar">
+        <button class="school-tab active" data-tab="dashboard" onclick="showSchoolTab('dashboard')">
+            <span class="school-emoji" aria-hidden="true">🧭</span> Dashboard global
+        </button>
+        <button class="school-tab" data-tab="institutions" onclick="showSchoolTab('institutions')">
+            <span class="school-emoji" aria-hidden="true">🌎</span> Instituciones
+        </button>
+        <button class="school-tab" data-tab="users" onclick="showSchoolTab('users')">
+            <span class="school-emoji" aria-hidden="true">👥</span> Usuarios
+        </button>
+        <button class="school-tab" data-tab="news" onclick="showSchoolTab('news')">
+            <span class="school-emoji" aria-hidden="true">📰</span> Noticias
+        </button>
+        <button class="school-tab" data-tab="notifications" onclick="showSchoolTab('notifications')">
+            <span class="school-emoji" aria-hidden="true">🔔</span> Notificaciones
+        </button>
+        <button class="school-tab" data-tab="reports" onclick="showSchoolTab('reports')">
+            <span class="school-emoji" aria-hidden="true">🗂️</span> Reportes globales
+        </button>
+    </div>
+
+    <!-- ==================== CONTENIDO ==================== -->
+    <div class="school-content">
+        <?php include __DIR__ . '/../partials/_tab-dashboard.php'; ?>
+        <?php include __DIR__ . '/../partials/_tab-institutions.php'; ?>
+        <?php include __DIR__ . '/../partials/_tab-users.php'; ?>
+        <?php include __DIR__ . '/../partials/_tab-news.php'; ?>
+        <?php include __DIR__ . '/../partials/_tab-notifications.php'; ?>
+        <?php include __DIR__ . '/../partials/_tab-reports.php'; ?>
+    </div>
+    </div><!-- /.school-body -->
+</div>
+
+<script>
+    window.__ndaIsSchoolStaff = <?= !empty($isSchoolStaff) ? 'true' : 'false' ?>;
+    window.__ndaMyUserId = <?= json_encode($user['id'] ?? null) ?>;
+    window.__ndaIsSchoolAdmin = <?= !empty($isSchoolAdmin) ? 'true' : 'false' ?>;
+    window.__ndaIsGlobalAdmin = true;
+    window.__ndaMyInstitutionId = null;
+</script>
+<script src="<?= asset('js/school.js') ?>"></script>
+
+<?php
+$content = ob_get_clean();
+require_once 'views/layout.php';
+?>
