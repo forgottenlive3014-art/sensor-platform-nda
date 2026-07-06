@@ -1,11 +1,8 @@
-        <!-- ========================================================== -->
-        <!--  ALUMNOS -->
-        <!-- ========================================================== -->
         <div id="tab-students" class="school-panel">
             <div class="school-panel-header">
-                <h3><span class="school-emoji" aria-hidden="true">🎒</span> Lista de Alumnos</h3>
+                <h3>Lista de Alumnos</h3>
                 <button class="school-btn primary" onclick="openModal('addStudentModal')">
-                    <span class="school-emoji" aria-hidden="true">➕</span> Agregar Alumno
+                    Agregar Alumno
                 </button>
             </div>
             <div class="school-panel-header" style="margin-top:0;">

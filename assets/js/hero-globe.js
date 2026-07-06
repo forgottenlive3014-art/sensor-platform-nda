@@ -1,9 +1,4 @@
-/* ================================================================
-   NDA — Hero: globo sismico real (globe.gl) con vuelo por scroll
-   Fase 1 (scroll 0%):    planeta completo, sismos del dia a nivel mundial
-   Fase 2 (scroll ~33%):  vuelo hacia Centroamerica
-   Fase 3 (scroll ~66%+): aterriza en El Salvador, marcador propio
-   ================================================================ */
+// NDA - Hero: globo sismico real (globe.gl) con vuelo por scroll en 3 fases (planeta, Centroamerica, El Salvador)
 (function () {
     const el = document.getElementById('globeViz');
     const heroEl = document.getElementById('home');
@@ -26,11 +21,7 @@
     globe.controls().enableZoom = false;
     globe.controls().enabled = false; // el usuario navega con scroll, no arrastrando el globo
 
-    // ---------------- MAPA LEAFLET (reemplaza el zoom cercano del globo) ----------------
-    // La textura del globo se ve borrosa si se acerca demasiado; en vez de
-    // forzar ese zoom, a partir de cierto punto del scroll se cambia a un
-    // mapa Leaflet real (nitido a cualquier nivel de zoom) centrado en
-    // El Salvador.
+    // La textura del globo se ve borrosa de cerca; en el zoom final se cambia a un mapa Leaflet real
     let leafletMap = null;
     function ensureLeafletMap() {
         if (leafletMap || typeof L === 'undefined') return;
@@ -59,15 +50,8 @@
         return '#5c7a54';
     }
 
-    // Marcador fijo de El Salvador (siempre visible, para ubicar el pais
-    // incluso antes de que lleguen datos de sismos).
     const svMarker = { lat: 13.7942, lng: -88.8965, size: 1, place: 'El Salvador', isSV: true };
 
-    // Antes este fetch iba directo a USGS (feed mundial, sin filtro
-    // regional y desincronizado del resto del sitio). Ahora usa el mismo
-    // proxy que ya consume el monitor sismico (MainController::earthquakes,
-    // filtrado a Centroamerica y con cache de 2 minutos) — un solo punto
-    // de verdad para "sismos recientes" en toda la plataforma.
     fetch('?url=earthquakes')
         .then(r => r.json())
         .then(data => {
@@ -96,8 +80,6 @@
                          ${d.time || ''}
                        </div>`);
 
-            // Ondas expansivas para sismos moderados/fuertes — matching
-            // el efecto "pulsaciones / ondas expansivas" del anteproyecto.
             const strong = quakes.filter(q => q.mag >= 4.2);
             globe
                 .ringsData(strong)
@@ -120,7 +102,6 @@
     const phase3 = document.querySelector('.h3d-phase-3');
     const globeWrap = document.querySelector('.hero3d-sticky');
 
-    // Puntos de vista clave del vuelo (lat, lng, altitude de la camara)
     const POV_PLANET = { lat: 12, lng: -75, altitude: 2.4 };
     const POV_CENTROAMERICA = { lat: 13.5, lng: -87, altitude: 0.9 };
     const POV_EL_SALVADOR = { lat: 13.7942, lng: -88.8965, altitude: 0.55 };
@@ -128,8 +109,7 @@
     function lerp(a, b, t) { return a + (b - a) * t; }
 
     function lerpPOV(p) {
-        // 0 -> 0.5 interpola planeta -> centroamerica
-        // 0.5 -> 1 interpola centroamerica -> el salvador
+        // 0->0.5 interpola planeta->centroamerica, 0.5->1 centroamerica->el salvador
         if (p <= 0.5) {
             const t = p / 0.5;
             return {
@@ -166,8 +146,6 @@
         if (globeWrap) globeWrap.dataset.phase = activePhase;
         globe.controls().autoRotate = activePhase === 1;
 
-        // Cruce de opacidad: el globo se desvanece y el mapa Leaflet
-        // (nitido) toma su lugar al llegar al acercamiento final.
         const mapEl = document.getElementById('svMapLeaflet');
         const globeEl = document.getElementById('globeViz');
         if (mapEl && globeEl) {

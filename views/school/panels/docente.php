@@ -18,53 +18,51 @@ ob_start();
 
     <div class="school-panel-header" style="padding:0 0 10px;">
         <label class="school-btn secondary" style="cursor:pointer;">
-            <span class="school-emoji" aria-hidden="true">📷</span> Subir foto de perfil
+            Subir foto de perfil
             <input type="file" accept="image/*" style="display:none" onchange="uploadTeacherPhoto(this)">
         </label>
     </div>
 
-    <!-- ==================== TABS (sidebar) ==================== -->
     <div class="school-body">
     <div class="school-tabs school-sidebar">
         <button class="school-tab active" data-tab="dashboard" onclick="showSchoolTab('dashboard')">
-            <span class="school-emoji" aria-hidden="true">🧭</span> Dashboard
+            Dashboard
         </button>
         <button class="school-tab" data-tab="sections" onclick="showSchoolTab('sections')">
-            <span class="school-emoji" aria-hidden="true">🧩</span> Mis Secciones
+            Mis Secciones
         </button>
         <button class="school-tab" data-tab="students" onclick="showSchoolTab('students')">
-            <span class="school-emoji" aria-hidden="true">🎒</span> Alumnos
+            Alumnos
         </button>
         <button class="school-tab" data-tab="attendance" onclick="showSchoolTab('attendance')">
-            <span class="school-emoji" aria-hidden="true">🖊️</span> Pase de Lista
+            Pase de Lista
         </button>
         <button class="school-tab" data-tab="incidents" onclick="showSchoolTab('incidents')">
-            <span class="school-emoji" aria-hidden="true">🧯</span> Incidentes / Daños
+            Incidentes / Daños
         </button>
         <button class="school-tab" data-tab="drills" onclick="showSchoolTab('drills')">
-            <span class="school-emoji" aria-hidden="true">🔔</span> Simulacros
+            Simulacros
         </button>
         <button class="school-tab" data-tab="routes" onclick="showSchoolTab('routes')">
-            <span class="school-emoji" aria-hidden="true">🚸</span> Rutas
+            Rutas
         </button>
         <button class="school-tab" data-tab="croquis" onclick="showSchoolTab('croquis')">
-            <span class="school-emoji" aria-hidden="true">📐</span> Croquis
+            Croquis
         </button>
         <button class="school-tab" data-tab="board" onclick="showSchoolTab('board')">
-            <span class="school-emoji" aria-hidden="true">📌</span> Corcho
+            Corcho
         </button>
         <button class="school-tab" data-tab="reports" onclick="showSchoolTab('reports')">
-            <span class="school-emoji" aria-hidden="true">🗂️</span> Reportes
+            Reportes
         </button>
         <button class="school-tab" data-tab="news" onclick="showSchoolTab('news')">
-            <span class="school-emoji" aria-hidden="true">📰</span> Noticias
+            Noticias
         </button>
         <button class="school-tab" data-tab="blog" onclick="showSchoolTab('blog')">
-            <span class="school-emoji" aria-hidden="true">📍</span> Lugares en riesgo
+            Lugares en riesgo
         </button>
     </div>
 
-    <!-- ==================== CONTENIDO ==================== -->
     <div class="school-content">
         <?php include __DIR__ . '/../partials/_tab-dashboard.php'; ?>
         <?php include __DIR__ . '/../partials/_tab-news.php'; ?>

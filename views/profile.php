@@ -26,7 +26,6 @@ $roleLabel = $roleLabels[$profileUser['role']] ?? $profileUser['role'];
         <div class="profile-alert success"><?= e($_SESSION['success']); unset($_SESSION['success']); ?></div>
     <?php endif; ?>
 
-    <!-- ENCABEZADO -->
     <div class="profile-head">
         <div class="profile-avatar"><?= strtoupper(substr($profileUser['nombre'], 0, 1)) ?></div>
         <div>
@@ -35,14 +34,12 @@ $roleLabel = $roleLabels[$profileUser['role']] ?? $profileUser['role'];
             <span class="profile-role-badge"><?= e($roleLabel) ?></span>
             <?php if ($profileUser['institucion_nombre']): ?>
                 <span class="profile-role-badge inst">
-                    🏫
                     <?= e($profileUser['institucion_nombre']) ?>
                 </span>
             <?php endif; ?>
         </div>
     </div>
 
-    <!-- DATOS PERSONALES -->
     <div class="profile-card">
         <h2>Datos personales</h2>
         <form method="POST" action="?url=profile/update" class="profile-form">
@@ -63,7 +60,6 @@ $roleLabel = $roleLabels[$profileUser['role']] ?? $profileUser['role'];
         </form>
     </div>
 
-    <!-- ESTADO INSTITUCIONAL -->
     <div class="profile-card">
         <h2>Institución educativa</h2>
 
@@ -101,7 +97,6 @@ $roleLabel = $roleLabels[$profileUser['role']] ?? $profileUser['role'];
                     <div class="profile-inst-list" id="joinInstList">
                         <?php foreach ($instituciones as $inst): ?>
                             <button type="button" class="profile-inst-item" data-id="<?= e($inst['instituciones_id']) ?>" data-name="<?= e($inst['nombre']) ?>">
-                                🏫
                                 <span><?= e($inst['nombre']) ?></span>
                             </button>
                         <?php endforeach; ?>

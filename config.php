@@ -4,8 +4,7 @@ define('DB_NAME', 'nda_project');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 
-// Carga variables desde un archivo .env (si existe) sin depender de
-// composer/librerias externas. Formato: CLAVE=valor, una por linea.
+// Carga variables desde .env (formato CLAVE=valor) sin depender de composer.
 function loadEnv($path) {
     if (!file_exists($path)) return;
     foreach (file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
@@ -22,17 +21,12 @@ function loadEnv($path) {
 }
 loadEnv(__DIR__ . '/.env');
 
-// Devuelve una variable de entorno (o el valor por defecto si no existe).
 function env($key, $default = null) {
     $value = getenv($key);
     return $value !== false ? $value : $default;
 }
 
-// ---------------------------------------------------------------
-// CSRF — token compartido por sesion, usado en formularios POST
-// server-rendered y expuesto via <meta> para las llamadas AJAX del
-// modulo escolar / sensor / chat. No requiere libreria externa.
-// ---------------------------------------------------------------
+// Token CSRF compartido por sesion, usado en forms server-rendered y expuesto via <meta> para AJAX.
 function csrfToken() {
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
@@ -43,9 +37,7 @@ function csrfToken() {
     return $_SESSION['csrf_token'];
 }
 
-// Valida el token recibido (form POST o header X-CSRF-Token). Devuelve
-// true/false; quien llama decide si corta la ejecucion con jsonResponse
-// o con un mensaje de error de sesion, segun el tipo de endpoint.
+// Valida el token recibido (form POST o header X-CSRF-Token).
 function csrfValid($token) {
     if (session_status() === PHP_SESSION_NONE) {
         session_start();

@@ -1,11 +1,8 @@
-        <!-- ========================================================== -->
-        <!--  RUTAS -->
-        <!-- ========================================================== -->
         <div id="tab-routes" class="school-panel">
             <div class="school-panel-header">
-                <h3><span class="school-emoji" aria-hidden="true">🚸</span> Rutas de Evacuación</h3>
+                <h3>Rutas de Evacuación</h3>
                 <button class="school-btn primary" onclick="openModal('addRouteModal')">
-                    <span class="school-emoji" aria-hidden="true">➕</span> Agregar Ruta
+                    Agregar Ruta
                 </button>
             </div>
             <div class="school-grid-2" id="routesContainer">

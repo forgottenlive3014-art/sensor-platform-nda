@@ -1,17 +1,12 @@
 <?php
 session_start();
 
-// Todo el request queda "amortiguado": si algun warning/notice de PHP se
-// imprime antes de tiempo (comun en XAMPP/WAMP con display_errors activo),
-// jsonResponse() lo puede descartar antes de mandar el JSON limpio. Sin
-// esto, un solo warning rompe TODAS las respuestas AJAX del sitio (asi se
-// ve como si el modulo escolar "no cargara nada" aunque el HTML si se vea).
+// Amortigua warnings/notices de PHP para que jsonResponse() siempre mande JSON limpio.
 ob_start();
 
 require_once 'config.php';
 
-// Evita que el navegador sirva paginas privadas desde la cache
-// (bfcache) despues de cerrar sesion al presionar "Atras".
+// Evita que el navegador sirva paginas privadas desde la cache (bfcache) tras cerrar sesion.
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Pragma: no-cache");
 header("Expires: 0");
@@ -38,11 +33,6 @@ function view($name, $data = []) {
     if (file_exists($file)) {
         require_once $file;
     } else {
-        // Antes: die("View not found: $name") — un error crudo sin estilo,
-        // que en producción se ve exactamente como una "pantalla en blanco
-        // rota". Se mantiene el codigo 500 (es un error real de servidor,
-        // no un 404 de ruta), pero con una pagina legible en vez de texto
-        // plano.
         http_response_code(500);
         ndaErrorPage('NDA — No disponible', 'Esta sección no está disponible ahora mismo.');
     }
@@ -57,11 +47,8 @@ function isLoggedIn() {
     return isset($_SESSION['user_id']);
 }
 
-// Devuelve un array con los datos de sesion del usuario actual.
-// El rol y el estado institucional se refrescan desde la base de datos
-// en cada request (una sola consulta, cacheada durante el request) para
-// que una aprobacion/rechazo del director surta efecto de inmediato sin
-// que el usuario tenga que cerrar sesion y volver a entrar.
+// Rol y estado institucional se refrescan desde la BD en cada request para que una
+// aprobacion/rechazo del director surta efecto sin cerrar sesion.
 function currentUser() {
     if (!isLoggedIn()) return null;
 
@@ -85,15 +72,12 @@ function currentUser() {
             $row = $stmt->fetch();
             if ($row) {
                 $fresh = $row;
-                // Mantiene la sesion sincronizada para el resto de la peticion.
                 $_SESSION['user_role'] = $row['role'];
                 $_SESSION['institucion_id'] = $row['institucion_id'];
                 $_SESSION['institucion_nombre'] = $row['institucion_nombre'];
                 $_SESSION['estado_institucional'] = $row['estado_institucional'];
             } else {
-                // El usuario de esta sesion ya no existe en la BD (p. ej. se
-                // reimporto la base de datos). Cerramos sesion para evitar
-                // que cualquier pagina truene con "array offset on false".
+                // Usuario ya no existe en la BD: cerramos sesion para evitar errores.
                 $_SESSION = [];
                 session_destroy();
                 if (!headers_sent()) {
@@ -117,12 +101,10 @@ function currentUser() {
     ];
 }
 
-// Roles que pertenecen al personal/comunidad de una institucion
 function institutionalRoles() {
     return ['director', 'docente', 'alumno', 'padre', 'administrativo'];
 }
 
-// True si el usuario ya pertenece de forma aprobada a una institucion
 function hasApprovedInstitution() {
     $u = currentUser();
     return $u && $u['institucion_id'] && $u['estado_institucional'] === 'aprobado';
@@ -133,9 +115,7 @@ function e($text) {
 }
 
 function jsonResponse($data, $code = 200) {
-    // Descarta cualquier salida acumulada (warnings, notices, espacios en
-    // blanco antes de "<?php", etc.) para que el JSON llegue limpio al
-    // fetch() del navegador — un solo caracter de mas rompe el parseo.
+    // Descarta cualquier salida acumulada para que el JSON llegue limpio al fetch().
     if (ob_get_level() > 0) {
         ob_clean();
     }
@@ -157,8 +137,7 @@ $url = isset($_GET['url']) ? $_GET['url'] : 'home';
 $url = rtrim($url, '/');
 $parts = explode('/', $url);
 
-// Cualquier segmento despues de "controlador/accion" se pasa como
-// argumento posicional extra al metodo del controlador.
+// Segmentos extra despues de "controlador/accion" se pasan como argumentos al metodo.
 $params = array_slice($parts, 2);
 
 $routeMap = [
@@ -306,14 +285,7 @@ $routeMap = [
     'school/active-alert'        => ['DrillController', 'activeAlert'],
 ];
 
-// El routeMap indexa por la ruta COMPLETA (ej. 'school/add-student',
-// 'profile/update'), no solo por el primer segmento. Antes se buscaba
-// con $controller (= $parts[0]), asi que CUALQUIER ruta de mas de un
-// segmento (practicamente todo el sitio: school/*, profile/update,
-// notifications/*, etc.) siempre caia en la entrada de un solo
-// segmento que coincidiera (o en el 404) sin importar el resto de la
-// URL — ej. 'school/add-student' terminaba ejecutando
-// SchoolController::index() en vez de SchoolController::addStudent().
+// El routeMap indexa por la ruta COMPLETA (ej. 'school/add-student'), no solo por el primer segmento.
 if (isset($routeMap[$url])) {
     list($className, $method) = $routeMap[$url];
 } else {
@@ -330,19 +302,12 @@ if (file_exists($file)) {
         try {
             call_user_func_array([$obj, $method], $params);
         } catch (Throwable $e) {
-            // Antes de esto, una excepcion no capturada (ej. una consulta SQL
-            // que falla) terminaba en una pagina en blanco o en un error crudo
-            // de PHP, sin ningun mensaje util — exactamente el sintoma de
-            // "aparece pero no se puede editar nada". Ahora se registra el
-            // detalle real en el log del servidor, y el usuario recibe una
-            // respuesta legible segun el tipo de ruta.
             error_log('[NDA] Excepcion no capturada en ' . $className . '::' . $method . '() — ' . $e->getMessage());
 
             if (ob_get_level() > 0) { ob_clean(); }
             http_response_code(500);
 
-            // Las acciones del modulo escolar, sensor, chat y notificaciones
-            // son todas AJAX (esperan JSON) salvo la carga inicial de 'school'.
+            // Todas las rutas son AJAX (esperan JSON) salvo la carga inicial de 'school'.
             $isJsonRoute = !(
                 $className === 'MainController' ||
                 ($className === 'AuthController' && $method !== 'institutionsList') ||

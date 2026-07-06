@@ -5,12 +5,10 @@ ob_start();
 
 <div class="auth-wrap">
 
-    <!-- CANVAS PARA ONDAS Y PARTÍCULAS -->
     <canvas id="wave-left"></canvas>
     <canvas id="wave-right"></canvas>
     <canvas id="particles"></canvas>
 
-    <!-- FORM CARD -->
     <div class="auth-card">
         <h1 class="auth-title">INICIAR SESIÓN</h1>
         <p class="auth-subtitle">Accede a tu cuenta para continuar</p>
@@ -88,7 +86,6 @@ ob_start();
         </form>
     </div>
 
-    <!-- HERO CENTER - ROBOT -->
     <div class="auth-hero">
         <div class="auth-robot-wrap">
             <div class="auth-robot-glow"></div>
@@ -97,7 +94,6 @@ ob_start();
         </div>
     </div>
 
-    <!-- BUBBLE -->
     <div class="auth-bubble">
         <div class="auth-bubble-box">
             <div class="auth-bubble-head">

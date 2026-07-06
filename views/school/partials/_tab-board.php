@@ -1,11 +1,8 @@
-        <!-- ========================================================== -->
-        <!--  TABLERO DE CORCHO -->
-        <!-- ========================================================== -->
         <div id="tab-board" class="school-panel">
             <div class="school-panel-header">
-                <h3><span class="school-emoji" aria-hidden="true">📌</span> Tablero de la comunidad</h3>
+                <h3>Tablero de la comunidad</h3>
                 <button class="school-btn primary" onclick="openModal('addBoardNoteModal')">
-                    <span class="school-emoji" aria-hidden="true">➕</span> Pegar nota
+                    Pegar nota
                 </button>
             </div>
             <p class="school-hint">Un espacio compartido para avisos, recordatorios e ideas de la comunidad institucional — como un corcho real.</p>

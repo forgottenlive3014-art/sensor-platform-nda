@@ -9,10 +9,7 @@ class MainController {
         view('home', $data);
     }
     
-    // Cache muy simple en archivo (sin tabla, sin dependencias) para no
-    // golpear USGS en cada visita. Duracion corta: los sismos son datos
-    // que cambian rápido, pero no vale la pena una llamada externa por
-    // cada usuario que abre Inicio en la misma ventana de 2 minutos.
+    // Cache en archivo para no golpear USGS en cada visita.
     const EARTHQUAKE_CACHE_TTL = 120; // segundos
 
     public function earthquakes() {

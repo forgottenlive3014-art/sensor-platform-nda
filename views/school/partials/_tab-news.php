@@ -1,12 +1,9 @@
-        <!-- ========================================================== -->
-        <!--  NOTICIAS INTERNAS -->
-        <!-- ========================================================== -->
         <div id="tab-news" class="school-panel">
             <div class="school-panel-header">
-                <h3><span class="school-emoji" aria-hidden="true">📰</span> Noticias internas</h3>
+                <h3>Noticias internas</h3>
                 <?php if (!empty($isSchoolAdmin)): ?>
                 <button class="school-btn primary" onclick="openModal('addNewsModal')">
-                    <span class="school-emoji" aria-hidden="true">➕</span> Publicar noticia
+                    Publicar noticia
                 </button>
                 <?php endif; ?>
             </div>
@@ -18,7 +15,6 @@
         </div>
 
         <?php if (!empty($isSchoolAdmin)): ?>
-        <!-- Modal Publicar Noticia -->
         <div class="school-modal" id="addNewsModal">
             <div class="school-modal-content">
                 <div class="school-modal-header">
@@ -41,7 +37,6 @@
             </div>
         </div>
 
-        <!-- Modal Editar Noticia -->
         <div class="school-modal" id="editNewsModal">
             <div class="school-modal-content">
                 <div class="school-modal-header">

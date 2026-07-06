@@ -15,39 +15,37 @@ ob_start();
 
     <?php include __DIR__ . '/../partials/_header.php'; ?>
 
-    <!-- ==================== TABS (sidebar) ==================== -->
     <div class="school-body">
     <div class="school-tabs school-sidebar">
         <button class="school-tab active" data-tab="dashboard" onclick="showSchoolTab('dashboard')">
-            <span class="school-emoji" aria-hidden="true">🧭</span> Dashboard
+            Dashboard
         </button>
         <button class="school-tab" data-tab="my-attendance" onclick="showSchoolTab('my-attendance')">
-            <span class="school-emoji" aria-hidden="true">🖊️</span> Mi Asistencia
+            Mi Asistencia
         </button>
         <button class="school-tab" data-tab="drills" onclick="showSchoolTab('drills')">
-            <span class="school-emoji" aria-hidden="true">🔔</span> Simulacros
+            Simulacros
         </button>
         <button class="school-tab" data-tab="routes" onclick="showSchoolTab('routes')">
-            <span class="school-emoji" aria-hidden="true">🚸</span> Rutas
+            Rutas
         </button>
         <button class="school-tab" data-tab="incidents" onclick="showSchoolTab('incidents')">
-            <span class="school-emoji" aria-hidden="true">🧯</span> Incidentes / Daños
+            Incidentes / Daños
         </button>
         <button class="school-tab" data-tab="croquis" onclick="showSchoolTab('croquis')">
-            <span class="school-emoji" aria-hidden="true">📐</span> Croquis
+            Croquis
         </button>
         <button class="school-tab" data-tab="board" onclick="showSchoolTab('board')">
-            <span class="school-emoji" aria-hidden="true">📌</span> Corcho
+            Corcho
         </button>
         <button class="school-tab" data-tab="news" onclick="showSchoolTab('news')">
-            <span class="school-emoji" aria-hidden="true">📰</span> Noticias
+            Noticias
         </button>
         <button class="school-tab" data-tab="blog" onclick="showSchoolTab('blog')">
-            <span class="school-emoji" aria-hidden="true">📍</span> Lugares en riesgo
+            Lugares en riesgo
         </button>
     </div>
 
-    <!-- ==================== CONTENIDO ==================== -->
     <div class="school-content">
         <?php include __DIR__ . '/../partials/_tab-dashboard-simple.php'; ?>
         <?php include __DIR__ . '/../partials/_tab-blog.php'; ?>

@@ -10,12 +10,10 @@ ob_start();
     <canvas id="wave-right"></canvas>
     <canvas id="particles"></canvas>
 
-    <!-- FORM CARD -->
     <div class="auth-card auth-card-wizard">
         <h1 class="auth-title">CREAR CUENTA</h1>
         <p class="auth-subtitle">Únete y comienza a monitorear</p>
 
-        <!-- INDICADOR DE PASOS -->
         <div class="wiz-steps" id="wizSteps">
             <div class="wiz-step on" data-wiz-dot="1"><span>1</span>Tipo de cuenta</div>
             <div class="wiz-step" data-wiz-dot="2"><span>2</span>Rol</div>
@@ -38,7 +36,7 @@ ob_start();
             <input type="hidden" name="inst_role" id="fInstRole" value="">
             <input type="hidden" name="institucion_id" id="fInstitucionId" value="">
 
-            <!-- ============ PASO 1: TIPO DE CUENTA ============ -->
+            <!-- Paso 1: tipo de cuenta -->
             <div class="wiz-screen on" data-screen="1">
                 <p class="wiz-question">¿Cómo vas a usar NDA?</p>
                 <div class="wiz-cards">
@@ -48,7 +46,6 @@ ob_start();
                         <span>Información, simuladores y trivias. Podrás unirte a una institución después desde tu perfil.</span>
                     </button>
                     <button type="button" class="wiz-card" data-account-type="institutional">
-                        🏫
                         <strong>Comunidad de una institución</strong>
                         <span>Director, docente, alumno, padre/encargado o personal administrativo de un centro educativo.</span>
                     </button>
@@ -59,7 +56,7 @@ ob_start();
                 </div>
             </div>
 
-            <!-- ============ PASO 2: ROL INSTITUCIONAL ============ -->
+            <!-- Paso 2: rol institucional -->
             <div class="wiz-screen" data-screen="2">
                 <p class="wiz-question">¿Cuál es tu rol en la institución?</p>
                 <div class="wiz-cards wiz-cards-roles">
@@ -69,12 +66,10 @@ ob_start();
                         <span>Registra el colegio y administra todo el módulo escolar.</span>
                     </button>
                     <button type="button" class="wiz-card wiz-card-sm" data-inst-role="docente">
-                        🧑‍🏫
                         <strong>Docente</strong>
                         <span>Gestiona tus secciones y pasa lista en simulacros.</span>
                     </button>
                     <button type="button" class="wiz-card wiz-card-sm" data-inst-role="alumno">
-                        🎒
                         <strong>Alumno</strong>
                         <span>Consulta rutas, participa en simulacros y actividades.</span>
                     </button>
@@ -95,7 +90,7 @@ ob_start();
                 </div>
             </div>
 
-            <!-- ============ PASO 3: INSTITUCIÓN ============ -->
+            <!-- Paso 3: institución -->
             <div class="wiz-screen" data-screen="3">
                 <!-- 3a: crear institución (solo director) -->
                 <div id="wizInstCreate" style="display:none">
@@ -141,7 +136,6 @@ ob_start();
                     <div class="wiz-inst-list" id="wizInstList">
                         <?php foreach ($instituciones as $inst): ?>
                             <button type="button" class="wiz-inst-item" data-id="<?= e($inst['instituciones_id']) ?>" data-name="<?= e($inst['nombre']) ?>">
-                                🏫
                                 <span><?= e($inst['nombre']) ?></span>
                             </button>
                         <?php endforeach; ?>
@@ -159,15 +153,13 @@ ob_start();
                 </div>
             </div>
 
-            <!-- ============ PASO 4: DATOS PERSONALES ============ -->
+            <!-- Paso 4: datos personales -->
             <div class="wiz-screen" data-screen="4">
                 <p class="wiz-question">Tus datos de acceso</p>
                 <div class="auth-field">
                     <label>Nombre completo</label>
                     <div class="auth-inp-wrap">
-                        <span class="auth-inp-ico">
-                            👤
-                        </span>
+                        <span class="auth-inp-ico"></span>
                         <input type="text" name="name" placeholder="Tu nombre completo" required>
                     </div>
                 </div>
@@ -225,7 +217,6 @@ ob_start();
         <p class="auth-switch">¿Ya tienes cuenta? <a href="?url=login">Inicia sesión</a></p>
     </div>
 
-    <!-- HERO CENTER - ROBOT -->
     <div class="auth-hero">
         <div class="auth-robot-wrap">
             <div class="auth-robot-glow"></div>
@@ -234,7 +225,6 @@ ob_start();
         </div>
     </div>
 
-    <!-- BUBBLE -->
     <div class="auth-bubble">
         <div class="auth-bubble-box">
             <div class="auth-bubble-head">

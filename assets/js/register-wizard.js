@@ -1,7 +1,4 @@
-// ============================================================
-// WIZARD DE REGISTRO — NDA
-// Controla los 4 pasos: tipo de cuenta, rol, institución, datos.
-// ============================================================
+// Wizard de registro NDA: controla los 4 pasos (tipo de cuenta, rol, institucion, datos)
 (function () {
     var form = document.getElementById('registerForm');
     if (!form) return;
@@ -32,7 +29,6 @@
         });
     }
 
-    // ---------- PASO 1: tipo de cuenta ----------
     var typeCards = document.querySelectorAll('[data-account-type]');
     var next1 = document.querySelector('[data-next="1"]');
     typeCards.forEach(function (card) {
@@ -46,14 +42,12 @@
     });
     next1.addEventListener('click', function () {
         if (accountType === 'general') {
-            // Cuenta general: nos saltamos rol e institución.
             showStep(4);
         } else {
             showStep(2);
         }
     });
 
-    // ---------- PASO 2: rol institucional ----------
     var roleCards = document.querySelectorAll('[data-inst-role]');
     var next2 = document.querySelector('[data-next="2"]');
     roleCards.forEach(function (card) {
@@ -77,7 +71,6 @@
         showStep(3);
     });
 
-    // ---------- PASO 3: institución ----------
     document.querySelector('[data-back="2"]').addEventListener('click', function () { showStep(2); });
 
     document.querySelector('[data-next="3"]').addEventListener('click', function () {
@@ -117,7 +110,6 @@
         });
     }
 
-    // ---------- PASO 4: volver ----------
     document.querySelector('[data-back="3"]').addEventListener('click', function () {
         if (accountType === 'general') {
             showStep(1);
@@ -126,7 +118,6 @@
         }
     });
 
-    // ---------- VALIDACIÓN FINAL ----------
     form.addEventListener('submit', function (e) {
         var pwd = form.querySelector('input[name="password"]');
         var confirm = form.querySelector('input[name="password_confirm"]');

@@ -105,8 +105,8 @@ async function loadStudents(page) {
                 <td>${s.teacher || 'Sin asignar'}</td>
                 <td><span style="color:var(--teal);">Activo</span></td>
                 <td>
-                    ${window.__ndaIsSchoolStaff ? `<button class="school-attendance-btn" onclick="editStudent(${s.estudiantes_id})">✏️</button>` : ''}
-                    ${window.__ndaIsSchoolAdmin ? `<button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteStudent(${s.estudiantes_id})">🗑️</button>` : ''}
+                    ${window.__ndaIsSchoolStaff ? `<button class="school-attendance-btn" onclick="editStudent(${s.estudiantes_id})">Editar</button>` : ''}
+                    ${window.__ndaIsSchoolAdmin ? `<button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteStudent(${s.estudiantes_id})">Eliminar</button>` : ''}
                 </td>
             </tr>
         `).join('');
@@ -257,8 +257,8 @@ async function loadTeachers(page) {
                 <td>${t.materia || '—'}</td>
                 <td>${t.aulas || 'Sin asignar'}</td>
                 <td>
-                    <button class="school-attendance-btn" onclick="editTeacher(${t.usuarios_id})">✏️</button>
-                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteTeacher(${t.usuarios_id})">🗑️</button>
+                    <button class="school-attendance-btn" onclick="editTeacher(${t.usuarios_id})">Editar</button>
+                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteTeacher(${t.usuarios_id})">Eliminar</button>
                 </td>
             </tr>
         `).join('');
@@ -409,8 +409,8 @@ async function loadParents(page) {
                 <td>${p.hijos || 'Ninguno vinculado'}</td>
                 <td>
                     <button class="school-attendance-btn" onclick="openLinkChildModal(${p.usuarios_id})">👪 Vincular hijo</button>
-                    <button class="school-attendance-btn" onclick="editParent(${p.usuarios_id})">✏️</button>
-                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteParent(${p.usuarios_id})">🗑️</button>
+                    <button class="school-attendance-btn" onclick="editParent(${p.usuarios_id})">Editar</button>
+                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteParent(${p.usuarios_id})">Eliminar</button>
                 </td>
             </tr>
         `).join('');
@@ -507,7 +507,7 @@ async function openLinkChildModal(parentId) {
         const links = await res.json();
         if (Array.isArray(links) && links.length > 0) {
             currentList.innerHTML = 'Vinculados actualmente: ' + links.map(l =>
-                `${l.nombre} ${l.apellido} (${l.parentesco}) <button class="school-attendance-btn" onclick="unlinkChild(${l.padres_estudiantes_id}, ${parentId})">✖️</button>`
+                `${l.nombre} ${l.apellido} (${l.parentesco}) <button class="school-attendance-btn" onclick="unlinkChild(${l.padres_estudiantes_id}, ${parentId})">Quitar</button>`
             ).join(' · ');
         } else {
             currentList.innerHTML = 'Todavía no tiene hijos vinculados.';
@@ -662,8 +662,8 @@ async function loadStaff(page) {
                 <td>${s.email}</td>
                 <td>${s.telefono || '—'}</td>
                 <td>
-                    <button class="school-attendance-btn" onclick="editStaff(${s.usuarios_id})">✏️</button>
-                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteStaff(${s.usuarios_id})">🗑️</button>
+                    <button class="school-attendance-btn" onclick="editStaff(${s.usuarios_id})">Editar</button>
+                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteStaff(${s.usuarios_id})">Eliminar</button>
                 </td>
             </tr>
         `).join('');
@@ -782,7 +782,7 @@ async function loadNotifications(page) {
                 <td><span class="chip b">${severityLabelMap[n.severidad] || n.severidad}</span></td>
                 <td>${n.es_global == 1 ? 'Global' : 'Institución'}</td>
                 <td>${new Date(n.created_at).toLocaleString('es-SV')}</td>
-                <td><button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteNotification(${n.notificaciones_id})">🗑️</button></td>
+                <td><button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteNotification(${n.notificaciones_id})">Eliminar</button></td>
             </tr>
         `).join('');
 
@@ -874,8 +874,8 @@ async function loadClassrooms(page) {
                 <td>${c.seccion || '—'}</td>
                 <td>${c.teacher || 'Sin asignar'}</td>
                 <td>
-                    <button class="school-attendance-btn" onclick="editClassroom(${c.aulas_id})">✏️</button>
-                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteClassroom(${c.aulas_id})">🗑️</button>
+                    <button class="school-attendance-btn" onclick="editClassroom(${c.aulas_id})">Editar</button>
+                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteClassroom(${c.aulas_id})">Eliminar</button>
                 </td>
             </tr>
         `).join('');
@@ -1026,7 +1026,7 @@ async function loadRoutes() {
                 <p style="font-size:0.82rem;color:var(--text2);">${r.descripcion || 'Sin descripción'}</p>
                 <div style="margin-top:8px;display:flex;gap:6px;">
                     ${window.__ndaIsSchoolStaff ? `<button class="school-attendance-btn" onclick="editRoute(${r.rutas_evacuacion_id})"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>` : ''}
-                    ${window.__ndaIsSchoolAdmin ? `<button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteRoute(${r.rutas_evacuacion_id})">🗑️</button>` : ''}
+                    ${window.__ndaIsSchoolAdmin ? `<button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteRoute(${r.rutas_evacuacion_id})">Eliminar</button>` : ''}
                 </div>
             </div>
         `).join('');
@@ -1179,9 +1179,9 @@ async function loadAttendance() {
                     </span>
                 </td>
                 <td>
-                    <button class="school-attendance-btn ${s.status === 'presente' ? 'active' : ''}" onclick="setAttendance(${i}, 'presente')">✅</button>
-                    <button class="school-attendance-btn ${s.status === 'ausente' ? 'active' : ''} danger" onclick="setAttendance(${i}, 'ausente')">❌</button>
-                    <button class="school-attendance-btn ${s.status === 'herido' ? 'active' : ''} warning" onclick="setAttendance(${i}, 'herido')">⚠️</button>
+                    <button class="school-attendance-btn ${s.status === 'presente' ? 'active' : ''}" onclick="setAttendance(${i}, 'presente')">Presente</button>
+                    <button class="school-attendance-btn ${s.status === 'ausente' ? 'active' : ''} danger" onclick="setAttendance(${i}, 'ausente')">Ausente</button>
+                    <button class="school-attendance-btn ${s.status === 'herido' ? 'active' : ''} warning" onclick="setAttendance(${i}, 'herido')">Herido</button>
                 </td>
             </tr>
         `).join('');
@@ -2171,8 +2171,8 @@ async function loadInstitutions(page) {
                 <td>${i.direccion || '—'}</td>
                 <td>${i.total_usuarios || 0}</td>
                 <td>
-                    <button class="school-attendance-btn" onclick="editInstitution(${i.instituciones_id})">✏️</button>
-                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteInstitution(${i.instituciones_id})">🗑️</button>
+                    <button class="school-attendance-btn" onclick="editInstitution(${i.instituciones_id})">Editar</button>
+                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteInstitution(${i.instituciones_id})">Eliminar</button>
                 </td>
             </tr>
         `).join('');
@@ -2324,8 +2324,8 @@ async function loadUsers(page) {
                 <td>${u.institucion_nombre || '—'}</td>
                 <td>${u.estado_institucional || '—'}</td>
                 <td>
-                    <button class="school-attendance-btn" onclick="editUser(${u.usuarios_id})">✏️</button>
-                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteUser(${u.usuarios_id})">🗑️</button>
+                    <button class="school-attendance-btn" onclick="editUser(${u.usuarios_id})">Editar</button>
+                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteUser(${u.usuarios_id})">Eliminar</button>
                 </td>
             </tr>
         `).join('');
@@ -2459,8 +2459,8 @@ async function loadNews(page) {
                 <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
                     <h3 style="margin:0;">${n.titulo}${!n.instituciones_id ? ' <span class="chip b">Global</span>' : ''}</h3>
                     ${window.__ndaIsSchoolAdmin ? `<span>
-                        <button class="school-attendance-btn" onclick="editNews(${n.noticias_internas_id})">✏️</button>
-                        <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteNews(${n.noticias_internas_id})">🗑️</button>
+                        <button class="school-attendance-btn" onclick="editNews(${n.noticias_internas_id})">Editar</button>
+                        <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteNews(${n.noticias_internas_id})">Eliminar</button>
                     </span>` : ''}
                 </div>
                 <p style="white-space:pre-wrap;">${n.contenido}</p>
@@ -2575,7 +2575,7 @@ async function loadBlog(page) {
                 <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
                     <h3 style="margin:0;">📍 ${b.titulo}</h3>
                     ${(window.__ndaIsSchoolAdmin || String(b.usuarios_id) === String(window.__ndaMyUserId)) ? `
-                        <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteBlogPost(${b.blog_riesgos_id})">🗑️</button>
+                        <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteBlogPost(${b.blog_riesgos_id})">Eliminar</button>
                     ` : ''}
                 </div>
                 ${b.imagen ? `<img class="school-incident-photo" src="${b.imagen}" alt="Foto del lugar" onclick="window.open('${b.imagen}','_blank')">` : ''}

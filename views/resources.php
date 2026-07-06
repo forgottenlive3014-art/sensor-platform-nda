@@ -6,7 +6,6 @@ ob_start();
 <div class="resources-page">
     <div class="wrap" style="padding-top: 80px; padding-bottom: 60px;">
 
-        <!-- Encabezado -->
         <div style="text-align: center; margin-bottom: 40px;">
             <h1 style="font-size: 2.5rem; font-weight: 900; background: linear-gradient(135deg, #f97316, #ff5500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block;">
                  Guías y Recursos Educativos
@@ -16,7 +15,6 @@ ob_start();
             </p>
         </div>
 
-        <!-- Filtros por categoría -->
         <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 30px;">
             <button class="filter-btn active" data-filter="all" style="background: #f97316; color: #fff; border: none; padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;">Todos</button>
             <button class="filter-btn" data-filter="evacuacion" style="background: var(--card2); color: var(--text1); border: 1px solid var(--border); padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;"> Evacuación</button>
@@ -26,10 +24,8 @@ ob_start();
             <button class="filter-btn" data-filter="lluvias" style="background: var(--card2); color: var(--text1); border: 1px solid var(--border); padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;"> Lluvias</button>
         </div>
 
-        <!-- Grid de PDFs -->
         <div class="resources-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px;">
 
-            <!--   EVACUACIÓN ESCOLAR   -->
             <div class="resource-card" data-category="evacuacion" style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: transform 0.2s, box-shadow 0.2s;">
                 <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
                     <div style="font-size: 2.5rem;"></div>
@@ -55,7 +51,6 @@ ob_start();
                 </div>
             </div>
 
-            <!--   CARTILLA EVACUACIÓN ESCOLAR   -->
             <div class="resource-card" data-category="evacuacion" style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: transform 0.2s, box-shadow 0.2s;">
                 <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
                     <div style="font-size: 2.5rem;"></div>
@@ -81,7 +76,6 @@ ob_start();
                 </div>
             </div>
 
-            <!--   MOCHILA EMERGENCIA 1   -->
             <div class="resource-card" data-category="mochila" style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: transform 0.2s, box-shadow 0.2s;">
                 <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
                     <div style="font-size: 2.5rem;"></div>
@@ -107,7 +101,6 @@ ob_start();
                 </div>
             </div>
 
-            <!--   MOCHILA EMERGENCIA 2   -->
             <div class="resource-card" data-category="mochila" style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: transform 0.2s, box-shadow 0.2s;">
                 <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
                     <div style="font-size: 2.5rem;"></div>
@@ -133,7 +126,6 @@ ob_start();
                 </div>
             </div>
 
-            <!--   PLAN FAMILIAR 1   -->
             <div class="resource-card" data-category="plan" style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: transform 0.2s, box-shadow 0.2s;">
                 <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
                     <div style="font-size: 2.5rem;"></div>
@@ -159,7 +151,6 @@ ob_start();
                 </div>
             </div>
 
-            <!--   PLAN FAMILIAR 2   -->
             <div class="resource-card" data-category="plan" style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: transform 0.2s, box-shadow 0.2s;">
                 <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
                     <div style="font-size: 2.5rem;"></div>
@@ -185,7 +176,6 @@ ob_start();
                 </div>
             </div>
 
-            <!--   PREPARACIÓN SISMOS   -->
             <div class="resource-card" data-category="sismo" style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: transform 0.2s, box-shadow 0.2s;">
                 <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
                     <div style="font-size: 2.5rem;"></div>
@@ -211,7 +201,6 @@ ob_start();
                 </div>
             </div>
 
-            <!--   PROTOCOLO LLUVIAS 1   -->
             <div class="resource-card" data-category="lluvias" style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: transform 0.2s, box-shadow 0.2s;">
                 <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
                     <div style="font-size: 2.5rem;"></div>
@@ -237,7 +226,6 @@ ob_start();
                 </div>
             </div>
 
-            <!--   PROTOCOLO LLUVIAS 2   -->
             <div class="resource-card" data-category="lluvias" style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: transform 0.2s, box-shadow 0.2s;">
                 <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
                     <div style="font-size: 2.5rem;"></div>
@@ -265,7 +253,6 @@ ob_start();
 
         </div>
 
-        <!-- Contador de recursos -->
         <div style="text-align: center; margin-top: 30px; color: var(--text3); font-size: 0.85rem;">
             <span id="resourceCount">9</span> recursos educativos disponibles
         </div>
@@ -273,7 +260,6 @@ ob_start();
     </div>
 </div>
 
-<!-- JavaScript para filtros -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const filterBtns = document.querySelectorAll('.filter-btn');

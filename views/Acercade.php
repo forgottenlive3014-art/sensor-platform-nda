@@ -6,7 +6,6 @@ ob_start();
 <div class="about-page">
     <div class="wrap" style="padding-top:80px; padding-bottom:60px;">
 
-        <!-- ====== HERO ====== -->
         <div class="about-hero reveal">
             <div class="about-glow"></div>
             <span class="kicker">QUIÉNES SOMOS</span>
@@ -15,7 +14,6 @@ ob_start();
                en algo claro, visual y al alcance de todos. Porque estar informado salva vidas.</p>
         </div>
 
-        <!-- ====== CONTADORES ====== -->
         <div class="stats reveal">
             <div class="stat"><span class="stat-num" data-target="9">0</span><span class="stat-label">Guías educativas</span></div>
             <div class="stat"><span class="stat-num" data-target="5">0</span><span class="stat-label">Tipos de emergencia</span></div>
@@ -23,7 +21,6 @@ ob_start();
             <div class="stat"><span class="stat-num" data-target="100" data-suffix="%">0</span><span class="stat-label">Acceso gratuito</span></div>
         </div>
 
-        <!-- ====== MISIÓN / VISIÓN (estilo revista, 2 columnas) ====== -->
         <div class="mv-grid">
             <div class="mv-card reveal" style="--c:#f29f05;">
                 <span class="mv-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></span>
@@ -40,7 +37,6 @@ ob_start();
             </div>
         </div>
 
-        <!-- ====== QUÉ OFRECEMOS ====== -->
         <div class="offer reveal">
             <h2 class="section-h">Lo que encuentras en NDA</h2>
             <div class="offer-grid">
@@ -59,7 +55,6 @@ ob_start();
             </div>
         </div>
 
-        <!-- ====== LÍNEA DE TIEMPO ====== -->
         <div class="timeline-wrap reveal">
             <h2 class="section-h">Cómo te acompañamos</h2>
             <div class="timeline">
@@ -74,7 +69,6 @@ ob_start();
             </div>
         </div>
 
-        <!-- ====== VALORES ====== -->
         <div class="values reveal">
             <h2 class="section-h">En lo que creemos</h2>
             <div class="values-grid">
@@ -85,7 +79,6 @@ ob_start();
             </div>
         </div>
 
-        <!-- ====== CTA FINAL ====== -->
         <div class="about-cta reveal">
             <div class="cta-glow"></div>
             <h2>La mejor emergencia es la que sabes enfrentar</h2>
@@ -177,7 +170,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }), {threshold:.12});
     document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-    /* contadores animados */
     const counters = document.querySelectorAll('.stat-num');
     const cio = new IntersectionObserver(es => {
         es.forEach(e => {

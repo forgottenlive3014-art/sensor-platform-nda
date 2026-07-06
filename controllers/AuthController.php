@@ -1,9 +1,6 @@
 <?php
 class AuthController {
 
-    // ---------------------------------------------------------------
-    // LOGIN
-    // ---------------------------------------------------------------
     public function login() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->processLogin();
@@ -45,20 +42,10 @@ class AuthController {
         }
     }
 
-    // ---------------------------------------------------------------
-    // Verifica la contraseña soportando ambos formatos de hash:
-    //  - password_hash() (bcrypt/argon2) -> formato nuevo, correcto.
-    //  - sha256 plano -> formato legado (cuentas creadas antes de este
-    //    cambio). Si el login es correcto con el hash legado, lo
-    //    re-hashea de inmediato con password_hash() para que la
-    //    siguiente vez ya use el algoritmo seguro. Migracion
-    //    transparente, sin forzar a nadie a resetear su contraseña.
-    // ---------------------------------------------------------------
+    // Soporta hashes legados (sha256 plano) y los re-hashea a password_hash() en el login.
     private function verifyPassword($password, $user) {
         $stored = $user['contra'];
 
-        // Formato nuevo: password_hash() siempre produce cadenas que
-        // empiezan con "$" (ej. $2y$... para bcrypt, $argon2id$...).
         if (strpos($stored, '$') === 0) {
             return password_verify($password, $stored);
         }
@@ -86,9 +73,6 @@ class AuthController {
         $_SESSION['estado_institucional'] = $user['estado_institucional'] ?? 'ninguno';
     }
 
-    // ---------------------------------------------------------------
-    // REGISTRO (wizard: cuenta general vs. personal de institucion)
-    // ---------------------------------------------------------------
     public function register() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->processRegister();

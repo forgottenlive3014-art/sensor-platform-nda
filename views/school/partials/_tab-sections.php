@@ -1,9 +1,6 @@
-        <!-- ========================================================== -->
-        <!--  SECCIONES (18 aulas: 1°-3° A-F) -->
-        <!-- ========================================================== -->
         <div id="tab-sections" class="school-panel">
             <div class="school-panel-header">
-                <h3><span class="school-emoji" aria-hidden="true">🧩</span> Secciones de Bachillerato</h3>
+                <h3>Secciones de Bachillerato</h3>
                 <?php if (!empty($isSchoolStaff)): ?>
                 <label class="school-toggle-all">
                     <input type="checkbox" id="sectionsShowAll" onchange="loadSections()"> Ver todas las secciones

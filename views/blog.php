@@ -1,15 +1,9 @@
 <?php
-/* ===========================================================
-   BLOG NDA  ·  lista + artículo, con FOTOGRAFÍAS reales
-   - Lista:    ?url=blog
-   - Artículo: ?url=blog&post=SLUG
-   Imágenes en: assets/media/blog/SLUG.jpg  (ver guía al final)
-   Si una imagen falta, queda un fondo de color elegante.
-   =========================================================== */
+/* Lista: ?url=blog · Artículo: ?url=blog&post=SLUG. Si falta la imagen en
+   assets/media/blog/SLUG.jpg, se usa el color de respaldo del artículo. */
 
 $title = $title ?? 'Blog - NDA';
 
-/* ---------- CUERPOS DE LOS ARTÍCULOS ---------- */
 $b_72 = <<<HTML
 <p class="art-lead">Las primeras 72 horas tras un desastre son las más críticas: es el tiempo que puede pasar antes de que la ayuda externa llegue a tu zona. Prepararte para ese lapso no requiere dinero ni equipo especial, solo organización. Aquí tienes el plan completo.</p>
 <h3 class="art-h3">¿Por qué 72 horas?</h3>
@@ -115,7 +109,7 @@ $b_punto = <<<HTML
 <div class="art-takeaway"><h4>Para recordar</h4><ul><li>Un punto cercano y uno lejano.</li><li>Lugares abiertos, seguros y conocidos por todos.</li><li>Un contacto puente fuera de la zona.</li><li>Escríbelo y repásalo dos veces al año.</li></ul></div>
 HTML;
 
-/* ---------- METADATOS ('img' = foto local; 'color' = respaldo si falta) ---------- */
+/* 'img' = foto local; 'color' = respaldo si falta */
 $BASE = 'assets/media/blog/';
 $ARTÍCULOS = [
   '72-horas' => ['titulo'=>'Cómo preparar a tu familia en 72 horas','cat'=>'prevencion','tag'=>'Prevención','color'=>'#f29f05','autor'=>'Equipo NDA','tiempo'=>'6 min','destacado'=>true,'img'=>$BASE.'72-horas.jpg','extracto'=>'La regla de las primeras 72 horas puede marcar la diferencia. Qué hacer, paso a paso, antes de que llegue la próxima emergencia.','cuerpo'=>$b_72],
@@ -127,7 +121,6 @@ $ARTÍCULOS = [
   'punto'    => ['titulo'=>'El punto de reunión que toda familia necesita','cat'=>'prevencion','tag'=>'Prevención','color'=>'#6a6fb5','autor'=>'Equipo NDA','tiempo'=>'4 min','destacado'=>false,'img'=>$BASE.'punto.jpg','extracto'=>'Si se pierde la señal y nadie sabe dónde está el otro, este simple acuerdo lo resuelve.','cuerpo'=>$b_punto],
 ];
 
-/* iconos SVG reutilizables (sin emojis) */
 $icoUser = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c0-3.6 3.1-5.5 7-5.5s7 1.9 7 5.5"/></svg>';
 $icoClock = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="8.2"/><path d="M12 7.5V12l3 1.8"/></svg>';
 
@@ -138,7 +131,7 @@ if ($post) { $title = $post['titulo'] . ' - NDA'; }
 ob_start();
 ?>
 
-<?php if ($post): /* ===================== ARTÍCULO ===================== */ ?>
+<?php if ($post): /* Artículo */ ?>
 <div class="blog-page" data-no-anim>
   <div class="wrap" style="padding-top:80px; padding-bottom:60px; max-width:780px;">
 
@@ -174,7 +167,7 @@ ob_start();
   </div>
 </div>
 
-<?php else: /* ===================== LISTA ===================== */ ?>
+<?php else: /* Lista */ ?>
 <div class="blog-page" data-no-anim>
   <div class="wrap" style="padding-top:80px; padding-bottom:60px;">
 

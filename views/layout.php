@@ -6,7 +6,7 @@
 <meta name="csrf-token" content="<?= csrfToken() ?>">
 <title><?= $title ?? 'svNDA — Natural Disaster Alert' ?></title>
 <script>
-// Evita el "flash" del tema incorrecto antes de que cargue el CSS/JS.
+// Evita el flash del tema incorrecto antes de que cargue el CSS/JS.
 (function(){
   try {
     var saved = localStorage.getItem('nda-theme');
@@ -17,10 +17,9 @@
 })();
 </script>
 <script>
-// Carga perezosa de CesiumJS (sin token de Cesium ion), compartida por el
-// globo del home y el mapa del croquis escolar. Vive en el <head> (y no en
-// app.js) porque hero-globe.js se ejecuta embebido en el contenido de
-// home.php, ANTES de que se cargue app.js al final del body.
+// Carga perezosa de CesiumJS, compartida por el globo del home y el mapa
+// del croquis escolar. Vive aquí (no en app.js) porque hero-globe.js corre
+// embebido en home.php antes de que app.js se cargue al final del body.
 var CESIUM_CDN_BASE = 'https://cesium.com/downloads/cesiumjs/releases/1.120/Build/Cesium/';
 var __ndaCesiumLoading = null;
 function ensureCesiumLoaded() {
@@ -53,13 +52,11 @@ function ensureCesiumLoaded() {
 
 <link rel="stylesheet" href="assets/css/auth.css">
 
-<!-- Extensiones visuales (Fase 2): NO redeclara --bg/--bg2/--bg3/--bg4,
-     solo agrega la escala de estado y componentes nuevos por encima. -->
+<!-- No redeclara --bg/--bg2/--bg3/--bg4, solo agrega estado y componentes nuevos -->
 <link rel="stylesheet" href="assets/css/nda-extensions.css">
 </head>
 <body>
 
-<!-- FLOATING SEISMIC PARTICLES -->
 <div class="seismic-particles" id="seismicParticles" aria-hidden="true"></div>
 
 
@@ -77,13 +74,11 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
     window.__ndaHasInstitution = <?= ($isLoggedIn && !empty($_SESSION['institucion_id']) && ($_SESSION['estado_institucional'] ?? '') === 'aprobado') ? 'true' : 'false' ?>;
 </script>
 
-<!-- Banner de simulacro en vivo (se llena via JS si hay una alerta activa) -->
+<!-- Se llena via JS si hay una alerta de simulacro activa -->
 <div class="drill-alert-banner" id="drillAlertBanner" style="display:none">
-    🔔
     <span id="drillAlertText">Simulacro en curso</span>
 </div>
 
-<!-- NAVBAR -->
 <nav class="nav" id="nav">
   <a class="nav-brand" href="?url=home">
     <div class="nda-logo-wave">
@@ -99,10 +94,7 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
     <a href="?url=blog">Blog</a>
     <a href="?url=juegos">Juegos</a>
     <?php
-        // Mismo criterio que SchoolController::canAccessSchool(): admin global,
-        // o rol institucional con estado_institucional 'aprobado'. Se calcula
-        // aqui con la sesion ya sincronizada por currentUser() (definida en
-        // index.php), para no duplicar la logica de permisos en dos lugares.
+        // Debe coincidir con SchoolController::canAccessSchool().
         $__navUser = currentUser();
         $__schoolEligibleRoles = ['director', 'docente', 'alumno', 'padre', 'administrativo'];
         $__canSeeSchoolLink = $__navUser && (
@@ -112,7 +104,6 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
     ?>
     <?php if ($__canSeeSchoolLink): ?>
     <a href="?url=school" class="nav-school-link">
-      🏫
       Gestión Escolar
     </a>
     <?php endif; ?>
@@ -128,16 +119,13 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
     </div>
     <button class="theme-btn" id="themeBtn" title="Cambiar tema" aria-label="Cambiar tema claro/oscuro">
       <svg id="themeIcoMoon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-      ☀️
     </button>
     <button class="lang-btn" id="langBtn" title="Switch language / Cambiar idioma" aria-label="Cambiar idioma">
-      🌐
       <span id="langBtnLabel">EN</span>
     </button>
 
     <div style="position:relative;">
       <button class="nda-notif-btn" id="ndaNotifBtn" title="Notificaciones" aria-label="Ver notificaciones">
-        🔔
         <span class="nda-notif-dot" id="ndaNotifDot"></span>
       </button>
       <div class="nda-notif-panel nda-glass" id="ndaNotifPanel">
@@ -151,9 +139,7 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
       </div>
     </div>
     
-    <!--   PHP SESSION AUTH   -->
     <?php if (isset($_SESSION['user_id']) && isset($_SESSION['user_name'])): ?>
-      <!-- Usuario logueado - Mostrar menú -->
       <div class="nav-user-menu" id="navUserMenu" style="display:flex">
         <div class="nav-user" id="navUserBadge" style="cursor:pointer" onclick="toggleUserDD()">
           <div class="nav-avatar" id="navAvatar">
@@ -165,35 +151,29 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
         <div class="nav-user-dd" id="navUserDD">
           <?php if ($__canSeeSchoolLink): ?>
           <a class="nud-item" href="?url=school">
-            🏫
             Módulo Colegio
           </a>
           <?php endif; ?>
           <a class="nud-item" href="?url=profile">
-            👤
             Mi Perfil
           </a>
           <div class="nud-item danger" onclick="logout()">
-            🚪
             Cerrar sesión
           </div>
         </div>
       </div>
 
-      <!-- Ocultar botones de login/register -->
       <div id="navAuthBtns" style="display:none">
         <a href="?url=login" class="btn-out" style="padding:6px 14px;font-size:.76rem;text-decoration:none;">Iniciar sesión</a>
         <a href="?url=register" class="btn-acc" style="padding:6px 14px;font-size:.76rem;text-decoration:none;">Registrarse</a>
       </div>
       
     <?php else: ?>
-      <!-- Usuario NO logueado - Mostrar botones -->
       <div id="navAuthBtns" style="display:flex;gap:6px">
         <a href="?url=login" class="btn-out" style="padding:6px 14px;font-size:.76rem;text-decoration:none;">Iniciar sesión</a>
         <a href="?url=register" class="btn-acc" style="padding:6px 14px;font-size:.76rem;text-decoration:none;">Registrarse</a>
       </div>
-      
-      <!-- Ocultar menú de usuario -->
+
       <div class="nav-user-menu" id="navUserMenu" style="display:none">
         <div class="nav-user" id="navUserBadge" style="cursor:pointer" onclick="toggleUserDD()">
           <div class="nav-avatar" id="navAvatar">?</div>
@@ -203,16 +183,13 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
         <div class="nav-user-dd" id="navUserDD">
           <?php if ($__canSeeSchoolLink): ?>
           <a class="nud-item" href="?url=school">
-            🏫
             Módulo Colegio
           </a>
           <?php endif; ?>
           <a class="nud-item" href="?url=profile">
-            👤
             Mi Perfil
           </a>
           <div class="nud-item danger" onclick="logout()">
-            🚪
             Cerrar sesión
           </div>
         </div>
@@ -225,10 +202,8 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
   </div>
 </nav>
 
-<!--   CONTENIDO PRINCIPAL   -->
 <?= $content ?? '' ?>
 
-<!--   FOOTER   -->
 <footer class="footer">
   <div class="wrap">
     <div class="ft-inner">
@@ -256,7 +231,7 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
 
 <button class="scroll-top" id="scrollTop"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></button>
 
-<!-- ==================== CHATBOT (disponible en todo el sitio) ==================== -->
+<!-- Chatbot, disponible en todo el sitio -->
 <div class="ndabot" id="ndabot">
   <button class="ndabot-fab" id="ndabotFab" aria-label="Abrir chat de ayuda">
     <img src="assets/media/img/chatbot.png" alt="Asistente NDA">
@@ -271,7 +246,7 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
         <span>Pregúntame o pide que te lleve a una sección</span>
       </div>
       <button class="ndabot-close" id="ndabotClose" aria-label="Cerrar chat">
-        ❌
+        &times;
       </button>
     </div>
 
@@ -294,7 +269,7 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
   </div>
 </div>
 
-<!-- ==================== TRADUCTOR (ES/EN) ==================== -->
+<!-- Traductor ES/EN -->
 <div id="google_translate_element" style="display:none"></div>
 <script>
     function googleTranslateElementInit() {
@@ -303,7 +278,6 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
 </script>
 <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-<!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 

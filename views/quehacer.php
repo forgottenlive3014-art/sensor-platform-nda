@@ -6,7 +6,6 @@ ob_start();
 <div class="now-page">
     <div class="wrap" style="padding-top:80px; padding-bottom:60px;">
 
-        <!-- ====== HERO DE URGENCIA ====== -->
         <div class="now-hero reveal">
             <div class="siren"></div>
             <span class="now-kicker">ACCIÓN INMEDIATA</span>
@@ -14,57 +13,50 @@ ob_start();
             <p>Mantén la calma. Elige la situación que estás viviendo y sigue los pasos.
                Cada segundo bien usado cuenta.</p>
             <a href="tel:911" class="emergency-call">
-                <span class="call-pulse"></span><span aria-hidden="true">📞</span> Llamar al 911
+                <span class="call-pulse"></span> Llamar al 911
             </a>
         </div>
 
-        <!-- ====== SELECTOR DE EMERGENCIA ====== -->
         <div class="now-selector reveal">
-            <button class="now-tab active" data-em="sismo" style="--c:#f29f05;"><span aria-hidden="true">🌍</span>Sismo</button>
-            <button class="now-tab" data-em="inundacion" style="--c:#2e7da6;"><span aria-hidden="true">🌊</span>Inundación</button>
-            <button class="now-tab" data-em="incendio" style="--c:#d91a2a;"><span aria-hidden="true">🔥</span>Incendio</button>
-            <button class="now-tab" data-em="deslizamiento" style="--c:#a16207;"><span aria-hidden="true">⛰️</span>Deslizamiento</button>
-            <button class="now-tab" data-em="tormenta" style="--c:#6a6fb5;"><span aria-hidden="true">⛈️</span>Tormenta</button>
+            <button class="now-tab active" data-em="sismo" style="--c:#f29f05;">Sismo</button>
+            <button class="now-tab" data-em="inundacion" style="--c:#2e7da6;">Inundación</button>
+            <button class="now-tab" data-em="incendio" style="--c:#d91a2a;">Incendio</button>
+            <button class="now-tab" data-em="deslizamiento" style="--c:#a16207;">Deslizamiento</button>
+            <button class="now-tab" data-em="tormenta" style="--c:#6a6fb5;">Tormenta</button>
         </div>
 
-        <!-- ====== CONTENEDOR DE PASOS (se llena por JS) ====== -->
         <div class="now-board reveal">
             <div class="now-board-head">
-                <span class="now-icon" id="nowIcon">🌍</span>
+                <span class="now-icon" id="nowIcon"></span>
                 <h2 id="nowTitle">Sismo / Terremoto</h2>
             </div>
 
             <div class="phase-tabs">
-                <button class="phase-tab active" data-phase="antes"><span aria-hidden="true">✅</span> Antes</button>
-                <button class="phase-tab" data-phase="durante"><span aria-hidden="true">⚡</span> Durante</button>
-                <button class="phase-tab" data-phase="despues"><span aria-hidden="true">🩹</span> Después</button>
+                <button class="phase-tab active" data-phase="antes">Antes</button>
+                <button class="phase-tab" data-phase="durante">Durante</button>
+                <button class="phase-tab" data-phase="despues">Después</button>
             </div>
 
             <div class="steps" id="nowSteps"></div>
         </div>
 
-        <!-- ====== CONTACTOS DE EMERGENCIA ====== -->
         <div class="contacts reveal">
-            <h2><span aria-hidden="true">📇</span> Contactos clave en El Salvador</h2>
+            <h2>Contactos clave en El Salvador</h2>
             <div class="contact-grid">
                 <a href="tel:911" class="contact-card" style="--c:#d91a2a;">
-                    <span class="c-emoji" aria-hidden="true">📞</span>
                     <div><b>911</b><small>Emergencias (línea única)</small></div>
                 </a>
                 <a href="#" class="contact-card" style="--c:#f29f05;">
-                    <span class="c-emoji" aria-hidden="true">🛡️</span>
                     <div><b>Protección Civil</b><small>Dirección General</small></div>
                 </a>
                 <a href="#" class="contact-card" style="--c:#2e8b7f;">
-                    <span class="c-emoji" aria-hidden="true">🚑</span>
                     <div><b>Cruz Roja</b><small>Salvadoreña</small></div>
                 </a>
                 <a href="#" class="contact-card" style="--c:#2e7da6;">
-                    <span class="c-emoji" aria-hidden="true">🚒</span>
                     <div><b>Bomberos</b><small>Cuerpo de Bomberos</small></div>
                 </a>
             </div>
-            <p class="contact-note"><span aria-hidden="true">ℹ️</span> Verifica y guarda los números locales de tu municipio antes de una emergencia.</p>
+            <p class="contact-note">Verifica y guarda los números locales de tu municipio antes de una emergencia.</p>
         </div>
 
     </div>
@@ -168,23 +160,23 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
     const DATA = {
-        sismo: { icon:'🌍', title:'Sismo / Terremoto',
+        sismo: { title:'Sismo / Terremoto',
             antes:[['Asegura tu casa','Fija estantes, espejos y objetos pesados que puedan caer.'],['Define un punto de reunión','Acuerda con tu familia dónde encontrarse al salir.'],['Prepara tu mochila','Agua, linterna, botiquín y documentos siempre listos.']],
             durante:[['Agáchate','Bájate al suelo antes de que el sismo te tire.'],['Cúbrete','Protege cabeza y cuello bajo una mesa firme.'],['Agárrate','Sujétate hasta que el movimiento termine. No corras ni uses ascensores.']],
             despues:[['Revisa heridas','Atiende primero a quien lo necesite. Ten calma.'],['Cuidado con réplicas','Pueden venir más temblores. Aléjate de estructuras dañadas.'],['Corta servicios si hay riesgo','Cierra gas y revisa fugas antes de encender luces.']] },
-        inundacion: { icon:'🌊', title:'Inundación',
+        inundacion: { title:'Inundación',
             antes:[['Conoce tu zona de riesgo','Identifica si vives cerca de quebradas o ríos.'],['Sube lo importante','Coloca documentos y aparatos en lugares altos.'],['Ten lista la ruta','Memoriza el camino hacia el punto más alto y seguro.']],
             durante:[['Sube a un lugar alto','Busca el nivel más elevado posible.'],['No cruces corrientes','30 cm de agua pueden arrastrarte. Nunca cruces a pie o en auto.'],['Mantente informado','Escucha la radio a pilas y sigue indicaciones oficiales.']],
             despues:[['No tomes agua dudosa','Hierve o purifica antes de beber.'],['Cuidado al volver','Revisa que la estructura sea segura antes de entrar.'],['Limpia y desinfecta','El agua de inundación puede traer enfermedades.']] },
-        incendio: { icon:'🔥', title:'Incendio',
+        incendio: { title:'Incendio',
             antes:[['Detectores de humo','Instálalos y prueba sus pilas con frecuencia.'],['Plan de escape','Conoce dos salidas de cada habitación.'],['Extintor a la mano','Ten uno y aprende a usarlo.']],
             durante:[['Agáchate y avanza','El humo sube; el aire limpio está abajo.'],['Toca antes de abrir','Si la puerta está caliente, busca otra salida.'],['Sal y no regreses','Una vez fuera, llama al 911. Nunca vuelvas por objetos.']],
             despues:[['Recibe atención médica','Aunque te sientas bien, revisa por inhalación de humo.'],['No entres aún','Espera el visto bueno de los bomberos.'],['Documenta daños','Toma fotos para tu reporte y seguro.']] },
-        deslizamiento: { icon:'⛰️', title:'Deslizamiento de tierra',
+        deslizamiento: { title:'Deslizamiento de tierra',
             antes:[['Observa señales','Grietas en el suelo, árboles inclinados o agua turbia.'],['Evita zonas de pendiente','No construyas ni duermas al pie de laderas inestables.'],['Plan de evacuación','Ten claro a dónde ir si el terreno cede.']],
             durante:[['Aléjate de la pendiente','Muévete lateralmente, fuera del camino del deslave.'],['Sube a terreno firme','Busca un punto alto y estable.'],['Avisa a otros','Alerta a vecinos en la trayectoria.']],
             despues:[['Mantente alejado','Puede haber más deslizamientos.'],['Reporta a las autoridades','Informa bloqueos y personas atrapadas.'],['Revisa servicios','Cuidado con cables y tuberías rotas.']] },
-        tormenta: { icon:'⛈️', title:'Tormenta eléctrica',
+        tormenta: { title:'Tormenta eléctrica',
             antes:[['Asegura objetos sueltos','El viento puede convertirlos en proyectiles.'],['Carga dispositivos','Ten linternas y baterías listas por si se va la luz.'],['Resguarda mascotas','Tenlas dentro y seguras.']],
             durante:[['Quédate adentro','Evita ventanas y aparatos conectados.'],['No uses agua','Evita ducharte o lavar durante rayos.'],['Si estás afuera','Aléjate de árboles altos y postes; agáchate.']],
             despues:[['Revisa daños','Inspecciona techo y conexiones eléctricas.'],['Evita cables caídos','Nunca los toques; repórtalos.'],['Mantente alerta','Pueden venir nuevas células de tormenta.']] },
@@ -193,7 +185,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let curEm = 'sismo', curPhase = 'antes';
     function render() {
         const d = DATA[curEm];
-        document.getElementById('nowIcon').textContent = d.icon;
         document.getElementById('nowTitle').textContent = d.title;
         const steps = d[curPhase];
         const box = document.getElementById('nowSteps'); box.innerHTML = '';

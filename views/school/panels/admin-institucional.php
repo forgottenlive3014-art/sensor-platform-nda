@@ -17,69 +17,67 @@ ob_start();
 
     <?php include __DIR__ . '/../partials/_header.php'; ?>
 
-    <!-- ==================== TABS (sidebar) ==================== -->
     <div class="school-body">
     <div class="school-tabs school-sidebar">
         <button class="school-tab active" data-tab="dashboard" onclick="showSchoolTab('dashboard')">
-            <span class="school-emoji" aria-hidden="true">🧭</span> Dashboard
+            Dashboard
         </button>
         <button class="school-tab" data-tab="users" onclick="showSchoolTab('users')">
-            <span class="school-emoji" aria-hidden="true">👥</span> Usuarios
+            Usuarios
         </button>
         <button class="school-tab" data-tab="news" onclick="showSchoolTab('news')">
-            <span class="school-emoji" aria-hidden="true">📰</span> Noticias
+            Noticias
         </button>
         <button class="school-tab" data-tab="notifications" onclick="showSchoolTab('notifications')">
-            <span class="school-emoji" aria-hidden="true">🔔</span> Notificaciones
+            Notificaciones
         </button>
         <button class="school-tab" data-tab="students" onclick="showSchoolTab('students')">
-            <span class="school-emoji" aria-hidden="true">🎒</span> Alumnos
+            Alumnos
         </button>
         <button class="school-tab" data-tab="teachers" onclick="showSchoolTab('teachers')">
-            <span class="school-emoji" aria-hidden="true">🧑‍🏫</span> Docentes
+            Docentes
         </button>
         <button class="school-tab" data-tab="parents" onclick="showSchoolTab('parents')">
-            <span class="school-emoji" aria-hidden="true">👪</span> Padres
+            Padres
         </button>
         <button class="school-tab" data-tab="staff" onclick="showSchoolTab('staff')">
-            <span class="school-emoji" aria-hidden="true">🧑‍💼</span> Personal
+            Personal
         </button>
         <button class="school-tab" data-tab="classrooms" onclick="showSchoolTab('classrooms')">
-            <span class="school-emoji" aria-hidden="true">🧱</span> Aulas
+            Aulas
         </button>
         <button class="school-tab" data-tab="routes" onclick="showSchoolTab('routes')">
-            <span class="school-emoji" aria-hidden="true">🚸</span> Rutas
+            Rutas
         </button>
         <button class="school-tab" data-tab="attendance" onclick="showSchoolTab('attendance')">
-            <span class="school-emoji" aria-hidden="true">🖊️</span> Pase de Lista
+            Pase de Lista
         </button>
         <button class="school-tab" data-tab="incidents" onclick="showSchoolTab('incidents')">
-            <span class="school-emoji" aria-hidden="true">🧯</span> Incidentes / Daños
+            Incidentes / Daños
         </button>
         <button class="school-tab" data-tab="sections" onclick="showSchoolTab('sections')">
-            <span class="school-emoji" aria-hidden="true">🧩</span> Secciones
+            Secciones
         </button>
         <button class="school-tab" data-tab="croquis" onclick="showSchoolTab('croquis')">
-            <span class="school-emoji" aria-hidden="true">📐</span> Croquis
+            Croquis
         </button>
         <button class="school-tab" data-tab="board" onclick="showSchoolTab('board')">
-            <span class="school-emoji" aria-hidden="true">📌</span> Corcho
+            Corcho
         </button>
         <button class="school-tab" data-tab="requests" onclick="showSchoolTab('requests')">
-            <span class="school-emoji" aria-hidden="true">🤝</span> Solicitudes
+            Solicitudes
             <?php if (!empty($pendingRequestsCount)): ?>
                 <span class="school-tab-badge"><?= (int)$pendingRequestsCount ?></span>
             <?php endif; ?>
         </button>
         <button class="school-tab" data-tab="drills" onclick="showSchoolTab('drills')">
-            <span class="school-emoji" aria-hidden="true">🔔</span> Simulacros
+            Simulacros
         </button>
         <button class="school-tab" data-tab="reports" onclick="showSchoolTab('reports')">
-            <span class="school-emoji" aria-hidden="true">🗂️</span> Reportes
+            Reportes
         </button>
     </div>
 
-    <!-- ==================== CONTENIDO ==================== -->
     <div class="school-content">
         <?php include __DIR__ . '/../partials/_tab-dashboard.php'; ?>
         <?php include __DIR__ . '/../partials/_tab-users.php'; ?>

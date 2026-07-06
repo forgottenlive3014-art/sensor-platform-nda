@@ -1,4 +1,4 @@
-//   SEISMIC WAVE ANIMATION  
+// Animacion de onda sismica
 function createWave(canvasId, side) {
     var canvas = document.getElementById(canvasId);
     if (!canvas) return;
@@ -67,7 +67,7 @@ function createWave(canvasId, side) {
     loop();
 }
 
-//   RING RIPPLE ANIMATION  
+// Animacion de anillos
 (function() {
     var c = document.getElementById('rings-canvas');
     if (!c) return;
@@ -97,7 +97,7 @@ function createWave(canvasId, side) {
     draw();
 })();
 
-//   FLOATING PARTICLES  
+// Particulas flotantes
 (function() {
     var c = document.getElementById('particles');
     if (!c) return;
@@ -139,7 +139,6 @@ function createWave(canvasId, side) {
     draw();
 })();
 
-//   PASSWORD TOGGLE  
 function togglePwd() {
     var i = document.getElementById('pwd');
     if (i) i.type = i.type === 'password' ? 'text' : 'password';
@@ -155,7 +154,7 @@ function togglePwdConf() {
     if (i) i.type = i.type === 'password' ? 'text' : 'password';
 }
 
-//   BUBBLE DIALOGS  
+// Dialogos de burbuja
 (function() {
     var loginMessages = [
         '¡Hola! Soy SismoBot.',
@@ -198,11 +197,7 @@ function togglePwdConf() {
     }, 4000);
 })();
 
-//   VALIDACIÓN REGISTRO  
-// (La validación del formulario de registro ahora vive en register-wizard.js,
-// junto con la lógica de pasos del wizard.)
-
-//   INIT WAVES  
+// La validacion del formulario de registro vive en register-wizard.js
 document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('wave-left')) {
         createWave('wave-left', 'left');

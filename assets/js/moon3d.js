@@ -1,9 +1,4 @@
-/* ================================================================
-   NDA — Luna 3D en tiempo real (CesiumJS, sin token de Cesium ion)
-   Muestra la Luna renderizada con su posicion e iluminacion solar
-   reales para el momento actual (Cesium.Simon1994PlanetaryPositions),
-   no una animacion prefijada.
-   ================================================================ */
+// NDA - Luna 3D en tiempo real (CesiumJS), posicion e iluminacion reales para el momento actual
 (function () {
     const el = document.getElementById('moon3dContainer');
     if (!el || typeof ensureCesiumLoaded !== 'function') return;
@@ -32,8 +27,6 @@
         if (viewer.scene.sun) viewer.scene.sun.show = false;
         if (!viewer.scene.moon) viewer.scene.moon = new Cesium.Moon();
 
-        // Momento real (no se anima): posicion e iluminacion tal como son
-        // "ahora mismo", calculadas con datos astronomicos reales.
         const now = Cesium.JulianDate.now();
         viewer.clock.currentTime = now;
         viewer.clock.shouldAnimate = false;
@@ -43,9 +36,6 @@
         const moonPosFixed = Cesium.Matrix3.multiplyByVector(temeToFixed, moonPosEci, new Cesium.Cartesian3());
         const dirToMoon = Cesium.Cartesian3.normalize(moonPosFixed, new Cesium.Cartesian3());
 
-        // Camara ubicada lejos de la Tierra, sobre la misma linea Tierra-Luna,
-        // mirando hacia la Luna real — reproduce aproximadamente la fase tal
-        // como se ve desde la Tierra en este momento.
         const camPos = Cesium.Cartesian3.multiplyByScalar(dirToMoon, 20000000, new Cesium.Cartesian3());
         viewer.camera.setView({
             destination: camPos,
