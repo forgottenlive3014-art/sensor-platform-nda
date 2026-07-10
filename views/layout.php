@@ -17,29 +17,44 @@
 })();
 </script>
 <script>
-// Carga perezosa de CesiumJS, compartida por el globo del home y el mapa
-// del croquis escolar. Vive aquí (no en app.js) porque hero-globe.js corre
-// embebido en home.php antes de que app.js se cargue al final del body.
-var CESIUM_CDN_BASE = 'https://cesium.com/downloads/cesiumjs/releases/1.120/Build/Cesium/';
-var __ndaCesiumLoading = null;
-function ensureCesiumLoaded() {
-    if (window.Cesium) return Promise.resolve();
-    if (__ndaCesiumLoading) return __ndaCesiumLoading;
-    __ndaCesiumLoading = new Promise(function (resolve, reject) {
-        window.CESIUM_BASE_URL = CESIUM_CDN_BASE;
-
+// Carga perezosa de MapLibre GL JS, usada por el mapa 3D del home (terreno
+// real de El Salvador) y por Three.js (globo + luna 3D). Viven aqui (no en
+// app.js) porque hero-globe.js corre embebido en home.php antes de que
+// app.js se cargue al final del body.
+var MAPLIBRE_CSS = 'https://unpkg.com/maplibre-gl@4/dist/maplibre-gl.css';
+var MAPLIBRE_JS = 'https://unpkg.com/maplibre-gl@4/dist/maplibre-gl.js';
+var __ndaMapLibreLoading = null;
+function ensureMapLibreLoaded() {
+    if (window.maplibregl) return Promise.resolve();
+    if (__ndaMapLibreLoading) return __ndaMapLibreLoading;
+    __ndaMapLibreLoading = new Promise(function (resolve, reject) {
         var css = document.createElement('link');
         css.rel = 'stylesheet';
-        css.href = CESIUM_CDN_BASE + 'Widgets/widgets.css';
+        css.href = MAPLIBRE_CSS;
         document.head.appendChild(css);
 
         var script = document.createElement('script');
-        script.src = CESIUM_CDN_BASE + 'Cesium.js';
+        script.src = MAPLIBRE_JS;
         script.onload = function () { resolve(); };
-        script.onerror = function () { reject(new Error('No se pudo cargar CesiumJS')); };
+        script.onerror = function () { reject(new Error('No se pudo cargar MapLibre GL JS')); };
         document.head.appendChild(script);
     });
-    return __ndaCesiumLoading;
+    return __ndaMapLibreLoading;
+}
+
+var THREE_JS = 'https://unpkg.com/three@0.160.0/build/three.min.js';
+var __ndaThreeLoading = null;
+function ensureThreeLoaded() {
+    if (window.THREE) return Promise.resolve();
+    if (__ndaThreeLoading) return __ndaThreeLoading;
+    __ndaThreeLoading = new Promise(function (resolve, reject) {
+        var script = document.createElement('script');
+        script.src = THREE_JS;
+        script.onload = function () { resolve(); };
+        script.onerror = function () { reject(new Error('No se pudo cargar Three.js')); };
+        document.head.appendChild(script);
+    });
+    return __ndaThreeLoading;
 }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -48,12 +63,12 @@ function ensureCesiumLoaded() {
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 
-<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="<?= asset('css/style.css') ?>">
 
-<link rel="stylesheet" href="assets/css/auth.css">
+<link rel="stylesheet" href="<?= asset('css/auth.css') ?>">
 
 <!-- No redeclara --bg/--bg2/--bg3/--bg4, solo agrega estado y componentes nuevos -->
-<link rel="stylesheet" href="assets/css/nda-extensions.css">
+<link rel="stylesheet" href="<?= asset('css/nda-extensions.css') ?>">
 </head>
 <body>
 
@@ -89,8 +104,8 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
   
   <div class="nav-links">
     <a href="?url=home">Inicio</a>
-    <a href="?url=home#sismos">Sismos</a>
-    <a href="?url=home#monitoreo">Monitoreo</a>
+    <a href="?url=sismos">Sismos</a>
+    <a href="?url=monitoreo">Monitoreo</a>
     <a href="?url=blog">Blog</a>
     <a href="?url=juegos">Juegos</a>
     <?php
@@ -222,7 +237,7 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
         </div>
         <p>Natural Disaster Alert — Plataforma educativa para la comunidad escolar de El Salvador. Datos en tiempo real y simulaciones interactivas.</p>
       </div>
-      <div class="ftc"><h5>Secciones</h5><a href="?url=home#sismos">Monitor Sísmico</a><a href="?url=home#placas">Placas Tectónicas</a><a href="?url=home#timeline">Historia</a><a href="?url=home#luna">Fases Lunares</a><a href="?url=home#mapa">Mapa de Peligros</a><a href="?url=home#ahora">¿Qué hacer AHORA?</a></div>
+      <div class="ftc"><h5>Secciones</h5><a href="?url=sismos">Monitor Sísmico</a><a href="?url=home#placas">Placas Tectónicas</a><a href="?url=home#timeline">Historia</a><a href="?url=monitoreo#luna">Fases Lunares</a><a href="?url=home#zona-sismica">Mapa de Peligros</a><a href="?url=quehacer">¿Qué hacer AHORA?</a></div>
       <div class="ftc"><h5>Fuentes</h5><a href="https://earthquake.usgs.gov" target="_blank">USGS Earthquakes</a><a href="https://www.marn.gob.sv" target="_blank">MARN El Salvador</a><a href="https://api.open-meteo.com" target="_blank">Open-Meteo API</a><a href="https://api.sunrise-sunset.org" target="_blank">Sunrise-Sunset API</a></div>
     </div>
     <div class="ft-btm"><p>© 2025 svNDA — Natural Disaster Alert · Proyecto educativo El Salvador · Datos USGS · Solo fines educativos</p></div>
@@ -282,6 +297,7 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
 
 
 <script src="<?= asset('js/app.js') ?>"></script>
+<script src="<?= asset('js/moon3d.js') ?>"></script>
 <script src="<?= asset('js/auth.js') ?>"></script>
 <script src="<?= asset('js/chatbot.js') ?>"></script>
 <script src="<?= asset('js/notifications.js') ?>"></script>

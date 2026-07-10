@@ -1,19 +1,36 @@
-// NDA - Hero: globo sismico real (globe.gl) con vuelo por scroll en 3 fases (planeta, Centroamerica, El Salvador)
+// NDA - Hero: globo real (globe.gl / Three.js) para la vista de planeta y
+// Centroamerica, que se funde con un mapa MapLibre GL JS con TERRENO real
+// (elevacion de El Salvador) al acercarse. Sin puntos de sismos: esos datos
+// viven en la seccion "Zona Sismica" y en la pagina /sismos.
 (function () {
-    const el = document.getElementById('globeViz');
+    const globeEl = document.getElementById('globeViz');
+    const terrainEl = document.getElementById('terrainViz');
     const heroEl = document.getElementById('home');
-    if (!el || !heroEl || typeof Globe === 'undefined') return;
+    if (!globeEl || !terrainEl || !heroEl || typeof Globe === 'undefined') return;
 
-    const COLOR_ALERT = '#b8433f';   // --red / --acc2
-    const COLOR_SV_MARKER = '#c98a3d'; // --acc
+    // MapLibre (a diferencia de Leaflet) no sustituye {s} ni {r} en las URLs
+    // de tiles -- hay que dar la lista real de subdominios y pedir @2x a
+    // proposito para que el mapa se vea nitido, no solo el relieve sin foto.
+    const CARTO_SUBDOMAINS = ['a', 'b', 'c', 'd'];
+    const DARK_TILES = CARTO_SUBDOMAINS.map(s => `https://${s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png`);
+    const LIGHT_TILES = CARTO_SUBDOMAINS.map(s => `https://${s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png`);
+    const TERRAIN_TILES = 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png';
 
-    const globe = Globe()(el)
-        .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-night.jpg')
+    function currentTheme() {
+        return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+    }
+
+    // ---------------- Globo lejano (planeta / Centroamerica) ----------------
+    // Textura fotorrealista real (NASA Blue Marble) en ambos temas -- el
+    // globo en si se ve igual de "foto real" que un globo de Google Maps,
+    // el tema claro/oscuro del sitio solo cambia el fondo detras de el.
+    const globe = Globe()(globeEl)
+        .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
         .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
         .backgroundColor('rgba(0,0,0,0)')
         .showAtmosphere(true)
-        .atmosphereColor('#c98a3d')
-        .atmosphereAltitude(0.18)
+        .atmosphereColor('#8fc6ff')
+        .atmosphereAltitude(0.2)
         .pointOfView({ lat: 12, lng: -75, altitude: 2.4 }, 0);
 
     globe.controls().autoRotate = true;
@@ -21,80 +38,54 @@
     globe.controls().enableZoom = false;
     globe.controls().enabled = false; // el usuario navega con scroll, no arrastrando el globo
 
-    // La textura del globo se ve borrosa de cerca; en el zoom final se cambia a un mapa Leaflet real
-    let leafletMap = null;
-    function ensureLeafletMap() {
-        if (leafletMap || typeof L === 'undefined') return;
-        const mapEl = document.getElementById('svMapLeaflet');
-        if (!mapEl) return;
-        leafletMap = L.map(mapEl, {
-            zoomControl: false,
-            attributionControl: false,
-            dragging: true,
-            scrollWheelZoom: false,
-        }).setView([13.7942, -88.8965], 8);
+    // ---------------- Mapa cercano con terreno real (El Salvador) ----------------
+    let map = null;
+    let appliedMapTheme = null;
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 18,
-        }).addTo(leafletMap);
-
-        L.circleMarker([13.7942, -88.8965], {
-            radius: 7, color: COLOR_SV_MARKER, weight: 2, fillColor: COLOR_SV_MARKER, fillOpacity: 0.5
-        }).addTo(leafletMap).bindTooltip('El Salvador', { permanent: false });
+    function mapStyle(theme) {
+        return {
+            version: 8,
+            sources: {
+                'nda-base': { type: 'raster', tiles: theme === 'light' ? LIGHT_TILES : DARK_TILES, tileSize: 512, attribution: '© CARTO © OpenStreetMap' },
+                'nda-terrain': { type: 'raster-dem', tiles: [TERRAIN_TILES], tileSize: 256, encoding: 'terrarium' },
+            },
+            layers: [{ id: 'nda-base-layer', type: 'raster', source: 'nda-base' }],
+            terrain: { source: 'nda-terrain', exaggeration: 1.6 },
+        };
     }
 
-    function magColor(mag) {
-        if (mag >= 6) return '#b8433f';
-        if (mag >= 5) return '#a85736';
-        if (mag >= 4) return '#c9a63f';
-        return '#5c7a54';
+    function ensureMap() {
+        if (map || typeof ensureMapLibreLoaded !== 'function') return;
+        ensureMapLibreLoaded().then(() => {
+            if (!window.maplibregl || map) return;
+            appliedMapTheme = currentTheme();
+            map = new maplibregl.Map({
+                container: terrainEl,
+                style: mapStyle(appliedMapTheme),
+                center: [-89.15, 13.75],
+                zoom: 10.8,
+                pitch: 65,
+                bearing: -18,
+                interactive: false,
+                attributionControl: false,
+            });
+        }).catch(() => {});
     }
 
-    const svMarker = { lat: 13.7942, lng: -88.8965, size: 1, place: 'El Salvador', isSV: true };
+    function applyMapTheme(theme) {
+        if (!map || theme === appliedMapTheme) return;
+        appliedMapTheme = theme;
+        map.setStyle(mapStyle(theme));
+    }
 
-    fetch('?url=earthquakes')
-        .then(r => r.json())
-        .then(data => {
-            const quakes = (data.features || []).map(f => ({
-                lat: f.geometry.coordinates[1],
-                lng: f.geometry.coordinates[0],
-                mag: f.properties.mag || 0,
-                place: f.properties.place,
-                depth: f.geometry.coordinates[2],
-                time: new Date(f.properties.time).toLocaleString('es-SV'),
-                color: magColor(f.properties.mag || 0),
-            }));
+    // Reacciona al boton de tema claro/oscuro (app.js cambia data-theme en <html>).
+    // El globo ya no cambia de textura por tema (siempre fotorrealista); solo
+    // el mapa MapLibre del acercamiento final cambia de estilo claro/oscuro.
+    new MutationObserver(() => {
+        applyMapTheme(currentTheme());
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
-            globe
-                .pointsData([...quakes, svMarker])
-                .pointLat('lat')
-                .pointLng('lng')
-                .pointColor(d => d.isSV ? COLOR_SV_MARKER : d.color)
-                .pointAltitude(d => d.isSV ? 0.02 : Math.max((d.mag || 1) * 0.015, 0.01))
-                .pointRadius(d => d.isSV ? 0.55 : Math.max((d.mag || 1) * 0.16, 0.18))
-                .pointLabel(d => d.isSV
-                    ? '<div style="background:#0d1420;color:#fff;padding:6px 10px;border-radius:8px;font:600 12px Space Grotesk,sans-serif">El Salvador</div>'
-                    : `<div style="background:#0d1420;color:#fff;padding:8px 12px;border-radius:8px;font:12px Space Grotesk,sans-serif;max-width:220px">
-                         <b>${d.place || 'Ubicación desconocida'}</b><br>
-                         Magnitud ${d.mag?.toFixed?.(1) ?? '—'} · ${Math.round(d.depth || 0)} km de profundidad<br>
-                         ${d.time || ''}
-                       </div>`);
-
-            const strong = quakes.filter(q => q.mag >= 4.2);
-            globe
-                .ringsData(strong)
-                .ringLat('lat')
-                .ringLng('lng')
-                .ringColor(() => t => `rgba(255,90,40,${1 - t})`)
-                .ringMaxRadius(d => Math.max(d.mag * 1.4, 3))
-                .ringPropagationSpeed(2.4)
-                .ringRepeatPeriod(1400);
-        })
-        .catch(() => {
-            // Sin conexion a USGS: al menos mostramos el marcador de El Salvador.
-            globe.pointsData([svMarker]).pointLat('lat').pointLng('lng')
-                .pointColor(() => COLOR_SV_MARKER).pointAltitude(0.02).pointRadius(0.55);
-        });
+    ensureMap();
 
     // ---------------- SCROLL: 3 fases ----------------
     const phase1 = document.querySelector('.h3d-phase-1');
@@ -104,12 +95,16 @@
 
     const POV_PLANET = { lat: 12, lng: -75, altitude: 2.4 };
     const POV_CENTROAMERICA = { lat: 13.5, lng: -87, altitude: 0.9 };
-    const POV_EL_SALVADOR = { lat: 13.7942, lng: -88.8965, altitude: 0.55 };
+    // No se acerca mas que esto con la textura del globo: es una sola imagen
+    // de toda la Tierra (4096x2048px), asi que El Salvador ocupa apenas unos
+    // pixeles ahi y se ve borroso si se acerca demasiado. El acercamiento real
+    // lo hace el mapa MapLibre con terreno (nitido), que toma el relevo antes
+    // de llegar a este punto (ver mapT mas abajo).
+    const POV_EL_SALVADOR = { lat: 13.7942, lng: -88.8965, altitude: 0.38 };
 
     function lerp(a, b, t) { return a + (b - a) * t; }
 
     function lerpPOV(p) {
-        // 0->0.5 interpola planeta->centroamerica, 0.5->1 centroamerica->el salvador
         if (p <= 0.5) {
             const t = p / 0.5;
             return {
@@ -146,17 +141,16 @@
         if (globeWrap) globeWrap.dataset.phase = activePhase;
         globe.controls().autoRotate = activePhase === 1;
 
-        const mapEl = document.getElementById('svMapLeaflet');
-        const globeEl = document.getElementById('globeViz');
-        if (mapEl && globeEl) {
-            const mapT = Math.max(0, Math.min(1, (p - 0.8) / 0.2));
-            if (mapT > 0 && !leafletMap) ensureLeafletMap();
-            mapEl.style.opacity = mapT;
-            mapEl.classList.toggle('visible', mapT > 0.5);
-            globeEl.style.opacity = 1 - mapT * 0.9;
-            if (leafletMap && mapT > 0.05) {
-                leafletMap.invalidateSize();
-            }
+        // El mapa con terreno (nitido) toma el relevo bastante antes de que
+        // el globo llegue a su zoom mas cercano, para que nunca se alcance
+        // a notar que la textura del globo completo se ve borrosa de cerca.
+        const mapT = Math.max(0, Math.min(1, (p - 0.6) / 0.28));
+        if (mapT > 0) ensureMap();
+        terrainEl.style.opacity = mapT;
+        terrainEl.classList.toggle('visible', mapT > 0.5);
+        globeEl.style.opacity = 1 - mapT * 0.95;
+        if (map && mapT > 0.05) {
+            try { map.resize(); } catch (e) {}
         }
     }
 
@@ -169,8 +163,9 @@
     raf();
 
     function resize() {
-        globe.width(el.clientWidth);
-        globe.height(el.clientHeight);
+        globe.width(globeEl.clientWidth);
+        globe.height(globeEl.clientHeight);
+        if (map) { try { map.resize(); } catch (e) {} }
     }
     window.addEventListener('resize', resize);
     resize();

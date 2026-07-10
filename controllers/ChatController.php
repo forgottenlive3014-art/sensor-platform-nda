@@ -1,10 +1,10 @@
 <?php
 class ChatController {
 
-    // Clave de Groq (https://console.groq.com/keys). Se pide aqui, en el
-    // propio controlador, en vez de en .env, para que sea mas facil de
-    // encontrar y editar. Pegar la clave entre las comillas, tal cual:
-    // private $apiKey = "gsk_xxxxxxxxxxxxxxxxxxxxxxxx";
+    // Clave de Groq (https://console.groq.com/keys). Este archivo esta
+    // excluido de git (ver .gitignore) precisamente porque tiene la clave
+    // real escrita aqui abajo -- si alguna vez se saca del .gitignore,
+    // sacar la clave de aqui primero.
     private $apiKey = "";
 
     private $model = "llama-3.3-70b-versatile";
@@ -247,7 +247,31 @@ class ChatController {
         $systemPrompt = "Eres el asistente virtual de NDA (Natural Disaster Alert), una plataforma educativa "
             . "sobre prevención de desastres naturales en El Salvador. Responde de forma breve, clara y amable, "
             . "SIEMPRE en español, salvo que el usuario escriba en inglés. Si la pregunta es sobre algo fuera de "
-            . "desastres naturales, prevención o el uso de la plataforma, redirige amablemente el tema.";
+            . "desastres naturales, prevención o el uso de la plataforma, redirige amablemente el tema.\n\n"
+            . "Datos geológicos y geográficos de El Salvador que DEBES usar como referencia (no inventes otras "
+            . "placas, fallas o cifras si el usuario pregunta sobre esto):\n"
+            . "- El Salvador está en el límite entre la Placa de Cocos (oceánica) y la Placa del Caribe "
+            . "(continental). La Placa de Cocos subduce (se hunde) bajo la Placa del Caribe a un ritmo de "
+            . "aproximadamente 8 cm/año. Esta subducción es la causa principal de la sismicidad y el "
+            . "vulcanismo del país. La Placa de Nazca NO pasa por Centroamérica (está frente a Sudamérica); "
+            . "nunca la menciones para explicar sismos en El Salvador.\n"
+            . "- Además de la subducción, existen fallas superficiales locales, como la Falla Metrópolis "
+            . "(atraviesa San Salvador, ~15 km), que generan sismos de menor profundidad pero alto impacto "
+            . "en zonas pobladas (ejemplo: terremoto del 10 de octubre de 1986).\n"
+            . "- El Salvador tiene aproximadamente 26 volcanes, varios activos: Izalco (\"El Faro del "
+            . "Pacífico\"), Santa Ana (Ilamatepec), San Salvador (Boquerón), San Vicente (Chinchontepec) y "
+            . "San Miguel (Chaparrastique, uno de los más activos).\n"
+            . "- Terremotos históricos relevantes: 1854 (San Salvador, ~M6.5), 1917 (erupción y sismo del "
+            . "Santa Ana), 1965 (San Salvador, M6.2), 1986 (San Salvador, M5.7, ~1,500 muertos), 2001 "
+            . "(13 de enero M7.7 y 13 de febrero M6.6, el más devastador del siglo, incluyendo el deslizamiento "
+            . "de Las Colinas).\n"
+            . "- La Red Sísmica de MARN (Ministerio de Medio Ambiente y Recursos Naturales) opera más de 30 "
+            . "estaciones en el país. Los datos sísmicos en tiempo real de esta plataforma vienen del USGS.\n"
+            . "- Riesgo de tsunami: sismos submarinos M≥7.0 frente a la costa pueden generar olas que llegan "
+            . "en 15-20 minutos a zonas como La Libertad o Acajutla; la evacuación es a terreno alto (mínimo "
+            . "30 m sobre el nivel del mar).\n"
+            . "Si no tienes certeza de un dato específico (cifras exactas, fechas, nombres), dilo explícitamente "
+            . "en vez de inventarlo.";
 
         if ($moduleLabel) {
             $systemPrompt .= " El usuario está viendo ahora mismo " . $moduleLabel . " dentro de la plataforma. "
@@ -284,14 +308,8 @@ class ChatController {
         ]);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-        // WAMP/PHP en Windows no trae paquete de certificados CA por defecto,
-        // lo que rompe la verificacion SSL contra api.groq.com. Se apunta a
-        // un bundle real de Mozilla incluido en el proyecto (no se desactiva
-        // la verificacion, que seria inseguro).
-        $caBundle = __DIR__ . '/../config/cacert.pem';
-        if (file_exists($caBundle)) {
-            curl_setopt($ch, CURLOPT_CAINFO, $caBundle);
-        }
+        // La verificacion SSL usa el bundle de certificados configurado a
+        // nivel de PHP (curl.cainfo en php.ini), no un archivo del proyecto.
 
         $response = curl_exec($ch);
         $error = curl_error($ch);

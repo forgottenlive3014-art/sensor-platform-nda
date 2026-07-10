@@ -46,6 +46,22 @@ class MainController {
         }
     }
 
+    public function sismos() {
+        $data = [
+            'title' => 'Sismos - NDA',
+            'user' => currentUser()
+        ];
+        view('sismos', $data);
+    }
+
+    public function monitoreo() {
+        $data = [
+            'title' => 'Monitoreo - NDA',
+            'user' => currentUser()
+        ];
+        view('monitoreo', $data);
+    }
+
     public function recursos() {
         $data = [
             'title' => 'Recursos - NDA',

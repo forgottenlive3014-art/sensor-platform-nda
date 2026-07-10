@@ -125,8 +125,14 @@ function jsonResponse($data, $code = 200) {
     exit;
 }
 
+// Agrega ?v=<fecha de modificacion> para que el navegador jamas sirva una
+// copia vieja en cache de un CSS/JS despues de un deploy (sin esto, algunos
+// navegadores ignoran el refresco forzado en archivos ya cacheados).
 function asset($path) {
-    return 'assets/' . ltrim($path, '/');
+    $rel = 'assets/' . ltrim($path, '/');
+    $full = __DIR__ . '/' . $rel;
+    $v = file_exists($full) ? filemtime($full) : time();
+    return $rel . '?v=' . $v;
 }
 
 
@@ -157,6 +163,8 @@ $routeMap = [
     'notifications/mark-read' => ['NotificationController', 'markRead'],
     'notifications/inbox' => ['NotificationController', 'inbox'],
     'earthquakes'=> ['MainController', 'earthquakes'],
+    'sismos'      => ['MainController', 'sismos'],
+    'monitoreo'   => ['MainController', 'monitoreo'],
     'resources'   => ['MainController', 'recursos'],
     'quehacer'    => ['MainController', 'quehacer'],
     'blog'        => ['MainController', 'blog'],
