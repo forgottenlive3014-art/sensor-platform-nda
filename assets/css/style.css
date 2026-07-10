@@ -804,7 +804,7 @@ canvas {
 /* ---------- SEISMIC MONITOR ---------- */
 .seismo-layout {
     display: grid;
-    grid-template-columns: 1fr 280px;
+    grid-template-columns: minmax(0, 1fr) 280px;
     gap: 18px;
     align-items: start;
 }
@@ -4474,7 +4474,11 @@ canvas {
     padding: 0 12px;
 }
 .tb-icon {
-    font-size: 1rem;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--acc3);
+    flex-shrink: 0;
 }
 @keyframes tbScroll {
     0% { transform: translateX(0); }

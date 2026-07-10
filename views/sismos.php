@@ -166,12 +166,12 @@ ob_start();
         <div class="sg-main-card">
           <div class="phdr">
             <div style="width:32px;height:32px;background:rgba(255,77,26,.15);border-radius:var(--rs);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M8 21l4-13 4 13"/><circle cx="12" cy="6" r="1.4"/><path d="M12 6l-1.5 3M12 6l1.5 3"/></svg></div>
-            <div>
-              <div style="font-weight:700;color:var(--text);font-size:.85rem">Sismógrafo Interactivo — El Salvador</div>
-              <div style="font-size:.7rem;color:var(--text3)" id="sgSubtitle">Estación SSN · San Salvador · 13.692°N, 89.218°W · EN VIVO</div>
+            <div style="min-width:0;overflow:hidden">
+              <div style="font-weight:700;color:var(--text);font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Sismógrafo Interactivo — El Salvador</div>
+              <div style="font-size:.7rem;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="sgSubtitle">Estación SSN · San Salvador · 13.692°N, 89.218°W · EN VIVO</div>
             </div>
-            <div class="hm-live" style="margin-left:auto"><span class="ldot"></span>EN VIVO</div>
-            <div style="font-size:.72rem;color:var(--text3);background:var(--bg3);padding:4px 10px;border-radius:100px;margin-left:8px" id="sgFreqLabel">Frecuencia media</div>
+            <div class="hm-live" style="margin-left:auto;flex-shrink:0"><span class="ldot"></span>EN VIVO</div>
+            <div style="font-size:.72rem;color:var(--text3);background:var(--bg3);padding:4px 10px;border-radius:100px;margin-left:8px;flex-shrink:0;white-space:nowrap" id="sgFreqLabel">Frecuencia media</div>
           </div>
           <div class="sg-wave-area">
             <div class="sg-depth-badge">PROFUNDIDAD: <strong id="sgDepth">36 KM</strong></div>
