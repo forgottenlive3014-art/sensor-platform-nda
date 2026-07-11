@@ -106,7 +106,7 @@ La guía completa de cómo conectar los cables, qué programa instalar y cómo s
 - IA: la API de Groq para el chatbot.
 - Servidor: pensado para correr con WAMP, XAMPP o Laragon (Apache + MySQL + PHP).
 
--- APIS Y LIBRERÍAS QUE USÉ
+-- APIS Y LIBRERÍAS QUE SE USARON
 
 - USGS Earthquake API: sismos recientes de la región
 - Open-Meteo API: temperatura, humedad, presión y viento
@@ -158,6 +158,3 @@ Corre una sola vez sql/migracion_completa.sql. Ese archivo solo agrega lo nuevo,
 
 Si te sale el error "Error al registrar una institución" o "Unknown column 'direccion'", es porque tu base de datos es de antes de que agregara los roles institucionales. Corre sql/migracion_completa.sql una vez, o si no te importa perder los datos de prueba, borra la base de datos y vuelve a importar sql/nda_project.sql desde cero.
 
--- SEGURIDAD
-
-Nunca subas el archivo .env a un repositorio público: ahí está la API key de Groq y el token del sensor. Si alguna vez una key quedó expuesta en el código o en un zip que compartiste, revócala y crea una nueva antes de usarla en serio.
