@@ -11,7 +11,7 @@ ob_start();
             <span class="kicker">QUIÉNES SOMOS</span>
             <h1>Preparar a El Salvador,<br><span class="grad">un hogar a la vez</span></h1>
             <p>NDA es una plataforma educativa que convierte la prevención de desastres
-               en algo claro, visual y al alcance de todos. Porque estar informado salva vidas.</p>
+               en algo claro, visual y al alcance de todos. Porque estar informado salva vidas y evita desastres.</p>
         </div>
 
         <div class="stats reveal">
