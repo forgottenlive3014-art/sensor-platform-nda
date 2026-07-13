@@ -119,7 +119,7 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
     ?>
     <?php if ($__canSeeSchoolLink): ?>
     <a href="?url=school" class="nav-school-link">
-      Gestión Escolar
+      <?= $__navUser['role'] === 'admin' ? 'Panel de Administración' : 'Gestión Escolar' ?>
     </a>
     <?php endif; ?>
     <a href="?url=resources">Recursos</a>

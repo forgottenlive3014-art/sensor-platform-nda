@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../models/TeacherModel.php';
 
-class TeacherController {
+class DocenteController {
 
     private function isSchoolAdmin() {
         $u = currentUser();

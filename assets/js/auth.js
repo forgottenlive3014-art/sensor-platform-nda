@@ -204,3 +204,42 @@ document.addEventListener('DOMContentLoaded', function() {
         createWave('wave-right', 'right');
     }
 });
+
+// Iniciar sesion / registrarse con Google. Si GOOGLE_CLIENT_ID no esta
+// configurado en .env, el boton avisa que todavia no esta disponible en
+// vez de intentar cargar el script de Google.
+(function() {
+    var btn = document.getElementById('googleSignInBtn');
+    if (!btn) return;
+    var clientId = btn.dataset.googleClientId || '';
+    btn.style.cursor = 'pointer';
+
+    function loadGoogleScript(cb) {
+        if (window.google && window.google.accounts && window.google.accounts.id) { cb(); return; }
+        var s = document.createElement('script');
+        s.src = 'https://accounts.google.com/gsi/client';
+        s.onload = cb;
+        s.onerror = function() {
+            if (typeof ndaAlert === 'function') ndaAlert('No se pudo cargar Google. Revisa tu conexión.', 'error');
+        };
+        document.head.appendChild(s);
+    }
+
+    btn.addEventListener('click', function() {
+        if (!clientId) {
+            if (typeof ndaAlert === 'function') ndaAlert('El inicio de sesión con Google todavía no está disponible.', 'info');
+            else alert('El inicio de sesión con Google todavía no está disponible.');
+            return;
+        }
+        loadGoogleScript(function() {
+            google.accounts.id.initialize({
+                client_id: clientId,
+                callback: function(response) {
+                    document.getElementById('googleCredential').value = response.credential;
+                    document.getElementById('googleLoginForm').submit();
+                }
+            });
+            google.accounts.id.prompt();
+        });
+    });
+})();

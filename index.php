@@ -149,6 +149,7 @@ $params = array_slice($parts, 2);
 $routeMap = [
     'home'       => ['MainController', 'home'],
     'login'      => ['AuthController', 'login'],
+    'google-login' => ['AuthController', 'googleLogin'],
     'register'   => ['AuthController', 'register'],
     'logout'     => ['AuthController', 'logout'],
     'profile'          => ['AuthController', 'profile'],
@@ -159,9 +160,9 @@ $routeMap = [
     'chat-api'   => ['ChatController', 'send'],
     'sensor/ingest' => ['SensorController', 'ingest'],
     'sensor/latest' => ['SensorController', 'latest'],
-    'notifications/latest' => ['NotificationController', 'latest'],
-    'notifications/mark-read' => ['NotificationController', 'markRead'],
-    'notifications/inbox' => ['NotificationController', 'inbox'],
+    'notifications/latest' => ['NotificacionController', 'latest'],
+    'notifications/mark-read' => ['NotificacionController', 'markRead'],
+    'notifications/inbox' => ['NotificacionController', 'inbox'],
     'earthquakes'=> ['MainController', 'earthquakes'],
     'sismos'      => ['MainController', 'sismos'],
     'monitoreo'   => ['MainController', 'monitoreo'],
@@ -174,25 +175,25 @@ $routeMap = [
     'school'                    => ['SchoolController', 'index'],
 
     // Alumnos (CRUD real)
-    'school/students'            => ['StudentController', 'list'],
-    'school/add-student'         => ['StudentController', 'create'],
-    'school/update-student'      => ['StudentController', 'update'],
-    'school/delete-student'      => ['StudentController', 'delete'],
-    'school/my-classroom'        => ['StudentController', 'myClassroom'],
+    'school/students'            => ['EstudianteController', 'list'],
+    'school/add-student'         => ['EstudianteController', 'create'],
+    'school/update-student'      => ['EstudianteController', 'update'],
+    'school/delete-student'      => ['EstudianteController', 'delete'],
+    'school/my-classroom'        => ['EstudianteController', 'myClassroom'],
 
     // Docentes (CRUD real)
-    'school/teachers'            => ['TeacherController', 'list'],
-    'school/add-teacher'         => ['TeacherController', 'create'],
-    'school/delete-teacher'      => ['TeacherController', 'delete'],
-    'school/update-teacher'      => ['TeacherController', 'update'],
-    'school/upload-teacher-photo'=> ['TeacherController', 'uploadPhoto'],
-    'school/assignable-teachers'=> ['TeacherController', 'assignable'],
+    'school/teachers'            => ['DocenteController', 'list'],
+    'school/add-teacher'         => ['DocenteController', 'create'],
+    'school/delete-teacher'      => ['DocenteController', 'delete'],
+    'school/update-teacher'      => ['DocenteController', 'update'],
+    'school/upload-teacher-photo'=> ['DocenteController', 'uploadPhoto'],
+    'school/assignable-teachers'=> ['DocenteController', 'assignable'],
 
     // Aulas (CRUD real)
-    'school/classrooms'          => ['ClassroomController', 'list'],
-    'school/add-classroom'       => ['ClassroomController', 'create'],
-    'school/delete-classroom'    => ['ClassroomController', 'delete'],
-    'school/update-classroom'    => ['ClassroomController', 'update'],
+    'school/classrooms'          => ['AulaController', 'list'],
+    'school/add-classroom'       => ['AulaController', 'create'],
+    'school/delete-classroom'    => ['AulaController', 'delete'],
+    'school/update-classroom'    => ['AulaController', 'update'],
 
     // Rutas
     'school/routes'             => ['SchoolController', 'getRoutes'],
@@ -201,9 +202,9 @@ $routeMap = [
     'school/delete-route'       => ['SchoolController', 'deleteRoute'],
 
     // Asistencia (CRUD real)
-    'school/attendance'           => ['AttendanceController', 'get'],
-    'school/save-attendance'      => ['AttendanceController', 'save'],
-    'school/my-attendance'        => ['AttendanceController', 'myAttendance'],
+    'school/attendance'           => ['AsistenciaController', 'get'],
+    'school/save-attendance'      => ['AsistenciaController', 'save'],
+    'school/my-attendance'        => ['AsistenciaController', 'myAttendance'],
 
     // Incidentes
     'school/incidents'          => ['SchoolController', 'getIncidents'],
@@ -213,19 +214,20 @@ $routeMap = [
     'school/delete-incident'    => ['SchoolController', 'deleteIncident'],
 
     // Simulacros (CRUD real)
-    'school/drills'               => ['DrillController', 'list'],
-    'school/add-drill'            => ['DrillController', 'create'],
-    'school/update-drill'         => ['DrillController', 'update'],
-    'school/delete-drill'         => ['DrillController', 'delete'],
+    'school/drills'               => ['SimulacroController', 'list'],
+    'school/add-drill'            => ['SimulacroController', 'create'],
+    'school/update-drill'         => ['SimulacroController', 'update'],
+    'school/delete-drill'         => ['SimulacroController', 'delete'],
 
     // Reportes
-    'school/reports'              => ['ReportController', 'get'],
+    'school/reports'              => ['ReporteController', 'get'],
 
     // Instituciones (CRUD real, solo Admin General)
-    'school/institutions'        => ['InstitutionController', 'list'],
-    'school/add-institution'     => ['InstitutionController', 'create'],
-    'school/update-institution'  => ['InstitutionController', 'update'],
-    'school/delete-institution'  => ['InstitutionController', 'delete'],
+    'school/institutions'        => ['InstitucionController', 'list'],
+    'school/add-institution'     => ['InstitucionController', 'create'],
+    'school/update-institution'  => ['InstitucionController', 'update'],
+    'school/delete-institution'  => ['InstitucionController', 'delete'],
+    'school/institution-stats'   => ['InstitucionController', 'stats'],
 
     // Usuarios y roles (CRUD real, Admin General y Admin Institucional)
     'school/users'         => ['UserController', 'list'],
@@ -234,27 +236,27 @@ $routeMap = [
     'school/delete-user'   => ['UserController', 'delete'],
 
     // Noticias internas (CRUD real)
-    'school/news'          => ['NewsController', 'list'],
-    'school/add-news'      => ['NewsController', 'create'],
-    'school/update-news'   => ['NewsController', 'update'],
-    'school/delete-news'   => ['NewsController', 'delete'],
+    'school/news'          => ['NoticiaController', 'list'],
+    'school/add-news'      => ['NoticiaController', 'create'],
+    'school/update-news'   => ['NoticiaController', 'update'],
+    'school/delete-news'   => ['NoticiaController', 'delete'],
 
     // Padres (CRUD real + vínculo con hijos)
-    'school/parents'              => ['ParentController', 'list'],
-    'school/add-parent'           => ['ParentController', 'create'],
-    'school/update-parent'        => ['ParentController', 'update'],
-    'school/delete-parent'        => ['ParentController', 'delete'],
-    'school/link-child'           => ['ParentController', 'linkChild'],
-    'school/unlink-child'         => ['ParentController', 'unlinkChild'],
-    'school/parent-children-links'=> ['ParentController', 'myChildrenLinks'],
-    'school/my-children'          => ['ParentController', 'myChildren'],
-    'school/my-children-status'   => ['ParentController', 'myChildrenDrillStatus'],
+    'school/parents'              => ['PadreController', 'list'],
+    'school/add-parent'           => ['PadreController', 'create'],
+    'school/update-parent'        => ['PadreController', 'update'],
+    'school/delete-parent'        => ['PadreController', 'delete'],
+    'school/link-child'           => ['PadreController', 'linkChild'],
+    'school/unlink-child'         => ['PadreController', 'unlinkChild'],
+    'school/parent-children-links'=> ['PadreController', 'myChildrenLinks'],
+    'school/my-children'          => ['PadreController', 'myChildren'],
+    'school/my-children-status'   => ['PadreController', 'myChildrenDrillStatus'],
 
     // Personal administrativo (CRUD real)
-    'school/staff'          => ['StaffController', 'list'],
-    'school/add-staff'      => ['StaffController', 'create'],
-    'school/update-staff'   => ['StaffController', 'update'],
-    'school/delete-staff'   => ['StaffController', 'delete'],
+    'school/staff'          => ['PersonalController', 'list'],
+    'school/add-staff'      => ['PersonalController', 'create'],
+    'school/update-staff'   => ['PersonalController', 'update'],
+    'school/delete-staff'   => ['PersonalController', 'delete'],
 
     // Blog de lugares en riesgo (Docente/Alumno/Personal/Director/Admin)
     'school/blog'          => ['BlogController', 'list'],
@@ -262,9 +264,9 @@ $routeMap = [
     'school/delete-blog'   => ['BlogController', 'delete'],
 
     // Notificaciones (gestión: Admin Institucional / Admin General)
-    'school/notifications'        => ['NotificationController', 'manageList'],
-    'school/send-notification'    => ['NotificationController', 'send'],
-    'school/delete-notification'  => ['NotificationController', 'delete'],
+    'school/notifications'        => ['NotificacionController', 'manageList'],
+    'school/send-notification'    => ['NotificacionController', 'send'],
+    'school/delete-notification'  => ['NotificacionController', 'delete'],
 
     // Solicitudes de ingreso (aprobacion del director)
     'school/join-requests'      => ['SchoolController', 'getJoinRequests'],
@@ -272,8 +274,8 @@ $routeMap = [
     'school/reject-request'     => ['SchoolController', 'rejectJoinRequest'],
 
     // Secciones (18 aulas de bachillerato) — CRUD real
-    'school/sections'            => ['SectionController', 'list'],
-    'school/assign-teacher'      => ['SectionController', 'assignTeacher'],
+    'school/sections'            => ['SeccionController', 'list'],
+    'school/assign-teacher'      => ['SeccionController', 'assignTeacher'],
 
     // Croquis interactivo
     'school/croquis'            => ['SchoolController', 'getCroquis'],
@@ -288,9 +290,27 @@ $routeMap = [
     'school/board-delete'       => ['SchoolController', 'deleteBoardNote'],
 
     // Alerta de simulacro en vivo
-    'school/activate-alert'      => ['DrillController', 'activate'],
-    'school/finish-alert'        => ['DrillController', 'finish'],
-    'school/active-alert'        => ['DrillController', 'activeAlert'],
+    'school/activate-alert'      => ['SimulacroController', 'activate'],
+    'school/finish-alert'        => ['SimulacroController', 'finish'],
+    'school/active-alert'        => ['SimulacroController', 'activeAlert'],
+
+    // CMS del Admin General: blog público (artículos y noticias)
+    'admin/articulos'        => ['ArticuloController', 'list'],
+    'admin/add-articulo'     => ['ArticuloController', 'create'],
+    'admin/update-articulo'  => ['ArticuloController', 'update'],
+    'admin/delete-articulo'  => ['ArticuloController', 'delete'],
+
+    // CMS del Admin General: recursos PDF descargables
+    'admin/recursos'        => ['RecursoController', 'list'],
+    'admin/add-recurso'     => ['RecursoController', 'create'],
+    'admin/update-recurso'  => ['RecursoController', 'update'],
+    'admin/delete-recurso'  => ['RecursoController', 'delete'],
+
+    // CMS del Admin General: contenido de "Qué hacer ahora" y "Acerca de NDA"
+    'admin/get-quehacer-content'   => ['ContenidoController', 'getQuehacer'],
+    'admin/save-quehacer-content'  => ['ContenidoController', 'saveQuehacer'],
+    'admin/get-acercade-content'   => ['ContenidoController', 'getAcercade'],
+    'admin/save-acercade-content'  => ['ContenidoController', 'saveAcercade'],
 ];
 
 // El routeMap indexa por la ruta COMPLETA (ej. 'school/add-student'), no solo por el primer segmento.

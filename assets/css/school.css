@@ -540,6 +540,24 @@
 }
 
 /* ─── FORM ─── */
+.school-content-group {
+    margin-bottom: 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 4px 16px;
+    background: var(--card2);
+}
+.school-content-group summary {
+    cursor: pointer;
+    font-weight: 700;
+    padding: 10px 0;
+    color: var(--text1);
+}
+.school-content-group[open] summary {
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 10px;
+}
+
 .school-form-group {
     margin-bottom: 16px;
 }

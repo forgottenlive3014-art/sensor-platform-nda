@@ -1,5 +1,26 @@
 <?php
 $title = $title ?? 'Recursos - NDA';
+
+require_once __DIR__ . '/../models/RecursoModel.php';
+$RECURSOS = (new RecursoModel())->getAllForPublic();
+
+$catColors = [
+    'evacuacion' => ['#f97316', 'rgba(249, 115, 22, 0.15)'],
+    'mochila'    => ['#00d4b0', 'rgba(0, 212, 176, 0.15)'],
+    'plan'       => ['#2d8fff', 'rgba(45, 143, 255, 0.15)'],
+    'sismo'      => ['#f97316', 'rgba(249, 115, 22, 0.15)'],
+    'lluvias'    => ['#2d8fff', 'rgba(45, 143, 255, 0.15)'],
+];
+$catLabels = [
+    'evacuacion' => 'Evacuación', 'mochila' => 'Mochila', 'plan' => 'Plan Familiar',
+    'sismo' => 'Sismos', 'lluvias' => 'Lluvias',
+];
+function formatResourceSize($bytes) {
+    if (!$bytes || $bytes <= 0) return '';
+    $mb = $bytes / (1024 * 1024);
+    return $mb >= 1 ? number_format($mb, 1) . ' MB' : number_format($bytes / 1024, 0) . ' KB';
+}
+
 ob_start();
 ?>
 
@@ -26,271 +47,49 @@ ob_start();
 
         <div class="resources-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px;">
 
-            <div class="resource-card" data-category="evacuacion" style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: transform 0.2s, box-shadow 0.2s;">
+            <?php foreach ($RECURSOS as $r):
+                $cat = $r['categoria'];
+                $accent = $catColors[$cat][0] ?? '#f97316';
+                $accentBg = $catColors[$cat][1] ?? 'rgba(249, 115, 22, 0.15)';
+                $tagList = array_filter(array_map('trim', explode(',', $r['tags'] ?? '')));
+                if (empty($tagList)) { $tagList = [$catLabels[$cat] ?? ucfirst($cat)]; }
+                $sizeLabel = formatResourceSize($r['tamano_bytes']);
+            ?>
+            <div class="resource-card" data-category="<?= htmlspecialchars($cat) ?>" style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: transform 0.2s, box-shadow 0.2s;">
                 <div style="display: flex; gap: 14px; margin-bottom: 14px;">
-                    <div class="res-thumb" data-pdf="assets/media/guias/Evacuacion escolar.pdf" style="width:120px;height:164px;flex-shrink:0;border-radius:8px;overflow:hidden;background:rgba(249,115,22,0.15);display:flex;align-items:center;justify-content:center;color:#f97316;position:relative;border:1px solid rgba(255,255,255,.08);box-shadow:0 4px 14px rgba(0,0,0,.35);transition:transform .25s ease, box-shadow .25s ease;">
+                    <div class="res-thumb" data-pdf="<?= htmlspecialchars($r['archivo']) ?>" style="width:120px;height:164px;flex-shrink:0;border-radius:8px;overflow:hidden;background:<?= $accentBg ?>;display:flex;align-items:center;justify-content:center;color:<?= $accent ?>;position:relative;border:1px solid rgba(255,255,255,.08);box-shadow:0 4px 14px rgba(0,0,0,.35);transition:transform .25s ease, box-shadow .25s ease;">
                         <svg class="res-thumb-fallback" width="1.3em" height="1.3em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
                     </div>
                     <div style="min-width:0;height:164px;overflow:hidden;">
                         <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:nowrap;">
-                            <h3 style="font-size: 1rem; font-weight: 700; color: var(--text1); margin: 0; min-width: 0; flex: 1 1 auto; min-height: 3.6em; line-height: 1.2;">Evacuación Escolar</h3>
-                            <span style="font-size: 0.75rem; color: var(--text3); white-space:nowrap; flex-shrink: 0;">PDF · 1.8 MB</span>
+                            <h3 style="font-size: 1rem; font-weight: 700; color: var(--text1); margin: 0; min-width: 0; flex: 1 1 auto; min-height: 3.6em; line-height: 1.2;"><?= htmlspecialchars($r['titulo']) ?></h3>
+                            <span style="font-size: 0.75rem; color: var(--text3); white-space:nowrap; flex-shrink: 0;">PDF<?= $sizeLabel ? ' · ' . $sizeLabel : '' ?></span>
                         </div>
                         <p style="font-size: 0.85rem; color: var(--text2); margin: 6px 0 0; line-height: 1.5; height: 4.5em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
-                            Guía completa para la evacuación en instituciones educativas. Incluye protocolos y rutas seguras.
+                            <?= htmlspecialchars($r['descripcion'] ?? '') ?>
                         </p>
                         <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
-                            <span style="background: rgba(249, 115, 22, 0.15); color: #f97316; font-size: 0.7rem; padding: 3px 10px; border-radius: 100px;">Evacuación</span>
-                            <span style="background: rgba(0, 212, 176, 0.15); color: #00d4b0; font-size: 0.7rem; padding: 3px 10px; border-radius: 100px;">Escolar</span>
+                            <?php foreach (array_slice($tagList, 0, 2) as $i => $tag): ?>
+                                <span style="background: <?= $i === 0 ? $accentBg : 'rgba(0, 212, 176, 0.15)' ?>; color: <?= $i === 0 ? $accent : '#00d4b0' ?>; font-size: 0.7rem; padding: 3px 10px; border-radius: 100px;"><?= htmlspecialchars($tag) ?></span>
+                            <?php endforeach; ?>
                         </div>
                     </div>
                 </div>
                 <div style="display: flex; gap: 8px;">
-                    <a href="assets/media/guias/Evacuacion escolar.pdf" target="_blank" onclick="return openPdfPreview(this.href,'Evacuación Escolar')" style="flex: 1; background: linear-gradient(135deg, #f97316, #ea6c0a); color: #fff; border: none; border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-align: center; text-decoration: none; cursor: pointer; transition: opacity 0.2s;">
+                    <a href="<?= htmlspecialchars($r['archivo']) ?>" target="_blank" onclick="return openPdfPreview(this.href,'<?= htmlspecialchars(addslashes($r['titulo'])) ?>')" style="flex: 1; background: linear-gradient(135deg, #f97316, #ea6c0a); color: #fff; border: none; border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-align: center; text-decoration: none; cursor: pointer; transition: opacity 0.2s;">
                         <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Previsualizar
                     </a>
-                    <a href="assets/media/guias/Evacuacion escolar.pdf" download style="background: var(--card2); color: var(--text1); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-decoration: none; cursor: pointer; transition: background 0.2s;">
+                    <a href="<?= htmlspecialchars($r['archivo']) ?>" download style="background: var(--card2); color: var(--text1); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-decoration: none; cursor: pointer; transition: background 0.2s;">
                         <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
                     </a>
                 </div>
             </div>
-
-            <div class="resource-card" data-category="evacuacion" style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: transform 0.2s, box-shadow 0.2s;">
-                <div style="display: flex; gap: 14px; margin-bottom: 14px;">
-                    <div class="res-thumb" data-pdf="assets/media/guias/Evacuacion escolarnCartilla-Guia-de-evacuacion-Escolar-1.pdf" style="width:120px;height:164px;flex-shrink:0;border-radius:8px;overflow:hidden;background:rgba(249,115,22,0.15);display:flex;align-items:center;justify-content:center;color:#f97316;position:relative;border:1px solid rgba(255,255,255,.08);box-shadow:0 4px 14px rgba(0,0,0,.35);transition:transform .25s ease, box-shadow .25s ease;">
-                        <svg class="res-thumb-fallback" width="1.3em" height="1.3em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
-                    </div>
-                    <div style="min-width:0;height:164px;overflow:hidden;">
-                        <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:nowrap;">
-                            <h3 style="font-size: 1rem; font-weight: 700; color: var(--text1); margin: 0; min-width: 0; flex: 1 1 auto; min-height: 3.6em; line-height: 1.2;">Cartilla Evacuación Escolar</h3>
-                            <span style="font-size: 0.75rem; color: var(--text3); white-space:nowrap; flex-shrink: 0;">PDF · 2.1 MB</span>
-                        </div>
-                        <p style="font-size: 0.85rem; color: var(--text2); margin: 6px 0 0; line-height: 1.5; height: 4.5em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
-                            Cartilla ilustrada con pasos a seguir durante una evacuación escolar. Material educativo para niños y docentes.
-                        </p>
-                        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
-                            <span style="background: rgba(249, 115, 22, 0.15); color: #f97316; font-size: 0.7rem; padding: 3px 10px; border-radius: 100px;">Evacuación</span>
-                            <span style="background: rgba(0, 212, 176, 0.15); color: #00d4b0; font-size: 0.7rem; padding: 3px 10px; border-radius: 100px;">Cartilla</span>
-                        </div>
-                    </div>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                    <a href="assets/media/guias/Evacuacion escolarnCartilla-Guia-de-evacuacion-Escolar-1.pdf" target="_blank" onclick="return openPdfPreview(this.href,'Cartilla Evacuación Escolar')" style="flex: 1; background: linear-gradient(135deg, #f97316, #ea6c0a); color: #fff; border: none; border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-align: center; text-decoration: none; cursor: pointer; transition: opacity 0.2s;">
-                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Previsualizar
-                    </a>
-                    <a href="assets/media/guias/Evacuacion escolarnCartilla-Guia-de-evacuacion-Escolar-1.pdf" download style="background: var(--card2); color: var(--text1); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-decoration: none; cursor: pointer; transition: background 0.2s;">
-                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
-                    </a>
-                </div>
-            </div>
-
-            <div class="resource-card" data-category="mochila" style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: transform 0.2s, box-shadow 0.2s;">
-                <div style="display: flex; gap: 14px; margin-bottom: 14px;">
-                    <div class="res-thumb" data-pdf="assets/media/guias/Mochila emergencia.pdf" style="width:120px;height:164px;flex-shrink:0;border-radius:8px;overflow:hidden;background:rgba(249,115,22,0.15);display:flex;align-items:center;justify-content:center;color:#f97316;position:relative;border:1px solid rgba(255,255,255,.08);box-shadow:0 4px 14px rgba(0,0,0,.35);transition:transform .25s ease, box-shadow .25s ease;">
-                        <svg class="res-thumb-fallback" width="1.3em" height="1.3em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
-                    </div>
-                    <div style="min-width:0;height:164px;overflow:hidden;">
-                        <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:nowrap;">
-                            <h3 style="font-size: 1rem; font-weight: 700; color: var(--text1); margin: 0; min-width: 0; flex: 1 1 auto; min-height: 3.6em; line-height: 1.2;">Mochila de Emergencia</h3>
-                            <span style="font-size: 0.75rem; color: var(--text3); white-space:nowrap; flex-shrink: 0;">PDF · 1.2 MB</span>
-                        </div>
-                        <p style="font-size: 0.85rem; color: var(--text2); margin: 6px 0 0; line-height: 1.5; height: 4.5em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
-                            Lista completa de suministros esenciales para tu mochila de emergencia. Agua, alimentos, herramientas y más.
-                        </p>
-                        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
-                            <span style="background: rgba(0, 212, 176, 0.15); color: #00d4b0; font-size: 0.7rem; padding: 3px 10px; border-radius: 100px;">Mochila</span>
-                            <span style="background: rgba(249, 115, 22, 0.15); color: #f97316; font-size: 0.7rem; padding: 3px 10px; border-radius: 100px;">Emergencia</span>
-                        </div>
-                    </div>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                    <a href="assets/media/guias/Mochila emergencia.pdf" target="_blank" onclick="return openPdfPreview(this.href,'Mochila de Emergencia')" style="flex: 1; background: linear-gradient(135deg, #f97316, #ea6c0a); color: #fff; border: none; border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-align: center; text-decoration: none; cursor: pointer; transition: opacity 0.2s;">
-                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Previsualizar
-                    </a>
-                    <a href="assets/media/guias/Mochila emergencia.pdf" download style="background: var(--card2); color: var(--text1); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-decoration: none; cursor: pointer; transition: background 0.2s;">
-                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
-                    </a>
-                </div>
-            </div>
-
-            <div class="resource-card" data-category="mochila" style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: transform 0.2s, box-shadow 0.2s;">
-                <div style="display: flex; gap: 14px; margin-bottom: 14px;">
-                    <div class="res-thumb" data-pdf="assets/media/guias/Mochila emergencia2.pdf" style="width:120px;height:164px;flex-shrink:0;border-radius:8px;overflow:hidden;background:rgba(249,115,22,0.15);display:flex;align-items:center;justify-content:center;color:#f97316;position:relative;border:1px solid rgba(255,255,255,.08);box-shadow:0 4px 14px rgba(0,0,0,.35);transition:transform .25s ease, box-shadow .25s ease;">
-                        <svg class="res-thumb-fallback" width="1.3em" height="1.3em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
-                    </div>
-                    <div style="min-width:0;height:164px;overflow:hidden;">
-                        <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:nowrap;">
-                            <h3 style="font-size: 1rem; font-weight: 700; color: var(--text1); margin: 0; min-width: 0; flex: 1 1 auto; min-height: 3.6em; line-height: 1.2;">Kit de Emergencia</h3>
-                            <span style="font-size: 0.75rem; color: var(--text3); white-space:nowrap; flex-shrink: 0;">PDF · 1.0 MB</span>
-                        </div>
-                        <p style="font-size: 0.85rem; color: var(--text2); margin: 6px 0 0; line-height: 1.5; height: 4.5em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
-                            Versión resumida del kit de emergencia con los elementos más importantes para sobrevivir 72 horas.
-                        </p>
-                        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
-                            <span style="background: rgba(0, 212, 176, 0.15); color: #00d4b0; font-size: 0.7rem; padding: 3px 10px; border-radius: 100px;">Kit</span>
-                            <span style="background: rgba(249, 115, 22, 0.15); color: #f97316; font-size: 0.7rem; padding: 3px 10px; border-radius: 100px;">72 horas</span>
-                        </div>
-                    </div>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                    <a href="assets/media/guias/Mochila emergencia2.pdf" target="_blank" onclick="return openPdfPreview(this.href,'Kit de Emergencia')" style="flex: 1; background: linear-gradient(135deg, #f97316, #ea6c0a); color: #fff; border: none; border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-align: center; text-decoration: none; cursor: pointer; transition: opacity 0.2s;">
-                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Previsualizar
-                    </a>
-                    <a href="assets/media/guias/Mochila emergencia2.pdf" download style="background: var(--card2); color: var(--text1); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-decoration: none; cursor: pointer; transition: background 0.2s;">
-                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
-                    </a>
-                </div>
-            </div>
-
-            <div class="resource-card" data-category="plan" style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: transform 0.2s, box-shadow 0.2s;">
-                <div style="display: flex; gap: 14px; margin-bottom: 14px;">
-                    <div class="res-thumb" data-pdf="assets/media/guias/Plan familiar.pdf" style="width:120px;height:164px;flex-shrink:0;border-radius:8px;overflow:hidden;background:rgba(249,115,22,0.15);display:flex;align-items:center;justify-content:center;color:#f97316;position:relative;border:1px solid rgba(255,255,255,.08);box-shadow:0 4px 14px rgba(0,0,0,.35);transition:transform .25s ease, box-shadow .25s ease;">
-                        <svg class="res-thumb-fallback" width="1.3em" height="1.3em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
-                    </div>
-                    <div style="min-width:0;height:164px;overflow:hidden;">
-                        <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:nowrap;">
-                            <h3 style="font-size: 1rem; font-weight: 700; color: var(--text1); margin: 0; min-width: 0; flex: 1 1 auto; min-height: 3.6em; line-height: 1.2;">Plan Familiar de Emergencia</h3>
-                            <span style="font-size: 0.75rem; color: var(--text3); white-space:nowrap; flex-shrink: 0;">PDF · 1.5 MB</span>
-                        </div>
-                        <p style="font-size: 0.85rem; color: var(--text2); margin: 6px 0 0; line-height: 1.5; height: 4.5em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
-                            Guía para crear un plan familiar ante desastres. Incluye roles, puntos de reunión y comunicación.
-                        </p>
-                        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
-                            <span style="background: rgba(45, 143, 255, 0.15); color: #2d8fff; font-size: 0.7rem; padding: 3px 10px; border-radius: 100px;">Plan Familiar</span>
-                            <span style="background: rgba(249, 115, 22, 0.15); color: #f97316; font-size: 0.7rem; padding: 3px 10px; border-radius: 100px;">Emergencia</span>
-                        </div>
-                    </div>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                    <a href="assets/media/guias/Plan familiar.pdf" target="_blank" onclick="return openPdfPreview(this.href,'Plan Familiar de Emergencia')" style="flex: 1; background: linear-gradient(135deg, #f97316, #ea6c0a); color: #fff; border: none; border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-align: center; text-decoration: none; cursor: pointer; transition: opacity 0.2s;">
-                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Previsualizar
-                    </a>
-                    <a href="assets/media/guias/Plan familiar.pdf" download style="background: var(--card2); color: var(--text1); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-decoration: none; cursor: pointer; transition: background 0.2s;">
-                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
-                    </a>
-                </div>
-            </div>
-
-            <div class="resource-card" data-category="plan" style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: transform 0.2s, box-shadow 0.2s;">
-                <div style="display: flex; gap: 14px; margin-bottom: 14px;">
-                    <div class="res-thumb" data-pdf="assets/media/guias/plan familiar(1).pdf" style="width:120px;height:164px;flex-shrink:0;border-radius:8px;overflow:hidden;background:rgba(249,115,22,0.15);display:flex;align-items:center;justify-content:center;color:#f97316;position:relative;border:1px solid rgba(255,255,255,.08);box-shadow:0 4px 14px rgba(0,0,0,.35);transition:transform .25s ease, box-shadow .25s ease;">
-                        <svg class="res-thumb-fallback" width="1.3em" height="1.3em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
-                    </div>
-                    <div style="min-width:0;height:164px;overflow:hidden;">
-                        <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:nowrap;">
-                            <h3 style="font-size: 1rem; font-weight: 700; color: var(--text1); margin: 0; min-width: 0; flex: 1 1 auto; min-height: 3.6em; line-height: 1.2;">Plan Familiar - Versión 2</h3>
-                            <span style="font-size: 0.75rem; color: var(--text3); white-space:nowrap; flex-shrink: 0;">PDF · 1.3 MB</span>
-                        </div>
-                        <p style="font-size: 0.85rem; color: var(--text2); margin: 6px 0 0; line-height: 1.5; height: 4.5em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
-                            Complemento del plan familiar con checklist, contactos de emergencia y mapa de riesgos locales.
-                        </p>
-                        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
-                            <span style="background: rgba(45, 143, 255, 0.15); color: #2d8fff; font-size: 0.7rem; padding: 3px 10px; border-radius: 100px;">Plan Familiar</span>
-                            <span style="background: rgba(0, 212, 176, 0.15); color: #00d4b0; font-size: 0.7rem; padding: 3px 10px; border-radius: 100px;">Checklist</span>
-                        </div>
-                    </div>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                    <a href="assets/media/guias/plan familiar(1).pdf" target="_blank" onclick="return openPdfPreview(this.href,'Plan Familiar - Versión 2')" style="flex: 1; background: linear-gradient(135deg, #f97316, #ea6c0a); color: #fff; border: none; border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-align: center; text-decoration: none; cursor: pointer; transition: opacity 0.2s;">
-                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Previsualizar
-                    </a>
-                    <a href="assets/media/guias/plan familiar(1).pdf" download style="background: var(--card2); color: var(--text1); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-decoration: none; cursor: pointer; transition: background 0.2s;">
-                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
-                    </a>
-                </div>
-            </div>
-
-            <div class="resource-card" data-category="sismo" style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: transform 0.2s, box-shadow 0.2s;">
-                <div style="display: flex; gap: 14px; margin-bottom: 14px;">
-                    <div class="res-thumb" data-pdf="assets/media/guias/Preparacion ante sismos.pdf" style="width:120px;height:164px;flex-shrink:0;border-radius:8px;overflow:hidden;background:rgba(249,115,22,0.15);display:flex;align-items:center;justify-content:center;color:#f97316;position:relative;border:1px solid rgba(255,255,255,.08);box-shadow:0 4px 14px rgba(0,0,0,.35);transition:transform .25s ease, box-shadow .25s ease;">
-                        <svg class="res-thumb-fallback" width="1.3em" height="1.3em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
-                    </div>
-                    <div style="min-width:0;height:164px;overflow:hidden;">
-                        <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:nowrap;">
-                            <h3 style="font-size: 1rem; font-weight: 700; color: var(--text1); margin: 0; min-width: 0; flex: 1 1 auto; min-height: 3.6em; line-height: 1.2;">Preparación ante Sismos</h3>
-                            <span style="font-size: 0.75rem; color: var(--text3); white-space:nowrap; flex-shrink: 0;">PDF · 2.2 MB</span>
-                        </div>
-                        <p style="font-size: 0.85rem; color: var(--text2); margin: 6px 0 0; line-height: 1.5; height: 4.5em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
-                            Guía completa sobre cómo prepararse, actuar y recuperarse después de un sismo. Información del MARN y Cruz Roja.
-                        </p>
-                        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
-                            <span style="background: rgba(249, 115, 22, 0.15); color: #f97316; font-size: 0.7rem; padding: 3px 10px; border-radius: 100px;">Sismos</span>
-                            <span style="background: rgba(239, 68, 68, 0.15); color: #ef4444; font-size: 0.7rem; padding: 3px 10px; border-radius: 100px;">Prevención</span>
-                        </div>
-                    </div>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                    <a href="assets/media/guias/Preparacion ante sismos.pdf" target="_blank" onclick="return openPdfPreview(this.href,'Preparación ante Sismos')" style="flex: 1; background: linear-gradient(135deg, #f97316, #ea6c0a); color: #fff; border: none; border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-align: center; text-decoration: none; cursor: pointer; transition: opacity 0.2s;">
-                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Previsualizar
-                    </a>
-                    <a href="assets/media/guias/Preparacion ante sismos.pdf" download style="background: var(--card2); color: var(--text1); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-decoration: none; cursor: pointer; transition: background 0.2s;">
-                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
-                    </a>
-                </div>
-            </div>
-
-            <div class="resource-card" data-category="lluvias" style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: transform 0.2s, box-shadow 0.2s;">
-                <div style="display: flex; gap: 14px; margin-bottom: 14px;">
-                    <div class="res-thumb" data-pdf="assets/media/guias/Protocolo lluvias.pdf" style="width:120px;height:164px;flex-shrink:0;border-radius:8px;overflow:hidden;background:rgba(249,115,22,0.15);display:flex;align-items:center;justify-content:center;color:#f97316;position:relative;border:1px solid rgba(255,255,255,.08);box-shadow:0 4px 14px rgba(0,0,0,.35);transition:transform .25s ease, box-shadow .25s ease;">
-                        <svg class="res-thumb-fallback" width="1.3em" height="1.3em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
-                    </div>
-                    <div style="min-width:0;height:164px;overflow:hidden;">
-                        <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:nowrap;">
-                            <h3 style="font-size: 1rem; font-weight: 700; color: var(--text1); margin: 0; min-width: 0; flex: 1 1 auto; min-height: 3.6em; line-height: 1.2;">Protocolo Lluvias</h3>
-                            <span style="font-size: 0.75rem; color: var(--text3); white-space:nowrap; flex-shrink: 0;">PDF · 1.6 MB</span>
-                        </div>
-                        <p style="font-size: 0.85rem; color: var(--text2); margin: 6px 0 0; line-height: 1.5; height: 4.5em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
-                            Protocolo de actuación ante lluvias intensas e inundaciones. Medidas de prevención y protección.
-                        </p>
-                        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
-                            <span style="background: rgba(45, 143, 255, 0.15); color: #2d8fff; font-size: 0.7rem; padding: 3px 10px; border-radius: 100px;">Lluvias</span>
-                            <span style="background: rgba(0, 212, 176, 0.15); color: #00d4b0; font-size: 0.7rem; padding: 3px 10px; border-radius: 100px;">Inundaciones</span>
-                        </div>
-                    </div>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                    <a href="assets/media/guias/Protocolo lluvias.pdf" target="_blank" onclick="return openPdfPreview(this.href,'Protocolo Lluvias')" style="flex: 1; background: linear-gradient(135deg, #f97316, #ea6c0a); color: #fff; border: none; border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-align: center; text-decoration: none; cursor: pointer; transition: opacity 0.2s;">
-                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Previsualizar
-                    </a>
-                    <a href="assets/media/guias/Protocolo lluvias.pdf" download style="background: var(--card2); color: var(--text1); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-decoration: none; cursor: pointer; transition: background 0.2s;">
-                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
-                    </a>
-                </div>
-            </div>
-
-            <div class="resource-card" data-category="lluvias" style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; transition: transform 0.2s, box-shadow 0.2s;">
-                <div style="display: flex; gap: 14px; margin-bottom: 14px;">
-                    <div class="res-thumb" data-pdf="assets/media/guias/Protocolo lluvias2.pdf" style="width:120px;height:164px;flex-shrink:0;border-radius:8px;overflow:hidden;background:rgba(249,115,22,0.15);display:flex;align-items:center;justify-content:center;color:#f97316;position:relative;border:1px solid rgba(255,255,255,.08);box-shadow:0 4px 14px rgba(0,0,0,.35);transition:transform .25s ease, box-shadow .25s ease;">
-                        <svg class="res-thumb-fallback" width="1.3em" height="1.3em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
-                    </div>
-                    <div style="min-width:0;height:164px;overflow:hidden;">
-                        <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:nowrap;">
-                            <h3 style="font-size: 1rem; font-weight: 700; color: var(--text1); margin: 0; min-width: 0; flex: 1 1 auto; min-height: 3.6em; line-height: 1.2;">Protocolo Lluvias - V.2</h3>
-                            <span style="font-size: 0.75rem; color: var(--text3); white-space:nowrap; flex-shrink: 0;">PDF · 1.4 MB</span>
-                        </div>
-                        <p style="font-size: 0.85rem; color: var(--text2); margin: 6px 0 0; line-height: 1.5; height: 4.5em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
-                            Actualización del protocolo con nuevas medidas y recomendaciones para temporada de lluvias en El Salvador.
-                        </p>
-                        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
-                            <span style="background: rgba(45, 143, 255, 0.15); color: #2d8fff; font-size: 0.7rem; padding: 3px 10px; border-radius: 100px;">Lluvias</span>
-                            <span style="background: rgba(249, 115, 22, 0.15); color: #f97316; font-size: 0.7rem; padding: 3px 10px; border-radius: 100px;">Actualización</span>
-                        </div>
-                    </div>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                    <a href="assets/media/guias/Protocolo lluvias2.pdf" target="_blank" onclick="return openPdfPreview(this.href,'Protocolo Lluvias - V.2')" style="flex: 1; background: linear-gradient(135deg, #f97316, #ea6c0a); color: #fff; border: none; border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-align: center; text-decoration: none; cursor: pointer; transition: opacity 0.2s;">
-                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Previsualizar
-                    </a>
-                    <a href="assets/media/guias/Protocolo lluvias2.pdf" download style="background: var(--card2); color: var(--text1); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-decoration: none; cursor: pointer; transition: background 0.2s;">
-                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
-                    </a>
-                </div>
-            </div>
+            <?php endforeach; ?>
 
         </div>
 
         <div style="text-align: center; margin-top: 30px; color: var(--text3); font-size: 0.85rem;">
-            <span id="resourceCount">9</span> recursos educativos disponibles
+            <span id="resourceCount"><?= count($RECURSOS) ?></span> recursos educativos disponibles
         </div>
 
     </div>

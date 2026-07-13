@@ -273,13 +273,14 @@ FOREIGN KEY (autor_id) REFERENCES usuarios(usuarios_id) ON DELETE CASCADE
 );
 
 -- DATOS DE PRUEBA --
--- Usuarios
+-- Superadmin unico. El admin NO se registra desde el formulario publico (el
+-- rol 'admin' no esta en la lista de roles institucionales que acepta
+-- AuthController::processRegister): esta cuenta se crea solo aqui, a mano.
+-- Cambia el correo y la contraseña antes de usarlo en serio -- esta
+-- contraseña de ejemplo cumple los requisitos minimos (8+ caracteres,
+-- mayuscula, minuscula, numero y simbolo) pero es publica en este repo.
 INSERT INTO usuarios (nombre, email, contra, role) VALUES
-('Super Administrador', 'admin@nda.com', SHA2('Admin123!', 256), 'admin'),
-('Usuario Prueba', 'test@nda.com', SHA2('123456', 256), 'user'),
-('Carlos Pérez', 'carlos@mail.com', SHA2('123456', 256), 'user'),
-('María García', 'maria@mail.com', SHA2('123456', 256), 'user'),
-('José López', 'jose@mail.com', SHA2('123456', 256), 'user');
+('Super Administrador', 'admin@nda.com', SHA2('CambiaEsto2026!', 256), 'admin');
 
 -- Instituciones
 INSERT INTO instituciones (nombre, correo, telefono, logo) VALUES

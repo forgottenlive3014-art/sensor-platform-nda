@@ -5,8 +5,16 @@
 $title = $title ?? 'Blog - NDA';
 
 // ============================================================
-// ARTÍCULOS DE PREVENCIÓN
+// CONFIGURACIÓN DEL BLOG (contenido gestionado por el Admin General
+// desde el panel de Gestión Escolar > Blog público)
 // ============================================================
+
+require_once __DIR__ . '/../models/ArticuloModel.php';
+$ARTÍCULOS = (new ArticuloModel())->getAllForPublic();
+
+/* Contenido de respaldo, usado solo si la tabla `blog` está vacía
+   (por ejemplo, antes de correr seed_admin_cms.php). */
+if (empty($ARTÍCULOS)) {
 
 $b_72 = <<<HTML
 <p class="art-lead">Las primeras 72 horas tras un desastre son las más críticas: es el tiempo que puede pasar antes de que la ayuda externa llegue a tu zona. Prepararte para ese lapso no requiere dinero ni equipo especial, solo organización. Aquí tienes el plan completo.</p>
@@ -183,10 +191,6 @@ $n_2026_enero = <<<HTML
 <div class="art-takeaway"><h4>Fuente</h4><ul><li><strong>Autor:</strong> Redacción El Diario de Hoy</li><li><strong>Fecha:</strong> 10 de enero de 2026</li><li><strong>Enlace:</strong> <a href="https://www.elsalvador.com/noticias/nacional/sismo-marn/1258019/2026/" target="_blank" style="color:#f29f05;">elsalvador.com</a></li></ul></div>
 HTML;
 
-// ============================================================
-// CONFIGURACIÓN DEL BLOG
-// ============================================================
-
 $BASE = 'assets/media/blog/';
 $ARTÍCULOS = [
   // ===== GUÍAS DE PREVENCIÓN =====
@@ -208,6 +212,8 @@ $ARTÍCULOS = [
   'noticia-2022' => ['titulo'=>'Huracán Julia: 4,000 evacuados','cat'=>'huracanes','tag'=>'Huracán Reciente','color'=>'#1a7a7a','autor'=>'El Diario de Hoy','tiempo'=>'4 min','destacado'=>false,'img'=>$BASE.'HJulia2022.jpg','extracto'=>'El 9 de octubre de 2022, Julia dejó 4,000 evacuados y daños en carreteras.','cuerpo'=>$n_2022],
   'noticia-2026-enero' => ['titulo'=>'Sismo de 4.1 frente a La Libertad (2026)','cat'=>'sismos','tag'=>'Sismo Reciente','color'=>'#d91a2a','autor'=>'El Diario de Hoy','tiempo'=>'2 min','destacado'=>false,'img'=>$BASE.'sismoEnero2026.jpg','extracto'=>'El 10 de enero de 2026, un sismo de 4.1 fue percibido en San Salvador.','cuerpo'=>$n_2026_enero],
 ];
+
+} // fin del respaldo (if empty($ARTÍCULOS))
 
 // ============================================================
 // ÍCONOS Y FUNCIONES
@@ -338,8 +344,13 @@ ob_start();
       <p class="blog-intro">Reportajes, guías y testimonios sobre prevención de desastres en El Salvador. Información clara, visual y lista para actuar.</p>
     </div>
 
-    <?php $f = $ARTÍCULOS['72-horas']; ?>
-    <a class="featured reveal" href="?url=blog&post=72-horas">
+    <?php
+      $featuredSlug = null;
+      foreach ($ARTÍCULOS as $s => $a) { if (!empty($a['destacado'])) { $featuredSlug = $s; break; } }
+      if ($featuredSlug === null) { $featuredSlug = array_key_first($ARTÍCULOS); }
+      $f = $ARTÍCULOS[$featuredSlug];
+    ?>
+    <a class="featured reveal" href="?url=blog&post=<?= urlencode($featuredSlug) ?>">
       <div class="featured-img" style="background-color:<?= $f['color'] ?>; background-image:url('<?= htmlspecialchars($f['img']) ?>');"></div>
       <div class="featured-content">
         <span class="badge-live">EN PORTADA</span>
@@ -366,7 +377,7 @@ ob_start();
     </div>
 
     <div class="blog-grid">
-      <?php foreach ($ARTÍCULOS as $s=>$a): if (!empty($a['destacado'])) continue; ?>
+      <?php foreach ($ARTÍCULOS as $s=>$a): if ($s === $featuredSlug) continue; ?>
         <a class="post-card" href="?url=blog&post=<?= $s ?>" data-cat="<?= $a['cat'] ?>" style="--accent:<?= $a['color'] ?>;">
           <div class="post-thumb">
             <div class="post-img" style="background-color:<?= $a['color'] ?>; background-image:url('<?= htmlspecialchars($a['img']) ?>');"></div>

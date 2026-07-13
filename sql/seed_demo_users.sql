@@ -1,8 +1,11 @@
 -- ============================================================
--- SEED: Cuentas de demostración para probar TODOS los roles
--- (director, docente, alumno, padre, administrativo, admin) y
--- ver el módulo de Gestión Escolar funcionando de inmediato,
--- con datos ya cargados en vez de una institución vacía.
+-- SEED: Cuentas de demostración para probar los roles institucionales
+-- (director, docente, alumno, padre, administrativo) y ver el módulo de
+-- Gestión Escolar funcionando de inmediato, con datos ya cargados en vez
+-- de una institución vacía.
+--
+-- No incluye una cuenta 'admin': ese rol es único y no se crea por
+-- registro ni por seed de prueba, solo a mano (ver nda_project.sql).
 --
 -- Ejecutar DESPUÉS de nda_project.sql (o de las 3 migraciones,
 -- si ya tenías una base de datos previa).
@@ -37,7 +40,6 @@ INSERT INTO aulas (nombre, grado, nivel, seccion, instituciones_id) VALUES
 
 -- Usuarios de prueba — TODOS con la contraseña: Demo2026!
 INSERT INTO usuarios (nombre, email, contra, role, institucion_id, estado_institucional) VALUES
-('Admin General',          'admin.demo@nda.com',          SHA2('Demo2026!', 256), 'admin',          NULL,      'ninguno'),
 ('Directora Demo',         'director.demo@nda.com',       SHA2('Demo2026!', 256), 'director',       @inst_id,  'aprobado'),
 ('Docente Demo',           'docente.demo@nda.com',        SHA2('Demo2026!', 256), 'docente',        @inst_id,  'aprobado'),
 ('Alumno Demo',            'alumno.demo@nda.com',         SHA2('Demo2026!', 256), 'alumno',         @inst_id,  'aprobado'),

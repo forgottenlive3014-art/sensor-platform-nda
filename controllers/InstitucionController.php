@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../models/InstitutionModel.php';
 
-class InstitutionController {
+class InstitucionController {
 
     // Solo el Admin General administra instituciones.
     private function isAdminGeneral() {
@@ -89,6 +89,21 @@ class InstitutionController {
         ]);
 
         jsonResponse(['success' => true]);
+    }
+
+    public function stats() {
+        if (!isLoggedIn() || !$this->isAdminGeneral()) {
+            jsonResponse(['error' => 'No autorizado'], 401);
+        }
+        $id = $_GET['id'] ?? null;
+        if (!$id) {
+            jsonResponse(['error' => 'ID de institución requerido'], 400);
+        }
+        $model = new InstitutionModel();
+        if (!$model->getById($id)) {
+            jsonResponse(['error' => 'Institución no encontrada'], 404);
+        }
+        jsonResponse(['success' => true, 'stats' => $model->getStats($id)]);
     }
 
     public function delete() {

@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../models/NewsModel.php';
 
-class NewsController {
+class NoticiaController {
 
     private function isSchoolAdmin() {
         $u = currentUser();

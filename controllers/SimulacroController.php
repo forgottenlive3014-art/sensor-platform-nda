@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../models/DrillModel.php';
 require_once __DIR__ . '/../models/NotificationModel.php';
 
-class DrillController {
+class SimulacroController {
 
     private function isSchoolStaff() {
         $u = currentUser();

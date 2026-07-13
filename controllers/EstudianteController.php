@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../models/StudentModel.php';
 
-class StudentController {
+class EstudianteController {
 
     private function isSchoolStaff() {
         $u = currentUser();
@@ -43,7 +43,7 @@ class StudentController {
         $instId = $this->scopeInstitutionId();
 
         // Un docente ve por defecto solo los alumnos de sus propias aulas
-        // asignadas (igual que ya hacia SectionController con "?all=1").
+        // asignadas (igual que ya hacia SeccionController con "?all=1").
         $teacherId = ($u['role'] === 'docente' && empty($_GET['all'])) ? $u['id'] : null;
 
         $rows = $model->getPage($instId, $isGlobalAdmin, $search, $aulaId, $page, $perPage, $teacherId);

@@ -108,8 +108,13 @@ class SchoolController {
             'padre'               => 'Información de seguridad, rutas y simulacros de la institución',
         ];
 
+        // El Admin General no gestiona "una escuela", administra toda la
+        // plataforma (instituciones, usuarios, blog, recursos, contenido),
+        // asi que su panel usa un titulo distinto al del resto de roles.
+        $panelTitle = $panel === 'admin-general' ? 'Panel de Administración General' : 'Gestión Escolar';
+
         $data = [
-            'title' => 'Gestión Escolar',
+            'title' => $panelTitle,
             'user' => $user,
             'stats' => $stats,
             'students' => $students,
@@ -119,17 +124,18 @@ class SchoolController {
             'isSchoolAdmin' => $this->isSchoolAdmin(),
             'isSchoolStaff' => $this->isSchoolStaff(),
             'pendingRequestsCount' => $pendingRequestsCount,
+            'panelTitle' => $panelTitle,
             'panelSubtitle' => $subtitles[$panel],
         ];
 
         view('school/panels/' . $panel, $data);
     }
 
-    // (ALUMNOS: ver controllers/StudentController.php)
+    // (ALUMNOS: ver controllers/EstudianteController.php)
 
-    // (DOCENTES: ver controllers/TeacherController.php)
+    // (DOCENTES: ver controllers/DocenteController.php)
 
-    // (AULAS: ver controllers/ClassroomController.php)
+    // (AULAS: ver controllers/AulaController.php)
 
     // ============================================================
     //  RUTAS DE EVACUACIÓN
@@ -228,7 +234,7 @@ class SchoolController {
         jsonResponse(['success' => true]);
     }
 
-    // (ASISTENCIA: ver controllers/AttendanceController.php)
+    // (ASISTENCIA: ver controllers/AsistenciaController.php)
 
     // ============================================================
     //  INCIDENTES
@@ -370,9 +376,9 @@ class SchoolController {
         jsonResponse(['success' => true]);
     }
 
-    // (SIMULACROS: ver controllers/DrillController.php)
+    // (SIMULACROS: ver controllers/SimulacroController.php)
 
-    // (REPORTES: ver controllers/ReportController.php)
+    // (REPORTES: ver controllers/ReporteController.php)
 
     // ============================================================
     //  SOLICITUDES DE INGRESO (aprobacion del director)
@@ -441,7 +447,7 @@ class SchoolController {
         jsonResponse(['success' => true]);
     }
 
-    // (SECCIONES: ver controllers/SectionController.php)
+    // (SECCIONES: ver controllers/SeccionController.php)
 
     // ============================================================
     //  CROQUIS INTERACTIVO

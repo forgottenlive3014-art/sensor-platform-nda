@@ -56,7 +56,11 @@ function showSchoolTab(tabId) {
         'my-children': loadMyChildren,
         'staff': loadStaff,
         'notifications': loadNotifications,
-        'blog': loadBlog
+        'blog': loadBlog,
+        'articulos': loadArticulos,
+        'recursos': loadRecursos,
+        'quehacer-content': () => loadContentForm('quehacer'),
+        'acercade-content': () => loadContentForm('acercade')
     };
     if (loaders[tabId]) loaders[tabId]();
 }
@@ -2171,6 +2175,7 @@ async function loadInstitutions(page) {
                 <td>${i.direccion || '—'}</td>
                 <td>${i.total_usuarios || 0}</td>
                 <td>
+                    <button class="school-attendance-btn" onclick="viewInstitutionStats(${i.instituciones_id}, '${(i.nombre || '').replace(/'/g, "\\'")}')">Ver detalle</button>
                     <button class="school-attendance-btn" onclick="editInstitution(${i.instituciones_id})">Editar</button>
                     <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteInstitution(${i.instituciones_id})">Eliminar</button>
                 </td>
@@ -2180,6 +2185,40 @@ async function loadInstitutions(page) {
         renderPagination('institutionsPagination', result.page, result.total_pages, 'loadInstitutions');
     } catch (e) {
         tbody.innerHTML = '<tr><td colspan="6" class="text-center">Error al cargar instituciones</td></tr>';
+        console.error(e);
+    }
+}
+
+async function viewInstitutionStats(id, nombre) {
+    document.getElementById('institutionStatsTitle').textContent = 'Detalle — ' + nombre;
+    const grid = document.getElementById('institutionStatsGrid');
+    grid.innerHTML = '<div class="text-center" style="padding:12px;grid-column:1/-1;">Cargando...</div>';
+    openModal('institutionStatsModal');
+    try {
+        const response = await fetch(`?url=school/institution-stats&id=${id}`);
+        const result = await response.json();
+        if (result.error) {
+            grid.innerHTML = `<div class="text-center" style="grid-column:1/-1;">Error: ${result.error}</div>`;
+            return;
+        }
+        const s = result.stats;
+        const tiles = [
+            ['Docentes', s.docentes],
+            ['Alumnos', s.alumnos],
+            ['Personal administrativo', s.administrativos],
+            ['Padres/Encargados', s.padres],
+            ['Rutas de evacuación', s.rutas],
+            ['Incidentes abiertos', s.incidentes_abiertos],
+            ['Incidentes resueltos', s.incidentes_resueltos],
+        ];
+        grid.innerHTML = tiles.map(([label, val]) => `
+            <div class="school-stat">
+                <div class="school-stat-number">${val}</div>
+                <div class="school-stat-label">${label}</div>
+            </div>
+        `).join('');
+    } catch (e) {
+        grid.innerHTML = '<div class="text-center" style="grid-column:1/-1;">Error al cargar el detalle</div>';
         console.error(e);
     }
 }
@@ -2631,6 +2670,316 @@ async function deleteBlogPost(id) {
         }
     } catch (e) {
         ndaAlert('Error de conexión');
+    }
+}
+
+// ─── BLOG PÚBLICO: ARTÍCULOS Y NOTICIAS (Admin General) ───
+let __articulosCache = [];
+let __articulosPage = 1;
+
+async function loadArticulos(page) {
+    const tbody = document.getElementById('articulosTableBody');
+    if (!tbody) return;
+    __articulosPage = page || 1;
+    tbody.innerHTML = '<tr><td colspan="5" class="text-center">Cargando artículos...</td></tr>';
+
+    const q = document.getElementById('articulosSearch')?.value.trim() || '';
+
+    try {
+        const response = await fetch(`?url=admin/articulos&q=${encodeURIComponent(q)}&page=${__articulosPage}&per_page=10`);
+        const result = await response.json();
+
+        if (result.error) {
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center">Error: ${result.error}</td></tr>`;
+            return;
+        }
+        __articulosCache = result.data || [];
+
+        if (__articulosCache.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center">No hay artículos todavía</td></tr>';
+            renderPagination('articulosPagination', 1, 1, 'loadArticulos');
+            return;
+        }
+
+        tbody.innerHTML = __articulosCache.map(a => `
+            <tr>
+                <td><strong>${escapeHtml(a.titulo)}</strong></td>
+                <td>${escapeHtml(a.cat)}</td>
+                <td>${escapeHtml(a.autor_nombre)}</td>
+                <td>${a.destacado == 1 ? '⭐ Sí' : '—'}</td>
+                <td>
+                    <button class="school-attendance-btn" onclick="editArticulo(${a.blog_id})">Editar</button>
+                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteArticulo(${a.blog_id})">Eliminar</button>
+                </td>
+            </tr>
+        `).join('');
+
+        renderPagination('articulosPagination', result.page, result.total_pages, 'loadArticulos');
+    } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center">Error al cargar artículos</td></tr>';
+        console.error(e);
+    }
+}
+
+const debounceArticulosSearch = debounce(() => loadArticulos(1), 350);
+
+function openArticuloModal() {
+    document.getElementById('articuloForm').reset();
+    document.getElementById('articuloId').value = '';
+    document.getElementById('articuloModalTitle').textContent = 'Agregar artículo';
+    document.getElementById('articuloColor').value = '#f29f05';
+    document.getElementById('articuloAutor').value = 'Equipo NDA';
+    document.getElementById('articuloTiempo').value = '5 min';
+    openModal('articuloModal');
+}
+
+function editArticulo(id) {
+    const a = __articulosCache.find(x => String(x.blog_id) === String(id));
+    if (!a) { ndaAlert('No se encontró el artículo.'); return; }
+    document.getElementById('articuloId').value = a.blog_id;
+    document.getElementById('articuloModalTitle').textContent = 'Editar artículo';
+    document.getElementById('articuloTitulo').value = a.titulo || '';
+    document.getElementById('articuloSlug').value = a.slug || '';
+    document.getElementById('articuloCat').value = a.cat || 'prevencion';
+    document.getElementById('articuloTag').value = a.tag || '';
+    document.getElementById('articuloColor').value = a.color || '#f29f05';
+    document.getElementById('articuloAutor').value = a.autor_nombre || 'Equipo NDA';
+    document.getElementById('articuloTiempo').value = a.tiempo || '5 min';
+    document.getElementById('articuloExtracto').value = a.extracto || '';
+    document.getElementById('articuloCuerpo').value = a.cuerpo || '';
+    document.getElementById('articuloDestacado').checked = a.destacado == 1;
+    openModal('articuloModal');
+}
+
+document.getElementById('articuloForm')?.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const id = document.getElementById('articuloId').value;
+    const formData = new FormData();
+    if (id) formData.append('id', id);
+    formData.append('titulo', document.getElementById('articuloTitulo').value);
+    formData.append('slug', document.getElementById('articuloSlug').value);
+    formData.append('cat', document.getElementById('articuloCat').value);
+    formData.append('tag', document.getElementById('articuloTag').value);
+    formData.append('color', document.getElementById('articuloColor').value);
+    formData.append('autor_nombre', document.getElementById('articuloAutor').value);
+    formData.append('tiempo', document.getElementById('articuloTiempo').value);
+    formData.append('extracto', document.getElementById('articuloExtracto').value);
+    formData.append('cuerpo', document.getElementById('articuloCuerpo').value);
+    if (document.getElementById('articuloDestacado').checked) formData.append('destacado', '1');
+    const fileInput = document.getElementById('articuloImagen');
+    if (fileInput && fileInput.files[0]) {
+        formData.append('imagen', fileInput.files[0]);
+    }
+
+    try {
+        const url = id ? '?url=admin/update-articulo' : '?url=admin/add-articulo';
+        const response = await fetch(url, { method: 'POST', body: formData });
+        const result = await response.json();
+        if (result.success) {
+            ndaAlert('✅ Artículo guardado correctamente');
+            closeModal('articuloModal');
+            this.reset();
+            loadArticulos(__articulosPage);
+        } else {
+            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+        }
+    } catch (e) {
+        ndaAlert('❌ Error de conexión');
+        console.error(e);
+    }
+});
+
+async function deleteArticulo(id) {
+    if (!(await ndaConfirm('¿Eliminar este artículo? Ya no aparecerá en el blog público.'))) return;
+    try {
+        const response = await fetch(`?url=admin/delete-articulo&id=${id}`);
+        const result = await response.json();
+        if (result.success) {
+            ndaAlert('✅ Artículo eliminado');
+            loadArticulos(__articulosPage);
+        } else {
+            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+        }
+    } catch (e) {
+        ndaAlert('❌ Error de conexión');
+    }
+}
+
+// ─── RECURSOS PDF DESCARGABLES (Admin General) ───
+let __recursosCache = [];
+let __recursosPage = 1;
+
+function formatFileSize(bytes) {
+    if (!bytes || bytes <= 0) return '—';
+    const mb = bytes / (1024 * 1024);
+    return mb >= 1 ? mb.toFixed(1) + ' MB' : (bytes / 1024).toFixed(0) + ' KB';
+}
+
+async function loadRecursos(page) {
+    const tbody = document.getElementById('recursosTableBody');
+    if (!tbody) return;
+    __recursosPage = page || 1;
+    tbody.innerHTML = '<tr><td colspan="5" class="text-center">Cargando recursos...</td></tr>';
+
+    const q = document.getElementById('recursosSearch')?.value.trim() || '';
+
+    try {
+        const response = await fetch(`?url=admin/recursos&q=${encodeURIComponent(q)}&page=${__recursosPage}&per_page=10`);
+        const result = await response.json();
+
+        if (result.error) {
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center">Error: ${result.error}</td></tr>`;
+            return;
+        }
+        __recursosCache = result.data || [];
+
+        if (__recursosCache.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center">No hay recursos todavía</td></tr>';
+            renderPagination('recursosPagination', 1, 1, 'loadRecursos');
+            return;
+        }
+
+        tbody.innerHTML = __recursosCache.map(r => `
+            <tr>
+                <td><strong>${escapeHtml(r.titulo)}</strong></td>
+                <td>${escapeHtml(r.categoria)}</td>
+                <td>${formatFileSize(r.tamano_bytes)}</td>
+                <td>${r.orden}</td>
+                <td>
+                    <button class="school-attendance-btn" onclick="editRecurso(${r.recursos_id})">Editar</button>
+                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteRecurso(${r.recursos_id})">Eliminar</button>
+                </td>
+            </tr>
+        `).join('');
+
+        renderPagination('recursosPagination', result.page, result.total_pages, 'loadRecursos');
+    } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center">Error al cargar recursos</td></tr>';
+        console.error(e);
+    }
+}
+
+const debounceRecursosSearch = debounce(() => loadRecursos(1), 350);
+
+function openRecursoModal() {
+    document.getElementById('recursoForm').reset();
+    document.getElementById('recursoId').value = '';
+    document.getElementById('recursoModalTitle').textContent = 'Agregar recurso';
+    document.getElementById('recursoArchivoLabel').textContent = 'Archivo PDF *';
+    document.getElementById('recursoArchivo').required = true;
+    openModal('recursoModal');
+}
+
+function editRecurso(id) {
+    const r = __recursosCache.find(x => String(x.recursos_id) === String(id));
+    if (!r) { ndaAlert('No se encontró el recurso.'); return; }
+    document.getElementById('recursoId').value = r.recursos_id;
+    document.getElementById('recursoModalTitle').textContent = 'Editar recurso';
+    document.getElementById('recursoTitulo').value = r.titulo || '';
+    document.getElementById('recursoDescripcion').value = r.descripcion || '';
+    document.getElementById('recursoCategoria').value = r.categoria || 'evacuacion';
+    document.getElementById('recursoTags').value = r.tags || '';
+    document.getElementById('recursoOrden').value = r.orden || 0;
+    document.getElementById('recursoArchivoLabel').textContent = 'Reemplazar archivo PDF (opcional)';
+    document.getElementById('recursoArchivo').required = false;
+    openModal('recursoModal');
+}
+
+document.getElementById('recursoForm')?.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const id = document.getElementById('recursoId').value;
+    const fileInput = document.getElementById('recursoArchivo');
+    if (!id && (!fileInput.files || !fileInput.files[0])) {
+        ndaAlert('❌ Debes seleccionar un archivo PDF');
+        return;
+    }
+    const formData = new FormData();
+    if (id) formData.append('id', id);
+    formData.append('titulo', document.getElementById('recursoTitulo').value);
+    formData.append('descripcion', document.getElementById('recursoDescripcion').value);
+    formData.append('categoria', document.getElementById('recursoCategoria').value);
+    formData.append('tags', document.getElementById('recursoTags').value);
+    formData.append('orden', document.getElementById('recursoOrden').value);
+    if (fileInput.files[0]) {
+        formData.append('archivo', fileInput.files[0]);
+    }
+
+    try {
+        const url = id ? '?url=admin/update-recurso' : '?url=admin/add-recurso';
+        const response = await fetch(url, { method: 'POST', body: formData });
+        const result = await response.json();
+        if (result.success) {
+            ndaAlert('✅ Recurso guardado correctamente');
+            closeModal('recursoModal');
+            this.reset();
+            loadRecursos(__recursosPage);
+        } else {
+            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+        }
+    } catch (e) {
+        ndaAlert('❌ Error de conexión');
+        console.error(e);
+    }
+});
+
+async function deleteRecurso(id) {
+    if (!(await ndaConfirm('¿Eliminar este recurso? Ya no aparecerá en la página de recursos.'))) return;
+    try {
+        const response = await fetch(`?url=admin/delete-recurso&id=${id}`);
+        const result = await response.json();
+        if (result.success) {
+            ndaAlert('✅ Recurso eliminado');
+            loadRecursos(__recursosPage);
+        } else {
+            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+        }
+    } catch (e) {
+        ndaAlert('❌ Error de conexión');
+    }
+}
+
+// ─── EDITOR DE CONTENIDO: "QUÉ HACER AHORA" Y "ACERCA DE NDA" (Admin General) ───
+async function loadContentForm(pagina) {
+    const form = document.getElementById(pagina + 'ContentForm');
+    if (!form) return;
+    try {
+        const response = await fetch(`?url=admin/get-${pagina}-content`);
+        const result = await response.json();
+        if (result.error) {
+            ndaAlert('Error: ' + result.error);
+            return;
+        }
+        (result.data || []).forEach(f => {
+            const el = form.querySelector(`[data-campo="${CSS.escape(f.campo)}"]`);
+            if (el) el.value = f.valor;
+        });
+    } catch (e) {
+        ndaAlert('Error al cargar el contenido');
+        console.error(e);
+    }
+}
+
+async function saveContentForm(pagina) {
+    const form = document.getElementById(pagina + 'ContentForm');
+    if (!form) return;
+    const valores = {};
+    form.querySelectorAll('[data-campo]').forEach(el => {
+        valores[el.dataset.campo] = el.value;
+    });
+
+    try {
+        const response = await fetch(`?url=admin/save-${pagina}-content`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ valores })
+        });
+        const result = await response.json();
+        if (result.success) {
+            ndaAlert('✅ Contenido guardado correctamente');
+        } else {
+            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+        }
+    } catch (e) {
+        ndaAlert('❌ Error de conexión');
+        console.error(e);
     }
 }
 

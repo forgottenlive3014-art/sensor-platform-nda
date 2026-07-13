@@ -66,7 +66,7 @@ ob_start();
             <div class="auth-divider">o continúa con</div>
 
             <div class="auth-socials">
-                <div class="auth-social">
+                <div class="auth-social" id="googleSignInBtn" data-google-client-id="<?= e(env('GOOGLE_CLIENT_ID', '')) ?>" title="Continuar con Google">
                     <svg width="22" height="22" viewBox="0 0 48 48">
                         <path fill="#4285f4" d="M24 9.5c3.1 0 5.8 1.1 8 2.9l6-6C34.4 3.1 29.5 1 24 1 14.8 1 7 6.7 3.7 14.6l7 5.4C12.5 13.6 17.8 9.5 24 9.5z"/>
                         <path fill="#34a853" d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.4c-.5 2.8-2.1 5.2-4.5 6.8l7 5.4c4.1-3.8 6.5-9.4 6.5-16.2z"/>
@@ -83,6 +83,11 @@ ob_start();
             </div>
 
             <p class="auth-switch">¿No tienes cuenta? <a href="?url=register">Regístrate</a></p>
+        </form>
+
+        <form id="googleLoginForm" method="POST" action="?url=google-login" style="display:none">
+            <?= csrfField() ?>
+            <input type="hidden" name="credential" id="googleCredential">
         </form>
     </div>
 

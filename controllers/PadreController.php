@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../models/ParentModel.php';
 
-class ParentController {
+class PadreController {
 
     private function isSchoolAdmin() {
         $u = currentUser();

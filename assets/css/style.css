@@ -3227,6 +3227,38 @@ canvas {
     background: var(--bg2);
 }
 
+.pwd-rules {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    margin: 2px 0 0;
+    padding: 0;
+}
+.pwd-rules li {
+    font-size: 0.72rem;
+    color: var(--text3);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: color var(--tr);
+}
+.pwd-rules li::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text3);
+    flex-shrink: 0;
+    transition: background var(--tr);
+}
+.pwd-rules li.ok {
+    color: var(--green, #22c55e);
+}
+.pwd-rules li.ok::before {
+    background: var(--green, #22c55e);
+}
+
 .auth-btn-main {
     width: 100%;
     padding: 12px;

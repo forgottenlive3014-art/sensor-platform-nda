@@ -63,7 +63,17 @@ $roleLabel = $roleLabels[$profileUser['role']] ?? $profileUser['role'];
     <div class="profile-card">
         <h2>Institución educativa</h2>
 
-        <?php if ($profileUser['estado_institucional'] === 'aprobado'): ?>
+        <?php if ($profileUser['role'] === 'admin'): ?>
+            <div class="profile-inst-status ok">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <div>
+                    <strong>Acceso global a todas las instituciones</strong>
+                    <p>Como Administrador General no perteneces a una institución en particular: supervisas todas las que están registradas en NDA.</p>
+                </div>
+            </div>
+            <a href="?url=school" class="profile-btn profile-btn-out" style="margin-top:14px;display:inline-block;">Ir al Panel de Administración</a>
+
+        <?php elseif ($profileUser['estado_institucional'] === 'aprobado'): ?>
             <div class="profile-inst-status ok">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                 <div>

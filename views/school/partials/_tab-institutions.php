@@ -60,6 +60,18 @@
             </div>
         </div>
 
+        <div class="school-modal" id="institutionStatsModal">
+            <div class="school-modal-content">
+                <div class="school-modal-header">
+                    <h3 id="institutionStatsTitle">Detalle de la institución</h3>
+                    <button class="school-modal-close" onclick="closeModal('institutionStatsModal')">&times;</button>
+                </div>
+                <div class="school-modal-body">
+                    <div class="school-stats" id="institutionStatsGrid"></div>
+                </div>
+            </div>
+        </div>
+
         <div class="school-modal" id="editInstitutionModal">
             <div class="school-modal-content">
                 <div class="school-modal-header">

@@ -62,6 +62,44 @@ class AuthController {
         return false;
     }
 
+    // Contraseña fuerte: minimo 8 caracteres, mayuscula, minuscula, numero y simbolo.
+    // Devuelve null si es valida, o el mensaje de error si no.
+    private function passwordStrengthError($password) {
+        if (strlen($password) < 8) {
+            return 'La contraseña debe tener al menos 8 caracteres.';
+        }
+        if (!preg_match('/[A-Z]/', $password)) {
+            return 'La contraseña debe incluir al menos una mayúscula.';
+        }
+        if (!preg_match('/[a-z]/', $password)) {
+            return 'La contraseña debe incluir al menos una minúscula.';
+        }
+        if (!preg_match('/[0-9]/', $password)) {
+            return 'La contraseña debe incluir al menos un número.';
+        }
+        if (!preg_match('/[^A-Za-z0-9]/', $password)) {
+            return 'La contraseña debe incluir al menos un símbolo (por ejemplo: ! @ # $ %).';
+        }
+        return null;
+    }
+
+    // Ademas del formato, confirma que el dominio del correo exista de verdad
+    // (tenga registro MX, o al menos A/AAAA) para filtrar dominios inventados.
+    private function isRealEmail($email) {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return false;
+        }
+        $domain = substr(strrchr($email, '@'), 1);
+        if (!$domain) {
+            return false;
+        }
+        if (checkdnsrr($domain, 'MX')) {
+            return true;
+        }
+        // Algunos dominios reciben correo sin registro MX propio (usan el A).
+        return checkdnsrr($domain, 'A') || checkdnsrr($domain, 'AAAA');
+    }
+
     private function startSession($user) {
         session_regenerate_id(true);
         $_SESSION['user_id'] = $user['usuarios_id'];
@@ -71,6 +109,68 @@ class AuthController {
         $_SESSION['institucion_id'] = $user['institucion_id'] ?? null;
         $_SESSION['institucion_nombre'] = $user['institucion_nombre'] ?? null;
         $_SESSION['estado_institucional'] = $user['estado_institucional'] ?? 'ninguno';
+    }
+
+    // Inicio de sesion con Google (Google Identity Services). Inactivo hasta que
+    // se configure GOOGLE_CLIENT_ID en .env: sin esa clave, responde con error
+    // en vez de intentar validar nada, para que el boton simplemente no funcione
+    // todavia sin romper la pagina.
+    public function googleLogin() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { redirect('login'); return; }
+        if (!csrfValid($_POST['csrf_token'] ?? '')) {
+            $_SESSION['error'] = 'Tu sesión expiró, intenta de nuevo.';
+            redirect('login');
+            return;
+        }
+
+        $clientId = env('GOOGLE_CLIENT_ID', '');
+        $credential = $_POST['credential'] ?? '';
+        if (empty($clientId) || empty($credential)) {
+            $_SESSION['error'] = 'El inicio de sesión con Google todavía no está disponible.';
+            redirect('login');
+            return;
+        }
+
+        // Verificamos el token directamente con Google (sin libreria pesada):
+        // si el aud no coincide con nuestro Client ID, o el correo no viene
+        // verificado por Google, lo rechazamos.
+        $ch = curl_init('https://oauth2.googleapis.com/tokeninfo?id_token=' . urlencode($credential));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 8);
+        $response = curl_exec($ch);
+        curl_close($ch);
+        $payload = $response ? json_decode($response, true) : null;
+
+        if (!$payload || ($payload['aud'] ?? '') !== $clientId || ($payload['email_verified'] ?? 'false') !== 'true' || empty($payload['email'])) {
+            $_SESSION['error'] = 'No se pudo verificar tu cuenta de Google.';
+            redirect('login');
+            return;
+        }
+
+        $email = $payload['email'];
+        $name = $payload['name'] ?? $email;
+
+        $db = getDB();
+        $stmt = $db->prepare("SELECT u.*, i.nombre AS institucion_nombre
+                               FROM usuarios u
+                               LEFT JOIN instituciones i ON i.instituciones_id = u.institucion_id
+                               WHERE u.email = ?");
+        $stmt->execute([$email]);
+        $user = $stmt->fetch();
+
+        if (!$user) {
+            // Cuenta general nueva. Nunca se crea con rol admin ni institucional
+            // via Google: eso solo se asigna a mano o pidiendo unirse despues.
+            $randomHash = password_hash(bin2hex(random_bytes(32)), PASSWORD_DEFAULT);
+            $db->prepare("INSERT INTO usuarios (nombre, email, contra, role, institucion_id, estado_institucional)
+                           VALUES (?, ?, ?, 'user', NULL, 'ninguno')")
+               ->execute([$name, $email, $randomHash]);
+            $stmt->execute([$email]);
+            $user = $stmt->fetch();
+        }
+
+        $this->startSession($user);
+        redirect('home');
     }
 
     public function register() {
@@ -102,8 +202,9 @@ class AuthController {
             redirect('register');
             return;
         }
-        if (strlen($password) < 6) {
-            $_SESSION['error'] = 'La contraseña debe tener al menos 6 caracteres.';
+        $passwordError = $this->passwordStrengthError($password);
+        if ($passwordError) {
+            $_SESSION['error'] = $passwordError;
             redirect('register');
             return;
         }
@@ -112,8 +213,8 @@ class AuthController {
             redirect('register');
             return;
         }
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $_SESSION['error'] = 'Ingresa un correo electrónico válido.';
+        if (!$this->isRealEmail($email)) {
+            $_SESSION['error'] = 'Ingresa un correo electrónico real (revisa que esté bien escrito).';
             redirect('register');
             return;
         }
@@ -302,6 +403,12 @@ class AuthController {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') { redirect('profile'); return; }
         if (!csrfValid($_POST['csrf_token'] ?? '')) {
             $_SESSION['error'] = 'Tu sesión expiró, intenta de nuevo.';
+            redirect('profile');
+            return;
+        }
+        // El Admin General ya supervisa todas las instituciones; no aplica
+        // solicitar ingreso a una en particular.
+        if (currentUser()['role'] === 'admin') {
             redirect('profile');
             return;
         }

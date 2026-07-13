@@ -1,5 +1,39 @@
 <?php
 $title = $title ?? '¿Qué hacer AHORA? - NDA';
+
+require_once __DIR__ . '/../models/ContenidoModel.php';
+
+$quehacerDefs = ContenidoModel::quehacerFieldDefs();
+$quehacerSaved = (new ContenidoModel())->getByPage('quehacer');
+$C = [];
+foreach ($quehacerDefs as $def) {
+    $C[$def['campo']] = $quehacerSaved[$def['campo']] ?? $def['default'];
+}
+
+$tiposKeys = ['sismo', 'inundacion', 'incendio', 'deslizamiento', 'tormenta'];
+$fases = ['antes', 'durante', 'despues'];
+$DATA_PHP = [];
+foreach ($tiposKeys as $tipo) {
+    $DATA_PHP[$tipo] = ['title' => $C["$tipo.title"]];
+    foreach ($fases as $fase) {
+        $steps = [];
+        for ($i = 0; $i < 3; $i++) {
+            $steps[] = [$C["$tipo.$fase.$i.titulo"], $C["$tipo.$fase.$i.texto"]];
+        }
+        $DATA_PHP[$tipo][$fase] = $steps;
+    }
+}
+
+$contactos = [];
+for ($i = 0; $i < 4; $i++) {
+    $contactos[] = [
+        'nombre' => $C["contacts.$i.nombre"],
+        'subtitulo' => $C["contacts.$i.subtitulo"],
+        'link' => $C["contacts.$i.link"],
+    ];
+}
+$contactColors = ['#d91a2a', '#f29f05', '#2e8b7f', '#2e7da6'];
+
 ob_start();
 ?>
 
@@ -8,10 +42,9 @@ ob_start();
 
         <div class="now-hero reveal">
             <div class="siren"></div>
-            <span class="now-kicker">ACCIÓN INMEDIATA</span>
-            <h1>¿Qué hacer <span class="grad">AHORA</span>?</h1>
-            <p>Mantén la calma. Elige la situación que estás viviendo y sigue los pasos.
-               Cada segundo bien usado cuenta.</p>
+            <span class="now-kicker"><?= htmlspecialchars($C['hero.kicker']) ?></span>
+            <h1 class="grad"><?= htmlspecialchars($C['hero.titulo']) ?></h1>
+            <p><?= htmlspecialchars($C['hero.texto']) ?></p>
             <a href="tel:911" class="emergency-call">
                 <span class="call-pulse"></span> Llamar al 911
             </a>
@@ -41,20 +74,13 @@ ob_start();
         </div>
 
         <div class="contacts reveal">
-            <h2>Contactos clave en El Salvador</h2>
+            <h2><?= htmlspecialchars($C['contacts.titulo']) ?></h2>
             <div class="contact-grid">
-                <a href="tel:911" class="contact-card" style="--c:#d91a2a;">
-                    <div><b>911</b><small>Emergencias (línea única)</small></div>
+                <?php foreach ($contactos as $i => $c): ?>
+                <a href="<?= htmlspecialchars($c['link'] ?: '#') ?>" class="contact-card" style="--c:<?= $contactColors[$i] ?? '#f29f05' ?>;">
+                    <div><b><?= htmlspecialchars($c['nombre']) ?></b><small><?= htmlspecialchars($c['subtitulo']) ?></small></div>
                 </a>
-                <a href="#" class="contact-card" style="--c:#f29f05;">
-                    <div><b>Protección Civil</b><small>Dirección General</small></div>
-                </a>
-                <a href="#" class="contact-card" style="--c:#2e8b7f;">
-                    <div><b>Cruz Roja</b><small>Salvadoreña</small></div>
-                </a>
-                <a href="#" class="contact-card" style="--c:#2e7da6;">
-                    <div><b>Bomberos</b><small>Cuerpo de Bomberos</small></div>
-                </a>
+                <?php endforeach; ?>
             </div>
             <p class="contact-note">Verifica y guarda los números locales de tu municipio antes de una emergencia.</p>
         </div>
@@ -159,28 +185,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }), {threshold:.1});
     document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-    const DATA = {
-        sismo: { title:'Sismo / Terremoto',
-            antes:[['Asegura tu casa','Fija estantes, espejos y objetos pesados que puedan caer.'],['Define un punto de reunión','Acuerda con tu familia dónde encontrarse al salir.'],['Prepara tu mochila','Agua, linterna, botiquín y documentos siempre listos.']],
-            durante:[['Agáchate','Bájate al suelo antes de que el sismo te tire.'],['Cúbrete','Protege cabeza y cuello bajo una mesa firme.'],['Agárrate','Sujétate hasta que el movimiento termine. No corras ni uses ascensores.']],
-            despues:[['Revisa heridas','Atiende primero a quien lo necesite. Ten calma.'],['Cuidado con réplicas','Pueden venir más temblores. Aléjate de estructuras dañadas.'],['Corta servicios si hay riesgo','Cierra gas y revisa fugas antes de encender luces.']] },
-        inundacion: { title:'Inundación',
-            antes:[['Conoce tu zona de riesgo','Identifica si vives cerca de quebradas o ríos.'],['Sube lo importante','Coloca documentos y aparatos en lugares altos.'],['Ten lista la ruta','Memoriza el camino hacia el punto más alto y seguro.']],
-            durante:[['Sube a un lugar alto','Busca el nivel más elevado posible.'],['No cruces corrientes','30 cm de agua pueden arrastrarte. Nunca cruces a pie o en auto.'],['Mantente informado','Escucha la radio a pilas y sigue indicaciones oficiales.']],
-            despues:[['No tomes agua dudosa','Hierve o purifica antes de beber.'],['Cuidado al volver','Revisa que la estructura sea segura antes de entrar.'],['Limpia y desinfecta','El agua de inundación puede traer enfermedades.']] },
-        incendio: { title:'Incendio',
-            antes:[['Detectores de humo','Instálalos y prueba sus pilas con frecuencia.'],['Plan de escape','Conoce dos salidas de cada habitación.'],['Extintor a la mano','Ten uno y aprende a usarlo.']],
-            durante:[['Agáchate y avanza','El humo sube; el aire limpio está abajo.'],['Toca antes de abrir','Si la puerta está caliente, busca otra salida.'],['Sal y no regreses','Una vez fuera, llama al 911. Nunca vuelvas por objetos.']],
-            despues:[['Recibe atención médica','Aunque te sientas bien, revisa por inhalación de humo.'],['No entres aún','Espera el visto bueno de los bomberos.'],['Documenta daños','Toma fotos para tu reporte y seguro.']] },
-        deslizamiento: { title:'Deslizamiento de tierra',
-            antes:[['Observa señales','Grietas en el suelo, árboles inclinados o agua turbia.'],['Evita zonas de pendiente','No construyas ni duermas al pie de laderas inestables.'],['Plan de evacuación','Ten claro a dónde ir si el terreno cede.']],
-            durante:[['Aléjate de la pendiente','Muévete lateralmente, fuera del camino del deslave.'],['Sube a terreno firme','Busca un punto alto y estable.'],['Avisa a otros','Alerta a vecinos en la trayectoria.']],
-            despues:[['Mantente alejado','Puede haber más deslizamientos.'],['Reporta a las autoridades','Informa bloqueos y personas atrapadas.'],['Revisa servicios','Cuidado con cables y tuberías rotas.']] },
-        tormenta: { title:'Tormenta eléctrica',
-            antes:[['Asegura objetos sueltos','El viento puede convertirlos en proyectiles.'],['Carga dispositivos','Ten linternas y baterías listas por si se va la luz.'],['Resguarda mascotas','Tenlas dentro y seguras.']],
-            durante:[['Quédate adentro','Evita ventanas y aparatos conectados.'],['No uses agua','Evita ducharte o lavar durante rayos.'],['Si estás afuera','Aléjate de árboles altos y postes; agáchate.']],
-            despues:[['Revisa daños','Inspecciona techo y conexiones eléctricas.'],['Evita cables caídos','Nunca los toques; repórtalos.'],['Mantente alerta','Pueden venir nuevas células de tormenta.']] },
-    };
+    const DATA = <?= json_encode($DATA_PHP, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS) ?>;
 
     let curEm = 'sismo', curPhase = 'antes';
     function render() {

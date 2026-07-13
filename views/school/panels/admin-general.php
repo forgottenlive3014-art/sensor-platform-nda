@@ -36,6 +36,18 @@ ob_start();
         <button class="school-tab" data-tab="reports" onclick="showSchoolTab('reports')">
             Reportes globales
         </button>
+        <button class="school-tab" data-tab="articulos" onclick="showSchoolTab('articulos')">
+            Blog público
+        </button>
+        <button class="school-tab" data-tab="recursos" onclick="showSchoolTab('recursos')">
+            Recursos PDF
+        </button>
+        <button class="school-tab" data-tab="quehacer-content" onclick="showSchoolTab('quehacer-content')">
+            Qué hacer ahora
+        </button>
+        <button class="school-tab" data-tab="acercade-content" onclick="showSchoolTab('acercade-content')">
+            Acerca de NDA
+        </button>
     </div>
 
     <div class="school-content">
@@ -45,6 +57,10 @@ ob_start();
         <?php include __DIR__ . '/../partials/_tab-news.php'; ?>
         <?php include __DIR__ . '/../partials/_tab-notifications.php'; ?>
         <?php include __DIR__ . '/../partials/_tab-reports.php'; ?>
+        <?php include __DIR__ . '/../partials/_tab-articulos.php'; ?>
+        <?php include __DIR__ . '/../partials/_tab-recursos.php'; ?>
+        <?php include __DIR__ . '/../partials/_tab-quehacer-content.php'; ?>
+        <?php include __DIR__ . '/../partials/_tab-acercade-content.php'; ?>
     </div>
     </div><!-- /.school-body -->
 </div>

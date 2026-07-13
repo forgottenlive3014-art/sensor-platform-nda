@@ -118,19 +118,44 @@
         }
     });
 
+    // Reglas de contraseña fuerte: deben coincidir con AuthController::passwordStrengthError.
+    var pwdRules = {
+        len: function (v) { return v.length >= 8; },
+        upper: function (v) { return /[A-Z]/.test(v); },
+        lower: function (v) { return /[a-z]/.test(v); },
+        num: function (v) { return /[0-9]/.test(v); },
+        sym: function (v) { return /[^A-Za-z0-9]/.test(v); }
+    };
+
+    function passwordIsStrong(v) {
+        return Object.keys(pwdRules).every(function (key) { return pwdRules[key](v); });
+    }
+
+    var pwdInput = document.getElementById('pwd-reg');
+    var pwdRulesList = document.getElementById('pwdRules');
+    if (pwdInput && pwdRulesList) {
+        pwdInput.addEventListener('input', function () {
+            var v = pwdInput.value;
+            Object.keys(pwdRules).forEach(function (key) {
+                var li = pwdRulesList.querySelector('[data-rule="' + key + '"]');
+                if (li) li.classList.toggle('ok', pwdRules[key](v));
+            });
+        });
+    }
+
     form.addEventListener('submit', function (e) {
         var pwd = form.querySelector('input[name="password"]');
         var confirm = form.querySelector('input[name="password_confirm"]');
+        if (!passwordIsStrong(pwd.value)) {
+            e.preventDefault();
+            ndaAlert('Tu contraseña no cumple los requisitos: revisa la lista debajo del campo.');
+            pwd.focus();
+            return false;
+        }
         if (pwd.value !== confirm.value) {
             e.preventDefault();
             ndaAlert('Las contraseñas no coinciden.');
             confirm.focus();
-            return false;
-        }
-        if (pwd.value.length < 6) {
-            e.preventDefault();
-            ndaAlert('La contraseña debe tener al menos 6 caracteres.');
-            pwd.focus();
             return false;
         }
     });

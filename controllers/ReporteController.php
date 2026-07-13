@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../models/ReportModel.php';
 
-class ReportController {
+class ReporteController {
 
     public function get() {
         if (!isLoggedIn()) {

@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../models/NotificationModel.php';
 
-class NotificationController {
+class NotificacionController {
 
     // Publico: incluso un visitante sin sesion puede recibir
     // notificaciones globales (ej. alerta sismica/sensor relevante
