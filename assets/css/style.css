@@ -16,14 +16,14 @@
     --bg2: #04192c;
     --bg3: #071f33;
     --bg4: #0b273f;
-    --card: #081422;
+    --card: #0D1420;
     --card2: #0d2032;
     --card3: #16293c;
-    --border: rgba(255, 255, 255, 0.07);
-    --border2: rgba(255, 255, 255, 0.13);
-    --border3: rgba(255, 255, 255, 0.22);
+    --border: #1A2D3B;
+    --border2: #24405A;
+    --border3: #315575;
     --text: #f6f4ef;
-    --text2: #8ba0b3;
+    --text2: #A8B3BD;
     --text3: #56708a;
     --text4: #35495d;
     --acc: #c98a3d;
@@ -59,18 +59,18 @@
 
 /* ---------- TEMA CLARO ---------- */
 [data-theme="light"] {
-    --bg: #f6f4ef;
+    --bg: #FDFBD4;
     --bg2: #ece9e1;
     --bg3: #e2ded3;
     --bg4: #d6d1c4;
     --card: #ffffff;
     --card2: #faf8f3;
     --card3: #f0ede5;
-    --border: rgba(0, 0, 0, 0.07);
-    --border2: rgba(0, 0, 0, 0.13);
-    --border3: rgba(0, 0, 0, 0.22);
+    --border: #E5E2DB;
+    --border2: #D6D0C2;
+    --border3: #C4BCA8;
     --text: #1a2d3b;
-    --text2: #314350;
+    --text2: #5B6770;
     --text3: #6a7a85;
     --text4: #9aa7ae;
     --gA: rgba(201, 138, 61, 0.08);
@@ -78,13 +78,14 @@
     --gB: rgba(61, 111, 143, 0.07);
     --sh: 0 4px 24px rgba(0, 0, 0, 0.09);
     --shl: 0 8px 40px rgba(0, 0, 0, 0.14);
-    --auth-wrap-bg: #f6f4ef;
+    --auth-wrap-bg: #FDFBD4;
     --auth-card-bg: rgba(255, 255, 255, 0.92);
     --auth-input-bg: #faf8f3;
     --auth-social-bg: #ffffff;
     --auth-bubble-bg: rgba(255, 255, 255, 0.92);
     --auth-glow: rgba(201, 138, 61, 0.16);
 }
+
 
 /* ---------- BASE ---------- */
 html {
@@ -163,7 +164,7 @@ canvas {
     gap: 0;
 }
 [data-theme="light"] .nav {
-    background: rgba(246, 244, 239, 0.93);
+    background: rgba(253, 251, 212, 0.93);
 }
 .nav.scrolled {
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
@@ -5963,7 +5964,7 @@ body { top: 0 !important; }
 [data-theme="light"] .hero3d-vignette {
     background:
         radial-gradient(ellipse 70% 60% at 50% 105%, var(--bg) 0%, transparent 60%),
-        linear-gradient(180deg, rgba(246, 244, 239, 0.5) 0%, transparent 25%, transparent 75%, var(--bg) 100%);
+        linear-gradient(180deg, rgba(253, 251, 212, 0.5) 0%, transparent 25%, transparent 75%, var(--bg) 100%);
 }
 
 .h3d-phase {

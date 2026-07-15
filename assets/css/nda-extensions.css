@@ -8,12 +8,19 @@
 
 :root {
     /* Escala de severidad del Design System (Fase 2) — unica fuente de
-       verdad de color para sismos, sensor, alertas escolares y sistema. */
-    --state-seguro: #335C67;
-    --state-informativo: #597D4F;
-    --state-precaucion: #BFB749;
-    --state-alerta: #C2441C;
-    --state-emergencia: #D91A2A;
+       verdad de color para sismos, sensor, alertas escolares y sistema.
+       Estos son los colores de "Modo Oscuro 1" (tema por defecto). */
+    --state-seguro: #3E6D78;
+    --state-informativo: #6BA15A;
+    --state-precaucion: #F2C94C;
+    --state-alerta: #E86A2A;
+    --state-emergencia: #FF3B3F;
+
+    --state-seguro-grad: linear-gradient(135deg, #3E6D78, #5B8E9A);
+    --state-informativo-grad: linear-gradient(135deg, #6BA15A, #86BD6E);
+    --state-precaucion-grad: linear-gradient(135deg, #F2C94C, #FFD666);
+    --state-alerta-grad: linear-gradient(135deg, #E86A2A, #FF8A3D);
+    --state-emergencia-grad: linear-gradient(135deg, #FF3B3F, #FF6B6F);
 
     --glass-bg: rgba(8, 20, 34, 0.55);
     --glass-border: rgba(255, 255, 255, 0.14);
@@ -21,11 +28,18 @@
 }
 
 [data-theme="light"] {
-    --state-seguro: #3E6D78;
-    --state-informativo: #6BA15A;
-    --state-precaucion: #F2C94C;
-    --state-alerta: #E86A2A;
-    --state-emergencia: #FF3B3F;
+    /* Colores de "Modo Claro" segun el Design System. */
+    --state-seguro: #335C67;
+    --state-informativo: #597D4F;
+    --state-precaucion: #BFB749;
+    --state-alerta: #C2441C;
+    --state-emergencia: #D91A2A;
+
+    --state-seguro-grad: linear-gradient(135deg, #335C67, #4D7F8A);
+    --state-informativo-grad: linear-gradient(135deg, #597D4F, #7FA960);
+    --state-precaucion-grad: linear-gradient(135deg, #BFB749, #E0C04D);
+    --state-alerta-grad: linear-gradient(135deg, #C2441C, #E06A2A);
+    --state-emergencia-grad: linear-gradient(135deg, #D91A2A, #F04A54);
 
     --glass-bg: rgba(255, 255, 255, 0.55);
     --glass-border: rgba(0, 0, 0, 0.10);

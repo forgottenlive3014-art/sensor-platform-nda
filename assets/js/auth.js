@@ -208,11 +208,24 @@ document.addEventListener('DOMContentLoaded', function() {
 // Iniciar sesion / registrarse con Google. Si GOOGLE_CLIENT_ID no esta
 // configurado en .env, el boton avisa que todavia no esta disponible en
 // vez de intentar cargar el script de Google.
+//
+// Usamos el boton oficial de Google (renderButton) en vez de "One Tap"
+// (accounts.id.prompt()): One Tap aparece como una tarjeta flotando en
+// una esquina, mientras que el boton real abre la ventana emergente
+// centrada de Google para elegir cuenta, que es lo que se espera aqui.
 (function() {
     var btn = document.getElementById('googleSignInBtn');
     if (!btn) return;
     var clientId = btn.dataset.googleClientId || '';
-    btn.style.cursor = 'pointer';
+
+    if (!clientId) {
+        btn.style.cursor = 'pointer';
+        btn.addEventListener('click', function() {
+            if (typeof ndaAlert === 'function') ndaAlert('El inicio de sesión con Google todavía no está disponible.', 'info');
+            else alert('El inicio de sesión con Google todavía no está disponible.');
+        });
+        return;
+    }
 
     function loadGoogleScript(cb) {
         if (window.google && window.google.accounts && window.google.accounts.id) { cb(); return; }
@@ -225,21 +238,21 @@ document.addEventListener('DOMContentLoaded', function() {
         document.head.appendChild(s);
     }
 
-    btn.addEventListener('click', function() {
-        if (!clientId) {
-            if (typeof ndaAlert === 'function') ndaAlert('El inicio de sesión con Google todavía no está disponible.', 'info');
-            else alert('El inicio de sesión con Google todavía no está disponible.');
-            return;
-        }
-        loadGoogleScript(function() {
-            google.accounts.id.initialize({
-                client_id: clientId,
-                callback: function(response) {
-                    document.getElementById('googleCredential').value = response.credential;
-                    document.getElementById('googleLoginForm').submit();
-                }
-            });
-            google.accounts.id.prompt();
+    loadGoogleScript(function() {
+        google.accounts.id.initialize({
+            client_id: clientId,
+            callback: function(response) {
+                document.getElementById('googleCredential').value = response.credential;
+                document.getElementById('googleLoginForm').submit();
+            }
+        });
+        var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+        btn.innerHTML = '';
+        google.accounts.id.renderButton(btn, {
+            type: 'icon',
+            shape: 'circle',
+            theme: isLight ? 'outline' : 'filled_black',
+            size: 'large'
         });
     });
 })();

@@ -297,6 +297,18 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
 
 
 <script src="<?= asset('js/app.js') ?>"></script>
+<?php if (isset($_SESSION['success']) || isset($_SESSION['error'])): ?>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    <?php if (isset($_SESSION['success'])): ?>
+    if (typeof ndaAlert === 'function') ndaAlert(<?= json_encode($_SESSION['success']) ?>, 'success');
+    <?php unset($_SESSION['success']); endif; ?>
+    <?php if (isset($_SESSION['error'])): ?>
+    if (typeof ndaAlert === 'function') ndaAlert(<?= json_encode($_SESSION['error']) ?>, 'error');
+    <?php unset($_SESSION['error']); endif; ?>
+});
+</script>
+<?php endif; ?>
 <script src="<?= asset('js/moon3d.js') ?>"></script>
 <script src="<?= asset('js/auth.js') ?>"></script>
 <script src="<?= asset('js/chatbot.js') ?>"></script>

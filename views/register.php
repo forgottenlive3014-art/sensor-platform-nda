@@ -1,6 +1,8 @@
 <?php
 $title = $title ?? 'Register';
 $instituciones = $instituciones ?? [];
+$prefillName = $prefillName ?? '';
+$prefillEmail = $prefillEmail ?? '';
 ob_start();
 ?>
 
@@ -13,23 +15,6 @@ ob_start();
     <div class="auth-card auth-card-wizard">
         <h1 class="auth-title">CREAR CUENTA</h1>
         <p class="auth-subtitle">Únete y comienza a monitorear</p>
-
-        <div class="auth-socials" style="justify-content:center;margin-bottom:16px">
-            <div class="auth-social" id="googleSignInBtn" data-google-client-id="<?= e(env('GOOGLE_CLIENT_ID', '')) ?>" title="Registrarme con Google (crea una cuenta general)">
-                <svg width="22" height="22" viewBox="0 0 48 48">
-                    <path fill="#4285f4" d="M24 9.5c3.1 0 5.8 1.1 8 2.9l6-6C34.4 3.1 29.5 1 24 1 14.8 1 7 6.7 3.7 14.6l7 5.4C12.5 13.6 17.8 9.5 24 9.5z"/>
-                    <path fill="#34a853" d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.4c-.5 2.8-2.1 5.2-4.5 6.8l7 5.4c4.1-3.8 6.5-9.4 6.5-16.2z"/>
-                    <path fill="#fbbc04" d="M10.7 28.5A14.8 14.8 0 0 1 9.5 24c0-1.6.3-3.1.7-4.5l-7-5.4A23.9 23.9 0 0 0 0 24c0 3.9.9 7.6 2.6 10.9l7-5.4z"/>
-                    <path fill="#ea4335" d="M24 47c5.4 0 10-1.8 13.3-4.8l-7-5.4C28.5 38.3 26.4 39 24 39c-6.2 0-11.5-4.2-13.3-9.9l-7 5.4C7 42.3 14.8 47 24 47z"/>
-                </svg>
-            </div>
-        </div>
-        <p class="wiz-hint" style="text-align:center;margin-bottom:16px">Regístrate con Google, o completa el formulario abajo</p>
-
-        <form id="googleLoginForm" method="POST" action="?url=google-login" style="display:none">
-            <?= csrfField() ?>
-            <input type="hidden" name="credential" id="googleCredential">
-        </form>
 
         <div class="wiz-steps" id="wizSteps">
             <div class="wiz-step on" data-wiz-dot="1"><span>1</span>Tipo de cuenta</div>
@@ -177,7 +162,7 @@ ob_start();
                     <label>Nombre completo</label>
                     <div class="auth-inp-wrap">
                         <span class="auth-inp-ico"></span>
-                        <input type="text" name="name" placeholder="Tu nombre completo" required>
+                        <input type="text" name="name" value="<?= e($prefillName) ?>" placeholder="Tu nombre completo" required>
                     </div>
                 </div>
 
@@ -187,7 +172,7 @@ ob_start();
                         <span class="auth-inp-ico">
                             <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
                         </span>
-                        <input type="email" name="email" placeholder="ejemplo@correo.com" required>
+                        <input type="email" name="email" value="<?= e($prefillEmail) ?>" placeholder="ejemplo@correo.com" required>
                     </div>
                 </div>
 
@@ -236,6 +221,25 @@ ob_start();
                     <button type="submit" class="auth-btn">Crear cuenta</button>
                 </div>
             </div>
+        </form>
+
+        <div class="auth-divider">o continúa con</div>
+
+        <div class="auth-socials" style="justify-content:center;">
+            <div class="auth-social" id="googleSignInBtn" data-google-client-id="<?= e(env('GOOGLE_CLIENT_ID', '')) ?>" title="Registrarme con Google (crea una cuenta general)">
+                <svg width="22" height="22" viewBox="0 0 48 48">
+                    <path fill="#4285f4" d="M24 9.5c3.1 0 5.8 1.1 8 2.9l6-6C34.4 3.1 29.5 1 24 1 14.8 1 7 6.7 3.7 14.6l7 5.4C12.5 13.6 17.8 9.5 24 9.5z"/>
+                    <path fill="#34a853" d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.4c-.5 2.8-2.1 5.2-4.5 6.8l7 5.4c4.1-3.8 6.5-9.4 6.5-16.2z"/>
+                    <path fill="#fbbc04" d="M10.7 28.5A14.8 14.8 0 0 1 9.5 24c0-1.6.3-3.1.7-4.5l-7-5.4A23.9 23.9 0 0 0 0 24c0 3.9.9 7.6 2.6 10.9l7-5.4z"/>
+                    <path fill="#ea4335" d="M24 47c5.4 0 10-1.8 13.3-4.8l-7-5.4C28.5 38.3 26.4 39 24 39c-6.2 0-11.5-4.2-13.3-9.9l-7 5.4C7 42.3 14.8 47 24 47z"/>
+                </svg>
+            </div>
+        </div>
+
+        <form id="googleLoginForm" method="POST" action="?url=google-login" style="display:none">
+            <?= csrfField() ?>
+            <input type="hidden" name="mode" value="register">
+            <input type="hidden" name="credential" id="googleCredential">
         </form>
 
         <p class="auth-switch">¿Ya tienes cuenta? <a href="?url=login">Inicia sesión</a></p>

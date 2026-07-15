@@ -123,11 +123,16 @@ class AuthController {
             return;
         }
 
+        // "login": solo entra si la cuenta ya existe; si no, se manda a
+        // completar el registro. "register": crea la cuenta si no existe,
+        // o inicia sesion directamente si el correo ya estaba registrado.
+        $mode = ($_POST['mode'] ?? 'login') === 'register' ? 'register' : 'login';
+
         $clientId = env('GOOGLE_CLIENT_ID', '');
         $credential = $_POST['credential'] ?? '';
         if (empty($clientId) || empty($credential)) {
             $_SESSION['error'] = 'El inicio de sesión con Google todavía no está disponible.';
-            redirect('login');
+            redirect($mode === 'register' ? 'register' : 'login');
             return;
         }
 
@@ -143,7 +148,7 @@ class AuthController {
 
         if (!$payload || ($payload['aud'] ?? '') !== $clientId || ($payload['email_verified'] ?? 'false') !== 'true' || empty($payload['email'])) {
             $_SESSION['error'] = 'No se pudo verificar tu cuenta de Google.';
-            redirect('login');
+            redirect($mode === 'register' ? 'register' : 'login');
             return;
         }
 
@@ -159,6 +164,17 @@ class AuthController {
         $user = $stmt->fetch();
 
         if (!$user) {
+            if ($mode === 'login') {
+                // No hay cuenta con ese correo: no la creamos a ciegas desde
+                // el boton de "iniciar sesion". Mandamos a completar el
+                // registro, con el nombre/correo de Google ya rellenados.
+                $_SESSION['google_prefill_name'] = $name;
+                $_SESSION['google_prefill_email'] = $email;
+                $_SESSION['error'] = 'No encontramos una cuenta con ese correo de Google. Completa tu registro para continuar.';
+                redirect('register');
+                return;
+            }
+
             // Cuenta general nueva. Nunca se crea con rol admin ni institucional
             // via Google: eso solo se asigna a mano o pidiendo unirse despues.
             $randomHash = password_hash(bin2hex(random_bytes(32)), PASSWORD_DEFAULT);
@@ -167,9 +183,17 @@ class AuthController {
                ->execute([$name, $email, $randomHash]);
             $stmt->execute([$email]);
             $user = $stmt->fetch();
+
+            $this->startSession($user);
+            $_SESSION['success'] = '¡Cuenta creada con Google! Bienvenido/a, ' . $name . '.';
+            redirect('home');
+            return;
         }
 
         $this->startSession($user);
+        $_SESSION['success'] = $mode === 'register'
+            ? 'Ya tenías una cuenta con este correo — iniciamos sesión por ti.'
+            : '¡Sesión iniciada con Google!';
         redirect('home');
     }
 
@@ -180,7 +204,19 @@ class AuthController {
         }
         $db = getDB();
         $instituciones = $db->query("SELECT instituciones_id, nombre, correo FROM instituciones ORDER BY nombre ASC")->fetchAll();
-        view('register', ['title' => 'Crear cuenta · NDA', 'instituciones' => $instituciones]);
+
+        // Si venimos de "iniciar sesion con Google" sin cuenta existente,
+        // rellenamos nombre/correo para que no los vuelva a escribir.
+        $prefillName = $_SESSION['google_prefill_name'] ?? '';
+        $prefillEmail = $_SESSION['google_prefill_email'] ?? '';
+        unset($_SESSION['google_prefill_name'], $_SESSION['google_prefill_email']);
+
+        view('register', [
+            'title' => 'Crear cuenta · NDA',
+            'instituciones' => $instituciones,
+            'prefillName' => $prefillName,
+            'prefillEmail' => $prefillEmail,
+        ]);
     }
 
     private function processRegister() {
