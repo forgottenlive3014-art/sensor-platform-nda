@@ -1,4 +1,4 @@
-//   SEISMIC WAVE ANIMATION  
+// Animacion de onda sismica
 function createWave(canvasId, side) {
     var canvas = document.getElementById(canvasId);
     if (!canvas) return;
@@ -67,7 +67,7 @@ function createWave(canvasId, side) {
     loop();
 }
 
-//   RING RIPPLE ANIMATION  
+// Animacion de anillos
 (function() {
     var c = document.getElementById('rings-canvas');
     if (!c) return;
@@ -97,7 +97,7 @@ function createWave(canvasId, side) {
     draw();
 })();
 
-//   FLOATING PARTICLES  
+// Particulas flotantes
 (function() {
     var c = document.getElementById('particles');
     if (!c) return;
@@ -139,7 +139,6 @@ function createWave(canvasId, side) {
     draw();
 })();
 
-//   PASSWORD TOGGLE  
 function togglePwd() {
     var i = document.getElementById('pwd');
     if (i) i.type = i.type === 'password' ? 'text' : 'password';
@@ -155,7 +154,7 @@ function togglePwdConf() {
     if (i) i.type = i.type === 'password' ? 'text' : 'password';
 }
 
-//   BUBBLE DIALOGS  
+// Dialogos de burbuja
 (function() {
     var loginMessages = [
         '¡Hola! Soy SismoBot.',
@@ -198,14 +197,62 @@ function togglePwdConf() {
     }, 4000);
 })();
 
-//   VALIDACIÓN REGISTRO  
-// (La validación del formulario de registro ahora vive en register-wizard.js,
-// junto con la lógica de pasos del wizard.)
-
-//   INIT WAVES  
+// La validacion del formulario de registro vive en register-wizard.js
 document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('wave-left')) {
         createWave('wave-left', 'left');
         createWave('wave-right', 'right');
     }
 });
+
+// Iniciar sesion / registrarse con Google. Si GOOGLE_CLIENT_ID no esta
+// configurado en .env, el boton avisa que todavia no esta disponible en
+// vez de intentar cargar el script de Google.
+//
+// Usamos el boton oficial de Google (renderButton) en vez de "One Tap"
+// (accounts.id.prompt()): One Tap aparece como una tarjeta flotando en
+// una esquina, mientras que el boton real abre la ventana emergente
+// centrada de Google para elegir cuenta, que es lo que se espera aqui.
+(function() {
+    var btn = document.getElementById('googleSignInBtn');
+    if (!btn) return;
+    var clientId = btn.dataset.googleClientId || '';
+
+    if (!clientId) {
+        btn.style.cursor = 'pointer';
+        btn.addEventListener('click', function() {
+            if (typeof ndaAlert === 'function') ndaAlert('El inicio de sesión con Google todavía no está disponible.', 'info');
+            else alert('El inicio de sesión con Google todavía no está disponible.');
+        });
+        return;
+    }
+
+    function loadGoogleScript(cb) {
+        if (window.google && window.google.accounts && window.google.accounts.id) { cb(); return; }
+        var s = document.createElement('script');
+        s.src = 'https://accounts.google.com/gsi/client';
+        s.onload = cb;
+        s.onerror = function() {
+            if (typeof ndaAlert === 'function') ndaAlert('No se pudo cargar Google. Revisa tu conexión.', 'error');
+        };
+        document.head.appendChild(s);
+    }
+
+    loadGoogleScript(function() {
+        google.accounts.id.initialize({
+            client_id: clientId,
+            callback: function(response) {
+                document.getElementById('googleCredential').value = response.credential;
+                document.getElementById('googleLoginForm').submit();
+            }
+        });
+        var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+        btn.innerHTML = '';
+        google.accounts.id.renderButton(btn, {
+            type: 'icon',
+            shape: 'circle',
+            theme: isLight ? 'outline' : 'filled_black',
+            size: 'large'
+        });
+    });
+})();

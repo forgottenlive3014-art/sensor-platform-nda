@@ -1,11 +1,9 @@
-        <!-- ========================================================== -->
-        <!--  INSTITUCIONES (solo Admin General) -->
-        <!-- ========================================================== -->
+        <!-- Solo visible para Admin General -->
         <div id="tab-institutions" class="school-panel">
             <div class="school-panel-header">
-                <h3><span class="school-emoji" aria-hidden="true">🌎</span> Instituciones registradas</h3>
+                <h3>Instituciones registradas</h3>
                 <button class="school-btn primary" onclick="openModal('addInstitutionModal')">
-                    <span class="school-emoji" aria-hidden="true">➕</span> Agregar Institución
+                    Agregar Institución
                 </button>
             </div>
             <p class="school-hint">Todas las instituciones dadas de alta en el sistema NDA.</p>
@@ -32,7 +30,6 @@
             <div class="school-pagination" id="institutionsPagination"></div>
         </div>
 
-        <!-- Modal Agregar Institución -->
         <div class="school-modal" id="addInstitutionModal">
             <div class="school-modal-content">
                 <div class="school-modal-header">
@@ -74,7 +71,18 @@
             </div>
         </div>
 
-        <!-- Modal Editar Institución -->
+        <div class="school-modal" id="institutionStatsModal">
+            <div class="school-modal-content">
+                <div class="school-modal-header">
+                    <h3 id="institutionStatsTitle">Detalle de la institución</h3>
+                    <button class="school-modal-close" onclick="closeModal('institutionStatsModal')">&times;</button>
+                </div>
+                <div class="school-modal-body">
+                    <div class="school-stats" id="institutionStatsGrid"></div>
+                </div>
+            </div>
+        </div>
+
         <div class="school-modal" id="editInstitutionModal">
             <div class="school-modal-content">
                 <div class="school-modal-header">

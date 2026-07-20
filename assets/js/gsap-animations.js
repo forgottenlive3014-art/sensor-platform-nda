@@ -1,8 +1,4 @@
-/* ================================================================
-   NDA — Animaciones GSAP (sitio completo)
-   No toca elementos que ya usan el sistema propio de reveal (".reveal"),
-   presente en algunas paginas de contenido — evita animar dos veces.
-   ================================================================ */
+// NDA - Animaciones GSAP. No toca elementos que ya usan el sistema propio de reveal (".reveal").
 (function () {
     if (typeof gsap === 'undefined') return;
     gsap.registerPlugin(ScrollTrigger);
@@ -10,7 +6,6 @@
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReduced) return;
 
-    // ---------- Reveal en lote para tarjetas y bloques de contenido ----------
     const CARD_SELECTORS = [
         '.mod-card', '.card', '.data-card-3d', '.ahora-card', '.h3d-card',
         '.section-card', '.request-card', '.smc', '.rtm-stat', '.fbi',
@@ -19,11 +14,10 @@
     ].join(', ');
 
     document.querySelectorAll(CARD_SELECTORS).forEach(el => {
-        if (el.closest('.reveal')) return; // ya animado por el sistema propio de la pagina
+        if (el.closest('.reveal')) return;
         el.style.willChange = 'transform, opacity';
     });
 
-    // Agrupa por contenedor padre para que el stagger se vea coordinado
     const groups = new Map();
     document.querySelectorAll(CARD_SELECTORS).forEach(el => {
         if (el.closest('.reveal')) return;
@@ -45,7 +39,6 @@
         });
     });
 
-    // ---------- Encabezados de sección ----------
     document.querySelectorAll('.sec-hd, .page-title, .rtm-title-area, .section-group h4').forEach(el => {
         if (el.closest('.reveal')) return;
         gsap.fromTo(el, { opacity: 0, x: -18 }, {
@@ -54,7 +47,6 @@
         });
     });
 
-    // ---------- Micro-interaccion: elevar tarjetas al pasar el mouse ----------
     document.querySelectorAll('.mod-card, .card, .h3d-card, .section-card, .guide-card, .blog-card, .game-card').forEach(el => {
         el.addEventListener('mouseenter', () => {
             gsap.to(el, { y: -6, duration: 0.25, ease: 'power2.out' });
@@ -64,7 +56,6 @@
         });
     });
 
-    // ---------- Contadores numericos con GSAP (stats con data-count) ----------
     document.querySelectorAll('[data-gsap-count]').forEach(el => {
         const target = parseFloat(el.dataset.gsapCount) || 0;
         const obj = { val: 0 };
@@ -79,8 +70,7 @@
         });
     });
 
-    // Refresca ScrollTrigger cuando el layout cambia bastante (p. ej. al
-    // abrir/cerrar tabs del modulo escolar, que muestran/ocultan contenido).
+    // Refresca ScrollTrigger al abrir/cerrar tabs (cambia el layout)
     document.addEventListener('click', () => {
         setTimeout(() => ScrollTrigger.refresh(), 350);
     });

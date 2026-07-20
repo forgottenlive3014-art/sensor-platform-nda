@@ -1,46 +1,48 @@
 <?php
 $title = $title ?? 'Acerca de NDA';
+
+require_once __DIR__ . '/../models/ContenidoModel.php';
+
+$acercadeDefs = ContenidoModel::acercadeFieldDefs();
+$acercadeSaved = (new ContenidoModel())->getByPage('acercade');
+$A = [];
+foreach ($acercadeDefs as $def) {
+    $A[$def['campo']] = $acercadeSaved[$def['campo']] ?? $def['default'];
+}
+$statSuffixes = ['', '', '', '%'];
+
 ob_start();
 ?>
 
 <div class="about-page">
     <div class="wrap" style="padding-top:80px; padding-bottom:60px;">
 
-        <!-- ====== HERO ====== -->
         <div class="about-hero reveal">
             <div class="about-glow"></div>
-            <span class="kicker">QUIÉNES SOMOS</span>
-            <h1>Preparar a El Salvador,<br><span class="grad">un hogar a la vez</span></h1>
-            <p>NDA es una plataforma educativa que convierte la prevención de desastres
-               en algo claro, visual y al alcance de todos. Porque estar informado salva vidas.</p>
+            <span class="kicker"><?= htmlspecialchars($A['hero.kicker']) ?></span>
+            <h1 class="grad"><?= htmlspecialchars($A['hero.titulo']) ?></h1>
+            <p><?= htmlspecialchars($A['hero.texto']) ?></p>
         </div>
 
-        <!-- ====== CONTADORES ====== -->
         <div class="stats reveal">
-            <div class="stat"><span class="stat-num" data-target="9">0</span><span class="stat-label">Guías educativas</span></div>
-            <div class="stat"><span class="stat-num" data-target="5">0</span><span class="stat-label">Tipos de emergencia</span></div>
-            <div class="stat"><span class="stat-num" data-target="72">0</span><span class="stat-label">Horas que enseñamos a resistir</span></div>
-            <div class="stat"><span class="stat-num" data-target="100" data-suffix="%">0</span><span class="stat-label">Acceso gratuito</span></div>
+            <?php for ($i = 0; $i < 4; $i++): ?>
+            <div class="stat"><span class="stat-num" data-target="<?= (int) $A["stats.$i.target"] ?>" <?= $statSuffixes[$i] ? 'data-suffix="' . $statSuffixes[$i] . '"' : '' ?>>0</span><span class="stat-label"><?= htmlspecialchars($A["stats.$i.label"]) ?></span></div>
+            <?php endfor; ?>
         </div>
 
-        <!-- ====== MISIÓN / VISIÓN (estilo revista, 2 columnas) ====== -->
         <div class="mv-grid">
             <div class="mv-card reveal" style="--c:#f29f05;">
                 <span class="mv-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></span>
                 <h3>Nuestra misión</h3>
-                <p>Llevar información práctica de prevención y respuesta ante desastres a familias,
-                   escuelas y comunidades de El Salvador, en un lenguaje sencillo y con herramientas
-                   que cualquiera pueda usar hoy mismo.</p>
+                <p><?= htmlspecialchars($A['mision.texto']) ?></p>
             </div>
             <div class="mv-card reveal" style="--c:#2e8b7f;">
                 <span class="mv-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="3" y1="21" x2="10" y2="14"/><path d="M8 12l10-6 3 3-6 10z"/></svg></span>
                 <h3>Nuestra visión</h3>
-                <p>Un país donde cada persona sepa exactamente qué hacer antes, durante y después
-                   de una emergencia, y donde la preparación sea un hábito y no una sorpresa.</p>
+                <p><?= htmlspecialchars($A['vision.texto']) ?></p>
             </div>
         </div>
 
-        <!-- ====== QUÉ OFRECEMOS ====== -->
         <div class="offer reveal">
             <h2 class="section-h">Lo que encuentras en NDA</h2>
             <div class="offer-grid">
@@ -59,37 +61,37 @@ ob_start();
             </div>
         </div>
 
-        <!-- ====== LÍNEA DE TIEMPO ====== -->
         <div class="timeline-wrap reveal">
             <h2 class="section-h">Cómo te acompañamos</h2>
             <div class="timeline">
-                <div class="tl-item reveal"><span class="tl-dot">1</span>
-                    <div class="tl-card"><b>Te informas</b><span>Lees guías y reportajes claros, sin tecnicismos.</span></div></div>
-                <div class="tl-item reveal"><span class="tl-dot">2</span>
-                    <div class="tl-card"><b>Practicas</b><span>Pones a prueba lo aprendido con juegos y simulacros.</span></div></div>
-                <div class="tl-item reveal"><span class="tl-dot">3</span>
-                    <div class="tl-card"><b>Te preparas</b><span>Armas tu mochila y tu plan familiar de emergencia.</span></div></div>
-                <div class="tl-item reveal"><span class="tl-dot">4</span>
-                    <div class="tl-card"><b>Actúas</b><span>Cuando llega la emergencia, ya sabes qué hacer.</span></div></div>
+                <?php for ($i = 0; $i < 4; $i++): ?>
+                <div class="tl-item reveal"><span class="tl-dot"><?= $i + 1 ?></span>
+                    <div class="tl-card"><b><?= htmlspecialchars($A["timeline.$i.titulo"]) ?></b><span><?= htmlspecialchars($A["timeline.$i.texto"]) ?></span></div></div>
+                <?php endfor; ?>
             </div>
         </div>
 
-        <!-- ====== VALORES ====== -->
         <div class="values reveal">
             <h2 class="section-h">En lo que creemos</h2>
             <div class="values-grid">
-                <div class="value-card"><span><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M11 17l-4-4a2 2 0 0 1 3-3l3 3M14 20l6-6-3-3-6 6M2 14l4 4"/></svg></span><b>Para todos</b><p>Información gratuita y accesible, sin barreras.</p></div>
-                <div class="value-card"><span><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg></span><b>Confiable</b><p>Basada en fuentes oficiales y buenas prácticas.</p></div>
-                <div class="value-card"><span><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.5.4.9 1 .9 1.6V17h6.2v-.7c0-.6.4-1.2.9-1.6A7 7 0 0 0 12 2z"/></svg></span><b>Clara</b><p>Lenguaje sencillo y diseño que se entiende rápido.</p></div>
-                <div class="value-card"><span><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span><b>Útil hoy</b><p>Acciones que puedes tomar de inmediato.</p></div>
+                <?php
+                $valorIcons = [
+                    '<path d="M11 17l-4-4a2 2 0 0 1 3-3l3 3M14 20l6-6-3-3-6 6M2 14l4 4"/>',
+                    '<circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/>',
+                    '<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.5.4.9 1 .9 1.6V17h6.2v-.7c0-.6.4-1.2.9-1.6A7 7 0 0 0 12 2z"/>',
+                    '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+                ];
+                for ($i = 0; $i < 4; $i++):
+                ?>
+                <div class="value-card"><span><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><?= $valorIcons[$i] ?></svg></span><b><?= htmlspecialchars($A["valores.$i.titulo"]) ?></b><p><?= htmlspecialchars($A["valores.$i.texto"]) ?></p></div>
+                <?php endfor; ?>
             </div>
         </div>
 
-        <!-- ====== CTA FINAL ====== -->
         <div class="about-cta reveal">
             <div class="cta-glow"></div>
-            <h2>La mejor emergencia es la que sabes enfrentar</h2>
-            <p>Empieza hoy. Tu preparación protege a quienes más quieres.</p>
+            <h2><?= htmlspecialchars($A['cta.titulo']) ?></h2>
+            <p><?= htmlspecialchars($A['cta.texto']) ?></p>
             <div class="cta-btns">
                 <a href="?url=resources" class="cta-primary">Ver recursos</a>
                 <a href="?url=quehacer" class="cta-secondary">¿Qué hacer ahora?</a>
@@ -177,7 +179,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }), {threshold:.12});
     document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-    /* contadores animados */
     const counters = document.querySelectorAll('.stat-num');
     const cio = new IntersectionObserver(es => {
         es.forEach(e => {

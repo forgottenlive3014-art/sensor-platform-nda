@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../models/AttendanceModel.php';
 
-class AttendanceController {
+class AsistenciaController {
 
     private function isSchoolStaff() {
         $u = currentUser();

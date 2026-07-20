@@ -1,9 +1,7 @@
-        <!-- ========================================================== -->
-        <!--  MI ASISTENCIA (solo Estudiante) -->
-        <!-- ========================================================== -->
+        <!-- Solo visible para el rol Estudiante -->
         <div id="tab-my-attendance" class="school-panel">
             <div class="school-panel-header">
-                <h3><span class="school-emoji" aria-hidden="true">🖊️</span> Mi Asistencia en Simulacros</h3>
+                <h3>Mi Asistencia en Simulacros</h3>
             </div>
             <p class="school-hint">Tu historial de asistencia registrado por tu docente durante cada simulacro.</p>
             <div class="school-table-wrap">

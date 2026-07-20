@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../models/SectionModel.php';
 
-class SectionController {
+class SeccionController {
 
     private function isSchoolAdmin() {
         $u = currentUser();

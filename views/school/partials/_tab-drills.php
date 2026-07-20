@@ -1,11 +1,8 @@
-        <!-- ========================================================== -->
-        <!--  SIMULACROS -->
-        <!-- ========================================================== -->
         <div id="tab-drills" class="school-panel">
             <div class="school-panel-header">
-                <h3><span class="school-emoji" aria-hidden="true">🔔</span> Simulacros</h3>
+                <h3>Simulacros</h3>
                 <button class="school-btn primary" onclick="openModal('addDrillModal')">
-                    <span class="school-emoji" aria-hidden="true">➕</span> Nuevo Simulacro
+                    Nuevo Simulacro
                 </button>
             </div>
             <div class="school-table-wrap">

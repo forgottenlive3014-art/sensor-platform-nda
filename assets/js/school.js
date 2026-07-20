@@ -56,16 +56,12 @@ function showSchoolTab(tabId) {
         'my-children': loadMyChildren,
         'staff': loadStaff,
         'notifications': loadNotifications,
-<<<<<<< Updated upstream
-        'blog': loadBlog
-=======
         'blog': loadBlog,
         'articulos': loadArticulos,
         'recursos': loadRecursos,
         'quehacer-content': () => loadContentForm('quehacer'),
         'acercade-content': () => loadContentForm('acercade'),
         'inicio': loadInicioInstitucional,
->>>>>>> Stashed changes
     };
     if (loaders[tabId]) loaders[tabId]();
 }
@@ -114,8 +110,8 @@ async function loadStudents(page) {
                 <td>${s.teacher || 'Sin asignar'}</td>
                 <td><span style="color:var(--teal);">Activo</span></td>
                 <td>
-                    ${window.__ndaIsSchoolStaff ? `<button class="school-attendance-btn" onclick="editStudent(${s.estudiantes_id})">✏️</button>` : ''}
-                    ${window.__ndaIsSchoolAdmin ? `<button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteStudent(${s.estudiantes_id})">🗑️</button>` : ''}
+                    ${window.__ndaIsSchoolStaff ? `<button class="school-attendance-btn" onclick="editStudent(${s.estudiantes_id})">Editar</button>` : ''}
+                    ${window.__ndaIsSchoolAdmin ? `<button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteStudent(${s.estudiantes_id})">Eliminar</button>` : ''}
                 </td>
             </tr>
         `).join('');
@@ -147,15 +143,15 @@ document.getElementById('addStudentForm')?.addEventListener('submit', async func
         });
         const result = await response.json();
         if (result.success) {
-            ndaAlert('✅ Alumno agregado correctamente. Contraseña temporal: ' + result.password_temporal);
+            ndaAlert('Alumno agregado correctamente. Contraseña temporal: ' + result.password_temporal);
             closeModal('addStudentModal');
             this.reset();
             loadStudents(__studentsPage);
         } else {
-            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
         }
     } catch (e) {
-        ndaAlert('❌ Error de conexión');
+        ndaAlert('Error de conexión');
         console.error(e);
     }
 });
@@ -220,13 +216,13 @@ async function deleteStudent(id) {
         const response = await fetch(`?url=school/delete-student&id=${id}`);
         const result = await response.json();
         if (result.success) {
-            ndaAlert('✅ Alumno eliminado');
+            ndaAlert('Alumno eliminado');
             loadStudents(__studentsPage);
         } else {
-            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
         }
     } catch (e) {
-        ndaAlert('❌ Error de conexión');
+        ndaAlert('Error de conexión');
         console.error(e);
     }
 }
@@ -266,8 +262,8 @@ async function loadTeachers(page) {
                 <td>${t.materia || '—'}</td>
                 <td>${t.aulas || 'Sin asignar'}</td>
                 <td>
-                    <button class="school-attendance-btn" onclick="editTeacher(${t.usuarios_id})">✏️</button>
-                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteTeacher(${t.usuarios_id})">🗑️</button>
+                    <button class="school-attendance-btn" onclick="editTeacher(${t.usuarios_id})">Editar</button>
+                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteTeacher(${t.usuarios_id})">Eliminar</button>
                 </td>
             </tr>
         `).join('');
@@ -334,15 +330,15 @@ document.getElementById('addTeacherForm')?.addEventListener('submit', async func
         });
         const result = await response.json();
         if (result.success) {
-            ndaAlert('✅ Docente agregado correctamente. Contraseña temporal: ' + result.password_temporal);
+            ndaAlert('Docente agregado correctamente. Contraseña temporal: ' + result.password_temporal);
             closeModal('addTeacherModal');
             this.reset();
             loadTeachers(__teachersPage);
         } else {
-            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
         }
     } catch (e) {
-        ndaAlert('❌ Error de conexión');
+        ndaAlert('Error de conexión');
         console.error(e);
     }
 });
@@ -353,13 +349,13 @@ async function deleteTeacher(id) {
         const response = await fetch(`?url=school/delete-teacher&id=${id}`);
         const result = await response.json();
         if (result.success) {
-            ndaAlert('✅ Docente eliminado');
+            ndaAlert('Docente eliminado');
             loadTeachers(__teachersPage);
         } else {
-            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
         }
     } catch (e) {
-        ndaAlert('❌ Error de conexión');
+        ndaAlert('Error de conexión');
         console.error(e);
     }
 }
@@ -373,12 +369,12 @@ async function uploadTeacherPhoto(input) {
         const response = await fetch('?url=school/upload-teacher-photo', { method: 'POST', body: formData });
         const result = await response.json();
         if (result.success) {
-            ndaAlert('✅ Fotografía actualizada');
+            ndaAlert('Fotografía actualizada');
         } else {
-            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
         }
     } catch (e) {
-        ndaAlert('❌ Error de conexión');
+        ndaAlert('Error de conexión');
     }
     input.value = '';
 }
@@ -417,9 +413,9 @@ async function loadParents(page) {
                 <td>${p.email}</td>
                 <td>${p.hijos || 'Ninguno vinculado'}</td>
                 <td>
-                    <button class="school-attendance-btn" onclick="openLinkChildModal(${p.usuarios_id})">👪 Vincular hijo</button>
-                    <button class="school-attendance-btn" onclick="editParent(${p.usuarios_id})">✏️</button>
-                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteParent(${p.usuarios_id})">🗑️</button>
+                    <button class="school-attendance-btn" onclick="openLinkChildModal(${p.usuarios_id})">Vincular hijo</button>
+                    <button class="school-attendance-btn" onclick="editParent(${p.usuarios_id})">Editar</button>
+                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteParent(${p.usuarios_id})">Eliminar</button>
                 </td>
             </tr>
         `).join('');
@@ -446,15 +442,15 @@ document.getElementById('addParentForm')?.addEventListener('submit', async funct
         });
         const result = await response.json();
         if (result.success) {
-            ndaAlert('✅ Padre/madre agregado. Contraseña temporal: ' + result.password_temporal);
+            ndaAlert('Padre/madre agregado. Contraseña temporal: ' + result.password_temporal);
             closeModal('addParentModal');
             this.reset();
             loadParents(__parentsPage);
         } else {
-            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
         }
     } catch (e) {
-        ndaAlert('❌ Error de conexión');
+        ndaAlert('Error de conexión');
     }
 });
 
@@ -496,13 +492,13 @@ async function deleteParent(id) {
         const response = await fetch(`?url=school/delete-parent&id=${id}`);
         const result = await response.json();
         if (result.success) {
-            ndaAlert('✅ Eliminado');
+            ndaAlert('Eliminado');
             loadParents(__parentsPage);
         } else {
-            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
         }
     } catch (e) {
-        ndaAlert('❌ Error de conexión');
+        ndaAlert('Error de conexión');
     }
 }
 
@@ -516,7 +512,7 @@ async function openLinkChildModal(parentId) {
         const links = await res.json();
         if (Array.isArray(links) && links.length > 0) {
             currentList.innerHTML = 'Vinculados actualmente: ' + links.map(l =>
-                `${l.nombre} ${l.apellido} (${l.parentesco}) <button class="school-attendance-btn" onclick="unlinkChild(${l.padres_estudiantes_id}, ${parentId})">✖️</button>`
+                `${l.nombre} ${l.apellido} (${l.parentesco}) <button class="school-attendance-btn" onclick="unlinkChild(${l.padres_estudiantes_id}, ${parentId})">Quitar</button>`
             ).join(' · ');
         } else {
             currentList.innerHTML = 'Todavía no tiene hijos vinculados.';
@@ -548,14 +544,14 @@ document.getElementById('linkChildForm')?.addEventListener('submit', async funct
         });
         const result = await response.json();
         if (result.success) {
-            ndaAlert('✅ Estudiante vinculado');
+            ndaAlert('Estudiante vinculado');
             closeModal('linkChildModal');
             loadParents(__parentsPage);
         } else {
-            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
         }
     } catch (e) {
-        ndaAlert('❌ Error de conexión');
+        ndaAlert('Error de conexión');
     }
 });
 
@@ -619,14 +615,14 @@ document.getElementById('sendChildrenNotifForm')?.addEventListener('submit', asy
         });
         const result = await response.json();
         if (result.success) {
-            ndaAlert('✅ Aviso enviado a tus hijos');
+            ndaAlert('Aviso enviado a tus hijos');
             closeModal('sendChildrenNotifModal');
             this.reset();
         } else {
-            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
         }
     } catch (e) {
-        ndaAlert('❌ Error de conexión');
+        ndaAlert('Error de conexión');
     }
 });
 
@@ -691,8 +687,8 @@ async function loadStaff(page) {
                 <td>${s.email}</td>
                 <td>${s.telefono || '—'}</td>
                 <td>
-                    <button class="school-attendance-btn" onclick="editStaff(${s.usuarios_id})">✏️</button>
-                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteStaff(${s.usuarios_id})">🗑️</button>
+                    <button class="school-attendance-btn" onclick="editStaff(${s.usuarios_id})">Editar</button>
+                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteStaff(${s.usuarios_id})">Eliminar</button>
                 </td>
             </tr>
         `).join('');
@@ -719,15 +715,15 @@ document.getElementById('addStaffForm')?.addEventListener('submit', async functi
         });
         const result = await response.json();
         if (result.success) {
-            ndaAlert('✅ Personal agregado. Contraseña temporal: ' + result.password_temporal);
+            ndaAlert('Personal agregado. Contraseña temporal: ' + result.password_temporal);
             closeModal('addStaffModal');
             this.reset();
             loadStaff(__staffPage);
         } else {
-            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
         }
     } catch (e) {
-        ndaAlert('❌ Error de conexión');
+        ndaAlert('Error de conexión');
     }
 });
 
@@ -769,13 +765,13 @@ async function deleteStaff(id) {
         const response = await fetch(`?url=school/delete-staff&id=${id}`);
         const result = await response.json();
         if (result.success) {
-            ndaAlert('✅ Eliminado');
+            ndaAlert('Eliminado');
             loadStaff(__staffPage);
         } else {
-            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
         }
     } catch (e) {
-        ndaAlert('❌ Error de conexión');
+        ndaAlert('Error de conexión');
     }
 }
 
@@ -811,7 +807,7 @@ async function loadNotifications(page) {
                 <td><span class="chip b">${severityLabelMap[n.severidad] || n.severidad}</span></td>
                 <td>${n.es_global == 1 ? 'Global' : 'Institución'}</td>
                 <td>${new Date(n.created_at).toLocaleString('es-SV')}</td>
-                <td><button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteNotification(${n.notificaciones_id})">🗑️</button></td>
+                <td><button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteNotification(${n.notificaciones_id})">Eliminar</button></td>
             </tr>
         `).join('');
 
@@ -852,15 +848,15 @@ document.getElementById('sendNotificationForm')?.addEventListener('submit', asyn
         });
         const result = await response.json();
         if (result.success) {
-            ndaAlert('✅ Notificación enviada');
+            ndaAlert('Notificación enviada');
             closeModal('sendNotificationModal');
             this.reset();
             loadNotifications(__notificationsPage);
         } else {
-            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
         }
     } catch (e) {
-        ndaAlert('❌ Error de conexión');
+        ndaAlert('Error de conexión');
     }
 });
 
@@ -915,8 +911,8 @@ async function loadClassrooms(page) {
                 <td>${c.seccion || '—'}</td>
                 <td>${c.teacher || 'Sin asignar'}</td>
                 <td>
-                    <button class="school-attendance-btn" onclick="editClassroom(${c.aulas_id})">✏️</button>
-                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteClassroom(${c.aulas_id})">🗑️</button>
+                    <button class="school-attendance-btn" onclick="editClassroom(${c.aulas_id})">Editar</button>
+                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteClassroom(${c.aulas_id})">Eliminar</button>
                 </td>
             </tr>
         `).join('');
@@ -1004,15 +1000,15 @@ document.getElementById('addClassroomForm')?.addEventListener('submit', async fu
         });
         const result = await response.json();
         if (result.success) {
-            ndaAlert('✅ Aula agregada correctamente');
+            ndaAlert('Aula agregada correctamente');
             closeModal('addClassroomModal');
             this.reset();
             loadClassrooms(__classroomsPage);
         } else {
-            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
         }
     } catch (e) {
-        ndaAlert('❌ Error de conexión');
+        ndaAlert('Error de conexión');
         console.error(e);
     }
 });
@@ -1023,13 +1019,13 @@ async function deleteClassroom(id) {
         const response = await fetch(`?url=school/delete-classroom&id=${id}`);
         const result = await response.json();
         if (result.success) {
-            ndaAlert('✅ Aula eliminada');
+            ndaAlert('Aula eliminada');
             loadClassrooms(__classroomsPage);
         } else {
-            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
         }
     } catch (e) {
-        ndaAlert('❌ Error de conexión');
+        ndaAlert('Error de conexión');
         console.error(e);
     }
 }
@@ -1060,14 +1056,13 @@ async function loadRoutes() {
         container.innerHTML = routes.map(r => `
             <div class="school-route-card">
                 <div class="school-route-header">
-                    <span class="school-route-icon">🗺️</span>
                     <h4>${r.nombre}</h4>
                     <span class="school-route-status ${r.estado || 'despejada'}">${r.estado || 'Despejada'}</span>
                 </div>
                 <p style="font-size:0.82rem;color:var(--text2);">${r.descripcion || 'Sin descripción'}</p>
                 <div style="margin-top:8px;display:flex;gap:6px;">
                     ${window.__ndaIsSchoolStaff ? `<button class="school-attendance-btn" onclick="editRoute(${r.rutas_evacuacion_id})"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>` : ''}
-                    ${window.__ndaIsSchoolAdmin ? `<button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteRoute(${r.rutas_evacuacion_id})">🗑️</button>` : ''}
+                    ${window.__ndaIsSchoolAdmin ? `<button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteRoute(${r.rutas_evacuacion_id})">Eliminar</button>` : ''}
                 </div>
             </div>
         `).join('');
@@ -1093,15 +1088,15 @@ document.getElementById('addRouteForm')?.addEventListener('submit', async functi
         });
         const result = await response.json();
         if (result.success) {
-            ndaAlert('✅ Ruta agregada correctamente');
+            ndaAlert('Ruta agregada correctamente');
             closeModal('addRouteModal');
             this.reset();
             loadRoutes();
         } else {
-            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
         }
     } catch (e) {
-        ndaAlert('❌ Error de conexión');
+        ndaAlert('Error de conexión');
         console.error(e);
     }
 });
@@ -1148,13 +1143,13 @@ async function deleteRoute(id) {
         const response = await fetch(`?url=school/delete-route&id=${id}`);
         const result = await response.json();
         if (result.success) {
-            ndaAlert('✅ Ruta eliminada');
+            ndaAlert('Ruta eliminada');
             loadRoutes();
         } else {
-            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
         }
     } catch (e) {
-        ndaAlert('❌ Error de conexión');
+        ndaAlert('Error de conexión');
         console.error(e);
     }
 }
@@ -1220,9 +1215,9 @@ async function loadAttendance() {
                     </span>
                 </td>
                 <td>
-                    <button class="school-attendance-btn ${s.status === 'presente' ? 'active' : ''}" onclick="setAttendance(${i}, 'presente')">✅</button>
-                    <button class="school-attendance-btn ${s.status === 'ausente' ? 'active' : ''} danger" onclick="setAttendance(${i}, 'ausente')">❌</button>
-                    <button class="school-attendance-btn ${s.status === 'herido' ? 'active' : ''} warning" onclick="setAttendance(${i}, 'herido')">⚠️</button>
+                    <button class="school-attendance-btn ${s.status === 'presente' ? 'active' : ''}" onclick="setAttendance(${i}, 'presente')">Presente</button>
+                    <button class="school-attendance-btn ${s.status === 'ausente' ? 'active' : ''} danger" onclick="setAttendance(${i}, 'ausente')">Ausente</button>
+                    <button class="school-attendance-btn ${s.status === 'herido' ? 'active' : ''} warning" onclick="setAttendance(${i}, 'herido')">Herido</button>
                 </td>
             </tr>
         `).join('');
@@ -1274,12 +1269,12 @@ async function saveAttendance() {
         const result = await response.json();
 
         if (result.success) {
-            ndaAlert('✅ Asistencia guardada correctamente');
+            ndaAlert('Asistencia guardada correctamente');
         } else {
-            ndaAlert('❌ Error al guardar: ' + (result.error || 'Desconocido'));
+            ndaAlert('Error al guardar: ' + (result.error || 'Desconocido'));
         }
     } catch (e) {
-        ndaAlert('❌ Error de conexión');
+        ndaAlert('Error de conexión');
         console.error(e);
     }
 }
@@ -1315,14 +1310,14 @@ async function loadIncidents() {
                     <span class="school-incident-type">${inc.tipo}</span>
                     <span class="school-incident-time">${new Date(inc.created_at).toLocaleString('es-SV')}</span>
                 </div>
-                ${inc.ubicacion ? `<div class="school-incident-location">${svgPin()} ${inc.ubicacion}</div>` : ''}
+                ${inc.ubicacion ? `<div class="school-incident-location">${inc.ubicacion}</div>` : ''}
                 <div class="school-incident-desc">${inc.descripcion}</div>
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;gap:6px;flex-wrap:wrap;">
-                    ${inc.estado === 'resuelto' ? '<span class="school-incident-resolved">' + svgCheck() + ' Resuelto</span>' : '<span></span>'}
+                    ${inc.estado === 'resuelto' ? '<span class="school-incident-resolved">Resuelto</span>' : '<span></span>'}
                     ${inc.reporter ? `<span style="font-size:0.7rem;color:var(--text3);">Reportado por: ${inc.reporter}</span>` : ''}
                     <span>
                         ${window.__ndaIsSchoolStaff ? `<button class="school-attendance-btn" onclick="editIncident(${inc.incidentes_id})">Editar</button>` : ''}
-                        ${window.__ndaIsSchoolStaff && inc.estado !== 'resuelto' ? `<button class="school-attendance-btn" onclick="resolveIncident(${inc.incidentes_id})">${svgCheck()} Resolver</button>` : ''}
+                        ${window.__ndaIsSchoolStaff && inc.estado !== 'resuelto' ? `<button class="school-attendance-btn" onclick="resolveIncident(${inc.incidentes_id})">Resolver</button>` : ''}
                         ${window.__ndaIsSchoolAdmin ? `<button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteIncident(${inc.incidentes_id})">Eliminar</button>` : ''}
                     </span>
                 </div>
@@ -1386,9 +1381,6 @@ async function deleteIncident(id) {
         ndaAlert('Error de conexión');
     }
 }
-
-function svgPin() { return '📍'; }
-function svgCheck() { return '✅'; }
 
 document.getElementById('addIncidentForm')?.addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -1581,16 +1573,16 @@ document.getElementById('addDrillForm')?.addEventListener('submit', async functi
         });
         const result = await response.json();
         if (result.success) {
-            ndaAlert('✅ Simulacro creado correctamente');
+            ndaAlert('Simulacro creado correctamente');
             closeModal('addDrillModal');
             this.reset();
             loadDrills();
             loadDrillSelect();
         } else {
-            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
         }
     } catch (e) {
-        ndaAlert('❌ Error de conexión');
+        ndaAlert('Error de conexión');
         console.error(e);
     }
 });
@@ -1611,14 +1603,14 @@ async function deleteDrill(id) {
         const response = await fetch(`?url=school/delete-drill&id=${id}`);
         const result = await response.json();
         if (result.success) {
-            ndaAlert('✅ Simulacro eliminado');
+            ndaAlert('Simulacro eliminado');
             loadDrills();
             loadDrillSelect();
         } else {
-            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
         }
     } catch (e) {
-        ndaAlert('❌ Error de conexión');
+        ndaAlert('Error de conexión');
         console.error(e);
     }
 }
@@ -1651,15 +1643,15 @@ async function loadReports() {
         container.innerHTML = `
             <div class="school-grid-2">
                 <div class="school-report-card">
-                    <h4>📊 Estadísticas de Asistencia</h4>
+                    <h4>Estadísticas de Asistencia</h4>
                     <div class="school-report-stat"><span>Total registros</span><span class="value">${att.total || 0}</span></div>
-                    <div class="school-report-stat"><span>✅ Presentes</span><span class="value" style="color:var(--teal);">${att.presentes || 0}</span></div>
-                    <div class="school-report-stat"><span>❌ Ausentes</span><span class="value" style="color:var(--acc2);">${att.ausentes || 0}</span></div>
-                    <div class="school-report-stat"><span>⚠️ Heridos</span><span class="value" style="color:var(--acc3);">${att.heridos || 0}</span></div>
+                    <div class="school-report-stat"><span>Presentes</span><span class="value" style="color:var(--teal);">${att.presentes || 0}</span></div>
+                    <div class="school-report-stat"><span>Ausentes</span><span class="value" style="color:var(--acc2);">${att.ausentes || 0}</span></div>
+                    <div class="school-report-stat"><span>Heridos</span><span class="value" style="color:var(--acc3);">${att.heridos || 0}</span></div>
                 </div>
 
                 <div class="school-report-card">
-                    <h4>📋 Incidentes por Tipo</h4>
+                    <h4>Incidentes por Tipo</h4>
                     ${incidentsByType.length === 0 ? '<p style="color:var(--text3);">No hay incidentes registrados</p>' :
                         incidentsByType.map(i => `
                             <div class="school-report-stat"><span>${i.tipo}</span><span class="value">${i.total}</span></div>
@@ -1668,7 +1660,7 @@ async function loadReports() {
                 </div>
 
                 <div class="school-report-card">
-                    <h4>🔔 Simulacros por Estado</h4>
+                    <h4>Simulacros por Estado</h4>
                     ${drillsByStatus.length === 0 ? '<p style="color:var(--text3);">No hay simulacros registrados</p>' :
                         drillsByStatus.map(d => `
                             <div class="school-report-stat"><span>${drillStatusLabel[d.estado] || d.estado}</span><span class="value">${d.total}</span></div>
@@ -1677,7 +1669,7 @@ async function loadReports() {
                 </div>
 
                 <div class="school-report-card" style="grid-column:1/-1;">
-                    <h4>🏢 Alumnos por Aula</h4>
+                    <h4>Alumnos por Aula</h4>
                     ${studentsByClassroom.length === 0 ? '<p style="color:var(--text3);">No hay datos de alumnos por aula</p>' :
                         `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;">
                             ${studentsByClassroom.map(c => `
@@ -1748,7 +1740,7 @@ function exportReport() {
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
-    ndaAlert('📤 Reporte exportado.', 'success');
+    ndaAlert('Reporte exportado.', 'success');
 }
 
 // ─── CARGAR AULAS PARA EL FORMULARIO ───
@@ -2064,7 +2056,7 @@ async function loadBoard() {
             <div class="sticky-note ${n.color}" data-id="${n.corcho_notas_id}" style="left:${n.pos_x}%; top:${n.pos_y}%; transform: rotate(${n.rotacion}deg);">
                 <button class="sticky-note-del" onclick="deleteBoardNote(${n.corcho_notas_id})" title="Quitar nota">&times;</button>
                 <p>${escapeHtml(n.texto)}</p>
-                <span class="sticky-note-author">${n.autor}${n.visibilidad && n.visibilidad !== 'todos' ? ' · 🔒' : ''}</span>
+                <span class="sticky-note-author">${n.autor}${n.visibilidad && n.visibilidad !== 'todos' ? ' · privado' : ''}</span>
             </div>
         `).join('');
 
@@ -2267,8 +2259,9 @@ async function loadInstitutions(page) {
                 <td>${i.direccion || '—'}</td>
                 <td>${i.total_usuarios || 0}</td>
                 <td>
-                    <button class="school-attendance-btn" onclick="editInstitution(${i.instituciones_id})">✏️</button>
-                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteInstitution(${i.instituciones_id})">🗑️</button>
+                    <button class="school-attendance-btn" onclick="viewInstitutionStats(${i.instituciones_id}, '${(i.nombre || '').replace(/'/g, "\\'")}')">Ver detalle</button>
+                    <button class="school-attendance-btn" onclick="editInstitution(${i.instituciones_id})">Editar</button>
+                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteInstitution(${i.instituciones_id})">Eliminar</button>
                 </td>
             </tr>
         `).join('');
@@ -2276,6 +2269,40 @@ async function loadInstitutions(page) {
         renderPagination('institutionsPagination', result.page, result.total_pages, 'loadInstitutions');
     } catch (e) {
         tbody.innerHTML = '<tr><td colspan="6" class="text-center">Error al cargar instituciones</td></tr>';
+        console.error(e);
+    }
+}
+
+async function viewInstitutionStats(id, nombre) {
+    document.getElementById('institutionStatsTitle').textContent = 'Detalle — ' + nombre;
+    const grid = document.getElementById('institutionStatsGrid');
+    grid.innerHTML = '<div class="text-center" style="padding:12px;grid-column:1/-1;">Cargando...</div>';
+    openModal('institutionStatsModal');
+    try {
+        const response = await fetch(`?url=school/institution-stats&id=${id}`);
+        const result = await response.json();
+        if (result.error) {
+            grid.innerHTML = `<div class="text-center" style="grid-column:1/-1;">Error: ${result.error}</div>`;
+            return;
+        }
+        const s = result.stats;
+        const tiles = [
+            ['Docentes', s.docentes],
+            ['Alumnos', s.alumnos],
+            ['Personal administrativo', s.administrativos],
+            ['Padres/Encargados', s.padres],
+            ['Rutas de evacuación', s.rutas],
+            ['Incidentes abiertos', s.incidentes_abiertos],
+            ['Incidentes resueltos', s.incidentes_resueltos],
+        ];
+        grid.innerHTML = tiles.map(([label, val]) => `
+            <div class="school-stat">
+                <div class="school-stat-number">${val}</div>
+                <div class="school-stat-label">${label}</div>
+            </div>
+        `).join('');
+    } catch (e) {
+        grid.innerHTML = '<div class="text-center" style="grid-column:1/-1;">Error al cargar el detalle</div>';
         console.error(e);
     }
 }
@@ -2298,15 +2325,15 @@ document.getElementById('addInstitutionForm')?.addEventListener('submit', async 
         });
         const result = await response.json();
         if (result.success) {
-            ndaAlert('✅ Institución agregada correctamente');
+            ndaAlert('Institución agregada correctamente');
             closeModal('addInstitutionModal');
             this.reset();
             loadInstitutions(__institutionsPage);
         } else {
-            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
         }
     } catch (e) {
-        ndaAlert('❌ Error de conexión');
+        ndaAlert('Error de conexión');
     }
 });
 
@@ -2356,13 +2383,13 @@ async function deleteInstitution(id) {
         const response = await fetch(`?url=school/delete-institution&id=${id}`);
         const result = await response.json();
         if (result.success) {
-            ndaAlert('✅ Institución eliminada');
+            ndaAlert('Institución eliminada');
             loadInstitutions(__institutionsPage);
         } else {
-            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
         }
     } catch (e) {
-        ndaAlert('❌ Error de conexión');
+        ndaAlert('Error de conexión');
     }
 }
 
@@ -2428,14 +2455,9 @@ async function loadUsers(page) {
                 <td>${u.institucion_nombre || '—'}</td>
                 <td>${u.estado_institucional || '—'}</td>
                 <td>
-<<<<<<< Updated upstream
-                    <button class="school-attendance-btn" onclick="editUser(${u.usuarios_id})">✏️</button>
-                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteUser(${u.usuarios_id})">🗑️</button>
-=======
                     <button class="school-attendance-btn" onclick="viewUserProfile(${u.usuarios_id})">Ver perfil</button>
                     <button class="school-attendance-btn" onclick="editUser(${u.usuarios_id})">Editar</button>
                     <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteUser(${u.usuarios_id})">Eliminar</button>
->>>>>>> Stashed changes
                 </td>
             </tr>
         `).join('');
@@ -2502,15 +2524,15 @@ document.getElementById('addUserForm')?.addEventListener('submit', async functio
         });
         const result = await response.json();
         if (result.success) {
-            ndaAlert('✅ Usuario agregado correctamente');
+            ndaAlert('Usuario agregado correctamente');
             closeModal('addUserModal');
             this.reset();
             loadUsers(__usersPage);
         } else {
-            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
         }
     } catch (e) {
-        ndaAlert('❌ Error de conexión');
+        ndaAlert('Error de conexión');
     }
 });
 
@@ -2563,13 +2585,13 @@ async function deleteUser(id) {
         const response = await fetch(`?url=school/delete-user&id=${id}`);
         const result = await response.json();
         if (result.success) {
-            ndaAlert('✅ Usuario eliminado');
+            ndaAlert('Usuario eliminado');
             loadUsers(__usersPage);
         } else {
-            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
         }
     } catch (e) {
-        ndaAlert('❌ Error de conexión');
+        ndaAlert('Error de conexión');
     }
 }
 
@@ -2612,23 +2634,24 @@ async function loadNews(page) {
                 actions += `<button class="school-attendance-btn" style="color:var(--state-seguro,green);" onclick="reviewNews(${n.noticias_internas_id},'approve')">Aprobar</button>
                     <button class="school-attendance-btn" style="color:var(--acc2);" onclick="reviewNews(${n.noticias_internas_id},'reject')">Rechazar</button>`;
             }
-            const estadoBadge = n.estado && n.estado !== 'publicada' ? ` <span class="chip b">${estadoLabels[n.estado] || n.estado}</span>` : '';
+            const tagLabel = !n.instituciones_id ? 'Global' : (estadoLabels[n.estado] && n.estado !== 'publicada' ? estadoLabels[n.estado] : 'Noticia');
+            const contenido = n.contenido || '';
+            const excerpt = contenido.length > 140 ? contenido.slice(0, 140) + '…' : contenido;
             return `
-            <div class="school-card" style="margin-bottom:12px;">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
-<<<<<<< Updated upstream
-                    <h3 style="margin:0;">${n.titulo}${!n.instituciones_id ? ' <span class="chip b">Global</span>' : ''}</h3>
-                    ${window.__ndaIsSchoolAdmin ? `<span>
-                        <button class="school-attendance-btn" onclick="editNews(${n.noticias_internas_id})">✏️</button>
-                        <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteNews(${n.noticias_internas_id})">🗑️</button>
-                    </span>` : ''}
-=======
-                    <h3 style="margin:0;">${n.titulo}${!n.instituciones_id ? ' <span class="chip b">Global</span>' : ''}${estadoBadge}</h3>
-                    ${actions ? `<span>${actions}</span>` : ''}
->>>>>>> Stashed changes
+            <div class="school-post-card" onclick="readNews(${n.noticias_internas_id})" style="cursor:pointer;">
+                <div class="school-post-thumb" style="background:linear-gradient(135deg,var(--acc),var(--acc3));">
+                    <span class="school-post-tag">${escapeHtml(tagLabel)}</span>
                 </div>
-                <p style="white-space:pre-wrap;">${n.contenido}</p>
-                <span style="font-size:0.7rem;color:var(--text3);">Por ${n.autor || 'Administración'} · ${new Date(n.created_at).toLocaleString('es-SV')}</span>
+                <div class="school-post-body">
+                    <h3>${escapeHtml(n.titulo)}</h3>
+                    <p>${escapeHtml(excerpt)}</p>
+                    <div class="school-post-meta">
+                        <span>${escapeHtml(n.autor || 'Administración')}</span>
+                        <span>${new Date(n.created_at).toLocaleDateString('es-SV')}</span>
+                    </div>
+                    <span class="school-post-readmore">Leer más →</span>
+                    ${actions ? `<div class="school-post-actions" onclick="event.stopPropagation()">${actions}</div>` : ''}
+                </div>
             </div>
         `;
         }).join('');
@@ -2638,6 +2661,19 @@ async function loadNews(page) {
         list.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);">Error al cargar noticias</div>';
         console.error(e);
     }
+}
+
+// Lectura completa de una noticia (mismo espíritu que un artículo del blog público).
+function readNews(id) {
+    const n = __newsCache.find(x => String(x.noticias_internas_id) === String(id));
+    if (!n) { ndaAlert('No se encontró la noticia.'); return; }
+    document.getElementById('readNewsTitle').textContent = n.titulo;
+    document.getElementById('readNewsMeta').innerHTML = `
+        <span>${escapeHtml(n.autor || 'Administración')}</span>
+        <span>${new Date(n.created_at).toLocaleString('es-SV')}</span>
+    `;
+    document.getElementById('readNewsBody').textContent = n.contenido || '';
+    openModal('readNewsModal');
 }
 
 document.getElementById('addNewsForm')?.addEventListener('submit', async function (e) {
@@ -2728,6 +2764,7 @@ async function reviewNews(id, action) {
 
 // ─── BLOG DE LUGARES EN RIESGO ───
 let __blogPage = 1;
+let __blogCache = [];
 
 async function loadBlog(page) {
     const list = document.getElementById('blogList');
@@ -2744,6 +2781,7 @@ async function loadBlog(page) {
             return;
         }
         const rows = result.data || [];
+        __blogCache = rows;
 
         if (rows.length === 0) {
             list.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);">Nadie ha publicado todavía. ¡Sé el primero en reportar un lugar en riesgo!</div>';
@@ -2751,26 +2789,54 @@ async function loadBlog(page) {
             return;
         }
 
-        list.innerHTML = rows.map(b => `
-            <div class="school-card" style="margin-bottom:12px;">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
-                    <h3 style="margin:0;">📍 ${b.titulo}</h3>
-                    ${(window.__ndaIsSchoolAdmin || String(b.usuarios_id) === String(window.__ndaMyUserId)) ? `
-                        <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteBlogPost(${b.blog_riesgos_id})">🗑️</button>
-                    ` : ''}
+        list.innerHTML = rows.map(b => {
+            const canDelete = window.__ndaIsSchoolAdmin || String(b.usuarios_id) === String(window.__ndaMyUserId);
+            const descripcion = b.descripcion || '';
+            const excerpt = descripcion.length > 140 ? descripcion.slice(0, 140) + '…' : descripcion;
+            const thumbStyle = b.imagen
+                ? `background-image:url('${b.imagen}');`
+                : `background:linear-gradient(135deg,var(--acc3),var(--acc2));`;
+            return `
+            <div class="school-post-card" onclick="readBlogPost(${b.blog_riesgos_id})" style="cursor:pointer;">
+                <div class="school-post-thumb" style="${thumbStyle}">
+                    <span class="school-post-tag">${escapeHtml(b.ubicacion || 'Riesgo')}</span>
                 </div>
-                ${b.imagen ? `<img class="school-incident-photo" src="${b.imagen}" alt="Foto del lugar" onclick="window.open('${b.imagen}','_blank')">` : ''}
-                ${b.ubicacion ? `<div class="school-incident-location">📍 ${b.ubicacion}</div>` : ''}
-                <p style="white-space:pre-wrap;">${escapeHtml(b.descripcion)}</p>
-                <span style="font-size:0.7rem;color:var(--text3);">Por ${b.autor} (${roleLabelMap[b.autor_role] || b.autor_role}) · ${new Date(b.created_at).toLocaleString('es-SV')}</span>
+                <div class="school-post-body">
+                    <h3>${escapeHtml(b.titulo)}</h3>
+                    <p>${escapeHtml(excerpt)}</p>
+                    <div class="school-post-meta">
+                        <span>${escapeHtml(b.autor)} (${escapeHtml(roleLabelMap[b.autor_role] || b.autor_role)})</span>
+                        <span>${new Date(b.created_at).toLocaleDateString('es-SV')}</span>
+                    </div>
+                    <span class="school-post-readmore">Ver más →</span>
+                    ${canDelete ? `<div class="school-post-actions" onclick="event.stopPropagation()"><button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteBlogPost(${b.blog_riesgos_id})">Eliminar</button></div>` : ''}
+                </div>
             </div>
-        `).join('');
+        `;
+        }).join('');
 
         renderPagination('blogPagination', result.page, result.total_pages, 'loadBlog');
     } catch (e) {
         list.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);">Error al cargar el blog</div>';
         console.error(e);
     }
+}
+
+// Lectura completa de un lugar en riesgo (mismo espíritu que un artículo del blog público).
+function readBlogPost(id) {
+    const b = __blogCache.find(x => String(x.blog_riesgos_id) === String(id));
+    if (!b) { ndaAlert('No se encontró la publicación.'); return; }
+    document.getElementById('readBlogTitle').textContent = b.titulo;
+    document.getElementById('readBlogImageWrap').innerHTML = b.imagen
+        ? `<img class="school-incident-photo" src="${b.imagen}" alt="Foto del lugar" style="max-height:320px;cursor:zoom-in;" onclick="window.open('${b.imagen}','_blank')">`
+        : '';
+    document.getElementById('readBlogMeta').innerHTML = `
+        <span>${escapeHtml(b.autor)} (${escapeHtml(roleLabelMap[b.autor_role] || b.autor_role)})</span>
+        <span>${new Date(b.created_at).toLocaleString('es-SV')}</span>
+        ${b.ubicacion ? `<span>${escapeHtml(b.ubicacion)}</span>` : ''}
+    `;
+    document.getElementById('readBlogBody').textContent = b.descripcion || '';
+    openModal('readBlogModal');
 }
 
 document.getElementById('addBlogForm')?.addEventListener('submit', async function (e) {
@@ -2812,6 +2878,316 @@ async function deleteBlogPost(id) {
         }
     } catch (e) {
         ndaAlert('Error de conexión');
+    }
+}
+
+// ─── BLOG PÚBLICO: ARTÍCULOS Y NOTICIAS (Admin General) ───
+let __articulosCache = [];
+let __articulosPage = 1;
+
+async function loadArticulos(page) {
+    const tbody = document.getElementById('articulosTableBody');
+    if (!tbody) return;
+    __articulosPage = page || 1;
+    tbody.innerHTML = '<tr><td colspan="5" class="text-center">Cargando artículos...</td></tr>';
+
+    const q = document.getElementById('articulosSearch')?.value.trim() || '';
+
+    try {
+        const response = await fetch(`?url=admin/articulos&q=${encodeURIComponent(q)}&page=${__articulosPage}&per_page=10`);
+        const result = await response.json();
+
+        if (result.error) {
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center">Error: ${result.error}</td></tr>`;
+            return;
+        }
+        __articulosCache = result.data || [];
+
+        if (__articulosCache.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center">No hay artículos todavía</td></tr>';
+            renderPagination('articulosPagination', 1, 1, 'loadArticulos');
+            return;
+        }
+
+        tbody.innerHTML = __articulosCache.map(a => `
+            <tr>
+                <td><strong>${escapeHtml(a.titulo)}</strong></td>
+                <td>${escapeHtml(a.cat)}</td>
+                <td>${escapeHtml(a.autor_nombre)}</td>
+                <td>${a.destacado == 1 ? 'Sí' : '—'}</td>
+                <td>
+                    <button class="school-attendance-btn" onclick="editArticulo(${a.blog_id})">Editar</button>
+                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteArticulo(${a.blog_id})">Eliminar</button>
+                </td>
+            </tr>
+        `).join('');
+
+        renderPagination('articulosPagination', result.page, result.total_pages, 'loadArticulos');
+    } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center">Error al cargar artículos</td></tr>';
+        console.error(e);
+    }
+}
+
+const debounceArticulosSearch = debounce(() => loadArticulos(1), 350);
+
+function openArticuloModal() {
+    document.getElementById('articuloForm').reset();
+    document.getElementById('articuloId').value = '';
+    document.getElementById('articuloModalTitle').textContent = 'Agregar artículo';
+    document.getElementById('articuloColor').value = '#f29f05';
+    document.getElementById('articuloAutor').value = 'Equipo NDA';
+    document.getElementById('articuloTiempo').value = '5 min';
+    openModal('articuloModal');
+}
+
+function editArticulo(id) {
+    const a = __articulosCache.find(x => String(x.blog_id) === String(id));
+    if (!a) { ndaAlert('No se encontró el artículo.'); return; }
+    document.getElementById('articuloId').value = a.blog_id;
+    document.getElementById('articuloModalTitle').textContent = 'Editar artículo';
+    document.getElementById('articuloTitulo').value = a.titulo || '';
+    document.getElementById('articuloSlug').value = a.slug || '';
+    document.getElementById('articuloCat').value = a.cat || 'prevencion';
+    document.getElementById('articuloTag').value = a.tag || '';
+    document.getElementById('articuloColor').value = a.color || '#f29f05';
+    document.getElementById('articuloAutor').value = a.autor_nombre || 'Equipo NDA';
+    document.getElementById('articuloTiempo').value = a.tiempo || '5 min';
+    document.getElementById('articuloExtracto').value = a.extracto || '';
+    document.getElementById('articuloCuerpo').value = a.cuerpo || '';
+    document.getElementById('articuloDestacado').checked = a.destacado == 1;
+    openModal('articuloModal');
+}
+
+document.getElementById('articuloForm')?.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const id = document.getElementById('articuloId').value;
+    const formData = new FormData();
+    if (id) formData.append('id', id);
+    formData.append('titulo', document.getElementById('articuloTitulo').value);
+    formData.append('slug', document.getElementById('articuloSlug').value);
+    formData.append('cat', document.getElementById('articuloCat').value);
+    formData.append('tag', document.getElementById('articuloTag').value);
+    formData.append('color', document.getElementById('articuloColor').value);
+    formData.append('autor_nombre', document.getElementById('articuloAutor').value);
+    formData.append('tiempo', document.getElementById('articuloTiempo').value);
+    formData.append('extracto', document.getElementById('articuloExtracto').value);
+    formData.append('cuerpo', document.getElementById('articuloCuerpo').value);
+    if (document.getElementById('articuloDestacado').checked) formData.append('destacado', '1');
+    const fileInput = document.getElementById('articuloImagen');
+    if (fileInput && fileInput.files[0]) {
+        formData.append('imagen', fileInput.files[0]);
+    }
+
+    try {
+        const url = id ? '?url=admin/update-articulo' : '?url=admin/add-articulo';
+        const response = await fetch(url, { method: 'POST', body: formData });
+        const result = await response.json();
+        if (result.success) {
+            ndaAlert('Artículo guardado correctamente');
+            closeModal('articuloModal');
+            this.reset();
+            loadArticulos(__articulosPage);
+        } else {
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
+        }
+    } catch (e) {
+        ndaAlert('Error de conexión');
+        console.error(e);
+    }
+});
+
+async function deleteArticulo(id) {
+    if (!(await ndaConfirm('¿Eliminar este artículo? Ya no aparecerá en el blog público.'))) return;
+    try {
+        const response = await fetch(`?url=admin/delete-articulo&id=${id}`);
+        const result = await response.json();
+        if (result.success) {
+            ndaAlert('Artículo eliminado');
+            loadArticulos(__articulosPage);
+        } else {
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
+        }
+    } catch (e) {
+        ndaAlert('Error de conexión');
+    }
+}
+
+// ─── RECURSOS PDF DESCARGABLES (Admin General) ───
+let __recursosCache = [];
+let __recursosPage = 1;
+
+function formatFileSize(bytes) {
+    if (!bytes || bytes <= 0) return '—';
+    const mb = bytes / (1024 * 1024);
+    return mb >= 1 ? mb.toFixed(1) + ' MB' : (bytes / 1024).toFixed(0) + ' KB';
+}
+
+async function loadRecursos(page) {
+    const tbody = document.getElementById('recursosTableBody');
+    if (!tbody) return;
+    __recursosPage = page || 1;
+    tbody.innerHTML = '<tr><td colspan="5" class="text-center">Cargando recursos...</td></tr>';
+
+    const q = document.getElementById('recursosSearch')?.value.trim() || '';
+
+    try {
+        const response = await fetch(`?url=admin/recursos&q=${encodeURIComponent(q)}&page=${__recursosPage}&per_page=10`);
+        const result = await response.json();
+
+        if (result.error) {
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center">Error: ${result.error}</td></tr>`;
+            return;
+        }
+        __recursosCache = result.data || [];
+
+        if (__recursosCache.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center">No hay recursos todavía</td></tr>';
+            renderPagination('recursosPagination', 1, 1, 'loadRecursos');
+            return;
+        }
+
+        tbody.innerHTML = __recursosCache.map(r => `
+            <tr>
+                <td><strong>${escapeHtml(r.titulo)}</strong></td>
+                <td>${escapeHtml(r.categoria)}</td>
+                <td>${formatFileSize(r.tamano_bytes)}</td>
+                <td>${r.orden}</td>
+                <td>
+                    <button class="school-attendance-btn" onclick="editRecurso(${r.recursos_id})">Editar</button>
+                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteRecurso(${r.recursos_id})">Eliminar</button>
+                </td>
+            </tr>
+        `).join('');
+
+        renderPagination('recursosPagination', result.page, result.total_pages, 'loadRecursos');
+    } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center">Error al cargar recursos</td></tr>';
+        console.error(e);
+    }
+}
+
+const debounceRecursosSearch = debounce(() => loadRecursos(1), 350);
+
+function openRecursoModal() {
+    document.getElementById('recursoForm').reset();
+    document.getElementById('recursoId').value = '';
+    document.getElementById('recursoModalTitle').textContent = 'Agregar recurso';
+    document.getElementById('recursoArchivoLabel').textContent = 'Archivo PDF *';
+    document.getElementById('recursoArchivo').required = true;
+    openModal('recursoModal');
+}
+
+function editRecurso(id) {
+    const r = __recursosCache.find(x => String(x.recursos_id) === String(id));
+    if (!r) { ndaAlert('No se encontró el recurso.'); return; }
+    document.getElementById('recursoId').value = r.recursos_id;
+    document.getElementById('recursoModalTitle').textContent = 'Editar recurso';
+    document.getElementById('recursoTitulo').value = r.titulo || '';
+    document.getElementById('recursoDescripcion').value = r.descripcion || '';
+    document.getElementById('recursoCategoria').value = r.categoria || 'evacuacion';
+    document.getElementById('recursoTags').value = r.tags || '';
+    document.getElementById('recursoOrden').value = r.orden || 0;
+    document.getElementById('recursoArchivoLabel').textContent = 'Reemplazar archivo PDF (opcional)';
+    document.getElementById('recursoArchivo').required = false;
+    openModal('recursoModal');
+}
+
+document.getElementById('recursoForm')?.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const id = document.getElementById('recursoId').value;
+    const fileInput = document.getElementById('recursoArchivo');
+    if (!id && (!fileInput.files || !fileInput.files[0])) {
+        ndaAlert('Debes seleccionar un archivo PDF');
+        return;
+    }
+    const formData = new FormData();
+    if (id) formData.append('id', id);
+    formData.append('titulo', document.getElementById('recursoTitulo').value);
+    formData.append('descripcion', document.getElementById('recursoDescripcion').value);
+    formData.append('categoria', document.getElementById('recursoCategoria').value);
+    formData.append('tags', document.getElementById('recursoTags').value);
+    formData.append('orden', document.getElementById('recursoOrden').value);
+    if (fileInput.files[0]) {
+        formData.append('archivo', fileInput.files[0]);
+    }
+
+    try {
+        const url = id ? '?url=admin/update-recurso' : '?url=admin/add-recurso';
+        const response = await fetch(url, { method: 'POST', body: formData });
+        const result = await response.json();
+        if (result.success) {
+            ndaAlert('Recurso guardado correctamente');
+            closeModal('recursoModal');
+            this.reset();
+            loadRecursos(__recursosPage);
+        } else {
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
+        }
+    } catch (e) {
+        ndaAlert('Error de conexión');
+        console.error(e);
+    }
+});
+
+async function deleteRecurso(id) {
+    if (!(await ndaConfirm('¿Eliminar este recurso? Ya no aparecerá en la página de recursos.'))) return;
+    try {
+        const response = await fetch(`?url=admin/delete-recurso&id=${id}`);
+        const result = await response.json();
+        if (result.success) {
+            ndaAlert('Recurso eliminado');
+            loadRecursos(__recursosPage);
+        } else {
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
+        }
+    } catch (e) {
+        ndaAlert('Error de conexión');
+    }
+}
+
+// ─── EDITOR DE CONTENIDO: "QUÉ HACER AHORA" Y "ACERCA DE NDA" (Admin General) ───
+async function loadContentForm(pagina) {
+    const form = document.getElementById(pagina + 'ContentForm');
+    if (!form) return;
+    try {
+        const response = await fetch(`?url=admin/get-${pagina}-content`);
+        const result = await response.json();
+        if (result.error) {
+            ndaAlert('Error: ' + result.error);
+            return;
+        }
+        (result.data || []).forEach(f => {
+            const el = form.querySelector(`[data-campo="${CSS.escape(f.campo)}"]`);
+            if (el) el.value = f.valor;
+        });
+    } catch (e) {
+        ndaAlert('Error al cargar el contenido');
+        console.error(e);
+    }
+}
+
+async function saveContentForm(pagina) {
+    const form = document.getElementById(pagina + 'ContentForm');
+    if (!form) return;
+    const valores = {};
+    form.querySelectorAll('[data-campo]').forEach(el => {
+        valores[el.dataset.campo] = el.value;
+    });
+
+    try {
+        const response = await fetch(`?url=admin/save-${pagina}-content`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ valores })
+        });
+        const result = await response.json();
+        if (result.success) {
+            ndaAlert('Contenido guardado correctamente');
+        } else {
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
+        }
+    } catch (e) {
+        ndaAlert('Error de conexión');
+        console.error(e);
     }
 }
 
@@ -2857,14 +3233,14 @@ document.getElementById('sendStudentsNotifForm')?.addEventListener('submit', asy
         });
         const result = await response.json();
         if (result.success) {
-            ndaAlert('✅ Aviso enviado a tus alumnos');
+            ndaAlert('Aviso enviado a tus alumnos');
             closeModal('sendStudentsNotifModal');
             this.reset();
         } else {
-            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
         }
     } catch (e) {
-        ndaAlert('❌ Error de conexión');
+        ndaAlert('Error de conexión');
     }
 });
 
@@ -2939,16 +3315,22 @@ async function loadInicioInstitucional() {
             // el mapa por completo.
             const center = hasCoords ? [parseFloat(inst.lat), parseFloat(inst.lng)] : [13.7942, -88.8965];
             const map = L.map('inicioMap', { center, zoom: hasCoords ? 16 : 8 });
+            const lightTiles = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+            const darkTiles = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
             const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-            L.tileLayer(
-                isLight
-                    ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
-                    : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+            const inicioTiles = L.tileLayer(
+                isLight ? lightTiles : darkTiles,
                 { attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 19 }
             ).addTo(map);
             if (hasCoords) {
                 L.marker(center).addTo(map).bindPopup(escapeHtml(inst.nombre || 'Institución'));
             }
+            // El botón de tema claro/oscuro cambia data-theme en <html> sin
+            // recargar la página (mismo patrón que el mapa de riesgos del sitio).
+            new MutationObserver(() => {
+                const light = document.documentElement.getAttribute('data-theme') === 'light';
+                inicioTiles.setUrl(light ? lightTiles : darkTiles);
+            }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
         }
     } catch (e) {
         body.innerHTML = '<div class="text-center" style="padding:20px;">Error al cargar la información institucional</div>';

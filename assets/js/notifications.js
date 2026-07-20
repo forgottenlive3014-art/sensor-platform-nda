@@ -1,8 +1,4 @@
-// ================================================================
-// NDA — Sistema de notificaciones (campana global)
-// Reutiliza el mismo patron de polling que ya usa el sensor
-// (assets/js/app.js, bloque "LECTURAS REALES DEL SENSOR").
-// ================================================================
+// NDA - Sistema de notificaciones (campana global)
 (function () {
     var btn = document.getElementById('ndaNotifBtn');
     var dot = document.getElementById('ndaNotifDot');
@@ -49,13 +45,12 @@
             var res = await fetch('?url=notifications/latest&since_id=' + lastId);
             var data = await res.json();
             if (data.notifications && data.notifications.length) {
-                // Se agregan al inicio (mas recientes primero), tope de 30 en memoria.
                 items = data.notifications.reverse().concat(items).slice(0, 30);
                 render();
             }
             if (data.last_id) lastId = data.last_id;
             updateBadge();
-        } catch (e) { /* silencioso — no debe romper el resto del sitio */ }
+        } catch (e) {}
     }
 
     btn.addEventListener('click', function () {
@@ -84,7 +79,6 @@
         }).catch(function () {});
     });
 
-    // ---- Bandeja de entrada (historial completo, paginado) ----
     var inboxList = document.getElementById('ndaNotifInboxList');
     var pagination = document.getElementById('ndaNotifPagination');
     var inboxPage = 1;

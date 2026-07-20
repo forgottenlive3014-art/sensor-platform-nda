@@ -1,11 +1,8 @@
-        <!-- ========================================================== -->
-        <!--  USUARIOS Y ROLES -->
-        <!-- ========================================================== -->
         <div id="tab-users" class="school-panel">
             <div class="school-panel-header">
-                <h3><span class="school-emoji" aria-hidden="true">👥</span> Usuarios</h3>
+                <h3>Usuarios</h3>
                 <button class="school-btn primary" onclick="openModal('addUserModal')">
-                    <span class="school-emoji" aria-hidden="true">➕</span> Agregar Usuario
+                    Agregar Usuario
                 </button>
             </div>
             <div class="school-panel-header" style="margin-top:0;gap:10px;flex-wrap:wrap;">
@@ -46,7 +43,6 @@
             <div class="school-pagination" id="usersPagination"></div>
         </div>
 
-        <!-- Modal Agregar Usuario -->
         <div class="school-modal" id="addUserModal">
             <div class="school-modal-content">
                 <div class="school-modal-header">
@@ -93,7 +89,6 @@
             </div>
         </div>
 
-        <!-- Modal Editar Usuario -->
         <div class="school-modal" id="editUserModal">
             <div class="school-modal-content">
                 <div class="school-modal-header">

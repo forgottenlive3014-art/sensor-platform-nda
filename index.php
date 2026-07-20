@@ -1,17 +1,12 @@
 <?php
 session_start();
 
-// Todo el request queda "amortiguado": si algun warning/notice de PHP se
-// imprime antes de tiempo (comun en XAMPP/WAMP con display_errors activo),
-// jsonResponse() lo puede descartar antes de mandar el JSON limpio. Sin
-// esto, un solo warning rompe TODAS las respuestas AJAX del sitio (asi se
-// ve como si el modulo escolar "no cargara nada" aunque el HTML si se vea).
+// Amortigua warnings/notices de PHP para que jsonResponse() siempre mande JSON limpio.
 ob_start();
 
 require_once 'config.php';
 
-// Evita que el navegador sirva paginas privadas desde la cache
-// (bfcache) despues de cerrar sesion al presionar "Atras".
+// Evita que el navegador sirva paginas privadas desde la cache (bfcache) tras cerrar sesion.
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Pragma: no-cache");
 header("Expires: 0");
@@ -38,11 +33,6 @@ function view($name, $data = []) {
     if (file_exists($file)) {
         require_once $file;
     } else {
-        // Antes: die("View not found: $name") — un error crudo sin estilo,
-        // que en producción se ve exactamente como una "pantalla en blanco
-        // rota". Se mantiene el codigo 500 (es un error real de servidor,
-        // no un 404 de ruta), pero con una pagina legible en vez de texto
-        // plano.
         http_response_code(500);
         ndaErrorPage('NDA — No disponible', 'Esta sección no está disponible ahora mismo.');
     }
@@ -57,11 +47,8 @@ function isLoggedIn() {
     return isset($_SESSION['user_id']);
 }
 
-// Devuelve un array con los datos de sesion del usuario actual.
-// El rol y el estado institucional se refrescan desde la base de datos
-// en cada request (una sola consulta, cacheada durante el request) para
-// que una aprobacion/rechazo del director surta efecto de inmediato sin
-// que el usuario tenga que cerrar sesion y volver a entrar.
+// Rol y estado institucional se refrescan desde la BD en cada request para que una
+// aprobacion/rechazo del director surta efecto sin cerrar sesion.
 function currentUser() {
     if (!isLoggedIn()) return null;
 
@@ -86,16 +73,13 @@ function currentUser() {
             $row = $stmt->fetch();
             if ($row) {
                 $fresh = $row;
-                // Mantiene la sesion sincronizada para el resto de la peticion.
                 $_SESSION['user_role'] = $row['role'];
                 $_SESSION['institucion_id'] = $row['institucion_id'];
                 $_SESSION['institucion_nombre'] = $row['institucion_nombre'];
                 $_SESSION['estado_institucional'] = $row['estado_institucional'];
                 $_SESSION['comite_autorizado'] = (bool) $row['comite_autorizado'];
             } else {
-                // El usuario de esta sesion ya no existe en la BD (p. ej. se
-                // reimporto la base de datos). Cerramos sesion para evitar
-                // que cualquier pagina truene con "array offset on false".
+                // Usuario ya no existe en la BD: cerramos sesion para evitar errores.
                 $_SESSION = [];
                 session_destroy();
                 if (!headers_sent()) {
@@ -121,12 +105,10 @@ function currentUser() {
     ];
 }
 
-// Roles que pertenecen al personal/comunidad de una institucion
 function institutionalRoles() {
     return ['director', 'docente', 'alumno', 'padre', 'administrativo'];
 }
 
-// True si el usuario ya pertenece de forma aprobada a una institucion
 function hasApprovedInstitution() {
     $u = currentUser();
     return $u && $u['institucion_id'] && $u['estado_institucional'] === 'aprobado';
@@ -149,9 +131,7 @@ function e($text) {
 }
 
 function jsonResponse($data, $code = 200) {
-    // Descarta cualquier salida acumulada (warnings, notices, espacios en
-    // blanco antes de "<?php", etc.) para que el JSON llegue limpio al
-    // fetch() del navegador — un solo caracter de mas rompe el parseo.
+    // Descarta cualquier salida acumulada para que el JSON llegue limpio al fetch().
     if (ob_get_level() > 0) {
         ob_clean();
     }
@@ -161,8 +141,14 @@ function jsonResponse($data, $code = 200) {
     exit;
 }
 
+// Agrega ?v=<fecha de modificacion> para que el navegador jamas sirva una
+// copia vieja en cache de un CSS/JS despues de un deploy (sin esto, algunos
+// navegadores ignoran el refresco forzado en archivos ya cacheados).
 function asset($path) {
-    return 'assets/' . ltrim($path, '/');
+    $rel = 'assets/' . ltrim($path, '/');
+    $full = __DIR__ . '/' . $rel;
+    $v = file_exists($full) ? filemtime($full) : time();
+    return $rel . '?v=' . $v;
 }
 
 
@@ -173,13 +159,13 @@ $url = isset($_GET['url']) ? $_GET['url'] : 'home';
 $url = rtrim($url, '/');
 $parts = explode('/', $url);
 
-// Cualquier segmento despues de "controlador/accion" se pasa como
-// argumento posicional extra al metodo del controlador.
+// Segmentos extra despues de "controlador/accion" se pasan como argumentos al metodo.
 $params = array_slice($parts, 2);
 
 $routeMap = [
     'home'       => ['MainController', 'home'],
     'login'      => ['AuthController', 'login'],
+    'google-login' => ['AuthController', 'googleLogin'],
     'register'   => ['AuthController', 'register'],
     'logout'     => ['AuthController', 'logout'],
     'profile'          => ['AuthController', 'profile'],
@@ -190,10 +176,12 @@ $routeMap = [
     'chat-api'   => ['ChatController', 'send'],
     'sensor/ingest' => ['SensorController', 'ingest'],
     'sensor/latest' => ['SensorController', 'latest'],
-    'notifications/latest' => ['NotificationController', 'latest'],
-    'notifications/mark-read' => ['NotificationController', 'markRead'],
-    'notifications/inbox' => ['NotificationController', 'inbox'],
+    'notifications/latest' => ['NotificacionController', 'latest'],
+    'notifications/mark-read' => ['NotificacionController', 'markRead'],
+    'notifications/inbox' => ['NotificacionController', 'inbox'],
     'earthquakes'=> ['MainController', 'earthquakes'],
+    'sismos'      => ['MainController', 'sismos'],
+    'monitoreo'   => ['MainController', 'monitoreo'],
     'resources'   => ['MainController', 'recursos'],
     'quehacer'    => ['MainController', 'quehacer'],
     'blog'        => ['MainController', 'blog'],
@@ -204,25 +192,25 @@ $routeMap = [
     'school/panel'              => ['SchoolController', 'panel'],
 
     // Alumnos (CRUD real)
-    'school/students'            => ['StudentController', 'list'],
-    'school/add-student'         => ['StudentController', 'create'],
-    'school/update-student'      => ['StudentController', 'update'],
-    'school/delete-student'      => ['StudentController', 'delete'],
-    'school/my-classroom'        => ['StudentController', 'myClassroom'],
+    'school/students'            => ['EstudianteController', 'list'],
+    'school/add-student'         => ['EstudianteController', 'create'],
+    'school/update-student'      => ['EstudianteController', 'update'],
+    'school/delete-student'      => ['EstudianteController', 'delete'],
+    'school/my-classroom'        => ['EstudianteController', 'myClassroom'],
 
     // Docentes (CRUD real)
-    'school/teachers'            => ['TeacherController', 'list'],
-    'school/add-teacher'         => ['TeacherController', 'create'],
-    'school/delete-teacher'      => ['TeacherController', 'delete'],
-    'school/update-teacher'      => ['TeacherController', 'update'],
-    'school/upload-teacher-photo'=> ['TeacherController', 'uploadPhoto'],
-    'school/assignable-teachers'=> ['TeacherController', 'assignable'],
+    'school/teachers'            => ['DocenteController', 'list'],
+    'school/add-teacher'         => ['DocenteController', 'create'],
+    'school/delete-teacher'      => ['DocenteController', 'delete'],
+    'school/update-teacher'      => ['DocenteController', 'update'],
+    'school/upload-teacher-photo'=> ['DocenteController', 'uploadPhoto'],
+    'school/assignable-teachers'=> ['DocenteController', 'assignable'],
 
     // Aulas (CRUD real)
-    'school/classrooms'          => ['ClassroomController', 'list'],
-    'school/add-classroom'       => ['ClassroomController', 'create'],
-    'school/delete-classroom'    => ['ClassroomController', 'delete'],
-    'school/update-classroom'    => ['ClassroomController', 'update'],
+    'school/classrooms'          => ['AulaController', 'list'],
+    'school/add-classroom'       => ['AulaController', 'create'],
+    'school/delete-classroom'    => ['AulaController', 'delete'],
+    'school/update-classroom'    => ['AulaController', 'update'],
 
     // Rutas
     'school/routes'             => ['SchoolController', 'getRoutes'],
@@ -231,9 +219,9 @@ $routeMap = [
     'school/delete-route'       => ['SchoolController', 'deleteRoute'],
 
     // Asistencia (CRUD real)
-    'school/attendance'           => ['AttendanceController', 'get'],
-    'school/save-attendance'      => ['AttendanceController', 'save'],
-    'school/my-attendance'        => ['AttendanceController', 'myAttendance'],
+    'school/attendance'           => ['AsistenciaController', 'get'],
+    'school/save-attendance'      => ['AsistenciaController', 'save'],
+    'school/my-attendance'        => ['AsistenciaController', 'myAttendance'],
 
     // Incidentes
     'school/incidents'          => ['SchoolController', 'getIncidents'],
@@ -243,19 +231,20 @@ $routeMap = [
     'school/delete-incident'    => ['SchoolController', 'deleteIncident'],
 
     // Simulacros (CRUD real)
-    'school/drills'               => ['DrillController', 'list'],
-    'school/add-drill'            => ['DrillController', 'create'],
-    'school/update-drill'         => ['DrillController', 'update'],
-    'school/delete-drill'         => ['DrillController', 'delete'],
+    'school/drills'               => ['SimulacroController', 'list'],
+    'school/add-drill'            => ['SimulacroController', 'create'],
+    'school/update-drill'         => ['SimulacroController', 'update'],
+    'school/delete-drill'         => ['SimulacroController', 'delete'],
 
     // Reportes
-    'school/reports'              => ['ReportController', 'get'],
+    'school/reports'              => ['ReporteController', 'get'],
 
     // Instituciones (CRUD real, solo Admin General)
-    'school/institutions'        => ['InstitutionController', 'list'],
-    'school/add-institution'     => ['InstitutionController', 'create'],
-    'school/update-institution'  => ['InstitutionController', 'update'],
-    'school/delete-institution'  => ['InstitutionController', 'delete'],
+    'school/institutions'        => ['InstitucionController', 'list'],
+    'school/add-institution'     => ['InstitucionController', 'create'],
+    'school/update-institution'  => ['InstitucionController', 'update'],
+    'school/delete-institution'  => ['InstitucionController', 'delete'],
+    'school/institution-stats'   => ['InstitucionController', 'stats'],
 
     // Registro público de instituciones (crea+verifica, cualquier usuario)
     'school/register-institution'      => ['InstitucionController', 'registerInstitution'],
@@ -271,36 +260,29 @@ $routeMap = [
     'school/inicio-institucional' => ['InicioInstitucionalController', 'get'],
 
     // Noticias internas (CRUD real)
-<<<<<<< Updated upstream
-    'school/news'          => ['NewsController', 'list'],
-    'school/add-news'      => ['NewsController', 'create'],
-    'school/update-news'   => ['NewsController', 'update'],
-    'school/delete-news'   => ['NewsController', 'delete'],
-=======
     'school/news'          => ['NoticiaController', 'list'],
     'school/add-news'      => ['NoticiaController', 'create'],
     'school/update-news'   => ['NoticiaController', 'update'],
     'school/delete-news'   => ['NoticiaController', 'delete'],
     'school/approve-news'  => ['NoticiaController', 'approve'],
     'school/reject-news'   => ['NoticiaController', 'reject'],
->>>>>>> Stashed changes
 
     // Padres (CRUD real + vínculo con hijos)
-    'school/parents'              => ['ParentController', 'list'],
-    'school/add-parent'           => ['ParentController', 'create'],
-    'school/update-parent'        => ['ParentController', 'update'],
-    'school/delete-parent'        => ['ParentController', 'delete'],
-    'school/link-child'           => ['ParentController', 'linkChild'],
-    'school/unlink-child'         => ['ParentController', 'unlinkChild'],
-    'school/parent-children-links'=> ['ParentController', 'myChildrenLinks'],
-    'school/my-children'          => ['ParentController', 'myChildren'],
-    'school/my-children-status'   => ['ParentController', 'myChildrenDrillStatus'],
+    'school/parents'              => ['PadreController', 'list'],
+    'school/add-parent'           => ['PadreController', 'create'],
+    'school/update-parent'        => ['PadreController', 'update'],
+    'school/delete-parent'        => ['PadreController', 'delete'],
+    'school/link-child'           => ['PadreController', 'linkChild'],
+    'school/unlink-child'         => ['PadreController', 'unlinkChild'],
+    'school/parent-children-links'=> ['PadreController', 'myChildrenLinks'],
+    'school/my-children'          => ['PadreController', 'myChildren'],
+    'school/my-children-status'   => ['PadreController', 'myChildrenDrillStatus'],
 
     // Personal administrativo (CRUD real)
-    'school/staff'          => ['StaffController', 'list'],
-    'school/add-staff'      => ['StaffController', 'create'],
-    'school/update-staff'   => ['StaffController', 'update'],
-    'school/delete-staff'   => ['StaffController', 'delete'],
+    'school/staff'          => ['PersonalController', 'list'],
+    'school/add-staff'      => ['PersonalController', 'create'],
+    'school/update-staff'   => ['PersonalController', 'update'],
+    'school/delete-staff'   => ['PersonalController', 'delete'],
 
     // Blog de lugares en riesgo (Docente/Alumno/Personal/Director/Admin)
     'school/blog'          => ['BlogController', 'list'],
@@ -308,9 +290,9 @@ $routeMap = [
     'school/delete-blog'   => ['BlogController', 'delete'],
 
     // Notificaciones (gestión: Admin Institucional / Admin General)
-    'school/notifications'        => ['NotificationController', 'manageList'],
-    'school/send-notification'    => ['NotificationController', 'send'],
-    'school/delete-notification'  => ['NotificationController', 'delete'],
+    'school/notifications'        => ['NotificacionController', 'manageList'],
+    'school/send-notification'    => ['NotificacionController', 'send'],
+    'school/delete-notification'  => ['NotificacionController', 'delete'],
 
     // Solicitudes de ingreso (aprobacion del director)
     'school/join-requests'      => ['SchoolController', 'getJoinRequests'],
@@ -318,8 +300,8 @@ $routeMap = [
     'school/reject-request'     => ['SchoolController', 'rejectJoinRequest'],
 
     // Secciones (18 aulas de bachillerato) — CRUD real
-    'school/sections'            => ['SectionController', 'list'],
-    'school/assign-teacher'      => ['SectionController', 'assignTeacher'],
+    'school/sections'            => ['SeccionController', 'list'],
+    'school/assign-teacher'      => ['SeccionController', 'assignTeacher'],
 
     // Croquis interactivo
     'school/croquis'            => ['SchoolController', 'getCroquis'],
@@ -336,19 +318,30 @@ $routeMap = [
     'school/board-delete'       => ['SchoolController', 'deleteBoardNote'],
 
     // Alerta de simulacro en vivo
-    'school/activate-alert'      => ['DrillController', 'activate'],
-    'school/finish-alert'        => ['DrillController', 'finish'],
-    'school/active-alert'        => ['DrillController', 'activeAlert'],
+    'school/activate-alert'      => ['SimulacroController', 'activate'],
+    'school/finish-alert'        => ['SimulacroController', 'finish'],
+    'school/active-alert'        => ['SimulacroController', 'activeAlert'],
+
+    // CMS del Admin General: blog público (artículos y noticias)
+    'admin/articulos'        => ['ArticuloController', 'list'],
+    'admin/add-articulo'     => ['ArticuloController', 'create'],
+    'admin/update-articulo'  => ['ArticuloController', 'update'],
+    'admin/delete-articulo'  => ['ArticuloController', 'delete'],
+
+    // CMS del Admin General: recursos PDF descargables
+    'admin/recursos'        => ['RecursoController', 'list'],
+    'admin/add-recurso'     => ['RecursoController', 'create'],
+    'admin/update-recurso'  => ['RecursoController', 'update'],
+    'admin/delete-recurso'  => ['RecursoController', 'delete'],
+
+    // CMS del Admin General: contenido de "Qué hacer ahora" y "Acerca de NDA"
+    'admin/get-quehacer-content'   => ['ContenidoController', 'getQuehacer'],
+    'admin/save-quehacer-content'  => ['ContenidoController', 'saveQuehacer'],
+    'admin/get-acercade-content'   => ['ContenidoController', 'getAcercade'],
+    'admin/save-acercade-content'  => ['ContenidoController', 'saveAcercade'],
 ];
 
-// El routeMap indexa por la ruta COMPLETA (ej. 'school/add-student',
-// 'profile/update'), no solo por el primer segmento. Antes se buscaba
-// con $controller (= $parts[0]), asi que CUALQUIER ruta de mas de un
-// segmento (practicamente todo el sitio: school/*, profile/update,
-// notifications/*, etc.) siempre caia en la entrada de un solo
-// segmento que coincidiera (o en el 404) sin importar el resto de la
-// URL — ej. 'school/add-student' terminaba ejecutando
-// SchoolController::index() en vez de SchoolController::addStudent().
+// El routeMap indexa por la ruta COMPLETA (ej. 'school/add-student'), no solo por el primer segmento.
 if (isset($routeMap[$url])) {
     list($className, $method) = $routeMap[$url];
 } else {
@@ -365,19 +358,12 @@ if (file_exists($file)) {
         try {
             call_user_func_array([$obj, $method], $params);
         } catch (Throwable $e) {
-            // Antes de esto, una excepcion no capturada (ej. una consulta SQL
-            // que falla) terminaba en una pagina en blanco o en un error crudo
-            // de PHP, sin ningun mensaje util — exactamente el sintoma de
-            // "aparece pero no se puede editar nada". Ahora se registra el
-            // detalle real en el log del servidor, y el usuario recibe una
-            // respuesta legible segun el tipo de ruta.
             error_log('[NDA] Excepcion no capturada en ' . $className . '::' . $method . '() — ' . $e->getMessage());
 
             if (ob_get_level() > 0) { ob_clean(); }
             http_response_code(500);
 
-            // Las acciones del modulo escolar, sensor, chat y notificaciones
-            // son todas AJAX (esperan JSON) salvo la carga inicial de 'school'.
+            // Todas las rutas son AJAX (esperan JSON) salvo la carga inicial de 'school'.
             $isJsonRoute = !(
                 $className === 'MainController' ||
                 ($className === 'AuthController' && $method !== 'institutionsList') ||

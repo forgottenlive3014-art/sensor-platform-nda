@@ -1,7 +1,4 @@
-// ============================================================
-// WIZARD DE REGISTRO — NDA
-// Controla los 4 pasos: tipo de cuenta, rol, institución, datos.
-// ============================================================
+// Wizard de registro NDA: controla los 4 pasos (tipo de cuenta, rol, institucion, datos)
 (function () {
     var form = document.getElementById('registerForm');
     if (!form) return;
@@ -32,7 +29,6 @@
         });
     }
 
-    // ---------- PASO 1: tipo de cuenta ----------
     var typeCards = document.querySelectorAll('[data-account-type]');
     var next1 = document.querySelector('[data-next="1"]');
     typeCards.forEach(function (card) {
@@ -46,14 +42,12 @@
     });
     next1.addEventListener('click', function () {
         if (accountType === 'general') {
-            // Cuenta general: nos saltamos rol e institución.
             showStep(4);
         } else {
             showStep(2);
         }
     });
 
-    // ---------- PASO 2: rol institucional ----------
     var roleCards = document.querySelectorAll('[data-inst-role]');
     var next2 = document.querySelector('[data-next="2"]');
     roleCards.forEach(function (card) {
@@ -77,7 +71,6 @@
         showStep(3);
     });
 
-    // ---------- PASO 3: institución ----------
     document.querySelector('[data-back="2"]').addEventListener('click', function () { showStep(2); });
 
     document.querySelector('[data-next="3"]').addEventListener('click', function () {
@@ -117,7 +110,6 @@
         });
     }
 
-    // ---------- PASO 4: volver ----------
     document.querySelector('[data-back="3"]').addEventListener('click', function () {
         if (accountType === 'general') {
             showStep(1);
@@ -126,20 +118,69 @@
         }
     });
 
-    // ---------- VALIDACIÓN FINAL ----------
+    // Reglas de contraseña fuerte: deben coincidir con AuthController::passwordStrengthError.
+    var pwdRules = {
+        len: function (v) { return v.length >= 8; },
+        upper: function (v) { return /[A-Z]/.test(v); },
+        lower: function (v) { return /[a-z]/.test(v); },
+        num: function (v) { return /[0-9]/.test(v); },
+        sym: function (v) { return /[^A-Za-z0-9]/.test(v); }
+    };
+
+    function passwordIsStrong(v) {
+        return Object.keys(pwdRules).every(function (key) { return pwdRules[key](v); });
+    }
+
+    var pwdInput = document.getElementById('pwd-reg');
+    var pwdRulesList = document.getElementById('pwdRules');
+    if (pwdInput && pwdRulesList) {
+        pwdInput.addEventListener('input', function () {
+            var v = pwdInput.value;
+            Object.keys(pwdRules).forEach(function (key) {
+                var li = pwdRulesList.querySelector('[data-rule="' + key + '"]');
+                if (li) li.classList.toggle('ok', pwdRules[key](v));
+            });
+        });
+    }
+
+    // Nombre de usuario: solo minusculas, numeros y guion bajo (debe
+    // coincidir con AuthController::usernameError). Se sanea mientras se
+    // escribe para no frustrar al usuario con errores de formato.
+    var usernameRegex = /^[a-z0-9_]{3,20}$/;
+    var usernameInput = document.getElementById('username-reg');
+    if (usernameInput) {
+        usernameInput.addEventListener('input', function () {
+            var start = usernameInput.selectionStart;
+            var cleaned = usernameInput.value.toLowerCase().replace(/[^a-z0-9_]/g, '');
+            if (cleaned !== usernameInput.value) {
+                usernameInput.value = cleaned;
+                usernameInput.setSelectionRange(start - 1, start - 1);
+            } else {
+                usernameInput.value = cleaned;
+            }
+        });
+    }
+
     form.addEventListener('submit', function (e) {
         var pwd = form.querySelector('input[name="password"]');
         var confirm = form.querySelector('input[name="password_confirm"]');
+        var username = form.querySelector('input[name="username"]');
+        if (username && !usernameRegex.test(username.value)) {
+            e.preventDefault();
+            ndaAlert('El nombre de usuario debe tener entre 3 y 20 caracteres: solo minúsculas, números y guion bajo.');
+            username.focus();
+            return false;
+        }
+        if (!passwordIsStrong(pwd.value)) {
+            e.preventDefault();
+            ndaAlert('Tu contraseña no cumple los requisitos: revisa la lista debajo del campo.');
+            pwd.focus();
+            return false;
+        }
         if (pwd.value !== confirm.value) {
             e.preventDefault();
             ndaAlert('Las contraseñas no coinciden.');
             confirm.focus();
-            return false;
-        }
-        if (pwd.value.length < 6) {
-            e.preventDefault();
-            ndaAlert('La contraseña debe tener al menos 6 caracteres.');
-            pwd.focus();
             return false;
         }
     });

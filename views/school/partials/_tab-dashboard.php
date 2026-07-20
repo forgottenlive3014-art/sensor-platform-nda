@@ -1,6 +1,3 @@
-        <!-- ========================================================== -->
-        <!--  DASHBOARD -->
-        <!-- ========================================================== -->
         <div id="tab-dashboard" class="school-panel active">
             <div class="school-stats">
                 <div class="school-stat">

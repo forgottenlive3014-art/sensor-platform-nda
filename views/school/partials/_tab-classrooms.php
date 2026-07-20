@@ -3,9 +3,9 @@
         <!-- ========================================================== -->
         <div id="tab-classrooms" class="school-panel">
             <div class="school-panel-header">
-                <h3><span class="school-emoji" aria-hidden="true">🧱</span> Lista de Aulas</h3>
+                <h3>Lista de Aulas</h3>
                 <button class="school-btn primary" onclick="openModal('addClassroomModal')">
-                    <span class="school-emoji" aria-hidden="true">➕</span> Agregar Aula
+                    Agregar Aula
                 </button>
             </div>
             <div class="school-panel-header" style="margin-top:0;">

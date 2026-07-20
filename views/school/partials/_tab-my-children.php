@@ -3,9 +3,9 @@
         <!-- ========================================================== -->
         <div id="tab-my-children" class="school-panel">
             <div class="school-panel-header">
-                <h3><span class="school-emoji" aria-hidden="true">👪</span> Mis Hijos</h3>
+                <h3>Mis Hijos</h3>
                 <button class="school-btn primary" onclick="openModal('sendChildrenNotifModal')">
-                    <span class="school-emoji" aria-hidden="true">📣</span> Enviar aviso a mis hijos
+                    Enviar aviso a mis hijos
                 </button>
             </div>
             <p class="school-hint">Información de tus hijos vinculados en esta institución. Si falta alguno, pídele al director que lo vincule desde Padres.</p>
@@ -26,7 +26,7 @@
             </div>
 
             <div class="school-card" style="margin-top:20px;">
-                <h3><span class="school-emoji" aria-hidden="true">🔔</span> Estado en el último simulacro</h3>
+                <h3>Estado en el último simulacro</h3>
                 <div class="school-table-wrap">
                     <table class="school-table">
                         <thead>

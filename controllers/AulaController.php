@@ -1,7 +1,7 @@
 <?php
-require_once __DIR__ . '/../models/StaffModel.php';
+require_once __DIR__ . '/../models/ClassroomModel.php';
 
-class StaffController {
+class AulaController {
 
     private function isSchoolAdmin() {
         $u = currentUser();
@@ -29,7 +29,7 @@ class StaffController {
         }
         $u = currentUser();
         $isGlobalAdmin = $u['role'] === 'admin';
-        $model = new StaffModel();
+        $model = new ClassroomModel();
         $search = trim($_GET['q'] ?? '');
         $page = (int) ($_GET['page'] ?? 1);
         $perPage = (int) ($_GET['per_page'] ?? 10);
@@ -53,31 +53,34 @@ class StaffController {
         }
         $input = json_decode(file_get_contents('php://input'), true);
         $nombre = trim($input['nombre'] ?? '');
-        $email = trim($input['email'] ?? '');
-
-        if (empty($nombre) || empty($email)) {
-            jsonResponse(['error' => 'Nombre y correo son obligatorios'], 400);
+        if (empty($nombre)) {
+            jsonResponse(['error' => 'El nombre del aula es obligatorio'], 400);
         }
-        $instId = $this->scopeInstitutionId();
+
+        $instId = $input['institucion_id'] ?? $this->scopeInstitutionId();
+        if (!$this->isGlobalAdminCheck() && $instId != $this->scopeInstitutionId()) {
+            jsonResponse(['error' => 'No autorizado para crear aulas en esa institución'], 403);
+        }
         if (!$instId) {
-            jsonResponse(['error' => 'No tienes una institución asociada'], 400);
+            jsonResponse(['error' => 'Selecciona una institución'], 400);
         }
 
-        $model = new StaffModel();
-        if ($model->emailExists($email)) {
-            jsonResponse(['error' => 'Ese correo ya está registrado'], 400);
-        }
-
-        $password = bin2hex(random_bytes(4));
+        $model = new ClassroomModel();
         $id = $model->create([
             'nombre' => $nombre,
-            'email' => $email,
-            'password' => $password,
-            'institucion_id' => $instId,
-            'telefono' => trim($input['telefono'] ?? ''),
+            'grado' => trim($input['grado'] ?? ''),
+            'nivel' => trim($input['nivel'] ?? ''),
+            'seccion' => trim($input['seccion'] ?? ''),
+            'instituciones_id' => $instId,
+            'maestro_id' => $input['maestro_id'] ?? null,
         ]);
 
-        jsonResponse(['success' => true, 'id' => $id, 'password_temporal' => $password]);
+        jsonResponse(['success' => true, 'id' => $id]);
+    }
+
+    private function isGlobalAdminCheck() {
+        $u = currentUser();
+        return $u['role'] === 'admin';
     }
 
     public function update() {
@@ -86,22 +89,27 @@ class StaffController {
         }
         $input = json_decode(file_get_contents('php://input'), true);
         $id = $input['id'] ?? null;
-        $nombre = trim($input['nombre'] ?? '');
-
-        if (!$id || empty($nombre)) {
-            jsonResponse(['error' => 'Datos incompletos'], 400);
+        if (!$id) {
+            jsonResponse(['error' => 'ID de aula requerido'], 400);
         }
 
-        $model = new StaffModel();
-        $staff = $model->getById($id);
-        if (!$staff) {
-            jsonResponse(['error' => 'Registro no encontrado'], 404);
+        $model = new ClassroomModel();
+        $aula = $model->getById($id);
+        if (!$aula) {
+            jsonResponse(['error' => 'Aula no encontrada'], 404);
         }
-        if ($this->scopeInstitutionId() !== null && $staff['institucion_id'] != $this->scopeInstitutionId()) {
-            jsonResponse(['error' => 'No autorizado'], 403);
+        if ($this->scopeInstitutionId() !== null && $aula['instituciones_id'] != $this->scopeInstitutionId()) {
+            jsonResponse(['error' => 'No autorizado para modificar esta aula'], 403);
         }
 
-        $model->update($id, ['nombre' => $nombre, 'telefono' => trim($input['telefono'] ?? '')]);
+        $model->update($id, [
+            'nombre' => trim($input['nombre'] ?? ''),
+            'grado' => trim($input['grado'] ?? ''),
+            'nivel' => trim($input['nivel'] ?? ''),
+            'seccion' => trim($input['seccion'] ?? ''),
+            'maestro_id' => $input['maestro_id'] ?? null,
+        ]);
+
         jsonResponse(['success' => true]);
     }
 
@@ -111,16 +119,16 @@ class StaffController {
         }
         $id = $_GET['id'] ?? null;
         if (!$id) {
-            jsonResponse(['error' => 'ID requerido'], 400);
+            jsonResponse(['error' => 'ID de aula requerido'], 400);
         }
 
-        $model = new StaffModel();
-        $staff = $model->getById($id);
-        if (!$staff) {
-            jsonResponse(['error' => 'Registro no encontrado'], 404);
+        $model = new ClassroomModel();
+        $aula = $model->getById($id);
+        if (!$aula) {
+            jsonResponse(['error' => 'Aula no encontrada'], 404);
         }
-        if ($this->scopeInstitutionId() !== null && $staff['institucion_id'] != $this->scopeInstitutionId()) {
-            jsonResponse(['error' => 'No autorizado'], 403);
+        if ($this->scopeInstitutionId() !== null && $aula['instituciones_id'] != $this->scopeInstitutionId()) {
+            jsonResponse(['error' => 'No autorizado para eliminar esta aula'], 403);
         }
 
         $model->delete($id);

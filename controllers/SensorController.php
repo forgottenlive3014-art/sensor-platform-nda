@@ -4,15 +4,10 @@ require_once __DIR__ . '/../models/NotificationModel.php';
 
 class SensorController {
 
-    // Umbrales de intensidad (mismos que ya se mostraban en la UI del demo).
     const UMBRAL_PRECAUCION = 0.3;
     const UMBRAL_ALERTA = 0.8;
 
-    // ------------------------------------------------------------
-    // Recibe una lectura enviada por el sketch de Processing.
-    // Body esperado (JSON): { "token": "...", "intensidad": 0.42,
-    //                          "eje_x": 0.1, "eje_y": -0.2, "eje_z": 0.98 }
-    // ------------------------------------------------------------
+    // Recibe una lectura del sketch de Processing: { token, intensidad, eje_x, eje_y, eje_z }
     public function ingest() {
         $input = json_decode(file_get_contents('php://input'), true);
 
@@ -45,10 +40,7 @@ class SensorController {
         $model = new SensorModel();
         $model->save($intensidad, $nivel, $ejeX, $ejeY, $ejeZ, $fuente);
 
-        // Si el nivel calculado es de alerta real, se genera una
-        // notificacion global (tipo 'sensor') visible en toda la
-        // plataforma via el sistema de notificaciones (campana en
-        // layout.php). No bloquea la respuesta si algo falla aqui.
+        // Alerta real: genera notificacion global visible en toda la plataforma.
         if ($nivel === 'alerta') {
             try {
                 (new NotificationModel())->create([
@@ -66,11 +58,6 @@ class SensorController {
         jsonResponse(['success' => true, 'nivel' => $nivel]);
     }
 
-    // ------------------------------------------------------------
-    // Devuelve las lecturas mas recientes para que el panel del sitio
-    // (sección "Sensor Arduino") las muestre en tiempo real. Publico
-    // (informativo, no expone datos sensibles).
-    // ------------------------------------------------------------
     public function latest() {
         $model = new SensorModel();
         $since = $_GET['since_id'] ?? 0;

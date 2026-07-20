@@ -3,9 +3,9 @@
         <!-- ========================================================== -->
         <div id="tab-parents" class="school-panel">
             <div class="school-panel-header">
-                <h3><span class="school-emoji" aria-hidden="true">👪</span> Padres / Madres</h3>
+                <h3>Padres / Madres</h3>
                 <button class="school-btn primary" onclick="openModal('addParentModal')">
-                    <span class="school-emoji" aria-hidden="true">➕</span> Agregar Padre/Madre
+                    Agregar Padre/Madre
                 </button>
             </div>
             <div class="school-panel-header" style="margin-top:0;">

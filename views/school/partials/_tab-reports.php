@@ -3,10 +3,10 @@
         <!-- ========================================================== -->
         <div id="tab-reports" class="school-panel">
             <div class="school-panel-header">
-                <h3><span class="school-emoji" aria-hidden="true">🗂️</span> Reportes</h3>
+                <h3>Reportes</h3>
                 <?php if (!empty($isSchoolAdmin)): ?>
                 <button class="school-btn secondary" onclick="exportReport()">
-                    <span class="school-emoji" aria-hidden="true">📤</span> Exportar
+                    Exportar
                 </button>
                 <?php endif; ?>
             </div>

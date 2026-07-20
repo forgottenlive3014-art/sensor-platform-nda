@@ -1,12 +1,3 @@
-<<<<<<< Updated upstream
-        <!-- ========================================================== -->
-        <!--  NOTICIAS INTERNAS -->
-        <!-- ========================================================== -->
-        <div id="tab-news" class="school-panel">
-            <div class="school-panel-header">
-                <h3><span class="school-emoji" aria-hidden="true">📰</span> Noticias internas</h3>
-                <?php if (!empty($isSchoolAdmin)): ?>
-=======
         <?php
         $canPublishNews = !empty($isSchoolAdmin) || ($user['role'] ?? '') === 'docente'
             || (($user['role'] ?? '') === 'alumno' && !empty($user['comite_autorizado']));
@@ -15,25 +6,33 @@
             <div class="school-panel-header">
                 <h3>Noticias internas</h3>
                 <?php if ($canPublishNews): ?>
->>>>>>> Stashed changes
                 <button class="school-btn primary" onclick="openModal('addNewsModal')">
-                    <span class="school-emoji" aria-hidden="true">➕</span> Publicar noticia
+                    Publicar noticia
                 </button>
                 <?php endif; ?>
             </div>
             <p class="school-hint">Comunicados del director, docentes y del comité estudiantil autorizado hacia la comunidad institucional.<?= !empty($isSchoolAdmin) ? ' Las noticias publicadas por el comité estudiantil quedan pendientes de tu aprobación.' : '' ?></p>
-            <div id="newsList" class="school-news-list">
+            <div id="newsList" class="school-post-grid">
                 <div class="text-center" style="padding:20px;color:var(--text3);">Cargando noticias...</div>
             </div>
             <div class="school-pagination" id="newsPagination"></div>
         </div>
 
-<<<<<<< Updated upstream
-        <?php if (!empty($isSchoolAdmin)): ?>
-        <!-- Modal Publicar Noticia -->
-=======
+        <!-- Lectura completa de una noticia, mismo espíritu que el artículo del blog público -->
+        <div class="school-modal" id="readNewsModal">
+            <div class="school-modal-content school-read-modal">
+                <div class="school-modal-header">
+                    <h3 id="readNewsTitle">Noticia</h3>
+                    <button class="school-modal-close" onclick="closeModal('readNewsModal')">&times;</button>
+                </div>
+                <div class="school-modal-body">
+                    <div class="school-read-meta" id="readNewsMeta"></div>
+                    <div class="school-read-body" id="readNewsBody"></div>
+                </div>
+            </div>
+        </div>
+
         <?php if ($canPublishNews): ?>
->>>>>>> Stashed changes
         <div class="school-modal" id="addNewsModal">
             <div class="school-modal-content">
                 <div class="school-modal-header">
@@ -56,7 +55,6 @@
             </div>
         </div>
 
-        <!-- Modal Editar Noticia -->
         <div class="school-modal" id="editNewsModal">
             <div class="school-modal-content">
                 <div class="school-modal-header">

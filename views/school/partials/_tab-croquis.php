@@ -3,14 +3,14 @@
         <!-- ========================================================== -->
         <div id="tab-croquis" class="school-panel">
             <div class="school-panel-header">
-                <h3><span class="school-emoji" aria-hidden="true">📐</span> Croquis de la institución</h3>
+                <h3>Croquis de la institución</h3>
                 <?php if (!empty($isSchoolAdmin)): ?>
                 <label class="school-btn secondary" style="cursor:pointer;">
-                    <span class="school-emoji" aria-hidden="true">📥</span> <span id="croquisUploadLabel">Subir plano</span>
+                    <span id="croquisUploadLabel">Subir plano</span>
                     <input type="file" id="croquisUploadInput" accept="image/*" style="display:none" onchange="uploadCroquisImage(this)">
                 </label>
                 <button class="school-btn secondary" id="croquisDeleteBtn" style="display:none;color:var(--acc2);" onclick="deleteCroquisImage()">
-                    <span class="school-emoji" aria-hidden="true">🗑️</span> Eliminar plano
+                    Eliminar plano
                 </button>
                 <?php endif; ?>
             </div>

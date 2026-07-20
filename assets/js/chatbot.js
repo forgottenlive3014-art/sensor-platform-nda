@@ -1,7 +1,4 @@
-// ============================================================
-// CHATBOT NDA — disponible en todas las paginas.
-// Guarda el historial en localStorage para que persista al navegar.
-// ============================================================
+// Chatbot NDA: disponible en todas las paginas, guarda el historial en localStorage
 (function () {
     var fab = document.getElementById('ndabotFab');
     var panel = document.getElementById('ndabotPanel');
@@ -16,12 +13,7 @@
     var STORAGE_KEY = 'nda-chat-history';
     var history = [];
 
-    // ------------------------------------------------------------
-    // Contexto de modulo actual: se resuelve por la ruta (?url=...) y,
-    // si estamos en home.php, por el ancla visible del scroll (#sismos,
-    // #arduino, #clima...). Se manda junto al mensaje para que el
-    // backend pueda responder con el contexto real del usuario.
-    // ------------------------------------------------------------
+    // Contexto de modulo actual (ruta o ancla del scroll), se envia junto al mensaje
     function currentModule() {
         var params = new URLSearchParams(window.location.search);
         var url = (params.get('url') || 'home').split('/')[0];
@@ -30,9 +22,6 @@
         var hash = (window.location.hash || '').replace('#', '');
         if (hash) return hash;
 
-        // Si no hay hash en la URL, se usa la ultima seccion de home.php
-        // que haya cruzado el centro del viewport (si el propio sitio
-        // expone esa variable global; si no, se omite sin romper nada).
         return window.__ndaCurrentSection || null;
     }
 
@@ -54,9 +43,8 @@
 
     function saveHistory() {
         try {
-            // Solo guardamos los ultimos 30 mensajes para no crecer indefinidamente.
             localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(-30)));
-        } catch (e) { /* almacenamiento no disponible, seguimos sin persistir */ }
+        } catch (e) {}
     }
 
     function renderMessage(msg) {
@@ -72,7 +60,7 @@
             var link = document.createElement('a');
             link.className = 'ndabot-navigate';
             link.href = '?url=' + msg.navigate;
-            link.textContent = 'Ir a ' + (msg.navigateLabel || 'la sección') + ' ➡️';
+            link.textContent = 'Ir a ' + (msg.navigateLabel || 'la sección');
             row.appendChild(link);
         }
 

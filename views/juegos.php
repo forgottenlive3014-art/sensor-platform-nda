@@ -6,7 +6,6 @@ ob_start();
 <div class="games-page">
     <div class="wrap" style="padding-top:80px; padding-bottom:60px;">
 
-        <!-- ====== ENCABEZADO ====== -->
         <div class="reveal" style="text-align:center; margin-bottom:36px;">
             <span class="kicker">APRENDE JUGANDO</span>
             <h1 class="games-title">Zona de <span class="grad">Juegos NDA</span></h1>
@@ -15,7 +14,6 @@ ob_start();
             </p>
         </div>
 
-        <!-- ====== SELECTOR DE JUEGOS ====== -->
         <div class="game-tabs reveal">
             <button class="gtab active" data-game="quiz"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M9 3a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 5 3 3 0 0 0 3 3h1V3H9zM15 3a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-2 5 3 3 0 0 1-3 3h-1V3h1z"/></svg> Quiz</button>
             <button class="gtab" data-game="memory"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em"><rect x="4" y="3" width="12" height="17" rx="2" transform="rotate(-8 10 11)"/><rect x="9" y="4" width="12" height="17" rx="2"/></svg> Memoria</button>
@@ -23,9 +21,7 @@ ob_start();
             <button class="gtab" data-game="drill"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Simulacro Reflejo</button>
         </div>
 
-        <!-- ========================================================= -->
-        <!-- ===================== JUEGO 1: QUIZ ===================== -->
-        <!-- ========================================================= -->
+        <!-- Juego 1: quiz -->
         <section class="game-panel active" id="game-quiz">
             <div class="game-card reveal">
                 <div id="quizStart" class="quiz-screen">
@@ -55,9 +51,7 @@ ob_start();
             </div>
         </section>
 
-        <!-- ========================================================= -->
-        <!-- ==================== JUEGO 2: MEMORIA ==================== -->
-        <!-- ========================================================= -->
+        <!-- Juego 2: memoria -->
         <section class="game-panel" id="game-memory">
             <div class="game-card reveal">
                 <div class="game-card-head">
@@ -76,9 +70,7 @@ ob_start();
             </div>
         </section>
 
-        <!-- ========================================================= -->
-        <!-- ================ JUEGO 3: ARMA TU MOCHILA ================ -->
-        <!-- ========================================================= -->
+        <!-- Juego 3: arma tu mochila -->
         <section class="game-panel" id="game-backpack">
             <div class="game-card reveal">
                 <div class="game-card-head">
@@ -92,9 +84,7 @@ ob_start();
             </div>
         </section>
 
-        <!-- ========================================================= -->
-        <!-- =============== JUEGO 4: SIMULACRO REFLEJO =============== -->
-        <!-- ========================================================= -->
+        <!-- Juego 4: simulacro reflejo -->
         <section class="game-panel" id="game-drill">
             <div class="game-card reveal">
                 <div class="game-card-head">
@@ -229,11 +219,9 @@ ob_start();
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
-    /* ===== reveal ===== */
     const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }), {threshold:.12});
     document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-    /* ===== tabs ===== */
     document.querySelectorAll('.gtab').forEach(tab => {
         tab.addEventListener('click', () => {
             document.querySelectorAll('.gtab').forEach(t => t.classList.remove('active'));
@@ -243,7 +231,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    /* ============== QUIZ ============== */
     const QUESTIONS = [
         { q: 'Durante un sismo fuerte dentro de un edificio, lo más seguro es:',
           o: ['Correr a la salida de inmediato', 'Agacharte, cubrirte y agarrarte', 'Pararte bajo el marco de una puerta', 'Usar el ascensor'], a:1 },
@@ -299,7 +286,6 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('quizStartBtn').onclick = () => { qi=0; qscore=0; elStart.style.display='none'; elPlay.style.display='block'; showQuestion(); };
     document.getElementById('quizRetry').onclick = () => { qi=0; qscore=0; elEnd.style.display='none'; elPlay.style.display='block'; showQuestion(); };
 
-    /* ============== MEMORIA ============== */
     const MEM_ICONS = ['<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 2s6 7 6 12a6 6 0 0 1-12 0c0-5 6-12 6-12z"/></svg>','<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M9 2h6l1 4-2 2v12a2 2 0 0 1-2 2h-0a2 2 0 0 1-2-2V8L8 6l1-4z"/></svg>','<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><rect x="4" y="9" width="16" height="6" rx="2" transform="rotate(-15 12 12)"/><line x1="10" y1="9" x2="10" y2="15"/><line x1="14" y1="9" x2="14" y2="15"/></svg>','<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><rect x="3" y="9" width="18" height="12" rx="2"/><circle cx="8" cy="15" r="2"/><path d="M13 13h5M13 17h3"/><path d="M7 9l3-5h6l2 5"/></svg>','<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><rect x="2" y="7" width="18" height="10" rx="2"/><line x1="22" y1="11" x2="22" y2="13"/></svg>','<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><rect x="8" y="7" width="8" height="14" rx="2"/><path d="M10 7V4h4v3M12 2v2"/></svg>','<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><rect x="5" y="6" width="14" height="14" rx="1"/><line x1="5" y1="10" x2="19" y2="10"/></svg>','<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg>'];
     let memDeck = [], memFlipped = [], memTries = 0, memPairs = 0, memLock = false;
     function buildMemory() {
@@ -336,7 +322,6 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('memReset').onclick = buildMemory;
     buildMemory();
 
-    /* ============== ARMA TU MOCHILA ============== */
     const BP_ITEMS = [
         {e:'<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 2s6 7 6 12a6 6 0 0 1-12 0c0-5 6-12 6-12z"/></svg>', l:'Agua', good:true}, {e:'<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M9 2h6l1 4-2 2v12a2 2 0 0 1-2 2h-0a2 2 0 0 1-2-2V8L8 6l1-4z"/></svg>', l:'Linterna', good:true},
         {e:'<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><rect x="4" y="9" width="16" height="6" rx="2" transform="rotate(-15 12 12)"/><line x1="10" y1="9" x2="10" y2="15"/><line x1="14" y1="9" x2="14" y2="15"/></svg>', l:'Botiquín', good:true}, {e:'<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><rect x="3" y="9" width="18" height="12" rx="2"/><circle cx="8" cy="15" r="2"/><path d="M13 13h5M13 17h3"/><path d="M7 9l3-5h6l2 5"/></svg>', l:'Radio', good:true},
@@ -374,7 +359,6 @@ document.addEventListener('DOMContentLoaded', function () {
     };
     buildBackpack();
 
-    /* ============== SIMULACRO REFLEJO ============== */
     const ACTS = [
         {k:'agachate', t:'¡AGÁCHATE! <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="12" cy="4" r="2"/><path d="M12 6v6l-4 4M12 12l4 4"/></svg>'}, {k:'cubrete', t:'¡CÚBRETE! <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/></svg>'}, {k:'agarrate', t:'¡AGÁRRATE! <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="12" cy="13" r="6"/><path d="M9 8V5a1 1 0 0 1 2 0v2M13 8V4a1 1 0 0 1 2 0v3"/></svg>'}
     ];
@@ -391,7 +375,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     document.querySelectorAll('.drill-act').forEach(btn => {
         btn.addEventListener('click', () => {
-            if (!drillTarget) { stage.className='drill-stage'; dmsg.textContent='⏳ Aún no. ¡Espera la señal y vuelve a empezar!'; clearTimeout(drillTimeout); drillTarget=null; return; }
+            if (!drillTarget) { stage.className='drill-stage'; dmsg.textContent='Aún no. ¡Espera la señal y vuelve a empezar!'; clearTimeout(drillTimeout); drillTarget=null; return; }
             const ms = Math.round(performance.now() - drillStart);
             if (btn.dataset.act === drillTarget.k) {
                 if (drillBest===null || ms<drillBest){ drillBest=ms; document.getElementById('drillBest').textContent = ms+' ms'; }

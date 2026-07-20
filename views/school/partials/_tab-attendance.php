@@ -1,15 +1,12 @@
-        <!-- ========================================================== -->
-        <!--  PASE DE LISTA -->
-        <!-- ========================================================== -->
         <div id="tab-attendance" class="school-panel">
             <div class="school-panel-header">
-                <h3><span class="school-emoji" aria-hidden="true">🖊️</span> Pase de Lista</h3>
+                <h3>Pase de Lista</h3>
                 <div>
                     <select id="drillSelect" class="school-select">
                         <option value="">Seleccionar simulacro</option>
                     </select>
                     <button class="school-btn primary" onclick="loadAttendance()">
-                        <span class="school-emoji" aria-hidden="true">🔍</span> Cargar
+                        Cargar
                     </button>
                 </div>
             </div>
@@ -30,7 +27,7 @@
             </div>
             <div class="school-attendance-actions" style="margin-top:12px;display:none;" id="attendanceActions">
                 <button class="school-btn primary" onclick="saveAttendance()">
-                    <span class="school-emoji" aria-hidden="true">💾</span> Guardar Asistencia
+                    Guardar Asistencia
                 </button>
             </div>
         </div>

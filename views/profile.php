@@ -27,7 +27,6 @@ $roleLabel = $roleLabels[$profileUser['role']] ?? $profileUser['role'];
         <div class="profile-alert success"><?= e($_SESSION['success']); unset($_SESSION['success']); ?></div>
     <?php endif; ?>
 
-    <!-- ENCABEZADO -->
     <div class="profile-head">
         <div class="profile-avatar"><?= strtoupper(substr($profileUser['nombre'], 0, 1)) ?></div>
         <div>
@@ -36,14 +35,12 @@ $roleLabel = $roleLabels[$profileUser['role']] ?? $profileUser['role'];
             <span class="profile-role-badge"><?= e($roleLabel) ?></span>
             <?php if ($profileUser['institucion_nombre']): ?>
                 <span class="profile-role-badge inst">
-                    🏫
                     <?= e($profileUser['institucion_nombre']) ?>
                 </span>
             <?php endif; ?>
         </div>
     </div>
 
-    <!-- DATOS PERSONALES -->
     <div class="profile-card">
         <h2>Datos personales</h2>
         <form method="POST" action="?url=profile/update" class="profile-form">
@@ -51,6 +48,11 @@ $roleLabel = $roleLabels[$profileUser['role']] ?? $profileUser['role'];
             <div class="profile-field">
                 <label>Nombre completo</label>
                 <input type="text" name="name" value="<?= e($profileUser['nombre']) ?>" required>
+            </div>
+            <div class="profile-field">
+                <label>Nombre de usuario</label>
+                <input type="text" name="username" value="<?= e($profileUser['username'] ?? '') ?>" placeholder="ej. azucena_hz" pattern="[a-z0-9_]{3,20}" title="3 a 20 caracteres: minúsculas, números y guion bajo" required>
+                <small class="profile-hint" style="display:block;margin-top:4px;">Es el nombre corto que se muestra en la barra de navegación.</small>
             </div>
             <div class="profile-field">
                 <label>Correo electrónico</label>
@@ -64,11 +66,20 @@ $roleLabel = $roleLabels[$profileUser['role']] ?? $profileUser['role'];
         </form>
     </div>
 
-    <!-- ESTADO INSTITUCIONAL -->
     <div class="profile-card">
         <h2>Institución educativa</h2>
 
-        <?php if ($profileUser['estado_institucional'] === 'aprobado'): ?>
+        <?php if ($profileUser['role'] === 'admin'): ?>
+            <div class="profile-inst-status ok">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <div>
+                    <strong>Acceso global a todas las instituciones</strong>
+                    <p>Como Administrador General no perteneces a una institución en particular: supervisas todas las que están registradas en NDA.</p>
+                </div>
+            </div>
+            <a href="?url=school" class="profile-btn profile-btn-out" style="margin-top:14px;display:inline-block;">Ir al Panel de Administración</a>
+
+        <?php elseif ($profileUser['estado_institucional'] === 'aprobado'): ?>
             <div class="profile-inst-status ok">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                 <div>
@@ -112,7 +123,6 @@ $roleLabel = $roleLabels[$profileUser['role']] ?? $profileUser['role'];
                     <div class="profile-inst-list" id="joinInstList">
                         <?php foreach ($instituciones as $inst): ?>
                             <button type="button" class="profile-inst-item" data-id="<?= e($inst['instituciones_id']) ?>" data-name="<?= e($inst['nombre']) ?>">
-                                🏫
                                 <span><?= e($inst['nombre']) ?></span>
                             </button>
                         <?php endforeach; ?>

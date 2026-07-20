@@ -6,7 +6,7 @@
 <meta name="csrf-token" content="<?= csrfToken() ?>">
 <title><?= $title ?? 'svNDA — Natural Disaster Alert' ?></title>
 <script>
-// Evita el "flash" del tema incorrecto antes de que cargue el CSS/JS.
+// Evita el flash del tema incorrecto antes de que cargue el CSS/JS.
 (function(){
   try {
     var saved = localStorage.getItem('nda-theme');
@@ -17,30 +17,44 @@
 })();
 </script>
 <script>
-// Carga perezosa de CesiumJS (sin token de Cesium ion), compartida por el
-// globo del home y el mapa del croquis escolar. Vive en el <head> (y no en
-// app.js) porque hero-globe.js se ejecuta embebido en el contenido de
-// home.php, ANTES de que se cargue app.js al final del body.
-var CESIUM_CDN_BASE = 'https://cesium.com/downloads/cesiumjs/releases/1.120/Build/Cesium/';
-var __ndaCesiumLoading = null;
-function ensureCesiumLoaded() {
-    if (window.Cesium) return Promise.resolve();
-    if (__ndaCesiumLoading) return __ndaCesiumLoading;
-    __ndaCesiumLoading = new Promise(function (resolve, reject) {
-        window.CESIUM_BASE_URL = CESIUM_CDN_BASE;
-
+// Carga perezosa de MapLibre GL JS, usada por el mapa 3D del home (terreno
+// real de El Salvador) y por Three.js (globo + luna 3D). Viven aqui (no en
+// app.js) porque hero-globe.js corre embebido en home.php antes de que
+// app.js se cargue al final del body.
+var MAPLIBRE_CSS = 'https://unpkg.com/maplibre-gl@4/dist/maplibre-gl.css';
+var MAPLIBRE_JS = 'https://unpkg.com/maplibre-gl@4/dist/maplibre-gl.js';
+var __ndaMapLibreLoading = null;
+function ensureMapLibreLoaded() {
+    if (window.maplibregl) return Promise.resolve();
+    if (__ndaMapLibreLoading) return __ndaMapLibreLoading;
+    __ndaMapLibreLoading = new Promise(function (resolve, reject) {
         var css = document.createElement('link');
         css.rel = 'stylesheet';
-        css.href = CESIUM_CDN_BASE + 'Widgets/widgets.css';
+        css.href = MAPLIBRE_CSS;
         document.head.appendChild(css);
 
         var script = document.createElement('script');
-        script.src = CESIUM_CDN_BASE + 'Cesium.js';
+        script.src = MAPLIBRE_JS;
         script.onload = function () { resolve(); };
-        script.onerror = function () { reject(new Error('No se pudo cargar CesiumJS')); };
+        script.onerror = function () { reject(new Error('No se pudo cargar MapLibre GL JS')); };
         document.head.appendChild(script);
     });
-    return __ndaCesiumLoading;
+    return __ndaMapLibreLoading;
+}
+
+var THREE_JS = 'https://unpkg.com/three@0.160.0/build/three.min.js';
+var __ndaThreeLoading = null;
+function ensureThreeLoaded() {
+    if (window.THREE) return Promise.resolve();
+    if (__ndaThreeLoading) return __ndaThreeLoading;
+    __ndaThreeLoading = new Promise(function (resolve, reject) {
+        var script = document.createElement('script');
+        script.src = THREE_JS;
+        script.onload = function () { resolve(); };
+        script.onerror = function () { reject(new Error('No se pudo cargar Three.js')); };
+        document.head.appendChild(script);
+    });
+    return __ndaThreeLoading;
 }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -49,17 +63,15 @@ function ensureCesiumLoaded() {
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 
-<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="<?= asset('css/style.css') ?>">
 
-<link rel="stylesheet" href="assets/css/auth.css">
+<link rel="stylesheet" href="<?= asset('css/auth.css') ?>">
 
-<!-- Extensiones visuales (Fase 2): NO redeclara --bg/--bg2/--bg3/--bg4,
-     solo agrega la escala de estado y componentes nuevos por encima. -->
-<link rel="stylesheet" href="assets/css/nda-extensions.css">
+<!-- No redeclara --bg/--bg2/--bg3/--bg4, solo agrega estado y componentes nuevos -->
+<link rel="stylesheet" href="<?= asset('css/nda-extensions.css') ?>">
 </head>
 <body>
 
-<!-- FLOATING SEISMIC PARTICLES -->
 <div class="seismic-particles" id="seismicParticles" aria-hidden="true"></div>
 
 
@@ -72,18 +84,22 @@ if (session_status() === PHP_SESSION_NONE) {
 $isLoggedIn = isset($_SESSION['user_id']) && isset($_SESSION['user_name']);
 $userName = $isLoggedIn ? $_SESSION['user_name'] : 'Usuario';
 $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
+// El nombre completo puede ser largo y romper el layout del navbar: se
+// muestra el nombre de usuario corto, o el primer nombre como respaldo
+// mientras la cuenta (vieja, o creada via Google) no tenga uno configurado.
+$navDisplayName = $isLoggedIn
+    ? (!empty($_SESSION['username']) ? $_SESSION['username'] : strtok($userName, ' '))
+    : 'Usuario';
 ?>
 <script>
     window.__ndaHasInstitution = <?= ($isLoggedIn && !empty($_SESSION['institucion_id']) && ($_SESSION['estado_institucional'] ?? '') === 'aprobado') ? 'true' : 'false' ?>;
 </script>
 
-<!-- Banner de simulacro en vivo (se llena via JS si hay una alerta activa) -->
+<!-- Se llena via JS si hay una alerta de simulacro activa -->
 <div class="drill-alert-banner" id="drillAlertBanner" style="display:none">
-    🔔
     <span id="drillAlertText">Simulacro en curso</span>
 </div>
 
-<!-- NAVBAR -->
 <nav class="nav" id="nav">
   <a class="nav-brand" href="?url=home">
     <div class="nda-logo-wave">
@@ -94,15 +110,12 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
   
   <div class="nav-links">
     <a href="?url=home">Inicio</a>
-    <a href="?url=home#sismos">Sismos</a>
-    <a href="?url=home#monitoreo">Monitoreo</a>
+    <a href="?url=sismos">Sismos</a>
+    <a href="?url=monitoreo">Monitoreo</a>
     <a href="?url=blog">Blog</a>
     <a href="?url=juegos">Juegos</a>
     <?php
-        // Mismo criterio que SchoolController::canAccessSchool(): admin global,
-        // o rol institucional con estado_institucional 'aprobado'. Se calcula
-        // aqui con la sesion ya sincronizada por currentUser() (definida en
-        // index.php), para no duplicar la logica de permisos en dos lugares.
+        // Debe coincidir con SchoolController::canAccessSchool().
         $__navUser = currentUser();
         $__schoolEligibleRoles = ['director', 'docente', 'alumno', 'padre', 'administrativo'];
         $__canSeeSchoolLink = $__navUser && (
@@ -112,8 +125,7 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
     ?>
     <?php if ($__canSeeSchoolLink): ?>
     <a href="?url=school" class="nav-school-link">
-      🏫
-      Gestión Escolar
+      <?= $__navUser['role'] === 'admin' ? 'Panel de Administración' : 'Gestión Escolar' ?>
     </a>
     <?php endif; ?>
     <a href="?url=resources">Recursos</a>
@@ -128,16 +140,13 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
     </div>
     <button class="theme-btn" id="themeBtn" title="Cambiar tema" aria-label="Cambiar tema claro/oscuro">
       <svg id="themeIcoMoon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-      ☀️
     </button>
     <button class="lang-btn" id="langBtn" title="Switch language / Cambiar idioma" aria-label="Cambiar idioma">
-      🌐
       <span id="langBtnLabel">EN</span>
     </button>
 
     <div style="position:relative;">
       <button class="nda-notif-btn" id="ndaNotifBtn" title="Notificaciones" aria-label="Ver notificaciones">
-        🔔
         <span class="nda-notif-dot" id="ndaNotifDot"></span>
       </button>
       <div class="nda-notif-panel nda-glass" id="ndaNotifPanel">
@@ -151,49 +160,41 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
       </div>
     </div>
     
-    <!--   PHP SESSION AUTH   -->
     <?php if (isset($_SESSION['user_id']) && isset($_SESSION['user_name'])): ?>
-      <!-- Usuario logueado - Mostrar menú -->
       <div class="nav-user-menu" id="navUserMenu" style="display:flex">
         <div class="nav-user" id="navUserBadge" style="cursor:pointer" onclick="toggleUserDD()">
           <div class="nav-avatar" id="navAvatar">
             <?= strtoupper(substr($_SESSION['user_name'], 0, 1)) ?>
           </div>
-          <span id="navUserName"><?= htmlspecialchars($_SESSION['user_name']) ?></span>
+          <span id="navUserName"><?= htmlspecialchars($navDisplayName) ?></span>
           <span style="font-size:.6rem;color:var(--text3)">▾</span>
         </div>
         <div class="nav-user-dd" id="navUserDD">
           <?php if ($__canSeeSchoolLink): ?>
           <a class="nud-item" href="?url=school">
-            🏫
             Módulo Colegio
           </a>
           <?php endif; ?>
           <a class="nud-item" href="?url=profile">
-            👤
             Mi Perfil
           </a>
           <div class="nud-item danger" onclick="logout()">
-            🚪
             Cerrar sesión
           </div>
         </div>
       </div>
 
-      <!-- Ocultar botones de login/register -->
       <div id="navAuthBtns" style="display:none">
         <a href="?url=login" class="btn-out" style="padding:6px 14px;font-size:.76rem;text-decoration:none;">Iniciar sesión</a>
         <a href="?url=register" class="btn-acc" style="padding:6px 14px;font-size:.76rem;text-decoration:none;">Registrarse</a>
       </div>
       
     <?php else: ?>
-      <!-- Usuario NO logueado - Mostrar botones -->
       <div id="navAuthBtns" style="display:flex;gap:6px">
         <a href="?url=login" class="btn-out" style="padding:6px 14px;font-size:.76rem;text-decoration:none;">Iniciar sesión</a>
         <a href="?url=register" class="btn-acc" style="padding:6px 14px;font-size:.76rem;text-decoration:none;">Registrarse</a>
       </div>
-      
-      <!-- Ocultar menú de usuario -->
+
       <div class="nav-user-menu" id="navUserMenu" style="display:none">
         <div class="nav-user" id="navUserBadge" style="cursor:pointer" onclick="toggleUserDD()">
           <div class="nav-avatar" id="navAvatar">?</div>
@@ -203,16 +204,13 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
         <div class="nav-user-dd" id="navUserDD">
           <?php if ($__canSeeSchoolLink): ?>
           <a class="nud-item" href="?url=school">
-            🏫
             Módulo Colegio
           </a>
           <?php endif; ?>
           <a class="nud-item" href="?url=profile">
-            👤
             Mi Perfil
           </a>
           <div class="nud-item danger" onclick="logout()">
-            🚪
             Cerrar sesión
           </div>
         </div>
@@ -225,10 +223,8 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
   </div>
 </nav>
 
-<!--   CONTENIDO PRINCIPAL   -->
 <?= $content ?? '' ?>
 
-<!--   FOOTER   -->
 <footer class="footer">
   <div class="wrap">
     <div class="ft-inner">
@@ -247,7 +243,7 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
         </div>
         <p>Natural Disaster Alert — Plataforma educativa para la comunidad escolar de El Salvador. Datos en tiempo real y simulaciones interactivas.</p>
       </div>
-      <div class="ftc"><h5>Secciones</h5><a href="?url=home#sismos">Monitor Sísmico</a><a href="?url=home#placas">Placas Tectónicas</a><a href="?url=home#timeline">Historia</a><a href="?url=home#luna">Fases Lunares</a><a href="?url=home#mapa">Mapa de Peligros</a><a href="?url=home#ahora">¿Qué hacer AHORA?</a></div>
+      <div class="ftc"><h5>Secciones</h5><a href="?url=sismos">Monitor Sísmico</a><a href="?url=home#placas">Placas Tectónicas</a><a href="?url=home#timeline">Historia</a><a href="?url=monitoreo#luna">Fases Lunares</a><a href="?url=home#zona-sismica">Mapa de Peligros</a><a href="?url=quehacer">¿Qué hacer AHORA?</a></div>
       <div class="ftc"><h5>Fuentes</h5><a href="https://earthquake.usgs.gov" target="_blank">USGS Earthquakes</a><a href="https://www.marn.gob.sv" target="_blank">MARN El Salvador</a><a href="https://api.open-meteo.com" target="_blank">Open-Meteo API</a><a href="https://api.sunrise-sunset.org" target="_blank">Sunrise-Sunset API</a></div>
     </div>
     <div class="ft-btm"><p>© 2025 svNDA — Natural Disaster Alert · Proyecto educativo El Salvador · Datos USGS · Solo fines educativos</p></div>
@@ -256,9 +252,6 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
 
 <button class="scroll-top" id="scrollTop"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></button>
 
-<<<<<<< Updated upstream
-<!-- ==================== CHATBOT (disponible en todo el sitio) ==================== -->
-=======
 <?php if (!empty($__canSeeSchoolLink)): ?>
 <?php
     // Director/docente si tienen Panel de Gestión propio; el resto de
@@ -269,12 +262,11 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
 ?>
 <!-- Acceso rápido a Gestión Escolar, junto al chatbot (solo si el rol tiene acceso) -->
 <a href="?url=<?= e($__schoolFabUrl) ?>" class="school-fab" id="schoolFab" aria-label="Ir a <?= e($__schoolFabLabel) ?>" title="<?= e($__schoolFabLabel) ?>">
-  <span class="school-emoji" aria-hidden="true">🏫</span>
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 4h9l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M9 12h6M9 16h6"/></svg>
 </a>
 <?php endif; ?>
 
 <!-- Chatbot, disponible en todo el sitio -->
->>>>>>> Stashed changes
 <div class="ndabot" id="ndabot">
   <button class="ndabot-fab" id="ndabotFab" aria-label="Abrir chat de ayuda">
     <img src="assets/media/img/chatbot.png" alt="Asistente NDA">
@@ -289,7 +281,7 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
         <span>Pregúntame o pide que te lleve a una sección</span>
       </div>
       <button class="ndabot-close" id="ndabotClose" aria-label="Cerrar chat">
-        ❌
+        &times;
       </button>
     </div>
 
@@ -312,7 +304,7 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
   </div>
 </div>
 
-<!-- ==================== TRADUCTOR (ES/EN) ==================== -->
+<!-- Traductor ES/EN -->
 <div id="google_translate_element" style="display:none"></div>
 <script>
     function googleTranslateElementInit() {
@@ -321,11 +313,23 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
 </script>
 <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-<!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 
 <script src="<?= asset('js/app.js') ?>"></script>
+<?php if (isset($_SESSION['success']) || isset($_SESSION['error'])): ?>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    <?php if (isset($_SESSION['success'])): ?>
+    if (typeof ndaAlert === 'function') ndaAlert(<?= json_encode($_SESSION['success']) ?>, 'success');
+    <?php unset($_SESSION['success']); endif; ?>
+    <?php if (isset($_SESSION['error'])): ?>
+    if (typeof ndaAlert === 'function') ndaAlert(<?= json_encode($_SESSION['error']) ?>, 'error');
+    <?php unset($_SESSION['error']); endif; ?>
+});
+</script>
+<?php endif; ?>
+<script src="<?= asset('js/moon3d.js') ?>"></script>
 <script src="<?= asset('js/auth.js') ?>"></script>
 <script src="<?= asset('js/chatbot.js') ?>"></script>
 <script src="<?= asset('js/notifications.js') ?>"></script>

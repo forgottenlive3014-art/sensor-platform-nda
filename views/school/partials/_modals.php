@@ -1,8 +1,3 @@
-<!-- ========================================================== -->
-<!--  MODALES -->
-<!-- ========================================================== -->
-
-<!-- Modal Agregar Alumno -->
 <div class="school-modal" id="addStudentModal">
     <div class="school-modal-content">
         <div class="school-modal-header">
@@ -39,7 +34,6 @@
     </div>
 </div>
 
-<!-- Modal Agregar Docente -->
 <div class="school-modal" id="addTeacherModal">
     <div class="school-modal-content">
         <div class="school-modal-header">
@@ -70,7 +64,6 @@
     </div>
 </div>
 
-<!-- Modal Agregar Aula -->
 <div class="school-modal" id="addClassroomModal">
     <div class="school-modal-content">
         <div class="school-modal-header">
@@ -104,7 +97,6 @@
     </div>
 </div>
 
-<!-- Modal Agregar Ruta -->
 <div class="school-modal" id="addRouteModal">
     <div class="school-modal-content">
         <div class="school-modal-header">
@@ -135,9 +127,6 @@
     </div>
 </div>
 
-<!-- Modal Reportar Incidente -->
-
-<!-- Modal Editar Incidente -->
 <div class="school-modal" id="editIncidentModal">
     <div class="school-modal-content">
         <div class="school-modal-header">
@@ -180,7 +169,6 @@
     </div>
 </div>
 
-<!-- Modal Editar Simulacro -->
 <div class="school-modal" id="editDrillModal">
     <div class="school-modal-content">
         <div class="school-modal-header">
@@ -254,7 +242,6 @@
     </div>
 </div>
 
-<!-- Modal Editar Docente -->
 <div class="school-modal" id="editTeacherModal">
     <div class="school-modal-content">
         <div class="school-modal-header">
@@ -283,7 +270,6 @@
     </div>
 </div>
 
-<!-- Modal Editar Aula -->
 <div class="school-modal" id="editClassroomModal">
     <div class="school-modal-content">
         <div class="school-modal-header">
@@ -324,7 +310,6 @@
     </div>
 </div>
 
-<!-- Modal Editar Ruta -->
 <div class="school-modal" id="editRouteModal">
     <div class="school-modal-content">
         <div class="school-modal-header">
@@ -401,7 +386,6 @@
     </div>
 </div>
 
-<!-- Modal Nueva Nota de Corcho -->
 <div class="school-modal" id="addBoardNoteModal">
     <div class="school-modal-content">
         <div class="school-modal-header">
@@ -443,7 +427,6 @@
     </div>
 </div>
 
-<!-- Modal Nuevo Punto de Croquis -->
 <div class="school-modal" id="addCroquisPointModal">
     <div class="school-modal-content">
         <div class="school-modal-header">
@@ -481,7 +464,6 @@
     </div>
 </div>
 
-<!-- Modal Nuevo Simulacro -->
 <div class="school-modal" id="addDrillModal">
     <div class="school-modal-content">
         <div class="school-modal-header">

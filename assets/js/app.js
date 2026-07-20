@@ -371,30 +371,36 @@ document.querySelectorAll('.sg-preset').forEach(btn => {
     };
 });
 
-document.getElementById('sgMagSlider').oninput = function() {
-    sgCurrentMag = parseFloat(this.value);
-    document.getElementById('sgMagDisp').textContent = parseFloat(this.value).toFixed(1);
-    document.querySelectorAll('.sg-preset').forEach(b => b.classList.remove('on'));
-};
+if (document.getElementById('sgMagSlider')) {
+    document.getElementById('sgMagSlider').oninput = function() {
+        sgCurrentMag = parseFloat(this.value);
+        document.getElementById('sgMagDisp').textContent = parseFloat(this.value).toFixed(1);
+        document.querySelectorAll('.sg-preset').forEach(b => b.classList.remove('on'));
+    };
+}
 
-document.getElementById('sgReset').onclick = () => {
-    sgCurrentMag = 3;
-    document.getElementById('sgMagSlider').value = 3;
-    document.getElementById('sgMagDisp').textContent = '3';
-    document.querySelectorAll('.sg-preset').forEach(b => b.classList.remove('on'));
-    document.querySelector('.sg-preset.m3').classList.add('on');
-};
+if (document.getElementById('sgReset')) {
+    document.getElementById('sgReset').onclick = () => {
+        sgCurrentMag = 3;
+        document.getElementById('sgMagSlider').value = 3;
+        document.getElementById('sgMagDisp').textContent = '3';
+        document.querySelectorAll('.sg-preset').forEach(b => b.classList.remove('on'));
+        document.querySelector('.sg-preset.m3').classList.add('on');
+    };
+}
 
-document.getElementById('simBtn').onclick = () => {
-    sgCurrentMag = 8.5;
-    document.getElementById('sgMagSlider').value = 8.5;
-    document.getElementById('sgMagDisp').textContent = '8.5';
-    document.querySelectorAll('.sg-preset').forEach(b => b.classList.remove('on'));
-    document.querySelector('.sg-preset.m85').classList.add('on');
-    document.getElementById('sgDepth').textContent = '8 KM';
-    document.getElementById('sg-last-mag').textContent = 'M8.5';
-    document.getElementById('sg-last-loc').textContent = 'San Miguel';
-};
+if (document.getElementById('simBtn')) {
+    document.getElementById('simBtn').onclick = () => {
+        sgCurrentMag = 8.5;
+        document.getElementById('sgMagSlider').value = 8.5;
+        document.getElementById('sgMagDisp').textContent = '8.5';
+        document.querySelectorAll('.sg-preset').forEach(b => b.classList.remove('on'));
+        document.querySelector('.sg-preset.m85').classList.add('on');
+        document.getElementById('sgDepth').textContent = '8 KM';
+        document.getElementById('sg-last-mag').textContent = 'M8.5';
+        document.getElementById('sg-last-loc').textContent = 'San Miguel';
+    };
+}
 
   
 //  5. MICRO SEISMOGRAPH
@@ -442,6 +448,17 @@ document.getElementById('simBtn').onclick = () => {
 //  6. USGS EARTHQUAKE DATA
   
 
+// Helpers null-safe: cada pagina del sitio solo tiene un subconjunto de estos
+// elementos (el resto vive en otra pagina), asi que nunca asumimos que existen.
+function ndaSetText(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+}
+function ndaSetHtml(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = val;
+}
+
 async function loadQuakes() {
     try {
         const url = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minlatitude=8&maxlatitude=18&minlongitude=-95&maxlongitude=-82&limit=25&orderby=time&minmagnitude=1.5';
@@ -455,65 +472,63 @@ async function loadQuakes() {
         const maxM = Math.max(...qs.map(q => q.properties.mag || 0));
         const avgD = Math.round(qs.reduce((s, q) => s + (q.geometry.coordinates[2] || 0), 0) / qs.length);
 
-        // Hero stats
-        document.getElementById('hp-quakes').textContent = h24;
-        document.getElementById('hm-today').textContent = h24;
-        document.getElementById('hm-max').textContent = maxM.toFixed(1);
-        document.getElementById('hm-depth').textContent = avgD;
+        // Hero stats (pagina Inicio)
+        ndaSetText('hp-quakes', h24);
+        ndaSetText('hm-today', h24);
+        ndaSetText('hm-max', maxM.toFixed(1));
+        ndaSetText('hm-depth', avgD);
+        ndaSetText('h3d-actividad-reciente', h24 > 0
+            ? `${h24} sismo${h24 === 1 ? '' : 's'} registrados en las últimas 24 horas cerca de El Salvador, con magnitud máxima de ${maxM.toFixed(1)}.`
+            : 'Sin sismos significativos registrados cerca de El Salvador en las últimas 24 horas.');
 
-        const activEl = document.getElementById('h3d-actividad-reciente');
-        if (activEl) {
-            activEl.textContent = h24 > 0
-                ? `${h24} sismo${h24 === 1 ? '' : 's'} registrados en las últimas 24 horas cerca de El Salvador, con magnitud máxima de ${maxM.toFixed(1)}.`
-                : 'Sin sismos significativos registrados cerca de El Salvador en las últimas 24 horas.';
-        }
-
-        // Side stats
-        document.getElementById('sc-last').textContent = 'M' + maxM.toFixed(1);
-        document.getElementById('sc-24h').textContent = h24;
-        document.getElementById('sc-depth').innerHTML = avgD + '<span style="font-size:.8rem;color:var(--text3)">km</span>';
+        // Side stats (pagina Sismos)
+        ndaSetText('sc-last', 'M' + maxM.toFixed(1));
+        ndaSetText('sc-24h', h24);
+        ndaSetHtml('sc-depth', avgD + '<span style="font-size:.8rem;color:var(--text3)">km</span>');
 
         const last = qs[0];
-        document.getElementById('sc-time').textContent = new Date(last.properties.time).toLocaleString('es-SV', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        ndaSetText('sc-time', new Date(last.properties.time).toLocaleString('es-SV', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }));
 
-        // SG bar
-        document.getElementById('sg-last-mag').textContent = 'M' + maxM.toFixed(1);
-        document.getElementById('sg-last-loc').textContent = (qs[0].properties.place || '').split(' of ').pop()?.slice(0, 25) || '—';
-        document.getElementById('sg-today').textContent = h24;
-        document.getElementById('sg-depth-v').textContent = avgD + ' km';
+        // SG bar (pagina Sismos)
+        ndaSetText('sg-last-mag', 'M' + maxM.toFixed(1));
+        ndaSetText('sg-last-loc', (qs[0].properties.place || '').split(' of ').pop()?.slice(0, 25) || '—');
+        ndaSetText('sg-today', h24);
+        ndaSetText('sg-depth-v', avgD + ' km');
 
-        // Nav alert
-        document.getElementById('navAlertText').textContent = `M${maxM.toFixed(1)} · ${(qs[0].properties.place || '').split(', ')[0]?.slice(0, 15)}`;
+        // Nav alert (comun a todo el sitio)
+        ndaSetText('navAlertText', `M${maxM.toFixed(1)} · ${(qs[0].properties.place || '').split(', ')[0]?.slice(0, 15)}`);
 
-        // Feed
+        // Feed (pagina Sismos)
         const feed = document.getElementById('quakeFeed');
-        feed.innerHTML = '';
-        qs.slice(0, 18).forEach((q) => {
-            const m = q.properties.mag || 0;
-            const cls = m < 3 ? 'ml' : m < 5 ? 'mm' : 'mh';
-            const dep = (q.geometry.coordinates[2] || 0).toFixed(0);
-            const tm = new Date(q.properties.time).toLocaleString('es-SV', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-            const el = document.createElement('div');
-            el.className = 'qfi';
-            el.innerHTML = `<div class="qfi-mag ${cls}">${m.toFixed(1)}</div>
-                            <div class="qfi-info">
-                                <div class="qfi-place">${q.properties.place || '—'}</div>
-                                <div class="qfi-meta">${tm}</div>
-                            </div>
-                            <div class="qfi-depth">Prof ${dep}km</div>`;
-            feed.appendChild(el);
-        });
+        if (feed) {
+            feed.innerHTML = '';
+            qs.slice(0, 18).forEach((q) => {
+                const m = q.properties.mag || 0;
+                const cls = m < 3 ? 'ml' : m < 5 ? 'mm' : 'mh';
+                const dep = (q.geometry.coordinates[2] || 0).toFixed(0);
+                const tm = new Date(q.properties.time).toLocaleString('es-SV', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                const el = document.createElement('div');
+                el.className = 'qfi';
+                el.innerHTML = `<div class="qfi-mag ${cls}">${m.toFixed(1)}</div>
+                                <div class="qfi-info">
+                                    <div class="qfi-place">${q.properties.place || '—'}</div>
+                                    <div class="qfi-meta">${tm}</div>
+                                </div>
+                                <div class="qfi-depth">Prof ${dep}km</div>`;
+                feed.appendChild(el);
+            });
+        }
 
         if (window._addQuakesToMap) window._addQuakesToMap(qs);
         if (window.updateRTMStats) window.updateRTMStats(qs);
 
     } catch (e) {
-        document.getElementById('quakeFeed').innerHTML = '<div class="loading-s">⚠️ Error USGS — revisa conexión</div>';
-        document.getElementById('navAlertText').textContent = 'Sistema activo';
+        ndaSetHtml('quakeFeed', '<div class="loading-s">⚠️ Error USGS — revisa conexión</div>');
+        ndaSetText('navAlertText', 'Sistema activo');
     }
 }
 
-document.getElementById('refreshQ').onclick = loadQuakes;
+if (document.getElementById('refreshQ')) document.getElementById('refreshQ').onclick = loadQuakes;
 
   
 //  7. PLATE TECTONICS CANVAS
@@ -894,9 +909,26 @@ window.setTL = function(i) {
 let hazMap, qLayer2, sLayer2, vLayer2, fLayer2, slideLayer, safeLayer;
 
 function initMap() {
+    if (!document.getElementById('hazardMap')) return;
     hazMap = L.map('hazardMap', { center: [13.7942, -88.8965], zoom: 8 });
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '© CARTO', maxZoom: 18 })
-        .addTo(hazMap);
+
+    const isLightTheme = document.documentElement.getAttribute('data-theme') === 'light';
+    const hazTiles = L.tileLayer(
+        isLightTheme
+            ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
+            : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+        { attribution: '© CARTO', maxZoom: 18 }
+    ).addTo(hazMap);
+
+    // El boton de tema claro/oscuro cambia data-theme en <html> sin recargar la pagina.
+    new MutationObserver(() => {
+        const light = document.documentElement.getAttribute('data-theme') === 'light';
+        hazTiles.setUrl(
+            light
+                ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
+                : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+        );
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
     sLayer2 = L.layerGroup();
     [
@@ -991,6 +1023,7 @@ window._addQuakesToMap = function(qs) {
   
 
 async function loadWeather() {
+    if (!document.getElementById('weatherCities')) return;
     try {
         const cities = [
             { name: 'San Salvador', lat: 13.6929, lng: -89.2182 },
@@ -1064,6 +1097,7 @@ async function loadWeather() {
 }
 
 async function loadSun() {
+    if (!document.getElementById('sunriseBig')) return;
     try {
         const resp = await fetch('https://api.sunrise-sunset.org/json?lat=13.6929&lng=-89.2182&formatted=0');
         const d = await resp.json();
@@ -1336,6 +1370,7 @@ async function loadSun() {
   
 
 (function() {
+    if (!document.getElementById('moonName')) return;
     const synodic = 29.530588853;
     const known = new Date(2000, 0, 6, 18, 14);
     const now = new Date();
@@ -1540,10 +1575,10 @@ async function loadSun() {
         const p = phases[phaseIdx];
         const pct = Math.round((phaseIdx / 8) * 100 + (currentPhaseRaw % 0.125) * 100 / 8);
 
-        document.getElementById('moonName').textContent = p.name;
+        document.getElementById('moonName').innerHTML = p.name;
         document.getElementById('moonDateStr').textContent = now.toLocaleDateString('es-SV', { weekday: 'long',
             year: 'numeric', month: 'long', day: 'numeric' });
-        document.getElementById('moonNextDate').textContent = `⏰ Próxima ${p.emoji}: ${getNextPhaseDate(phaseIdx)}`;
+        document.getElementById('moonNextDate').innerHTML = `⏰ Próxima ${p.emoji}: ${getNextPhaseDate(phaseIdx)}`;
         document.getElementById('moonFill').style.width = ((phaseIdx + 0.5) / 8 * 100) + '%';
         document.getElementById('moonPct').textContent = Math.round((phaseIdx + 0.5) / 8 * 100) + '%';
         document.getElementById('tideCurPhase').textContent = `${p.tideLabel} · Pesca: ${p.fishing}`;
@@ -1746,9 +1781,11 @@ const prepCheckedSets = {
 let prepActive = 'before';
 
 function renderPrep() {
+    const panelsEl = document.getElementById('prepPanels');
+    if (!panelsEl) return;
     const p = prepData[prepActive];
     const checked = prepCheckedSets[prepActive];
-    document.getElementById('prepPanels').innerHTML = `
+    panelsEl.innerHTML = `
         <div class="prep-panel on">
             <div class="pp-scene">
                 <canvas id="prepCv"></canvas>
@@ -2448,9 +2485,42 @@ async function loadTsunamiFeed() {
     }
 }
 
-  
+
+//  26b. SISMOGRAFO ARDUINO EN VIVO (pagina Monitoreo)
+
+
+let __ardSinceId = 0;
+function initArduinoLive() {
+    const statusEl = document.getElementById('ardLiveStatus');
+    const valEl = document.getElementById('ardLiveValue');
+    const barEl = document.getElementById('ardLiveBar');
+    if (!statusEl || !valEl || !barEl) return;
+
+    async function poll() {
+        try {
+            const r = await fetch('?url=sensor/latest&since_id=' + __ardSinceId);
+            const d = await r.json();
+            __ardSinceId = d.last_id || __ardSinceId;
+
+            statusEl.textContent = d.connected ? '● Sensor conectado' : '○ Sin conexión — esperando hardware';
+            statusEl.className = 'chip ' + (d.connected ? 'g' : 'o');
+
+            const readings = d.readings || [];
+            if (readings.length) {
+                const last = readings[readings.length - 1];
+                const intensidad = parseFloat(last.intensidad) || 0;
+                valEl.textContent = intensidad.toFixed(2) + 'G · ' + last.nivel;
+                barEl.style.width = Math.max(2, Math.min(100, (intensidad / 1.2) * 100)) + '%';
+            }
+        } catch (e) { /* silencioso: se reintenta en el siguiente ciclo */ }
+    }
+    poll();
+    setInterval(poll, 4000);
+}
+
+
 //  27. TSUNAMI EVACUATION CANVAS SIMULATION
-  
+
 
 let tsEvacRunning = false,
     tsEvacT = 0,
@@ -2803,14 +2873,17 @@ let memCards = [],
     memLocked = false;
 
 function initMemoryGame() {
+    if (!document.getElementById('memoryGrid')) return;
     const all = [...memSymbols, ...memSymbols].sort(() => Math.random() - 0.5);
     memCards = all;
     memFlipped = [];
     memMatched = new Set();
     memMoveCount = 0;
     memLocked = false;
-    document.getElementById('memMoves').textContent = '0';
-    document.getElementById('memPairs').textContent = '0/8';
+    const movesEl = document.getElementById('memMoves');
+    const pairsEl = document.getElementById('memPairs');
+    if (movesEl) movesEl.textContent = '0';
+    if (pairsEl) pairsEl.textContent = '0/8';
     const winEl = document.getElementById('memWin');
     if (winEl) winEl.style.display = 'none';
     renderMemory();
@@ -3088,18 +3161,26 @@ function processCbMsg(text) {
 //  37. INIT ALL
 
 
+// Cada pagina del sitio comparte este mismo app.js aunque solo tenga algunas
+// de estas secciones en su HTML. safeInit() evita que un error (o un elemento
+// faltante sin guardia) en una seccion corte la inicializacion de las demas.
+function safeInit(fn) {
+    try { fn(); } catch (e) { console.error('[NDA] Error inicializando sección:', fn.name || fn, e); }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    renderTL();
-    initMap();
-    loadQuakes();
-    loadWeather();
-    loadSun();
-    renderBP();
-    renderPrep();
-    renderBP3D();
-    initRTMonitor();
-    initBuildingShake();
-    loadTsunamiFeed();
-    initEvacCanvas();
-    initMemoryGame();
+    safeInit(renderTL);
+    safeInit(initMap);
+    safeInit(loadQuakes);
+    safeInit(loadWeather);
+    safeInit(loadSun);
+    safeInit(renderBP);
+    safeInit(renderPrep);
+    safeInit(renderBP3D);
+    safeInit(initRTMonitor);
+    safeInit(initBuildingShake);
+    safeInit(loadTsunamiFeed);
+    safeInit(initEvacCanvas);
+    safeInit(initMemoryGame);
+    safeInit(initArduinoLive);
 });
