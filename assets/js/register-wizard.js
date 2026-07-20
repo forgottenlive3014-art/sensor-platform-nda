@@ -143,9 +143,34 @@
         });
     }
 
+    // Nombre de usuario: solo minusculas, numeros y guion bajo (debe
+    // coincidir con AuthController::usernameError). Se sanea mientras se
+    // escribe para no frustrar al usuario con errores de formato.
+    var usernameRegex = /^[a-z0-9_]{3,20}$/;
+    var usernameInput = document.getElementById('username-reg');
+    if (usernameInput) {
+        usernameInput.addEventListener('input', function () {
+            var start = usernameInput.selectionStart;
+            var cleaned = usernameInput.value.toLowerCase().replace(/[^a-z0-9_]/g, '');
+            if (cleaned !== usernameInput.value) {
+                usernameInput.value = cleaned;
+                usernameInput.setSelectionRange(start - 1, start - 1);
+            } else {
+                usernameInput.value = cleaned;
+            }
+        });
+    }
+
     form.addEventListener('submit', function (e) {
         var pwd = form.querySelector('input[name="password"]');
         var confirm = form.querySelector('input[name="password_confirm"]');
+        var username = form.querySelector('input[name="username"]');
+        if (username && !usernameRegex.test(username.value)) {
+            e.preventDefault();
+            ndaAlert('El nombre de usuario debe tener entre 3 y 20 caracteres: solo minúsculas, números y guion bajo.');
+            username.focus();
+            return false;
+        }
         if (!passwordIsStrong(pwd.value)) {
             e.preventDefault();
             ndaAlert('Tu contraseña no cumple los requisitos: revisa la lista debajo del campo.');

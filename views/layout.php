@@ -84,6 +84,12 @@ if (session_status() === PHP_SESSION_NONE) {
 $isLoggedIn = isset($_SESSION['user_id']) && isset($_SESSION['user_name']);
 $userName = $isLoggedIn ? $_SESSION['user_name'] : 'Usuario';
 $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
+// El nombre completo puede ser largo y romper el layout del navbar: se
+// muestra el nombre de usuario corto, o el primer nombre como respaldo
+// mientras la cuenta (vieja, o creada via Google) no tenga uno configurado.
+$navDisplayName = $isLoggedIn
+    ? (!empty($_SESSION['username']) ? $_SESSION['username'] : strtok($userName, ' '))
+    : 'Usuario';
 ?>
 <script>
     window.__ndaHasInstitution = <?= ($isLoggedIn && !empty($_SESSION['institucion_id']) && ($_SESSION['estado_institucional'] ?? '') === 'aprobado') ? 'true' : 'false' ?>;
@@ -160,7 +166,7 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
           <div class="nav-avatar" id="navAvatar">
             <?= strtoupper(substr($_SESSION['user_name'], 0, 1)) ?>
           </div>
-          <span id="navUserName"><?= htmlspecialchars($_SESSION['user_name']) ?></span>
+          <span id="navUserName"><?= htmlspecialchars($navDisplayName) ?></span>
           <span style="font-size:.6rem;color:var(--text3)">▾</span>
         </div>
         <div class="nav-user-dd" id="navUserDD">

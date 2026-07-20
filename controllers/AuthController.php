@@ -100,10 +100,64 @@ class AuthController {
         return checkdnsrr($domain, 'A') || checkdnsrr($domain, 'AAAA');
     }
 
+    // Nombre de usuario corto para el navbar (el nombre completo puede ser
+    // largo y romper el layout). Solo minusculas, numeros y guion bajo.
+    // Devuelve null si es valido, o el mensaje de error si no.
+    private function usernameError($username, $excludeId = null) {
+        if (!preg_match('/^[a-z0-9_]{3,20}$/', $username)) {
+            return 'El nombre de usuario debe tener entre 3 y 20 caracteres: solo minúsculas, números y guion bajo.';
+        }
+        $db = getDB();
+        $sql = "SELECT usuarios_id FROM usuarios WHERE username = ?";
+        $params = [$username];
+        if ($excludeId) {
+            $sql .= " AND usuarios_id != ?";
+            $params[] = $excludeId;
+        }
+        $stmt = $db->prepare($sql);
+        $stmt->execute($params);
+        if ($stmt->fetch()) {
+            return 'Ese nombre de usuario ya está en uso.';
+        }
+        return null;
+    }
+
+    // Genera un username disponible a partir de un texto base (nombre o
+    // correo), usado cuando la cuenta se crea via Google y no pedimos uno
+    // a mano. Ej: "Azucena Hernández" -> "azucena_hernandez", "azucena_hernandez2"...
+    private function generateUsername($base) {
+        $slug = strtolower($base);
+        if (function_exists('transliterator_transliterate')) {
+            $slug = transliterator_transliterate('Any-Latin; Latin-ASCII;', $slug);
+        } else {
+            $slug = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $slug);
+        }
+        $slug = preg_replace('/[^a-z0-9]+/', '_', $slug);
+        $slug = trim($slug, '_');
+        $slug = substr($slug, 0, 16) ?: 'usuario';
+        if (strlen($slug) < 3) {
+            $slug = str_pad($slug, 3, '0');
+        }
+
+        $db = getDB();
+        $candidate = $slug;
+        $i = 2;
+        $stmt = $db->prepare("SELECT usuarios_id FROM usuarios WHERE username = ?");
+        while (true) {
+            $stmt->execute([$candidate]);
+            if (!$stmt->fetch()) {
+                return $candidate;
+            }
+            $candidate = substr($slug, 0, 20 - strlen((string) $i)) . $i;
+            $i++;
+        }
+    }
+
     private function startSession($user) {
         session_regenerate_id(true);
         $_SESSION['user_id'] = $user['usuarios_id'];
         $_SESSION['user_name'] = $user['nombre'];
+        $_SESSION['username'] = $user['username'] ?? null;
         $_SESSION['user_email'] = $user['email'];
         $_SESSION['user_role'] = $user['role'];
         $_SESSION['institucion_id'] = $user['institucion_id'] ?? null;
@@ -177,10 +231,13 @@ class AuthController {
 
             // Cuenta general nueva. Nunca se crea con rol admin ni institucional
             // via Google: eso solo se asigna a mano o pidiendo unirse despues.
+            // Google no pide un username, asi que generamos uno disponible a
+            // partir del nombre; el usuario puede cambiarlo despues en su perfil.
             $randomHash = password_hash(bin2hex(random_bytes(32)), PASSWORD_DEFAULT);
-            $db->prepare("INSERT INTO usuarios (nombre, email, contra, role, institucion_id, estado_institucional)
-                           VALUES (?, ?, ?, 'user', NULL, 'ninguno')")
-               ->execute([$name, $email, $randomHash]);
+            $newUsername = $this->generateUsername($name);
+            $db->prepare("INSERT INTO usuarios (nombre, username, email, contra, role, institucion_id, estado_institucional)
+                           VALUES (?, ?, ?, ?, 'user', NULL, 'ninguno')")
+               ->execute([$name, $newUsername, $email, $randomHash]);
             $stmt->execute([$email]);
             $user = $stmt->fetch();
 
@@ -227,14 +284,21 @@ class AuthController {
         }
 
         $name = trim($_POST['name'] ?? '');
+        $username = strtolower(trim($_POST['username'] ?? ''));
         $email = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
         $confirm = $_POST['password_confirm'] ?? '';
         $accountType = $_POST['account_type'] ?? 'general'; // general | institutional
         $instRole = $_POST['inst_role'] ?? '';               // director|docente|alumno|padre|administrativo
 
-        if (empty($name) || empty($email) || empty($password)) {
+        if (empty($name) || empty($username) || empty($email) || empty($password)) {
             $_SESSION['error'] = 'Todos los campos son obligatorios.';
+            redirect('register');
+            return;
+        }
+        $usernameError = $this->usernameError($username);
+        if ($usernameError) {
+            $_SESSION['error'] = $usernameError;
             redirect('register');
             return;
         }
@@ -321,9 +385,9 @@ class AuthController {
         }
 
         $hashed = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $db->prepare("INSERT INTO usuarios (nombre, email, contra, role, institucion_id, estado_institucional)
-                               VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$name, $email, $hashed, $role, $institucionId, $estadoInstitucional]);
+        $stmt = $db->prepare("INSERT INTO usuarios (nombre, username, email, contra, role, institucion_id, estado_institucional)
+                               VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$name, $username, $email, $hashed, $role, $institucionId, $estadoInstitucional]);
         $userId = $db->lastInsertId();
 
         if ($role === 'director') {
@@ -416,19 +480,27 @@ class AuthController {
         }
 
         $name = trim($_POST['name'] ?? '');
+        $username = strtolower(trim($_POST['username'] ?? ''));
         $telefono = trim($_POST['telefono'] ?? '');
 
-        if (empty($name)) {
-            $_SESSION['error'] = 'El nombre no puede estar vacío.';
+        if (empty($name) || empty($username)) {
+            $_SESSION['error'] = 'El nombre y el nombre de usuario no pueden estar vacíos.';
+            redirect('profile');
+            return;
+        }
+        $usernameError = $this->usernameError($username, $_SESSION['user_id']);
+        if ($usernameError) {
+            $_SESSION['error'] = $usernameError;
             redirect('profile');
             return;
         }
 
         $db = getDB();
-        $stmt = $db->prepare("UPDATE usuarios SET nombre = ?, telefono = ? WHERE usuarios_id = ?");
-        $stmt->execute([$name, $telefono ?: null, $_SESSION['user_id']]);
+        $stmt = $db->prepare("UPDATE usuarios SET nombre = ?, username = ?, telefono = ? WHERE usuarios_id = ?");
+        $stmt->execute([$name, $username, $telefono ?: null, $_SESSION['user_id']]);
 
         $_SESSION['user_name'] = $name;
+        $_SESSION['username'] = $username;
         $_SESSION['success'] = 'Perfil actualizado.';
         redirect('profile');
     }

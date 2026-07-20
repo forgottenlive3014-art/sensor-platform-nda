@@ -167,6 +167,17 @@ ob_start();
                 </div>
 
                 <div class="auth-field">
+                    <label>Nombre de usuario</label>
+                    <div class="auth-inp-wrap">
+                        <span class="auth-inp-ico">
+                            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c0-3.6 3.1-5.5 7-5.5s7 1.9 7 5.5"/></svg>
+                        </span>
+                        <input type="text" name="username" id="username-reg" placeholder="ej. azucena_hz" pattern="[a-z0-9_]{3,20}" title="3 a 20 caracteres: minúsculas, números y guion bajo" required>
+                    </div>
+                    <p class="wiz-hint" id="usernameHint">Es el nombre corto que se muestra en la barra de navegación: 3 a 20 caracteres, solo minúsculas, números y guion bajo.</p>
+                </div>
+
+                <div class="auth-field">
                     <label>Correo electrónico</label>
                     <div class="auth-inp-wrap">
                         <span class="auth-inp-ico">

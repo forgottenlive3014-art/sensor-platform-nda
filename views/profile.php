@@ -49,6 +49,11 @@ $roleLabel = $roleLabels[$profileUser['role']] ?? $profileUser['role'];
                 <input type="text" name="name" value="<?= e($profileUser['nombre']) ?>" required>
             </div>
             <div class="profile-field">
+                <label>Nombre de usuario</label>
+                <input type="text" name="username" value="<?= e($profileUser['username'] ?? '') ?>" placeholder="ej. azucena_hz" pattern="[a-z0-9_]{3,20}" title="3 a 20 caracteres: minúsculas, números y guion bajo" required>
+                <small class="profile-hint" style="display:block;margin-top:4px;">Es el nombre corto que se muestra en la barra de navegación.</small>
+            </div>
+            <div class="profile-field">
                 <label>Correo electrónico</label>
                 <input type="email" value="<?= e($profileUser['email']) ?>" disabled>
             </div>
