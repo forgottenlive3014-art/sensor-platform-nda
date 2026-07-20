@@ -56,7 +56,16 @@ function showSchoolTab(tabId) {
         'my-children': loadMyChildren,
         'staff': loadStaff,
         'notifications': loadNotifications,
+<<<<<<< Updated upstream
         'blog': loadBlog
+=======
+        'blog': loadBlog,
+        'articulos': loadArticulos,
+        'recursos': loadRecursos,
+        'quehacer-content': () => loadContentForm('quehacer'),
+        'acercade-content': () => loadContentForm('acercade'),
+        'inicio': loadInicioInstitucional,
+>>>>>>> Stashed changes
     };
     if (loaders[tabId]) loaders[tabId]();
 }
@@ -601,6 +610,26 @@ async function loadMyChildren() {
     loadMyChildrenDrillStatus();
 }
 
+document.getElementById('sendChildrenNotifForm')?.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    try {
+        const response = await fetch('?url=school/send-notification', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mensaje: document.getElementById('childrenNotifMessage').value }),
+        });
+        const result = await response.json();
+        if (result.success) {
+            ndaAlert('✅ Aviso enviado a tus hijos');
+            closeModal('sendChildrenNotifModal');
+            this.reset();
+        } else {
+            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+        }
+    } catch (e) {
+        ndaAlert('❌ Error de conexión');
+    }
+});
+
 async function loadMyChildrenDrillStatus() {
     const tbody = document.getElementById('myChildrenStatusBody');
     if (!tbody) return;
@@ -794,16 +823,28 @@ async function loadNotifications(page) {
 }
 
 document.querySelector('[onclick="openModal(\'sendNotificationModal\')"]')?.addEventListener('click', () => {
-    const group = document.getElementById('notificationGlobalGroup');
-    if (group) group.style.display = window.__ndaIsGlobalAdmin ? '' : 'none';
+    document.getElementById('notificationTargetType').value = 'institucion';
+    onNotificationTargetTypeChange();
 });
+
+function onNotificationTargetTypeChange() {
+    const type = document.getElementById('notificationTargetType').value;
+    document.getElementById('notificationGlobalGroup').style.display = (type === 'institucion' && window.__ndaIsGlobalAdmin) ? '' : 'none';
+    document.getElementById('notificationRoleGroup').style.display = type === 'rol' ? '' : 'none';
+    document.getElementById('notificationUsersGroup').style.display = type === 'usuarios' ? '' : 'none';
+}
 
 document.getElementById('sendNotificationForm')?.addEventListener('submit', async function (e) {
     e.preventDefault();
+    const targetType = document.getElementById('notificationTargetType').value;
     const data = {
         mensaje: document.getElementById('notificationMessage').value,
         severidad: document.getElementById('notificationSeverity').value,
+        target_type: targetType,
         es_global: document.getElementById('notificationGlobal')?.checked || false,
+        role: document.getElementById('notificationRole')?.value || '',
+        usuarios_ids: (document.getElementById('notificationUserIds')?.value || '')
+            .split(',').map(s => s.trim()).filter(Boolean),
     };
     try {
         const response = await fetch('?url=school/send-notification', {
@@ -1838,6 +1879,7 @@ function filterStudentsBySection(aulaId, nombre) {
 const CROQUIS_LABELS = {
     encuentro: 'Punto de encuentro',
     zona_segura: 'Zona segura',
+    zona_riesgo: 'Zona de riesgo',
     extintor: 'Extintor',
     botiquin: 'Botiquín',
     salida: 'Salida de emergencia',
@@ -1858,21 +1900,34 @@ async function loadCroquis() {
                 <p>Todavía no se ha subido un plano de la institución.</p>
                 <p class="school-hint">El director puede subir una imagen del croquis con el botón "Subir plano".</p>
             </div>`;
+            const uploadLabelEmpty = document.getElementById('croquisUploadLabel');
+            if (uploadLabelEmpty) uploadLabelEmpty.textContent = 'Subir plano';
+            const deleteBtnEmpty = document.getElementById('croquisDeleteBtn');
+            if (deleteBtnEmpty) deleteBtnEmpty.style.display = 'none';
             return;
         }
 
         board.innerHTML = `<div class="croquis-image-wrap" id="croquisImageWrap">
             <img src="${data.imagen}" alt="Croquis de la institución" draggable="false">
         </div>`;
+        __croquisPointsCache = data.puntos || [];
+
+        const uploadLabel = document.getElementById('croquisUploadLabel');
+        if (uploadLabel) uploadLabel.textContent = 'Actualizar plano';
+        const deleteBtn = document.getElementById('croquisDeleteBtn');
+        if (deleteBtn) deleteBtn.style.display = '';
 
         const wrap = document.getElementById('croquisImageWrap');
-        (data.puntos || []).forEach(p => {
+        __croquisPointsCache.forEach(p => {
             const dot = document.createElement('div');
             dot.className = 'croquis-marker ' + p.tipo;
             dot.style.left = p.pos_x + '%';
             dot.style.top = p.pos_y + '%';
             dot.title = p.nombre;
-            dot.innerHTML = `<span class="croquis-marker-tooltip"><strong>${p.nombre}</strong><br>${CROQUIS_LABELS[p.tipo] || p.tipo}${p.descripcion ? '<br>' + p.descripcion : ''}${window.__ndaIsSchoolStaff ? `<br><a href="#" onclick="deleteCroquisPoint(${p.puntos_croquis_id});return false;">Eliminar</a>` : ''}</span>`;
+            const actions = window.__ndaIsSchoolStaff
+                ? `<br><a href="#" onclick="editCroquisPoint(${p.puntos_croquis_id});return false;">Editar</a> · <a href="#" onclick="deleteCroquisPoint(${p.puntos_croquis_id});return false;">Eliminar</a>`
+                : '';
+            dot.innerHTML = `<span class="croquis-marker-tooltip"><strong>${escapeHtml(p.nombre)}</strong><br>${CROQUIS_LABELS[p.tipo] || p.tipo}${p.descripcion ? '<br>' + escapeHtml(p.descripcion) : ''}${actions}</span>`;
             wrap.appendChild(dot);
         });
 
@@ -1882,15 +1937,39 @@ async function loadCroquis() {
                 const rect = wrap.getBoundingClientRect();
                 const x = ((e.clientX - rect.left) / rect.width) * 100;
                 const y = ((e.clientY - rect.top) / rect.height) * 100;
-                document.getElementById('croquisPointX').value = x.toFixed(2);
-                document.getElementById('croquisPointY').value = y.toFixed(2);
-                openModal('addCroquisPointModal');
+                openAddCroquisPointModal(x.toFixed(2), y.toFixed(2));
             });
         }
     } catch (e) {
         board.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);">Error al cargar el croquis</div>';
         console.error(e);
     }
+}
+
+let __croquisPointsCache = [];
+
+function openAddCroquisPointModal(x, y) {
+    document.getElementById('addCroquisPointForm').reset();
+    document.getElementById('croquisPointId').value = '';
+    document.getElementById('croquisPointX').value = x;
+    document.getElementById('croquisPointY').value = y;
+    document.getElementById('croquisPointModalTitle').textContent = 'Nuevo punto en el croquis';
+    document.getElementById('croquisPointSubmitBtn').textContent = 'Agregar punto';
+    openModal('addCroquisPointModal');
+}
+
+function editCroquisPoint(id) {
+    const p = __croquisPointsCache.find(x => String(x.puntos_croquis_id) === String(id));
+    if (!p) { ndaAlert('No se encontró el punto.'); return; }
+    document.getElementById('croquisPointId').value = p.puntos_croquis_id;
+    document.getElementById('croquisPointX').value = p.pos_x;
+    document.getElementById('croquisPointY').value = p.pos_y;
+    document.getElementById('croquisPointType').value = p.tipo;
+    document.getElementById('croquisPointName').value = p.nombre;
+    document.getElementById('croquisPointDesc').value = p.descripcion || '';
+    document.getElementById('croquisPointModalTitle').textContent = 'Editar punto del croquis';
+    document.getElementById('croquisPointSubmitBtn').textContent = 'Guardar cambios';
+    openModal('addCroquisPointModal');
 }
 
 async function uploadCroquisImage(input) {
@@ -1911,9 +1990,26 @@ async function uploadCroquisImage(input) {
     input.value = '';
 }
 
+async function deleteCroquisImage() {
+    if (!(await ndaConfirm('¿Eliminar el plano completo? También se borrarán todos los puntos marcados en él.'))) return;
+    try {
+        const response = await fetch('?url=school/croquis-delete');
+        const result = await response.json();
+        if (result.success) {
+            loadCroquis();
+        } else {
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
+        }
+    } catch (e) {
+        ndaAlert('Error de conexión');
+    }
+}
+
 document.getElementById('addCroquisPointForm')?.addEventListener('submit', async function (e) {
     e.preventDefault();
+    const id = document.getElementById('croquisPointId').value;
     const data = {
+        id: id || undefined,
         tipo: document.getElementById('croquisPointType').value,
         nombre: document.getElementById('croquisPointName').value,
         descripcion: document.getElementById('croquisPointDesc').value,
@@ -1921,7 +2017,7 @@ document.getElementById('addCroquisPointForm')?.addEventListener('submit', async
         pos_y: document.getElementById('croquisPointY').value
     };
     try {
-        const response = await fetch('?url=school/croquis-add-point', {
+        const response = await fetch(`?url=school/croquis-${id ? 'update' : 'add'}-point`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -2193,6 +2289,8 @@ document.getElementById('addInstitutionForm')?.addEventListener('submit', async 
         correo: document.getElementById('institutionEmail').value,
         telefono: document.getElementById('institutionPhone').value,
         direccion: document.getElementById('institutionAddress').value,
+        lat: document.getElementById('institutionLat').value,
+        lng: document.getElementById('institutionLng').value,
     };
     try {
         const response = await fetch('?url=school/add-institution', {
@@ -2220,6 +2318,8 @@ function editInstitution(id) {
     document.getElementById('editInstitutionEmail').value = i.correo || '';
     document.getElementById('editInstitutionPhone').value = i.telefono || '';
     document.getElementById('editInstitutionAddress').value = i.direccion || '';
+    document.getElementById('editInstitutionLat').value = i.lat || '';
+    document.getElementById('editInstitutionLng').value = i.lng || '';
     openModal('editInstitutionModal');
 }
 
@@ -2231,6 +2331,8 @@ document.getElementById('editInstitutionForm')?.addEventListener('submit', async
         correo: document.getElementById('editInstitutionEmail').value,
         telefono: document.getElementById('editInstitutionPhone').value,
         direccion: document.getElementById('editInstitutionAddress').value,
+        lat: document.getElementById('editInstitutionLat').value,
+        lng: document.getElementById('editInstitutionLng').value,
     };
     try {
         const response = await fetch('?url=school/update-institution', {
@@ -2295,23 +2397,24 @@ async function loadUsers(page) {
     const tbody = document.getElementById('usersTableBody');
     if (!tbody) return;
     __usersPage = page || 1;
-    tbody.innerHTML = '<tr><td colspan="6" class="text-center">Cargando usuarios...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="text-center">Cargando usuarios...</td></tr>';
 
     const q = document.getElementById('usersSearch')?.value.trim() || '';
     const role = document.getElementById('usersRoleFilter')?.value || '';
+    const sort = document.getElementById('usersSort')?.value || 'nombre';
 
     try {
-        const response = await fetch(`?url=school/users&q=${encodeURIComponent(q)}&role=${encodeURIComponent(role)}&page=${__usersPage}&per_page=10`);
+        const response = await fetch(`?url=school/users&q=${encodeURIComponent(q)}&role=${encodeURIComponent(role)}&sort=${encodeURIComponent(sort)}&page=${__usersPage}&per_page=10`);
         const result = await response.json();
 
         if (result.error) {
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center">Error: ${result.error}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center">Error: ${result.error}</td></tr>`;
             return;
         }
         __usersCache = result.data || [];
 
         if (__usersCache.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center">No hay usuarios que coincidan</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center">No hay usuarios que coincidan</td></tr>';
             renderPagination('usersPagination', 1, 1, 'loadUsers');
             return;
         }
@@ -2319,21 +2422,56 @@ async function loadUsers(page) {
         tbody.innerHTML = __usersCache.map(u => `
             <tr>
                 <td><strong>${u.nombre}</strong></td>
+                <td>${u.codigo_institucional || '—'}</td>
                 <td>${u.email}</td>
                 <td><span class="chip b">${roleLabelMap[u.role] || u.role}</span></td>
                 <td>${u.institucion_nombre || '—'}</td>
                 <td>${u.estado_institucional || '—'}</td>
                 <td>
+<<<<<<< Updated upstream
                     <button class="school-attendance-btn" onclick="editUser(${u.usuarios_id})">✏️</button>
                     <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteUser(${u.usuarios_id})">🗑️</button>
+=======
+                    <button class="school-attendance-btn" onclick="viewUserProfile(${u.usuarios_id})">Ver perfil</button>
+                    <button class="school-attendance-btn" onclick="editUser(${u.usuarios_id})">Editar</button>
+                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteUser(${u.usuarios_id})">Eliminar</button>
+>>>>>>> Stashed changes
                 </td>
             </tr>
         `).join('');
 
         renderPagination('usersPagination', result.page, result.total_pages, 'loadUsers');
     } catch (e) {
-        tbody.innerHTML = '<tr><td colspan="6" class="text-center">Error al cargar usuarios</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center">Error al cargar usuarios</td></tr>';
         console.error(e);
+    }
+}
+
+// Perfil completo de un usuario (noticias/reportes publicados).
+async function viewUserProfile(id) {
+    openModal('userProfileModal');
+    const body = document.getElementById('userProfileBody');
+    body.innerHTML = 'Cargando...';
+    try {
+        const response = await fetch(`?url=school/user-profile&id=${id}`);
+        const p = await response.json();
+        if (p.error) { body.innerHTML = `Error: ${escapeHtml(p.error)}`; return; }
+        const noticias = (p.noticias || []).map(n => `<li>${escapeHtml(n.titulo)} <span class="chip b">${escapeHtml(n.estado)}</span></li>`).join('') || '<li>Sin noticias publicadas</li>';
+        const incidentes = (p.incidentes || []).map(i => `<li>${escapeHtml(i.tipo)} <span class="chip b">${escapeHtml(i.estado)}</span></li>`).join('') || '<li>Sin reportes publicados</li>';
+        body.innerHTML = `
+            <div class="school-grid-2">
+                <div><strong>Nombre:</strong> ${escapeHtml(p.nombre)}</div>
+                <div><strong>Código institucional:</strong> ${escapeHtml(p.codigo_institucional || '—')}</div>
+                <div><strong>Correo:</strong> ${escapeHtml(p.email)}</div>
+                <div><strong>Rol:</strong> ${roleLabelMap[p.role] || p.role}</div>
+                <div><strong>Teléfono:</strong> ${escapeHtml(p.telefono || '—')}</div>
+                <div><strong>Miembro desde:</strong> ${p.created_at ? new Date(p.created_at).toLocaleDateString() : '—'}</div>
+            </div>
+            <div style="margin-top:14px;"><strong>Noticias publicadas</strong><ul>${noticias}</ul></div>
+            <div style="margin-top:10px;"><strong>Reportes/incidentes publicados</strong><ul>${incidentes}</ul></div>
+        `;
+    } catch (e) {
+        body.innerHTML = 'Error al cargar el perfil';
     }
 }
 
@@ -2384,8 +2522,14 @@ function editUser(id) {
     document.getElementById('editUserRole').value = u.role || 'user';
     document.getElementById('editUserEstado').value = u.estado_institucional || 'ninguno';
     document.getElementById('editUserPhone').value = u.telefono || '';
+    document.getElementById('editUserComite').checked = !!u.comite_autorizado;
+    document.getElementById('editUserComiteGroup').style.display = u.role === 'alumno' ? '' : 'none';
     openModal('editUserModal');
 }
+
+document.getElementById('editUserRole')?.addEventListener('change', function () {
+    document.getElementById('editUserComiteGroup').style.display = this.value === 'alumno' ? '' : 'none';
+});
 
 document.getElementById('editUserForm')?.addEventListener('submit', async function (e) {
     e.preventDefault();
@@ -2395,6 +2539,7 @@ document.getElementById('editUserForm')?.addEventListener('submit', async functi
         role: document.getElementById('editUserRole').value,
         estado_institucional: document.getElementById('editUserEstado').value,
         telefono: document.getElementById('editUserPhone').value,
+        comite_autorizado: document.getElementById('editUserComite').checked,
     };
     try {
         const response = await fetch('?url=school/update-user', {
@@ -2454,19 +2599,39 @@ async function loadNews(page) {
             return;
         }
 
-        list.innerHTML = __newsCache.map(n => `
+        const estadoLabels = { pendiente: 'Pendiente de revisión', publicada: 'Publicada', rechazada: 'Rechazada' };
+        list.innerHTML = __newsCache.map(n => {
+            const isOwner = window.__ndaMyUserId && String(n.usuarios_id) === String(window.__ndaMyUserId);
+            const canEdit = window.__ndaIsSchoolAdmin || isOwner;
+            let actions = '';
+            if (canEdit) {
+                actions += `<button class="school-attendance-btn" onclick="editNews(${n.noticias_internas_id})">Editar</button>
+                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteNews(${n.noticias_internas_id})">Eliminar</button>`;
+            }
+            if (window.__ndaIsSchoolAdmin && n.estado === 'pendiente') {
+                actions += `<button class="school-attendance-btn" style="color:var(--state-seguro,green);" onclick="reviewNews(${n.noticias_internas_id},'approve')">Aprobar</button>
+                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="reviewNews(${n.noticias_internas_id},'reject')">Rechazar</button>`;
+            }
+            const estadoBadge = n.estado && n.estado !== 'publicada' ? ` <span class="chip b">${estadoLabels[n.estado] || n.estado}</span>` : '';
+            return `
             <div class="school-card" style="margin-bottom:12px;">
                 <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+<<<<<<< Updated upstream
                     <h3 style="margin:0;">${n.titulo}${!n.instituciones_id ? ' <span class="chip b">Global</span>' : ''}</h3>
                     ${window.__ndaIsSchoolAdmin ? `<span>
                         <button class="school-attendance-btn" onclick="editNews(${n.noticias_internas_id})">✏️</button>
                         <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteNews(${n.noticias_internas_id})">🗑️</button>
                     </span>` : ''}
+=======
+                    <h3 style="margin:0;">${n.titulo}${!n.instituciones_id ? ' <span class="chip b">Global</span>' : ''}${estadoBadge}</h3>
+                    ${actions ? `<span>${actions}</span>` : ''}
+>>>>>>> Stashed changes
                 </div>
                 <p style="white-space:pre-wrap;">${n.contenido}</p>
                 <span style="font-size:0.7rem;color:var(--text3);">Por ${n.autor || 'Administración'} · ${new Date(n.created_at).toLocaleString('es-SV')}</span>
             </div>
-        `).join('');
+        `;
+        }).join('');
 
         renderPagination('newsPagination', result.page, result.total_pages, 'loadNews');
     } catch (e) {
@@ -2534,6 +2699,22 @@ async function deleteNews(id) {
     if (!(await ndaConfirm('¿Eliminar esta noticia?'))) return;
     try {
         const response = await fetch(`?url=school/delete-news&id=${id}`);
+        const result = await response.json();
+        if (result.success) {
+            loadNews(__newsPage);
+        } else {
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
+        }
+    } catch (e) {
+        ndaAlert('Error de conexión');
+    }
+}
+
+async function reviewNews(id, action) {
+    try {
+        const response = await fetch(`?url=school/${action === 'approve' ? 'approve-news' : 'reject-news'}`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }),
+        });
         const result = await response.json();
         if (result.success) {
             loadNews(__newsPage);
@@ -2666,6 +2847,27 @@ async function loadMyAttendance() {
     }
 }
 
+// ─── ENVIAR AVISO A MIS ALUMNOS (Docente) ───
+document.getElementById('sendStudentsNotifForm')?.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    try {
+        const response = await fetch('?url=school/send-notification', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mensaje: document.getElementById('studentsNotifMessage').value }),
+        });
+        const result = await response.json();
+        if (result.success) {
+            ndaAlert('✅ Aviso enviado a tus alumnos');
+            closeModal('sendStudentsNotifModal');
+            this.reset();
+        } else {
+            ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
+        }
+    } catch (e) {
+        ndaAlert('❌ Error de conexión');
+    }
+});
+
 // ─── INIT ───
 // El panel inicial visible es siempre "dashboard"; cada rol solo incluye los
 // demás tabs que le corresponden, así que solo se precargan sus formularios
@@ -2676,7 +2878,83 @@ document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('studentsTableBody')) loadStudents();
     if (document.getElementById('institutionsTableBody')) loadInstitutions();
     if (document.getElementById('myClassroomInfo')) loadMyClassroom();
+    if (document.getElementById('inicioInstitucionalBody')) loadInicioInstitucional();
 });
+
+// ─── PÁGINA PRINCIPAL INSTITUCIONAL ───
+async function loadInicioInstitucional() {
+    const body = document.getElementById('inicioInstitucionalBody');
+    if (!body) return;
+    try {
+        const response = await fetch('?url=school/inicio-institucional');
+        const d = await response.json();
+        if (d.error) { body.innerHTML = `<div class="text-center" style="padding:20px;">Error: ${escapeHtml(d.error)}</div>`; return; }
+
+        const inst = d.institucion || {};
+        const hasCoords = !!(inst.lat && inst.lng);
+        const zonaItem = p => `<li>${escapeHtml(p.nombre)}${p.descripcion ? ' — ' + escapeHtml(p.descripcion) : ''}</li>`;
+        const rutaItem = r => `<li>${escapeHtml(r.nombre)} <span class="school-route-status ${r.estado || 'despejada'}">${escapeHtml(r.estado || 'Despejada')}</span></li>`;
+        const noticiaItem = n => `<li><strong>${escapeHtml(n.titulo)}</strong> — ${escapeHtml((n.contenido || '').slice(0, 120))}${n.contenido && n.contenido.length > 120 ? '…' : ''}</li>`;
+        const simulacroItem = s => `<li>${escapeHtml(s.nombre)} — ${s.fecha || ''} ${s.hora || ''}</li>`;
+
+        body.innerHTML = `
+            <div class="school-card" style="margin-bottom:16px;">
+                <h3>${escapeHtml(inst.nombre || 'Institución')}</h3>
+                <p style="color:var(--text3);">${escapeHtml(inst.direccion || 'Dirección no registrada')}</p>
+                ${!hasCoords ? '<p class="school-hint">El Admin General todavía no registró la ubicación exacta — el mapa muestra El Salvador de forma general.</p>' : ''}
+                <div id="inicioMap" style="height:320px;border-radius:12px;overflow:hidden;margin-top:10px;"></div>
+            </div>
+            <div class="school-grid-2">
+                <div class="school-card">
+                    <h3>Zonas seguras</h3>
+                    <ul>${d.zonas_seguras.length ? d.zonas_seguras.map(zonaItem).join('') : '<li>Sin zonas seguras marcadas en el croquis</li>'}</ul>
+                </div>
+                <div class="school-card">
+                    <h3>Zonas de riesgo</h3>
+                    <ul>${d.zonas_riesgo.length ? d.zonas_riesgo.map(zonaItem).join('') : '<li>Sin zonas de riesgo marcadas en el croquis</li>'}</ul>
+                </div>
+                <div class="school-card">
+                    <h3>Rutas de evacuación</h3>
+                    <ul>${d.rutas.length ? d.rutas.map(rutaItem).join('') : '<li>Sin rutas registradas</li>'}</ul>
+                </div>
+                <div class="school-card">
+                    <h3>Próximos simulacros</h3>
+                    <ul>${d.simulacros_proximos.length ? d.simulacros_proximos.map(simulacroItem).join('') : '<li>No hay simulacros programados</li>'}</ul>
+                </div>
+            </div>
+            <div class="school-card" style="margin-top:16px;">
+                <h3>Noticias recientes</h3>
+                <ul>${d.noticias.length ? d.noticias.map(noticiaItem).join('') : '<li>Sin noticias publicadas todavía</li>'}</ul>
+            </div>
+            <div class="school-card" style="margin-top:16px;">
+                <h3>Tablón de corcho</h3>
+                <p class="school-hint">Consulta y publica notas institucionales en la pestaña Corcho.</p>
+                <button class="school-btn secondary" onclick="document.getElementById('corcho')?.scrollIntoView({behavior:'smooth'})">Ir al tablón</button>
+            </div>
+        `;
+
+        if (typeof L !== 'undefined' && document.getElementById('inicioMap')) {
+            // Sin coordenadas registradas: se centra en El Salvador (mismo
+            // punto que usa el mapa de riesgos del sitio) en vez de ocultar
+            // el mapa por completo.
+            const center = hasCoords ? [parseFloat(inst.lat), parseFloat(inst.lng)] : [13.7942, -88.8965];
+            const map = L.map('inicioMap', { center, zoom: hasCoords ? 16 : 8 });
+            const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+            L.tileLayer(
+                isLight
+                    ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
+                    : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+                { attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 19 }
+            ).addTo(map);
+            if (hasCoords) {
+                L.marker(center).addTo(map).bindPopup(escapeHtml(inst.nombre || 'Institución'));
+            }
+        }
+    } catch (e) {
+        body.innerHTML = '<div class="text-center" style="padding:20px;">Error al cargar la información institucional</div>';
+        console.error(e);
+    }
+}
 
 // ─── MI AULA (Estudiante) ───
 async function loadMyClassroom() {
@@ -2691,12 +2969,16 @@ async function loadMyClassroom() {
             return;
         }
         el.classList.remove('text-center');
+        const companeros = (c.companeros || []).map(x => escapeHtml(`${x.nombre} ${x.apellido || ''}`.trim())).join(', ') || 'Sin compañeros registrados';
+        const padres = (c.padres || []).map(x => escapeHtml(x.nombre)).join(', ') || 'Sin encargados registrados';
         el.innerHTML = `
             <div class="school-grid-2">
                 <div><strong>Aula:</strong> ${c.classroom} (${c.grado || ''} ${c.seccion || ''})</div>
                 <div><strong>Docente:</strong> ${c.teacher || 'Sin asignar'}</div>
                 <div><strong>Compañeros:</strong> ${c.total_alumnos || 0} alumnos</div>
+                <div><strong>Padres/encargados:</strong> ${padres}</div>
             </div>
+            <div style="margin-top:12px;"><strong>Mis compañeros:</strong> ${companeros}</div>
         `;
     } catch (e) {
         el.innerHTML = 'Error al cargar tu aula';

@@ -256,7 +256,25 @@ $userAvatar = $isLoggedIn ? strtoupper(substr($userName, 0, 1)) : '?';
 
 <button class="scroll-top" id="scrollTop"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></button>
 
+<<<<<<< Updated upstream
 <!-- ==================== CHATBOT (disponible en todo el sitio) ==================== -->
+=======
+<?php if (!empty($__canSeeSchoolLink)): ?>
+<?php
+    // Director/docente si tienen Panel de Gestión propio; el resto de
+    // roles (admin, alumno, padre, administrativo) solo tiene la Página
+    // Principal — mismo criterio que el enlace de la barra de navegación.
+    $__schoolFabUrl = in_array($__navUser['role'], ['director', 'docente'], true) ? 'school/panel' : 'school';
+    $__schoolFabLabel = $__navUser['role'] === 'admin' ? 'Panel de Administración' : ($__schoolFabUrl === 'school/panel' ? 'Panel de Gestión Escolar' : 'Gestión Escolar');
+?>
+<!-- Acceso rápido a Gestión Escolar, junto al chatbot (solo si el rol tiene acceso) -->
+<a href="?url=<?= e($__schoolFabUrl) ?>" class="school-fab" id="schoolFab" aria-label="Ir a <?= e($__schoolFabLabel) ?>" title="<?= e($__schoolFabLabel) ?>">
+  <span class="school-emoji" aria-hidden="true">🏫</span>
+</a>
+<?php endif; ?>
+
+<!-- Chatbot, disponible en todo el sitio -->
+>>>>>>> Stashed changes
 <div class="ndabot" id="ndabot">
   <button class="ndabot-fab" id="ndabotFab" aria-label="Abrir chat de ayuda">
     <img src="assets/media/img/chatbot.png" alt="Asistente NDA">

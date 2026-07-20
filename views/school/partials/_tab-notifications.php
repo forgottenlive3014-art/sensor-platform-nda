@@ -51,8 +51,30 @@
                                 <option value="emergencia">Emergencia</option>
                             </select>
                         </div>
+                        <div class="school-form-group">
+                            <label>Destinatarios</label>
+                            <select id="notificationTargetType" onchange="onNotificationTargetTypeChange()">
+                                <option value="institucion">Institución completa</option>
+                                <option value="rol">Rol específico</option>
+                                <option value="usuarios">Usuarios determinados</option>
+                            </select>
+                        </div>
                         <div class="school-form-group" id="notificationGlobalGroup" style="display:none;">
                             <label><input type="checkbox" id="notificationGlobal"> Enviar a todo el sitio (global)</label>
+                        </div>
+                        <div class="school-form-group" id="notificationRoleGroup" style="display:none;">
+                            <label>Rol</label>
+                            <select id="notificationRole">
+                                <option value="director">Admin Institucional</option>
+                                <option value="docente">Docente</option>
+                                <option value="alumno">Estudiante</option>
+                                <option value="padre">Padre</option>
+                                <option value="administrativo">Personal</option>
+                            </select>
+                        </div>
+                        <div class="school-form-group" id="notificationUsersGroup" style="display:none;">
+                            <label>IDs de usuario (separados por coma, ver pestaña Usuarios)</label>
+                            <input type="text" id="notificationUserIds" placeholder="12, 45, 78">
                         </div>
                         <button type="submit" class="school-btn primary">Enviar</button>
                     </form>

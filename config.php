@@ -28,11 +28,17 @@ function env($key, $default = null) {
     return $value !== false ? $value : $default;
 }
 
+<<<<<<< Updated upstream
 // ---------------------------------------------------------------
 // CSRF — token compartido por sesion, usado en formularios POST
 // server-rendered y expuesto via <meta> para las llamadas AJAX del
 // modulo escolar / sensor / chat. No requiere libreria externa.
 // ---------------------------------------------------------------
+=======
+require_once __DIR__ . '/mailer.php';
+
+// Token CSRF compartido por sesion, usado en forms server-rendered y expuesto via <meta> para AJAX.
+>>>>>>> Stashed changes
 function csrfToken() {
     if (session_status() === PHP_SESSION_NONE) {
         session_start();

@@ -68,11 +68,12 @@ class ParentModel {
 
     public function create($data) {
         $hashed = password_hash($data['password'], PASSWORD_DEFAULT);
+        $codigoInstitucional = generateCodigoInstitucional($this->db);
         $stmt = $this->db->prepare("
-            INSERT INTO usuarios (nombre, email, contra, role, institucion_id, estado_institucional, telefono)
-            VALUES (?, ?, ?, 'padre', ?, 'aprobado', ?)
+            INSERT INTO usuarios (nombre, email, contra, role, institucion_id, estado_institucional, telefono, codigo_institucional)
+            VALUES (?, ?, ?, 'padre', ?, 'aprobado', ?, ?)
         ");
-        $stmt->execute([$data['nombre'], $data['email'], $hashed, $data['institucion_id'], $data['telefono'] ?: null]);
+        $stmt->execute([$data['nombre'], $data['email'], $hashed, $data['institucion_id'], $data['telefono'] ?: null, $codigoInstitucional]);
         return $this->db->lastInsertId();
     }
 

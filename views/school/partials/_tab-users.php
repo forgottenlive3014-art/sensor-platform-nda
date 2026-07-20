@@ -9,7 +9,7 @@
                 </button>
             </div>
             <div class="school-panel-header" style="margin-top:0;gap:10px;flex-wrap:wrap;">
-                <input type="text" id="usersSearch" class="school-select" placeholder="Buscar por nombre o correo..." oninput="debounceUsersSearch()" style="max-width:240px;">
+                <input type="text" id="usersSearch" class="school-select" placeholder="Buscar por nombre, correo o código..." oninput="debounceUsersSearch()" style="max-width:240px;">
                 <select id="usersRoleFilter" class="school-select" onchange="loadUsers(1)">
                     <option value="">Todos los roles</option>
                     <option value="admin">Admin General</option>
@@ -20,12 +20,17 @@
                     <option value="administrativo">Personal</option>
                     <option value="user">Usuario registrado</option>
                 </select>
+                <select id="usersSort" class="school-select" onchange="loadUsers(1)">
+                    <option value="nombre">Ordenar por nombre</option>
+                    <option value="created_at">Ordenar por fecha de registro</option>
+                </select>
             </div>
             <div class="school-table-wrap">
                 <table class="school-table">
                     <thead>
                         <tr>
                             <th>Nombre</th>
+                            <th>Código</th>
                             <th>Correo</th>
                             <th>Rol</th>
                             <th>Institución</th>
@@ -34,7 +39,7 @@
                         </tr>
                     </thead>
                     <tbody id="usersTableBody">
-                        <tr><td colspan="6" class="text-center">Cargando...</td></tr>
+                        <tr><td colspan="7" class="text-center">Cargando...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -127,8 +132,24 @@
                             <label>Teléfono</label>
                             <input type="text" id="editUserPhone">
                         </div>
+                        <div class="school-form-group" id="editUserComiteGroup" style="display:none;">
+                            <label>
+                                <input type="checkbox" id="editUserComite">
+                                Comité autorizado (puede publicar noticias)
+                            </label>
+                        </div>
                         <button type="submit" class="school-btn primary">Guardar cambios</button>
                     </form>
                 </div>
+            </div>
+        </div>
+
+        <div class="school-modal" id="userProfileModal">
+            <div class="school-modal-content">
+                <div class="school-modal-header">
+                    <h3>Perfil de usuario</h3>
+                    <button class="school-modal-close" onclick="closeModal('userProfileModal')">&times;</button>
+                </div>
+                <div class="school-modal-body" id="userProfileBody">Cargando...</div>
             </div>
         </div>

@@ -32,9 +32,10 @@ class UserController {
         $role = trim($_GET['role'] ?? '');
         $page = (int) ($_GET['page'] ?? 1);
         $perPage = (int) ($_GET['per_page'] ?? 10);
+        $sort = ($_GET['sort'] ?? '') === 'created_at' ? 'created_at' : 'nombre';
         $instId = $this->scopeInstitutionId();
 
-        $rows = $model->getPage($search, $instId, $role, $page, $perPage);
+        $rows = $model->getPage($search, $instId, $role, $page, $perPage, $sort);
         $total = $model->countAll($search, $instId, $role);
 
         jsonResponse([
@@ -137,9 +138,32 @@ class UserController {
             'institucion_id' => $input['institucion_id'] ?? $target['institucion_id'],
             'estado_institucional' => $input['estado_institucional'] ?? $target['estado_institucional'],
             'telefono' => trim($input['telefono'] ?? ''),
+            'comite_autorizado' => !empty($input['comite_autorizado']),
         ]);
 
         jsonResponse(['success' => true]);
+    }
+
+    // Perfil completo de un usuario + sus noticias/reportes publicados,
+    // para el modal "Ver perfil" del director/admin en la pestaña Usuarios.
+    public function profile() {
+        if (!isLoggedIn() || !$this->isSchoolAdmin()) {
+            jsonResponse(['error' => 'No autorizado'], 401);
+        }
+        $id = $_GET['id'] ?? null;
+        if (!$id) {
+            jsonResponse(['error' => 'ID de usuario requerido'], 400);
+        }
+        $model = new UserModel();
+        $target = $model->getById($id);
+        if (!$target) {
+            jsonResponse(['error' => 'Usuario no encontrado'], 404);
+        }
+        if (!$this->isGlobalAdmin() && $target['institucion_id'] != $this->scopeInstitutionId()) {
+            jsonResponse(['error' => 'No autorizado'], 403);
+        }
+
+        jsonResponse($model->getProfileDetail($id));
     }
 
     public function delete() {

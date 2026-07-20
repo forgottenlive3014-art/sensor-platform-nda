@@ -70,7 +70,7 @@ class StudentController {
 
         $db = getDB();
         $stmt = $db->prepare("
-            SELECT a.aulas_id, a.nombre as classroom, a.grado, a.seccion, us.nombre as teacher,
+            SELECT e.estudiantes_id, a.aulas_id, a.nombre as classroom, a.grado, a.seccion, us.nombre as teacher,
                    (SELECT COUNT(*) FROM estudiantes e2 WHERE e2.aulas_id = a.aulas_id) as total_alumnos
             FROM estudiantes e
             LEFT JOIN aulas a ON a.aulas_id = e.aulas_id
@@ -80,7 +80,37 @@ class StudentController {
         $stmt->execute([$u['id']]);
         $row = $stmt->fetch();
 
-        jsonResponse($row ?: ['classroom' => null]);
+        if (!$row) {
+            jsonResponse(['classroom' => null]);
+        }
+
+        // Compañeros de la misma aula (sin incluirse a si mismo).
+        $companeros = [];
+        if (!empty($row['aulas_id'])) {
+            $stmtC = $db->prepare("
+                SELECT nombre, apellido FROM estudiantes
+                WHERE aulas_id = ? AND estudiantes_id != ?
+                ORDER BY nombre
+            ");
+            $stmtC->execute([$row['aulas_id'], $row['estudiantes_id']]);
+            $companeros = $stmtC->fetchAll();
+        }
+
+        // Padres/encargados vinculados a este alumno.
+        $stmtP = $db->prepare("
+            SELECT us.nombre, us.email, us.telefono
+            FROM padres_estudiantes pe
+            JOIN usuarios us ON us.usuarios_id = pe.padre_usuario_id
+            WHERE pe.estudiante_id = ?
+        ");
+        $stmtP->execute([$row['estudiantes_id']]);
+        $padres = $stmtP->fetchAll();
+
+        unset($row['estudiantes_id']);
+        $row['companeros'] = $companeros;
+        $row['padres'] = $padres;
+
+        jsonResponse($row);
     }
 
     public function create() {

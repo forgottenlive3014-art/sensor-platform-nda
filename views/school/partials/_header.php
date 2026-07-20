@@ -9,7 +9,7 @@
         </div>
         <div class="school-header-right">
             <span class="school-role-badge <?= $user['role'] ?? 'user' ?>">
-                <?= e($user['nombre'] ?? 'Usuario') ?>
+                <?= e(!empty($user['username']) ? $user['username'] : strtok($user['nombre'] ?? 'Usuario', ' ')) ?>
                 <span style="font-size:0.65rem;opacity:0.6;"><?= e($user['role'] ?? '') ?></span>
             </span>
         </div>

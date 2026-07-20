@@ -57,6 +57,17 @@
                             <label>Dirección</label>
                             <input type="text" id="institutionAddress">
                         </div>
+                        <div class="school-form-group" style="display:flex;gap:10px;">
+                            <div style="flex:1;">
+                                <label>Latitud</label>
+                                <input type="number" step="any" id="institutionLat" placeholder="13.6929">
+                            </div>
+                            <div style="flex:1;">
+                                <label>Longitud</label>
+                                <input type="number" step="any" id="institutionLng" placeholder="-89.2182">
+                            </div>
+                        </div>
+                        <p class="school-hint">La latitud/longitud ubican la institución en el mapa de la Página de Inicio institucional.</p>
                         <button type="submit" class="school-btn primary">Guardar Institución</button>
                     </form>
                 </div>
@@ -88,6 +99,16 @@
                         <div class="school-form-group">
                             <label>Dirección</label>
                             <input type="text" id="editInstitutionAddress">
+                        </div>
+                        <div class="school-form-group" style="display:flex;gap:10px;">
+                            <div style="flex:1;">
+                                <label>Latitud</label>
+                                <input type="number" step="any" id="editInstitutionLat">
+                            </div>
+                            <div style="flex:1;">
+                                <label>Longitud</label>
+                                <input type="number" step="any" id="editInstitutionLng">
+                            </div>
                         </div>
                         <button type="submit" class="school-btn primary">Guardar cambios</button>
                     </form>

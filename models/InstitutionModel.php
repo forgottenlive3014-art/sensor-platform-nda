@@ -61,21 +61,23 @@ class InstitutionModel {
 
     public function create($data) {
         $stmt = $this->db->prepare("
-            INSERT INTO instituciones (nombre, correo, telefono, direccion)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO instituciones (nombre, correo, telefono, direccion, lat, lng)
+            VALUES (?, ?, ?, ?, ?, ?)
         ");
         $stmt->execute([
             $data['nombre'],
             $data['correo'] ?: null,
             $data['telefono'] ?: null,
             $data['direccion'] ?: null,
+            $data['lat'] !== '' && $data['lat'] !== null ? (float) $data['lat'] : null,
+            $data['lng'] !== '' && $data['lng'] !== null ? (float) $data['lng'] : null,
         ]);
         return $this->db->lastInsertId();
     }
 
     public function update($id, $data) {
         $stmt = $this->db->prepare("
-            UPDATE instituciones SET nombre = ?, correo = ?, telefono = ?, direccion = ?
+            UPDATE instituciones SET nombre = ?, correo = ?, telefono = ?, direccion = ?, lat = ?, lng = ?
             WHERE instituciones_id = ?
         ");
         $stmt->execute([
@@ -83,6 +85,8 @@ class InstitutionModel {
             $data['correo'] ?: null,
             $data['telefono'] ?: null,
             $data['direccion'] ?: null,
+            $data['lat'] !== '' && $data['lat'] !== null ? (float) $data['lat'] : null,
+            $data['lng'] !== '' && $data['lng'] !== null ? (float) $data['lng'] : null,
             $id,
         ]);
         return $stmt->rowCount() > 0;
@@ -92,5 +96,62 @@ class InstitutionModel {
         $stmt = $this->db->prepare("DELETE FROM instituciones WHERE instituciones_id = ?");
         $stmt->execute([$id]);
         return $stmt->rowCount() > 0;
+    }
+
+    // ------------------------------------------------------------------
+    // Registro público de instituciones con verificación por correo.
+    // ------------------------------------------------------------------
+
+    // Crea la institución en estado 'pendiente' de verificación, ligada
+    // al usuario que la registra (aun no es 'director' hasta verificar).
+    public function createPending($data, $codigo, $expira) {
+        $stmt = $this->db->prepare("
+            INSERT INTO instituciones
+                (nombre, tipo, correo, correo_director_personal, nombre_director,
+                 telefono, direccion, director_id, estado_verificacion,
+                 codigo_verificacion, codigo_verificacion_expira)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pendiente', ?, ?)
+        ");
+        $stmt->execute([
+            $data['nombre'],
+            $data['tipo'],
+            $data['correo'],
+            $data['correo_director_personal'] ?: null,
+            $data['nombre_director'],
+            $data['telefono'] ?: null,
+            $data['direccion'] ?: null,
+            $data['director_id'],
+            $codigo,
+            $expira,
+        ]);
+        return $this->db->lastInsertId();
+    }
+
+    // Institución sin verificar que este usuario registró (si existe).
+    public function getPendingByDirector($userId) {
+        $stmt = $this->db->prepare("
+            SELECT * FROM instituciones
+            WHERE director_id = ? AND estado_verificacion = 'pendiente'
+            ORDER BY instituciones_id DESC LIMIT 1
+        ");
+        $stmt->execute([$userId]);
+        return $stmt->fetch();
+    }
+
+    public function updateVerificationCode($id, $codigo, $expira) {
+        $stmt = $this->db->prepare("
+            UPDATE instituciones SET codigo_verificacion = ?, codigo_verificacion_expira = ?
+            WHERE instituciones_id = ?
+        ");
+        $stmt->execute([$codigo, $expira, $id]);
+    }
+
+    public function markVerified($id) {
+        $stmt = $this->db->prepare("
+            UPDATE instituciones
+            SET estado_verificacion = 'verificado', codigo_verificacion = NULL, codigo_verificacion_expira = NULL
+            WHERE instituciones_id = ?
+        ");
+        $stmt->execute([$id]);
     }
 }

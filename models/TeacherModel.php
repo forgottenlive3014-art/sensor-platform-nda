@@ -67,13 +67,14 @@ class TeacherModel {
 
     public function create($data) {
         $hashed = password_hash($data['password'], PASSWORD_DEFAULT);
+        $codigoInstitucional = generateCodigoInstitucional($this->db);
         $stmt = $this->db->prepare("
-            INSERT INTO usuarios (nombre, email, contra, role, institucion_id, estado_institucional, telefono, materia)
-            VALUES (?, ?, ?, 'docente', ?, 'aprobado', ?, ?)
+            INSERT INTO usuarios (nombre, email, contra, role, institucion_id, estado_institucional, telefono, materia, codigo_institucional)
+            VALUES (?, ?, ?, 'docente', ?, 'aprobado', ?, ?, ?)
         ");
         $stmt->execute([
             $data['nombre'], $data['email'], $hashed, $data['institucion_id'],
-            $data['telefono'] ?: null, $data['materia'] ?: null,
+            $data['telefono'] ?: null, $data['materia'] ?: null, $codigoInstitucional,
         ]);
         return $this->db->lastInsertId();
     }

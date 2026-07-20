@@ -4,6 +4,9 @@
         <div id="tab-my-children" class="school-panel">
             <div class="school-panel-header">
                 <h3><span class="school-emoji" aria-hidden="true">👪</span> Mis Hijos</h3>
+                <button class="school-btn primary" onclick="openModal('sendChildrenNotifModal')">
+                    <span class="school-emoji" aria-hidden="true">📣</span> Enviar aviso a mis hijos
+                </button>
             </div>
             <p class="school-hint">Información de tus hijos vinculados en esta institución. Si falta alguno, pídele al director que lo vincule desde Padres.</p>
             <div class="school-table-wrap">
@@ -33,6 +36,24 @@
                             <tr><td colspan="3" class="text-center">Cargando...</td></tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="school-modal" id="sendChildrenNotifModal">
+            <div class="school-modal-content">
+                <div class="school-modal-header">
+                    <h3>Enviar aviso a mis hijos</h3>
+                    <button class="school-modal-close" onclick="closeModal('sendChildrenNotifModal')">&times;</button>
+                </div>
+                <div class="school-modal-body">
+                    <form id="sendChildrenNotifForm">
+                        <div class="school-form-group">
+                            <label>Mensaje * (máx. 255 caracteres)</label>
+                            <textarea id="childrenNotifMessage" rows="3" maxlength="255" required></textarea>
+                        </div>
+                        <button type="submit" class="school-btn primary">Enviar</button>
+                    </form>
                 </div>
             </div>
         </div>

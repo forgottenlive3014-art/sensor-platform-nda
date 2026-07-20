@@ -7,12 +7,16 @@ class NewsModel {
         $this->db = getDB();
     }
 
-    public function countAll($instId, $isGlobalAdmin, $search = '') {
+    // $onlyPublished = true para lectores sin permiso de moderación (solo ven 'publicada').
+    public function countAll($instId, $isGlobalAdmin, $search = '', $onlyPublished = false) {
         $sql = "SELECT COUNT(*) as total FROM noticias_internas WHERE 1=1";
         $params = [];
         if (!$isGlobalAdmin) {
             $sql .= " AND (instituciones_id = ? OR instituciones_id IS NULL)";
             $params[] = $instId;
+        }
+        if ($onlyPublished) {
+            $sql .= " AND estado = 'publicada'";
         }
         if ($search !== '') {
             $sql .= " AND (titulo LIKE ? OR contenido LIKE ?)";
@@ -24,7 +28,7 @@ class NewsModel {
         return (int) ($stmt->fetch()['total'] ?? 0);
     }
 
-    public function getPage($instId, $isGlobalAdmin, $search = '', $page = 1, $perPage = 10) {
+    public function getPage($instId, $isGlobalAdmin, $search = '', $page = 1, $perPage = 10, $onlyPublished = false) {
         $page = max(1, (int) $page);
         $perPage = max(1, min(100, (int) $perPage));
         $offset = ($page - 1) * $perPage;
@@ -40,6 +44,9 @@ class NewsModel {
         if (!$isGlobalAdmin) {
             $sql .= " AND (n.instituciones_id = ? OR n.instituciones_id IS NULL)";
             $params[] = $instId;
+        }
+        if ($onlyPublished) {
+            $sql .= " AND n.estado = 'publicada'";
         }
         if ($search !== '') {
             $sql .= " AND (n.titulo LIKE ? OR n.contenido LIKE ?)";
@@ -61,10 +68,10 @@ class NewsModel {
 
     public function create($data) {
         $stmt = $this->db->prepare("
-            INSERT INTO noticias_internas (instituciones_id, usuarios_id, titulo, contenido)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO noticias_internas (instituciones_id, usuarios_id, titulo, contenido, estado)
+            VALUES (?, ?, ?, ?, ?)
         ");
-        $stmt->execute([$data['instituciones_id'], $data['usuarios_id'], $data['titulo'], $data['contenido']]);
+        $stmt->execute([$data['instituciones_id'], $data['usuarios_id'], $data['titulo'], $data['contenido'], $data['estado'] ?? 'publicada']);
         return $this->db->lastInsertId();
     }
 
@@ -73,6 +80,14 @@ class NewsModel {
             UPDATE noticias_internas SET titulo = ?, contenido = ? WHERE noticias_internas_id = ?
         ");
         $stmt->execute([$data['titulo'], $data['contenido'], $id]);
+        return $stmt->rowCount() > 0;
+    }
+
+    public function setEstado($id, $estado, $revisorId) {
+        $stmt = $this->db->prepare("
+            UPDATE noticias_internas SET estado = ?, revisado_por = ? WHERE noticias_internas_id = ?
+        ");
+        $stmt->execute([$estado, $revisorId, $id]);
         return $stmt->rowCount() > 0;
     }
 

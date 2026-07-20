@@ -363,7 +363,21 @@
     color: var(--text);
     flex: 1;
 }
+.school-card ul {
+    margin: 0;
+    padding-left: 20px;
+}
+.school-card ul li {
+    margin-bottom: 8px;
+    line-height: 1.7;
+}
+.school-card ul li:last-child {
+    margin-bottom: 0;
+}
+
 .school-route-status {
+    display: inline-block;
+    vertical-align: middle;
     font-size: 0.65rem;
     font-weight: 700;
     padding: 3px 10px;
@@ -779,6 +793,7 @@
 }
 .croquis-dot.encuentro, .croquis-marker.encuentro { background: var(--green); }
 .croquis-dot.zona_segura, .croquis-marker.zona_segura { background: var(--blue); }
+.croquis-dot.zona_riesgo, .croquis-marker.zona_riesgo { background: var(--state-alerta, var(--acc3)); }
 .croquis-dot.extintor, .croquis-marker.extintor { background: var(--red); }
 .croquis-dot.botiquin, .croquis-marker.botiquin { background: var(--acc4); }
 .croquis-dot.salida, .croquis-marker.salida { background: var(--acc3); }

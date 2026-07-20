@@ -3,6 +3,7 @@ $title = $title ?? 'Mi perfil · NDA';
 $profileUser = $profileUser ?? [];
 $instituciones = $instituciones ?? [];
 $pendingRequest = $pendingRequest ?? null;
+$pendingInstitution = $pendingInstitution ?? null;
 ob_start();
 
 $roleLabels = [
@@ -77,6 +78,16 @@ $roleLabel = $roleLabels[$profileUser['role']] ?? $profileUser['role'];
             </div>
             <a href="?url=school" class="profile-btn profile-btn-out" style="margin-top:14px;display:inline-block;">Ir a Gestión Escolar</a>
 
+        <?php elseif ($pendingInstitution): ?>
+            <div class="profile-inst-status pending">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <div>
+                    <strong>Verificación pendiente</strong>
+                    <p>Registraste <?= e($pendingInstitution['nombre']) ?> — falta confirmar el código enviado a <?= e($pendingInstitution['correo']) ?>.</p>
+                </div>
+            </div>
+            <a href="?url=school/verify-institution" class="profile-btn" style="margin-top:14px;display:inline-block;">Ingresar código de verificación</a>
+
         <?php elseif ($profileUser['estado_institucional'] === 'pendiente' && $pendingRequest): ?>
             <div class="profile-inst-status pending">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -124,6 +135,9 @@ $roleLabel = $roleLabels[$profileUser['role']] ?? $profileUser['role'];
                 </div>
                 <button type="submit" class="profile-btn">Enviar solicitud</button>
             </form>
+
+            <p class="profile-hint" style="margin-top:18px;">¿Tu institución todavía no está registrada en NDA?</p>
+            <a href="?url=school/register-institution" class="profile-btn profile-btn-out">Registrar mi institución</a>
         <?php endif; ?>
     </div>
 </div>

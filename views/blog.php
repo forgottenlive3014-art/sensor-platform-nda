@@ -9,6 +9,7 @@
 
 $title = $title ?? 'Blog - NDA';
 
+<<<<<<< Updated upstream
 /* ---------- CUERPOS DE LOS ARTÍCULOS ---------- */
 $b_72 = <<<HTML
 <p class="art-lead">Las primeras 72 horas tras un desastre son las más críticas: es el tiempo que puede pasar antes de que la ayuda externa llegue a tu zona. Prepararte para ese lapso no requiere dinero ni equipo especial, solo organización. Aquí tienes el plan completo.</p>
@@ -128,6 +129,20 @@ $ARTÍCULOS = [
 ];
 
 /* iconos SVG reutilizables (sin emojis) */
+=======
+// ============================================================
+// CONFIGURACIÓN DEL BLOG (contenido gestionado por el Admin General
+// desde el panel de Gestión Escolar > Blog público)
+// ============================================================
+
+require_once __DIR__ . '/../models/ArticuloModel.php';
+$ARTÍCULOS = (new ArticuloModel())->getAllForPublic();
+
+// ============================================================
+// ÍCONOS Y FUNCIONES
+// ============================================================
+
+>>>>>>> Stashed changes
 $icoUser = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c0-3.6 3.1-5.5 7-5.5s7 1.9 7 5.5"/></svg>';
 $icoClock = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="8.2"/><path d="M12 7.5V12l3 1.8"/></svg>';
 
@@ -184,8 +199,21 @@ ob_start();
       <p class="blog-intro">Reportajes, guías y testimonios sobre prevención de desastres en El Salvador. Información clara, visual y lista para actuar.</p>
     </div>
 
+<<<<<<< Updated upstream
     <?php $f = $ARTÍCULOS['72-horas']; ?>
     <a class="featured reveal" href="?url=blog&post=72-horas">
+=======
+    <?php if (empty($ARTÍCULOS)): ?>
+      <p class="school-hint" style="text-align:center;padding:40px 0;">Todavía no hay artículos publicados. El Admin General puede agregarlos desde Gestión Escolar &rsaquo; Blog público.</p>
+    <?php else: ?>
+    <?php
+      $featuredSlug = null;
+      foreach ($ARTÍCULOS as $s => $a) { if (!empty($a['destacado'])) { $featuredSlug = $s; break; } }
+      if ($featuredSlug === null) { $featuredSlug = array_key_first($ARTÍCULOS); }
+      $f = $ARTÍCULOS[$featuredSlug];
+    ?>
+    <a class="featured reveal" href="?url=blog&post=<?= urlencode($featuredSlug) ?>">
+>>>>>>> Stashed changes
       <div class="featured-img" style="background-color:<?= $f['color'] ?>; background-image:url('<?= htmlspecialchars($f['img']) ?>');"></div>
       <div class="featured-content">
         <span class="badge-live">EN PORTADA</span>
@@ -224,6 +252,7 @@ ob_start();
         </a>
       <?php endforeach; ?>
     </div>
+    <?php endif; ?>
 
     <div class="newsletter reveal">
       <div class="news-glow"></div>

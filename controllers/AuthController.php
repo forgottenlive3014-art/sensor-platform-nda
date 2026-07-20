@@ -277,9 +277,18 @@ class AuthController {
             $pendingRequest = $stmtP->fetch();
         }
 
+        // Institución que este usuario registró y todavía no verifica.
+        $pendingInstitution = null;
+        if ($user['role'] === 'user') {
+            $stmtI = $db->prepare("SELECT * FROM instituciones WHERE director_id = ? AND estado_verificacion = 'pendiente' ORDER BY instituciones_id DESC LIMIT 1");
+            $stmtI->execute([$_SESSION['user_id']]);
+            $pendingInstitution = $stmtI->fetch();
+        }
+
         view('profile', [
             'title' => 'Mi perfil · NDA',
             'profileUser' => $user,
+            'pendingInstitution' => $pendingInstitution,
             'instituciones' => $instituciones,
             'pendingRequest' => $pendingRequest,
         ]);

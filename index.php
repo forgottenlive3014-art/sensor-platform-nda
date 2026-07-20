@@ -72,11 +72,12 @@ function currentUser() {
             'institucion_id'       => $_SESSION['institucion_id'] ?? null,
             'institucion_nombre'   => $_SESSION['institucion_nombre'] ?? null,
             'estado_institucional' => $_SESSION['estado_institucional'] ?? 'ninguno',
+            'comite_autorizado'    => $_SESSION['comite_autorizado'] ?? false,
         ];
         try {
             $db = getDB();
             $stmt = $db->prepare("
-                SELECT u.role, u.institucion_id, u.estado_institucional, i.nombre AS institucion_nombre
+                SELECT u.role, u.institucion_id, u.estado_institucional, u.comite_autorizado, i.nombre AS institucion_nombre
                 FROM usuarios u
                 LEFT JOIN instituciones i ON i.instituciones_id = u.institucion_id
                 WHERE u.usuarios_id = ?
@@ -90,6 +91,7 @@ function currentUser() {
                 $_SESSION['institucion_id'] = $row['institucion_id'];
                 $_SESSION['institucion_nombre'] = $row['institucion_nombre'];
                 $_SESSION['estado_institucional'] = $row['estado_institucional'];
+                $_SESSION['comite_autorizado'] = (bool) $row['comite_autorizado'];
             } else {
                 // El usuario de esta sesion ya no existe en la BD (p. ej. se
                 // reimporto la base de datos). Cerramos sesion para evitar
@@ -109,11 +111,13 @@ function currentUser() {
     return [
         'id'                    => $_SESSION['user_id'],
         'nombre'                => $_SESSION['user_name'] ?? '',
+        'username'              => $_SESSION['username'] ?? null,
         'email'                 => $_SESSION['user_email'] ?? '',
         'role'                  => $fresh['role'],
         'institucion_id'        => $fresh['institucion_id'],
         'institucion_nombre'    => $fresh['institucion_nombre'],
         'estado_institucional'  => $fresh['estado_institucional'],
+        'comite_autorizado'     => (bool) $fresh['comite_autorizado'],
     ];
 }
 
@@ -126,6 +130,18 @@ function institutionalRoles() {
 function hasApprovedInstitution() {
     $u = currentUser();
     return $u && $u['institucion_id'] && $u['estado_institucional'] === 'aprobado';
+}
+
+// Código institucional único: año de ingreso + 4 dígitos aleatorios
+// (ej. 20250644). Reintenta con otra combinación si ya existe, igual que
+// AuthController::generateUsername() ya hace para el username.
+function generateCodigoInstitucional($db) {
+    $stmt = $db->prepare("SELECT 1 FROM usuarios WHERE codigo_institucional = ?");
+    do {
+        $codigo = date('Y') . str_pad((string) random_int(0, 9999), 4, '0', STR_PAD_LEFT);
+        $stmt->execute([$codigo]);
+    } while ($stmt->fetch());
+    return $codigo;
 }
 
 function e($text) {
@@ -185,6 +201,7 @@ $routeMap = [
     'Acercade'    => ['MainController', 'acercaDe'],
     // ============================================================
     'school'                    => ['SchoolController', 'index'],
+    'school/panel'              => ['SchoolController', 'panel'],
 
     // Alumnos (CRUD real)
     'school/students'            => ['StudentController', 'list'],
@@ -240,17 +257,33 @@ $routeMap = [
     'school/update-institution'  => ['InstitutionController', 'update'],
     'school/delete-institution'  => ['InstitutionController', 'delete'],
 
+    // Registro público de instituciones (crea+verifica, cualquier usuario)
+    'school/register-institution'      => ['InstitucionController', 'registerInstitution'],
+    'school/verify-institution'        => ['InstitucionController', 'verifyInstitution'],
+    'school/resend-verification-code'  => ['InstitucionController', 'resendVerificationCode'],
+
     // Usuarios y roles (CRUD real, Admin General y Admin Institucional)
     'school/users'         => ['UserController', 'list'],
     'school/add-user'      => ['UserController', 'create'],
     'school/update-user'   => ['UserController', 'update'],
     'school/delete-user'   => ['UserController', 'delete'],
+    'school/user-profile'  => ['UserController', 'profile'],
+    'school/inicio-institucional' => ['InicioInstitucionalController', 'get'],
 
     // Noticias internas (CRUD real)
+<<<<<<< Updated upstream
     'school/news'          => ['NewsController', 'list'],
     'school/add-news'      => ['NewsController', 'create'],
     'school/update-news'   => ['NewsController', 'update'],
     'school/delete-news'   => ['NewsController', 'delete'],
+=======
+    'school/news'          => ['NoticiaController', 'list'],
+    'school/add-news'      => ['NoticiaController', 'create'],
+    'school/update-news'   => ['NoticiaController', 'update'],
+    'school/delete-news'   => ['NoticiaController', 'delete'],
+    'school/approve-news'  => ['NoticiaController', 'approve'],
+    'school/reject-news'   => ['NoticiaController', 'reject'],
+>>>>>>> Stashed changes
 
     // Padres (CRUD real + vínculo con hijos)
     'school/parents'              => ['ParentController', 'list'],
@@ -291,7 +324,9 @@ $routeMap = [
     // Croquis interactivo
     'school/croquis'            => ['SchoolController', 'getCroquis'],
     'school/croquis-upload'     => ['SchoolController', 'uploadCroquisImage'],
+    'school/croquis-delete'     => ['SchoolController', 'deleteCroquisImage'],
     'school/croquis-add-point'  => ['SchoolController', 'addCroquisPoint'],
+    'school/croquis-update-point' => ['SchoolController', 'updateCroquisPoint'],
     'school/croquis-del-point'  => ['SchoolController', 'deleteCroquisPoint'],
 
     // Tablero de corcho
@@ -346,7 +381,8 @@ if (file_exists($file)) {
             $isJsonRoute = !(
                 $className === 'MainController' ||
                 ($className === 'AuthController' && $method !== 'institutionsList') ||
-                ($className === 'SchoolController' && $method === 'index')
+                ($className === 'SchoolController' && in_array($method, ['index', 'panel'], true)) ||
+                ($className === 'InstitucionController' && in_array($method, ['registerInstitution', 'verifyInstitution', 'resendVerificationCode'], true))
             );
 
             if ($isJsonRoute) {

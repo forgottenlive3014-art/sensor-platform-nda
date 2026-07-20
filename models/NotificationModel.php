@@ -29,6 +29,33 @@ class NotificationModel {
         return $this->db->lastInsertId();
     }
 
+    // Envía una notificación a todos los usuarios de un rol dentro de una
+    // institución (o de cualquier institución si $instId es null) — una
+    // fila por destinatario, mismo esquema que create() con
+    // destinatario_usuario_id, sin agregar columnas nuevas.
+    public function createForRole($instId, $role, array $data) {
+        $sql = "SELECT usuarios_id FROM usuarios WHERE role = ?";
+        $params = [$role];
+        if ($instId !== null) {
+            $sql .= " AND institucion_id = ?";
+            $params[] = $instId;
+        }
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        $userIds = array_column($stmt->fetchAll(), 'usuarios_id');
+        return $this->createForUsers($userIds, $data);
+    }
+
+    // Envía la misma notificación a una lista explícita de usuarios.
+    public function createForUsers(array $userIds, array $data) {
+        $count = 0;
+        foreach (array_unique($userIds) as $uid) {
+            $this->create(array_merge($data, ['destinatario_usuario_id' => $uid]));
+            $count++;
+        }
+        return $count;
+    }
+
     // Notificaciones relevantes para el usuario actual: las globales,
     // las de su institucion (si pertenece a una aprobada), y las
     // dirigidas a el directamente. Solo las nuevas desde $sinceId.

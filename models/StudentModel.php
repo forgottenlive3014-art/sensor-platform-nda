@@ -103,11 +103,12 @@ class StudentModel {
 
     public function create($data) {
         $hashed = password_hash($data['password'], PASSWORD_DEFAULT);
+        $codigoInstitucional = generateCodigoInstitucional($this->db);
         $stmt = $this->db->prepare("
-            INSERT INTO usuarios (nombre, email, contra, role, institucion_id, estado_institucional)
-            VALUES (?, ?, ?, 'alumno', ?, 'aprobado')
+            INSERT INTO usuarios (nombre, email, contra, role, institucion_id, estado_institucional, codigo_institucional)
+            VALUES (?, ?, ?, 'alumno', ?, 'aprobado', ?)
         ");
-        $stmt->execute([$data['nombre'] . ' ' . $data['apellido'], $data['email'], $hashed, $data['institucion_id']]);
+        $stmt->execute([$data['nombre'] . ' ' . $data['apellido'], $data['email'], $hashed, $data['institucion_id'], $codigoInstitucional]);
         $userId = $this->db->lastInsertId();
 
         $codigo = 'EST' . str_pad($userId, 6, '0', STR_PAD_LEFT);

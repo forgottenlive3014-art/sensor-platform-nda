@@ -59,7 +59,11 @@
 
 /* ---------- TEMA CLARO ---------- */
 [data-theme="light"] {
+<<<<<<< Updated upstream
     --bg: #f6f4ef;
+=======
+    --bg: #ece9e1;
+>>>>>>> Stashed changes
     --bg2: #ece9e1;
     --bg3: #e2ded3;
     --bg4: #d6d1c4;
@@ -78,7 +82,11 @@
     --gB: rgba(61, 111, 143, 0.07);
     --sh: 0 4px 24px rgba(0, 0, 0, 0.09);
     --shl: 0 8px 40px rgba(0, 0, 0, 0.14);
+<<<<<<< Updated upstream
     --auth-wrap-bg: #f6f4ef;
+=======
+    --auth-wrap-bg: #ece9e1;
+>>>>>>> Stashed changes
     --auth-card-bg: rgba(255, 255, 255, 0.92);
     --auth-input-bg: #faf8f3;
     --auth-social-bg: #ffffff;
@@ -163,7 +171,11 @@ canvas {
     gap: 0;
 }
 [data-theme="light"] .nav {
+<<<<<<< Updated upstream
     background: rgba(246, 244, 239, 0.93);
+=======
+    background: rgba(236, 233, 225, 0.93);
+>>>>>>> Stashed changes
 }
 .nav.scrolled {
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
@@ -5721,6 +5733,17 @@ body { top: 0 !important; }
 .goog-text-highlight { background: none !important; box-shadow: none !important; }
 
 /* ---------- CHATBOT FLOTANTE (todo el sitio) ---------- */
+.school-fab {
+    position: fixed; bottom: 24px; right: 100px; z-index: 9400;
+    width: 52px; height: 52px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--acc4), var(--acc3));
+    box-shadow: 0 10px 30px var(--gA);
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none; font-size: 1.5rem; line-height: 1;
+    transition: transform 0.2s;
+}
+.school-fab:hover { transform: scale(1.08); }
+
 .ndabot { position: fixed; bottom: 24px; right: 24px; z-index: 9400; }
 .ndabot-fab {
     width: 60px; height: 60px; border-radius: 50%; border: none; cursor: pointer;
@@ -5816,6 +5839,7 @@ body { top: 0 !important; }
 @media (max-width: 480px) {
     .ndabot { right: 14px; bottom: 14px; }
     .ndabot-panel { width: calc(100vw - 28px); right: -6px; }
+    .school-fab { right: 76px; bottom: 17px; width: 46px; height: 46px; font-size: 1.3rem; }
 }
 
 /* ============================================================
@@ -5871,7 +5895,11 @@ body { top: 0 !important; }
 [data-theme="light"] .hero3d-vignette {
     background:
         radial-gradient(ellipse 70% 60% at 50% 105%, var(--bg) 0%, transparent 60%),
+<<<<<<< Updated upstream
         linear-gradient(180deg, rgba(246, 244, 239, 0.5) 0%, transparent 25%, transparent 75%, var(--bg) 100%);
+=======
+        linear-gradient(180deg, rgba(236, 233, 225, 0.5) 0%, transparent 25%, transparent 75%, var(--bg) 100%);
+>>>>>>> Stashed changes
 }
 
 .h3d-phase {

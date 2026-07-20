@@ -112,8 +112,34 @@ class NotificationController {
         ]);
     }
 
+    // Alumnos (usuarios_id) de las aulas asignadas a este docente.
+    private function docenteStudentUserIds($docenteId) {
+        $db = getDB();
+        $stmt = $db->prepare("
+            SELECT e.usuarios_id FROM estudiantes e
+            JOIN aulas a ON a.aulas_id = e.aulas_id
+            WHERE a.maestro_id = ? AND e.usuarios_id IS NOT NULL
+        ");
+        $stmt->execute([$docenteId]);
+        return array_column($stmt->fetchAll(), 'usuarios_id');
+    }
+
+    // Hijos vinculados (usuarios_id) de este padre/madre.
+    private function padreChildUserIds($padreId) {
+        $db = getDB();
+        $stmt = $db->prepare("
+            SELECT e.usuarios_id FROM padres_estudiantes pe
+            JOIN estudiantes e ON e.estudiantes_id = pe.estudiante_id
+            WHERE pe.padre_usuario_id = ? AND e.usuarios_id IS NOT NULL
+        ");
+        $stmt->execute([$padreId]);
+        return array_column($stmt->fetchAll(), 'usuarios_id');
+    }
+
     public function send() {
-        if (!isLoggedIn() || !$this->isSchoolAdmin()) {
+        $u = currentUser();
+        $canSend = $this->isSchoolAdmin() || ($u && in_array($u['role'], ['docente', 'padre'], true));
+        if (!isLoggedIn() || !$canSend) {
             jsonResponse(['error' => 'No autorizado'], 401);
         }
         $input = json_decode(file_get_contents('php://input'), true);
@@ -131,9 +157,64 @@ class NotificationController {
             jsonResponse(['error' => 'Severidad inválida'], 400);
         }
 
-        $u = currentUser();
-        // El director solo notifica a su institucion; el Admin General
-        // puede enviar una notificacion global a todo el sitio.
+        $model = new NotificationModel();
+        $data = ['tipo' => 'escolar', 'severidad' => $severidad, 'mensaje' => $mensaje];
+
+        // Docente y padre solo pueden enviar a un conjunto de usuarios
+        // resuelto en el servidor (sus alumnos / sus hijos) — nunca se
+        // confía en una lista de IDs que venga del cliente para estos roles.
+        if ($u['role'] === 'docente') {
+            $ids = $this->docenteStudentUserIds($u['id']);
+            if (empty($ids)) {
+                jsonResponse(['error' => 'No tienes alumnos asignados'], 400);
+            }
+            $count = $model->createForUsers($ids, $data);
+            jsonResponse(['success' => true, 'enviadas' => $count]);
+        }
+        if ($u['role'] === 'padre') {
+            $ids = $this->padreChildUserIds($u['id']);
+            if (empty($ids)) {
+                jsonResponse(['error' => 'No tienes hijos vinculados'], 400);
+            }
+            $count = $model->createForUsers($ids, $data);
+            jsonResponse(['success' => true, 'enviadas' => $count]);
+        }
+
+        // admin/director: institución completa, global (solo admin), rol
+        // específico dentro de la institución, o una lista de usuarios.
+        $targetType = $input['target_type'] ?? 'institucion';
+
+        if ($targetType === 'rol') {
+            $role = $input['role'] ?? '';
+            if (!in_array($role, ['director', 'docente', 'alumno', 'padre', 'administrativo'], true)) {
+                jsonResponse(['error' => 'Rol inválido'], 400);
+            }
+            $instId = $u['role'] === 'admin' ? ($input['institucion_id'] ?? null) : $u['institucion_id'];
+            $count = $model->createForRole($instId, $role, $data);
+            jsonResponse(['success' => true, 'enviadas' => $count]);
+        }
+
+        if ($targetType === 'usuarios') {
+            $ids = array_filter(array_map('intval', (array) ($input['usuarios_ids'] ?? [])));
+            if (empty($ids)) {
+                jsonResponse(['error' => 'Selecciona al menos un usuario'], 400);
+            }
+            // Un director solo puede apuntar a usuarios de su propia institucion.
+            if ($u['role'] !== 'admin') {
+                $db = getDB();
+                $placeholders = implode(',', array_fill(0, count($ids), '?'));
+                $stmt = $db->prepare("SELECT usuarios_id FROM usuarios WHERE usuarios_id IN ($placeholders) AND institucion_id = ?");
+                $stmt->execute([...$ids, $u['institucion_id']]);
+                $ids = array_column($stmt->fetchAll(), 'usuarios_id');
+                if (empty($ids)) {
+                    jsonResponse(['error' => 'Ninguno de esos usuarios pertenece a tu institución'], 403);
+                }
+            }
+            $count = $model->createForUsers($ids, $data);
+            jsonResponse(['success' => true, 'enviadas' => $count]);
+        }
+
+        // target_type === 'institucion' (comportamiento original).
         $isGlobal = $u['role'] === 'admin' && !empty($input['es_global']);
         $instId = $isGlobal ? null : ($u['role'] === 'admin' ? ($input['institucion_id'] ?? null) : $u['institucion_id']);
 
@@ -141,14 +222,10 @@ class NotificationController {
             jsonResponse(['error' => 'Selecciona una institución o marca la notificación como global'], 400);
         }
 
-        $model = new NotificationModel();
-        $id = $model->create([
-            'tipo' => 'escolar',
-            'severidad' => $severidad,
+        $id = $model->create(array_merge($data, [
             'destinatario_institucion_id' => $instId,
             'es_global' => $isGlobal,
-            'mensaje' => $mensaje,
-        ]);
+        ]));
 
         jsonResponse(['success' => true, 'id' => $id]);
     }
