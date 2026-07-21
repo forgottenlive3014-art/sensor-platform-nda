@@ -247,6 +247,10 @@ $RECURSOS = [
     ['titulo' => 'Preparación ante Sismos', 'categoria' => 'sismo', 'tags' => 'Sismos,Prevención', 'archivo' => 'assets/media/guias/Preparacion ante sismos.pdf', 'descripcion' => 'Guía completa sobre cómo prepararse, actuar y recuperarse después de un sismo. Información del MARN y Cruz Roja.'],
     ['titulo' => 'Protocolo Lluvias', 'categoria' => 'lluvias', 'tags' => 'Lluvias,Inundaciones', 'archivo' => 'assets/media/guias/Protocolo lluvias.pdf', 'descripcion' => 'Protocolo de actuación ante lluvias intensas e inundaciones. Medidas de prevención y protección.'],
     ['titulo' => 'Protocolo Lluvias - V.2', 'categoria' => 'lluvias', 'tags' => 'Lluvias,Actualización', 'archivo' => 'assets/media/guias/Protocolo lluvias2.pdf', 'descripcion' => 'Actualización del protocolo con nuevas medidas y recomendaciones para temporada de lluvias en El Salvador.'],
+    ['titulo' => 'Movimientos de Ladera', 'categoria' => 'lluvias', 'tags' => 'Deslizamientos,Prevención', 'archivo' => 'assets/media/guias/2013_ElSalvador2_movimientos_laderas.pdf', 'descripcion' => 'Guía sobre deslizamientos y movimientos de ladera en El Salvador: causas, señales de alerta y medidas de prevención.'],
+    ['titulo' => 'Eventos Meteorológicos Extremos', 'categoria' => 'lluvias', 'tags' => 'Clima,Prevención', 'archivo' => 'assets/media/guias/2013_ElSalvador7_eventos_meteorol_extremos.pdf', 'descripcion' => 'Guía sobre eventos meteorológicos extremos en El Salvador y cómo prepararse ante ellos.'],
+    ['titulo' => 'Guía Metodológica para Docentes', 'categoria' => 'evacuacion', 'tags' => 'Docentes,Educación', 'archivo' => 'assets/media/guias/Guía metodológica para docentes.pdf', 'descripcion' => 'Guía metodológica dirigida a docentes para la enseñanza de la gestión de riesgos y preparación ante desastres.'],
+    ['titulo' => 'Afiche Simulacro 2018', 'categoria' => 'evacuacion', 'tags' => 'Simulacro,Afiche', 'archivo' => 'assets/media/guias/Simulacro2018-Afiche2.pdf', 'descripcion' => 'Afiche informativo del simulacro nacional 2018 con las pautas básicas de evacuación.'],
 ];
 
 $stmtCheckRecurso = $db->prepare('SELECT COUNT(*) FROM recursos WHERE archivo = ?');
