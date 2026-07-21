@@ -158,6 +158,7 @@ $routeMap = [
     'profile/update'   => ['AuthController', 'updateProfile'],
     'profile/join'     => ['AuthController', 'requestJoinInstitution'],
     'profile/cancel-join' => ['AuthController', 'cancelJoinRequest'],
+    'profile/found'    => ['AuthController', 'foundInstitution'],
     'institutions-list'   => ['AuthController', 'institutionsList'],
     'chat-api'   => ['ChatController', 'send'],
     'sensor/ingest' => ['SensorController', 'ingest'],

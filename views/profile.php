@@ -102,38 +102,84 @@ $roleLabel = $roleLabels[$profileUser['role']] ?? $profileUser['role'];
             </form>
 
         <?php else: ?>
-            <p class="profile-hint">Todavía no perteneces a ninguna institución. Si formas parte de la comunidad de un colegio registrado en NDA, solicita tu ingreso aquí.</p>
+            <p class="profile-hint">Todavía no perteneces a ninguna institución.</p>
 
-            <form method="POST" action="?url=profile/join" class="profile-form" id="joinForm">
-                <?= csrfField() ?>
-                <div class="profile-field">
-                    <label>Institución</label>
-                    <input type="text" id="joinInstSearch" placeholder="Buscar institución...">
-                    <div class="profile-inst-list" id="joinInstList">
-                        <?php foreach ($instituciones as $inst): ?>
-                            <button type="button" class="profile-inst-item" data-id="<?= e($inst['instituciones_id']) ?>" data-name="<?= e($inst['nombre']) ?>">
-                                <span><?= e($inst['nombre']) ?></span>
-                            </button>
-                        <?php endforeach; ?>
+            <div class="profile-inst-tabs">
+                <button type="button" class="profile-tab sel" data-panel="joinPanel">Unirme a una institución</button>
+                <button type="button" class="profile-tab" data-panel="foundPanel">Fundar una institución</button>
+            </div>
+
+            <div id="joinPanel">
+                <p class="profile-hint">Si formas parte de la comunidad de un colegio registrado en NDA, solicita tu ingreso aquí.</p>
+                <form method="POST" action="?url=profile/join" class="profile-form" id="joinForm">
+                    <?= csrfField() ?>
+                    <div class="profile-field">
+                        <label>Institución</label>
+                        <input type="text" id="joinInstSearch" placeholder="Buscar institución...">
+                        <div class="profile-inst-list" id="joinInstList">
+                            <?php foreach ($instituciones as $inst): ?>
+                                <button type="button" class="profile-inst-item" data-id="<?= e($inst['instituciones_id']) ?>" data-name="<?= e($inst['nombre']) ?>">
+                                    <span><?= e($inst['nombre']) ?></span>
+                                </button>
+                            <?php endforeach; ?>
+                        </div>
+                        <input type="hidden" name="institucion_id" id="joinInstId" required>
                     </div>
-                    <input type="hidden" name="institucion_id" id="joinInstId" required>
-                </div>
-                <div class="profile-field">
-                    <label>Tu rol en la institución</label>
-                    <select name="rol_solicitado" required>
-                        <option value="">Selecciona...</option>
-                        <option value="docente">Docente</option>
-                        <option value="alumno">Alumno</option>
-                        <option value="padre">Padre / Encargado</option>
-                        <option value="administrativo">Personal administrativo</option>
-                    </select>
-                </div>
-                <div class="profile-field">
-                    <label>Mensaje para el director (opcional)</label>
-                    <textarea name="join_message" rows="2" placeholder="Ej. Soy docente de 3er año, sección B"></textarea>
-                </div>
-                <button type="submit" class="profile-btn">Enviar solicitud</button>
-            </form>
+                    <div class="profile-field">
+                        <label>Tu rol en la institución</label>
+                        <select name="rol_solicitado" required>
+                            <option value="">Selecciona...</option>
+                            <option value="docente">Docente</option>
+                            <option value="alumno">Alumno</option>
+                            <option value="padre">Padre / Encargado</option>
+                            <option value="administrativo">Personal administrativo</option>
+                        </select>
+                    </div>
+                    <div class="profile-field">
+                        <label>Mensaje para el director (opcional)</label>
+                        <textarea name="join_message" rows="2" placeholder="Ej. Soy docente de 3er año, sección B"></textarea>
+                    </div>
+                    <button type="submit" class="profile-btn">Enviar solicitud</button>
+                </form>
+            </div>
+
+            <div id="foundPanel" style="display:none;">
+                <p class="profile-hint">Funda una institución nueva y conviértete en su director/a. Te enviaremos un código al correo institucional para confirmar que es real.</p>
+                <form method="POST" action="?url=profile/found" class="profile-form" id="foundForm">
+                    <?= csrfField() ?>
+                    <div class="profile-field">
+                        <label>Nombre de la institución</label>
+                        <input type="text" name="inst_name" placeholder="Ej. Colegio San José" required>
+                    </div>
+                    <div class="profile-field">
+                        <label>Tipo de institución</label>
+                        <select name="inst_tipo" required>
+                            <option value="colegio">Colegio</option>
+                            <option value="escuela">Escuela</option>
+                            <option value="instituto">Instituto</option>
+                            <option value="universidad">Universidad</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                    </div>
+                    <div class="profile-field">
+                        <label>Correo institucional</label>
+                        <input type="email" name="inst_email" placeholder="info@colegio.edu.sv" required>
+                    </div>
+                    <div class="profile-field">
+                        <label>Tu correo personal/profesional (opcional)</label>
+                        <input type="email" name="inst_director_email" placeholder="tunombre@gmail.com">
+                    </div>
+                    <div class="profile-field">
+                        <label>Teléfono (opcional)</label>
+                        <input type="text" name="inst_phone" placeholder="2233-4455">
+                    </div>
+                    <div class="profile-field">
+                        <label>Dirección (opcional)</label>
+                        <input type="text" name="inst_address" placeholder="San Salvador, El Salvador">
+                    </div>
+                    <button type="submit" class="profile-btn">Fundar institución</button>
+                </form>
+            </div>
         <?php endif; ?>
     </div>
 </div>
@@ -177,6 +223,9 @@ $roleLabel = $roleLabels[$profileUser['role']] ?? $profileUser['role'];
 .profile-inst-item svg { color:var(--acc); flex-shrink:0; }
 .profile-inst-item:hover { border-color:var(--acc); color:var(--text); }
 .profile-inst-item.sel { border-color:var(--acc); background:var(--card3); color:var(--text); font-weight:600; }
+.profile-inst-tabs { display:flex; gap:8px; margin-bottom:16px; }
+.profile-tab { background:var(--card2); border:1.5px solid var(--border2); color:var(--text2); font-size:.82rem; font-weight:600; padding:8px 16px; border-radius:50px; cursor:pointer; }
+.profile-tab.sel { border-color:var(--acc); color:var(--acc); }
 </style>
 
 <script>
@@ -202,6 +251,17 @@ $roleLabel = $roleLabels[$profileUser['role']] ?? $profileUser['role'];
             });
         });
     }
+
+    document.querySelectorAll('.profile-tab').forEach(function(tab){
+        tab.addEventListener('click', function(){
+            document.querySelectorAll('.profile-tab').forEach(function(t){ t.classList.remove('sel'); });
+            tab.classList.add('sel');
+            ['joinPanel', 'foundPanel'].forEach(function(id){
+                var panel = document.getElementById(id);
+                if (panel) panel.style.display = (id === tab.dataset.panel) ? '' : 'none';
+            });
+        });
+    });
 })();
 </script>
 

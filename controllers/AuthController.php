@@ -719,6 +719,91 @@ class AuthController {
         redirect('profile');
     }
 
+    // Un usuario general (incluye cuentas creadas con Google) funda una
+    // institucion nueva desde su perfil. Mismo flujo que el registro
+    // tradicional: la institucion queda con verificacion de correo
+    // pendiente y se cierra la sesion actual hasta que confirme el codigo.
+    public function foundInstitution() {
+        if (!isLoggedIn()) { redirect('login'); return; }
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') { redirect('profile'); return; }
+        if (!csrfValid($_POST['csrf_token'] ?? '')) {
+            $_SESSION['error'] = 'Tu sesión expiró, intenta de nuevo.';
+            redirect('profile');
+            return;
+        }
+
+        $user = currentUser();
+        if ($user['role'] !== 'user' || $user['estado_institucional'] !== 'ninguno') {
+            $_SESSION['error'] = 'Solo puedes fundar una institución si aún no perteneces a ninguna.';
+            redirect('profile');
+            return;
+        }
+
+        $instName = trim($_POST['inst_name'] ?? '');
+        $instTipo = $_POST['inst_tipo'] ?? '';
+        $instEmail = trim($_POST['inst_email'] ?? '');
+        $instDirectorEmail = trim($_POST['inst_director_email'] ?? '');
+        $instPhone = trim($_POST['inst_phone'] ?? '');
+        $instAddress = trim($_POST['inst_address'] ?? '');
+
+        $validTipos = ['colegio', 'escuela', 'instituto', 'universidad', 'otro'];
+        if (empty($instName)) {
+            $_SESSION['error'] = 'Ingresa el nombre de la institución que vas a administrar.';
+            redirect('profile');
+            return;
+        }
+        if (!in_array($instTipo, $validTipos, true)) {
+            $_SESSION['error'] = 'Selecciona el tipo de institución.';
+            redirect('profile');
+            return;
+        }
+        if (!$this->isRealEmail($instEmail)) {
+            $_SESSION['error'] = 'Ingresa un correo institucional real: ahí te enviaremos el código de verificación.';
+            redirect('profile');
+            return;
+        }
+        if ($instDirectorEmail !== '' && !$this->isRealEmail($instDirectorEmail)) {
+            $_SESSION['error'] = 'El correo personal del director/a no es válido.';
+            redirect('profile');
+            return;
+        }
+
+        $db = getDB();
+        $userId = $_SESSION['user_id'];
+        $stmtName = $db->prepare("SELECT nombre FROM usuarios WHERE usuarios_id = ?");
+        $stmtName->execute([$userId]);
+        $name = $stmtName->fetchColumn();
+
+        $verifyCode = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $verifyExpira = date('Y-m-d H:i:s', time() + 15 * 60);
+
+        $stmtI = $db->prepare("INSERT INTO instituciones
+            (nombre, tipo, correo, correo_director_personal, telefono, direccion, nombre_director, estado_verificacion, codigo_verificacion, codigo_verificacion_expira)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'pendiente', ?, ?)");
+        $stmtI->execute([$instName, $instTipo, $instEmail, $instDirectorEmail ?: null, $instPhone ?: null, $instAddress ?: null, $name, $verifyCode, $verifyExpira]);
+        $institucionId = $db->lastInsertId();
+
+        $db->prepare("UPDATE usuarios SET role = 'director', institucion_id = ?, estado_institucional = 'aprobado' WHERE usuarios_id = ?")
+           ->execute([$institucionId, $userId]);
+        $db->prepare("UPDATE instituciones SET director_id = ? WHERE instituciones_id = ?")
+           ->execute([$userId, $institucionId]);
+
+        $this->seedBachilleratoSections($db, $institucionId);
+
+        // Cierra la sesion actual (como en el registro nuevo): no queda logueado
+        // como director hasta que confirme el codigo de la institucion.
+        unset($_SESSION['user_id'], $_SESSION['user_name'], $_SESSION['username'], $_SESSION['user_email'],
+              $_SESSION['user_role'], $_SESSION['institucion_id'], $_SESSION['institucion_nombre'], $_SESSION['estado_institucional']);
+
+        $_SESSION['pending_verify_institucion_id'] = $institucionId;
+        $_SESSION['pending_verify_user_id'] = $userId;
+        $sent = Mailer::sendVerificationCode($instEmail, $name, $verifyCode);
+        $_SESSION['success'] = $sent
+            ? 'Institución creada. Te enviamos un código de verificación a ' . $instEmail . '.'
+            : 'Institución creada, pero no pudimos enviar el correo de verificación. Usa "Reenviar código" en la siguiente pantalla.';
+        redirect('register/verify');
+    }
+
     public function cancelJoinRequest() {
         if (!isLoggedIn()) { redirect('login'); return; }
         if (!csrfValid($_POST['csrf_token'] ?? '')) {
