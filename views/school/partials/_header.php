@@ -1,7 +1,6 @@
-    <!-- ==================== HEADER ==================== -->
+﻿    <!-- ==================== HEADER ==================== -->
     <div class="school-header">
         <div class="school-header-left">
-            <div class="school-header-icon"><span class="school-emoji" aria-hidden="true">🏫</span></div>
             <div>
                 <h1><?= e($panelTitle ?? 'Gestión Escolar') ?></h1>
                 <p class="school-header-sub"><?= e($panelSubtitle ?? 'Administra alumnos, docentes, rutas de evacuación, simulacros y más') ?></p>

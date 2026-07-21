@@ -151,6 +151,8 @@ $routeMap = [
     'login'      => ['AuthController', 'login'],
     'google-login' => ['AuthController', 'googleLogin'],
     'register'   => ['AuthController', 'register'],
+    'register/verify'       => ['AuthController', 'verifyEmail'],
+    'register/resend-code'  => ['AuthController', 'resendVerificationCode'],
     'logout'     => ['AuthController', 'logout'],
     'profile'          => ['AuthController', 'profile'],
     'profile/update'   => ['AuthController', 'updateProfile'],
@@ -173,6 +175,17 @@ $routeMap = [
     'Acercade'    => ['MainController', 'acercaDe'],
     // ============================================================
     'school'                    => ['SchoolController', 'index'],
+    'school/panel'              => ['SchoolController', 'panel'],
+    'school/news-detail'        => ['SchoolController', 'newsDetail'],
+    'school/riesgo-detail'      => ['SchoolController', 'riesgoDetail'],
+    'school/incident-detail'    => ['SchoolController', 'incidentDetail'],
+
+    // "Me gusta" y comentarios (Noticias, Lugares en riesgo, Incidentes)
+    'school/toggle-like'         => ['InteraccionController', 'toggleLike'],
+    'school/interaction-summary' => ['InteraccionController', 'getSummary'],
+    'school/comments'            => ['InteraccionController', 'listComments'],
+    'school/add-comment'         => ['InteraccionController', 'addComment'],
+    'school/delete-comment'      => ['InteraccionController', 'deleteComment'],
 
     // Alumnos (CRUD real)
     'school/students'            => ['EstudianteController', 'list'],
@@ -267,6 +280,8 @@ $routeMap = [
     'school/notifications'        => ['NotificacionController', 'manageList'],
     'school/send-notification'    => ['NotificacionController', 'send'],
     'school/delete-notification'  => ['NotificacionController', 'delete'],
+    'school/send-to-my-students'  => ['NotificacionController', 'sendToMyStudents'],
+    'school/send-to-my-children'  => ['NotificacionController', 'sendToMyChildren'],
 
     // Solicitudes de ingreso (aprobacion del director)
     'school/join-requests'      => ['SchoolController', 'getJoinRequests'],
@@ -282,6 +297,7 @@ $routeMap = [
     'school/croquis-upload'     => ['SchoolController', 'uploadCroquisImage'],
     'school/croquis-add-point'  => ['SchoolController', 'addCroquisPoint'],
     'school/croquis-del-point'  => ['SchoolController', 'deleteCroquisPoint'],
+    'school/institution-location' => ['SchoolController', 'updateInstitutionLocation'],
 
     // Tablero de corcho
     'school/board'              => ['SchoolController', 'getBoardNotes'],
@@ -339,7 +355,7 @@ if (file_exists($file)) {
             $isJsonRoute = !(
                 $className === 'MainController' ||
                 ($className === 'AuthController' && $method !== 'institutionsList') ||
-                ($className === 'SchoolController' && $method === 'index')
+                ($className === 'SchoolController' && in_array($method, ['index', 'panel', 'newsDetail', 'riesgoDetail', 'incidentDetail'], true))
             );
 
             if ($isJsonRoute) {

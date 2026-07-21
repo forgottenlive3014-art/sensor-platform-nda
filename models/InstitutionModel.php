@@ -89,11 +89,12 @@ class InstitutionModel {
 
     public function create($data) {
         $stmt = $this->db->prepare("
-            INSERT INTO instituciones (nombre, correo, telefono, direccion)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO instituciones (nombre, tipo, correo, telefono, direccion)
+            VALUES (?, ?, ?, ?, ?)
         ");
         $stmt->execute([
             $data['nombre'],
+            $data['tipo'] ?: 'colegio',
             $data['correo'] ?: null,
             $data['telefono'] ?: null,
             $data['direccion'] ?: null,
@@ -103,11 +104,12 @@ class InstitutionModel {
 
     public function update($id, $data) {
         $stmt = $this->db->prepare("
-            UPDATE instituciones SET nombre = ?, correo = ?, telefono = ?, direccion = ?
+            UPDATE instituciones SET nombre = ?, tipo = ?, correo = ?, telefono = ?, direccion = ?
             WHERE instituciones_id = ?
         ");
         $stmt->execute([
             $data['nombre'],
+            $data['tipo'] ?: 'colegio',
             $data['correo'] ?: null,
             $data['telefono'] ?: null,
             $data['direccion'] ?: null,

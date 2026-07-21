@@ -42,16 +42,51 @@ class NoticiaController {
         ]);
     }
 
+    // Guarda una imagen subida en assets/media/uploads/noticias/. Mismo
+    // patron que BlogController::storeUploadedImage() / SchoolController.
+    private function storeUploadedImage($file) {
+        $allowed = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+        $mime = mime_content_type($file['tmp_name']);
+        if (!isset($allowed[$mime])) return false;
+        if ($file['size'] > 5 * 1024 * 1024) return false;
+
+        $dir = __DIR__ . '/../assets/media/uploads/noticias';
+        if (!is_dir($dir)) mkdir($dir, 0755, true);
+
+        $name = uniqid('noticia_', true) . '.' . $allowed[$mime];
+        move_uploaded_file($file['tmp_name'], $dir . '/' . $name);
+
+        return 'assets/media/uploads/noticias/' . $name;
+    }
+
+    // Resumen corto para la tarjeta: si no lo escriben a mano, se deriva
+    // del contenido para no dejar tarjetas vacias en noticias viejas o
+    // publicadas sin ese campo.
+    private function autoResumen($resumen, $contenido) {
+        $resumen = trim($resumen);
+        if ($resumen !== '') return $resumen;
+        $plain = trim(preg_replace('/\s+/', ' ', strip_tags($contenido)));
+        return mb_strlen($plain) > 160 ? mb_substr($plain, 0, 157) . '...' : $plain;
+    }
+
     public function create() {
         if (!isLoggedIn() || !$this->isSchoolAdmin()) {
             jsonResponse(['error' => 'No autorizado'], 401);
         }
-        $input = json_decode(file_get_contents('php://input'), true);
-        $titulo = trim($input['titulo'] ?? '');
-        $contenido = trim($input['contenido'] ?? '');
+        $titulo = trim($_POST['titulo'] ?? '');
+        $contenido = trim($_POST['contenido'] ?? '');
+        $resumen = $this->autoResumen($_POST['resumen'] ?? '', $contenido);
 
         if (empty($titulo) || empty($contenido)) {
             jsonResponse(['error' => 'Título y contenido son obligatorios'], 400);
+        }
+
+        $imagen = null;
+        if (!empty($_FILES['imagen']['name']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
+            $imagen = $this->storeUploadedImage($_FILES['imagen']);
+            if ($imagen === false) {
+                jsonResponse(['error' => 'La imagen no es válida (usa JPG, PNG o WEBP, máx. 5MB)'], 400);
+            }
         }
 
         $u = currentUser();
@@ -67,20 +102,22 @@ class NoticiaController {
             'instituciones_id' => $instId,
             'usuarios_id' => $u['id'],
             'titulo' => $titulo,
+            'resumen' => $resumen,
             'contenido' => $contenido,
+            'imagen' => $imagen,
         ]);
 
-        jsonResponse(['success' => true, 'id' => $id]);
+        jsonResponse(['success' => true, 'id' => $id, 'imagen' => $imagen]);
     }
 
     public function update() {
         if (!isLoggedIn() || !$this->isSchoolAdmin()) {
             jsonResponse(['error' => 'No autorizado'], 401);
         }
-        $input = json_decode(file_get_contents('php://input'), true);
-        $id = $input['id'] ?? null;
-        $titulo = trim($input['titulo'] ?? '');
-        $contenido = trim($input['contenido'] ?? '');
+        $id = $_POST['id'] ?? null;
+        $titulo = trim($_POST['titulo'] ?? '');
+        $contenido = trim($_POST['contenido'] ?? '');
+        $resumen = $this->autoResumen($_POST['resumen'] ?? '', $contenido);
 
         if (!$id) {
             jsonResponse(['error' => 'ID de noticia requerido'], 400);
@@ -99,7 +136,16 @@ class NoticiaController {
             jsonResponse(['error' => 'No autorizado para editar esta noticia'], 403);
         }
 
-        $model->update($id, ['titulo' => $titulo, 'contenido' => $contenido]);
+        $imagen = $news['imagen'];
+        if (!empty($_FILES['imagen']['name']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
+            $uploaded = $this->storeUploadedImage($_FILES['imagen']);
+            if ($uploaded === false) {
+                jsonResponse(['error' => 'La imagen no es válida (usa JPG, PNG o WEBP, máx. 5MB)'], 400);
+            }
+            $imagen = $uploaded;
+        }
+
+        $model->update($id, ['titulo' => $titulo, 'resumen' => $resumen, 'contenido' => $contenido, 'imagen' => $imagen]);
         jsonResponse(['success' => true]);
     }
 

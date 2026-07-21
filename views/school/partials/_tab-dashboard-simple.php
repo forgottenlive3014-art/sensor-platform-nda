@@ -1,26 +1,26 @@
-        <!-- ========================================================== -->
+﻿        <!-- ========================================================== -->
         <!--  DASHBOARD (solo lectura: estudiante / padre) -->
         <!-- ========================================================== -->
         <div id="tab-dashboard" class="school-panel active">
             <?php if (($user['role'] ?? '') === 'alumno'): ?>
             <div class="school-card" id="myClassroomCard" style="margin-bottom:16px;">
-                <h3><span class="school-emoji" aria-hidden="true">🎒</span> Mi Aula</h3>
+                <h3>Mi Aula</h3>
                 <div id="myClassroomInfo" class="text-center" style="padding:10px;color:var(--text3);">Cargando...</div>
             </div>
             <?php endif; ?>
             <div class="school-stats">
                 <div class="school-stat">
-                    <div class="school-stat-icon"><span class="school-emoji" aria-hidden="true">🚸</span></div>
+                    <div class="school-stat-icon"></div>
                     <div class="school-stat-number"><?= $stats['routes'] ?? 0 ?></div>
                     <div class="school-stat-label">Rutas</div>
                 </div>
                 <div class="school-stat">
-                    <div class="school-stat-icon"><span class="school-emoji" aria-hidden="true">🔔</span></div>
+                    <div class="school-stat-icon"></div>
                     <div class="school-stat-number"><?= $stats['drills'] ?? 0 ?></div>
                     <div class="school-stat-label">Simulacros</div>
                 </div>
                 <div class="school-stat">
-                    <div class="school-stat-icon"><span class="school-emoji" aria-hidden="true">🧯</span></div>
+                    <div class="school-stat-icon"></div>
                     <div class="school-stat-number"><?= $stats['incidents'] ?? 0 ?></div>
                     <div class="school-stat-label">Incidentes abiertos</div>
                 </div>

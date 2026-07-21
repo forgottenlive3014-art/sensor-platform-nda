@@ -8,8 +8,13 @@
                 <?php endif; ?>
             </div>
             <p class="school-hint">Comunicados del director o del Admin General hacia la comunidad institucional.</p>
-            <div id="newsList" class="school-news-list">
-                <div class="text-center" style="padding:20px;color:var(--text3);">Cargando noticias...</div>
+            <div class="school-filters" id="newsFilters">
+                <button class="sfilter active" data-cat="all">Todas</button>
+                <button class="sfilter" data-cat="institucion">Mi institución</button>
+                <button class="sfilter" data-cat="global">Global</button>
+            </div>
+            <div id="newsList" class="school-card-grid">
+                <div class="text-center" style="padding:20px;color:var(--text3);grid-column:1/-1;">Cargando noticias...</div>
             </div>
             <div class="school-pagination" id="newsPagination"></div>
         </div>
@@ -26,6 +31,14 @@
                         <div class="school-form-group">
                             <label>Título *</label>
                             <input type="text" id="newsTitle" required>
+                        </div>
+                        <div class="school-form-group">
+                            <label>Resumen (opcional)</label>
+                            <input type="text" id="newsResumen" maxlength="300" placeholder="Extracto corto para la tarjeta — si lo dejas vacío, se genera del contenido.">
+                        </div>
+                        <div class="school-form-group">
+                            <label>Imagen (opcional)</label>
+                            <input type="file" id="newsImage" accept="image/*">
                         </div>
                         <div class="school-form-group">
                             <label>Contenido *</label>
@@ -49,6 +62,14 @@
                         <div class="school-form-group">
                             <label>Título *</label>
                             <input type="text" id="editNewsTitle" required>
+                        </div>
+                        <div class="school-form-group">
+                            <label>Resumen (opcional)</label>
+                            <input type="text" id="editNewsResumen" maxlength="300">
+                        </div>
+                        <div class="school-form-group">
+                            <label>Imagen (opcional — deja vacío para conservar la actual)</label>
+                            <input type="file" id="editNewsImage" accept="image/*">
                         </div>
                         <div class="school-form-group">
                             <label>Contenido *</label>

@@ -19,7 +19,9 @@ class BlogModel {
         $offset = ($page - 1) * $perPage;
 
         $stmt = $this->db->prepare("
-            SELECT b.*, u.nombre as autor, u.role as autor_role
+            SELECT b.*, u.nombre as autor, u.role as autor_role,
+                (SELECT COUNT(*) FROM interacciones_likes WHERE tipo_contenido = 'riesgo' AND contenido_id = b.blog_riesgos_id) as total_likes,
+                (SELECT COUNT(*) FROM interacciones_comentarios WHERE tipo_contenido = 'riesgo' AND contenido_id = b.blog_riesgos_id) as total_comments
             FROM blog_riesgos b
             JOIN usuarios u ON u.usuarios_id = b.usuarios_id
             WHERE b.instituciones_id = ?

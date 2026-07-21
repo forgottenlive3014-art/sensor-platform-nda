@@ -121,6 +121,13 @@
                         <option value="peligro">Peligro</option>
                     </select>
                 </div>
+                <div class="school-form-group">
+                    <label>Ubicación en el mapa (opcional)</label>
+                    <div id="addRouteMap" style="height:180px;border-radius:8px;overflow:hidden;margin-bottom:6px;"></div>
+                    <button type="button" class="school-btn secondary" onclick="useMyLocationForRoute('add')">Usar mi ubicación</button>
+                    <input type="hidden" id="routeLat">
+                    <input type="hidden" id="routeLng">
+                </div>
                 <button type="submit" class="school-btn primary">Guardar Ruta</button>
             </form>
         </div>
@@ -334,6 +341,13 @@
                         <option value="bloqueada">Bloqueada</option>
                         <option value="peligro">Peligro</option>
                     </select>
+                </div>
+                <div class="school-form-group">
+                    <label>Ubicación en el mapa (opcional)</label>
+                    <div id="editRouteMap" style="height:180px;border-radius:8px;overflow:hidden;margin-bottom:6px;"></div>
+                    <button type="button" class="school-btn secondary" onclick="useMyLocationForRoute('edit')">Usar mi ubicación</button>
+                    <input type="hidden" id="editRouteLat">
+                    <input type="hidden" id="editRouteLng">
                 </div>
                 <button type="submit" class="school-btn primary">Guardar cambios</button>
             </form>

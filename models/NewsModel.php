@@ -30,7 +30,9 @@ class NewsModel {
         $offset = ($page - 1) * $perPage;
 
         $sql = "
-            SELECT n.*, u.nombre as autor, i.nombre as institucion_nombre
+            SELECT n.*, u.nombre as autor, i.nombre as institucion_nombre,
+                (SELECT COUNT(*) FROM interacciones_likes WHERE tipo_contenido = 'noticia' AND contenido_id = n.noticias_internas_id) as total_likes,
+                (SELECT COUNT(*) FROM interacciones_comentarios WHERE tipo_contenido = 'noticia' AND contenido_id = n.noticias_internas_id) as total_comments
             FROM noticias_internas n
             LEFT JOIN usuarios u ON u.usuarios_id = n.usuarios_id
             LEFT JOIN instituciones i ON i.instituciones_id = n.instituciones_id
@@ -61,18 +63,21 @@ class NewsModel {
 
     public function create($data) {
         $stmt = $this->db->prepare("
-            INSERT INTO noticias_internas (instituciones_id, usuarios_id, titulo, contenido)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO noticias_internas (instituciones_id, usuarios_id, titulo, resumen, contenido, imagen)
+            VALUES (?, ?, ?, ?, ?, ?)
         ");
-        $stmt->execute([$data['instituciones_id'], $data['usuarios_id'], $data['titulo'], $data['contenido']]);
+        $stmt->execute([
+            $data['instituciones_id'], $data['usuarios_id'], $data['titulo'],
+            $data['resumen'] ?? null, $data['contenido'], $data['imagen'] ?? null,
+        ]);
         return $this->db->lastInsertId();
     }
 
     public function update($id, $data) {
         $stmt = $this->db->prepare("
-            UPDATE noticias_internas SET titulo = ?, contenido = ? WHERE noticias_internas_id = ?
+            UPDATE noticias_internas SET titulo = ?, resumen = ?, contenido = ?, imagen = ? WHERE noticias_internas_id = ?
         ");
-        $stmt->execute([$data['titulo'], $data['contenido'], $id]);
+        $stmt->execute([$data['titulo'], $data['resumen'] ?? null, $data['contenido'], $data['imagen'] ?? null, $id]);
         return $stmt->rowCount() > 0;
     }
 

@@ -17,6 +17,16 @@ class SchoolController {
         return in_array($u['role'], ['admin', 'director', 'docente'], true);
     }
 
+    // Roles con acceso al Panel de Gestion (school/panel) — a diferencia de
+    // isSchoolStaff(), NO incluye al admin global (que tiene su propio panel
+    // aparte, admin-general) y excluye alumno/padre/administrativo, que ya
+    // no tienen panel propio: todo lo suyo vive en la Pagina Principal.
+    private function isPanelRole() {
+        $u = currentUser();
+        if (!$u) return false;
+        return in_array($u['role'], ['director', 'docente'], true);
+    }
+
     // Institucion del usuario logueado (null si es admin global o no tiene).
     private function myInstitutionId() {
         $u = currentUser();
@@ -45,12 +55,80 @@ class SchoolController {
 
         $db = getDB();
         $user = currentUser();
-        $instId = $this->myInstitutionId();
-        $isGlobalAdmin = $user['role'] === 'admin';
 
-        // Filtro por institucion: un admin global ve todo; el resto solo lo suyo.
-        $instFilter = ($isGlobalAdmin || !$instId) ? '' : " WHERE instituciones_id = " . intval($instId);
-        $instFilterAlias = ($isGlobalAdmin || !$instId) ? '' : " WHERE a.instituciones_id = " . intval($instId);
+        // El Admin General no gestiona "una escuela", administra toda la
+        // plataforma (instituciones, usuarios, blog, recursos, contenido) —
+        // no es uno de los 5 roles institucionales, su panel no cambia con
+        // la separacion Pagina Principal / Panel de Gestion.
+        if ($user['role'] === 'admin') {
+            $this->renderAdminGeneral($db, $user);
+            return;
+        }
+
+        $this->renderMainPage($db, $user);
+    }
+
+    // Pagina Principal Institucional (ruta "school"): un solo archivo
+    // compartido por los 5 roles institucionales (director, docente,
+    // alumno, padre, administrativo). Deliberadamente liviana y de solo
+    // lectura — el CRUD completo vive en panel() (ruta "school/panel"),
+    // exclusiva de director/docente.
+    private function renderMainPage($db, $user) {
+        $instId = $this->myInstitutionId();
+        $instFilter = $instId ? " WHERE instituciones_id = " . intval($instId) : '';
+
+        $institucion = null;
+        if ($instId) {
+            $stmtI = $db->prepare("SELECT * FROM instituciones WHERE instituciones_id = ?");
+            $stmtI->execute([$instId]);
+            $institucion = $stmtI->fetch();
+        }
+
+        $drills = $db->query("SELECT * FROM simulacros" . $instFilter . " ORDER BY fecha DESC LIMIT 5")->fetchAll();
+        $routes = $db->query("SELECT * FROM rutas_evacuacion" . $instFilter . " ORDER BY created_at DESC LIMIT 20")->fetchAll();
+
+        $croquisPoints = [];
+        if ($instId) {
+            $stmtP = $db->prepare("SELECT * FROM puntos_croquis WHERE instituciones_id = ? ORDER BY puntos_croquis_id");
+            $stmtP->execute([$instId]);
+            $croquisPoints = $stmtP->fetchAll();
+        }
+
+        $data = [
+            'title' => 'Gestión Escolar',
+            'user' => $user,
+            'institucion' => $institucion,
+            'drills' => $drills,
+            'routes' => $routes,
+            'croquisPoints' => $croquisPoints,
+            'isSchoolAdmin' => $this->isSchoolAdmin(),
+            'isSchoolStaff' => $this->isSchoolStaff(),
+            'isPanelRole' => $this->isPanelRole(),
+            'panelTitle' => 'Gestión Escolar',
+            'panelSubtitle' => 'Información de seguridad, noticias y comunidad de tu institución',
+        ];
+
+        view('school/main', $data);
+    }
+
+    // Panel de Gestion (ruta "school/panel"): solo director (completo) y
+    // docente (reducido). Alumno/padre/administrativo ya no tienen panel
+    // propio — todo lo suyo vive en la Pagina Principal.
+    public function panel() {
+        if (!isLoggedIn()) {
+            redirect('login');
+            return;
+        }
+        if (!$this->canAccessSchool() || !$this->isPanelRole()) {
+            redirect('school');
+            return;
+        }
+
+        $db = getDB();
+        $user = currentUser();
+        $instId = $this->myInstitutionId();
+        $instFilter = $instId ? " WHERE instituciones_id = " . intval($instId) : '';
+        $instFilterAlias = $instId ? " WHERE a.instituciones_id = " . intval($instId) : '';
 
         $stats = [
             'students' => $db->query("SELECT COUNT(*) as total FROM estudiantes e JOIN aulas a ON e.aulas_id=a.aulas_id" . $instFilterAlias)->fetch()['total'] ?? 0,
@@ -66,7 +144,7 @@ class SchoolController {
             FROM estudiantes e
             LEFT JOIN aulas a ON e.aulas_id = a.aulas_id
             LEFT JOIN usuarios u ON a.maestro_id = u.usuarios_id"
-            . ($instId && !$isGlobalAdmin ? " WHERE a.instituciones_id = " . intval($instId) : '') .
+            . ($instId ? " WHERE a.instituciones_id = " . intval($instId) : '') .
             " ORDER BY e.created_at DESC LIMIT 10";
         $students = $db->query($studentsQ)->fetchAll();
 
@@ -74,47 +152,25 @@ class SchoolController {
         $routes = $db->query("SELECT * FROM rutas_evacuacion" . $instFilter . " ORDER BY created_at DESC LIMIT 5")->fetchAll();
 
         $incidentsQ = "SELECT i.*, u.nombre as reporter FROM incidentes i LEFT JOIN usuarios u ON i.usuario_id = u.usuarios_id"
-            . ($instId && !$isGlobalAdmin ? " WHERE i.instituciones_id = " . intval($instId) : '')
+            . ($instId ? " WHERE i.instituciones_id = " . intval($instId) : '')
             . " ORDER BY i.created_at DESC LIMIT 5";
         $incidents = $db->query($incidentsQ)->fetchAll();
 
         $pendingRequestsCount = 0;
         if ($this->isSchoolAdmin() && $instId) {
-            $pendingRequestsCount = $db->prepare("SELECT COUNT(*) as total FROM solicitudes_institucion WHERE instituciones_id = ? AND estado = 'pendiente'");
-            $pendingRequestsCount->execute([$instId]);
-            $pendingRequestsCount = $pendingRequestsCount->fetch()['total'] ?? 0;
+            $stmtPR = $db->prepare("SELECT COUNT(*) as total FROM solicitudes_institucion WHERE instituciones_id = ? AND estado = 'pendiente'");
+            $stmtPR->execute([$instId]);
+            $pendingRequestsCount = $stmtPR->fetch()['total'] ?? 0;
         }
 
-        // Cada rol tiene su propio panel (vista + tabs). 'administrativo' no es
-        // uno de los 5 roles con panel dedicado que se definieron; hoy ya tiene
-        // el mismo nivel de permisos que padre/alumno (canAccessSchool() si,
-        // isSchoolStaff()/isSchoolAdmin() no), asi que comparte ese panel de
-        // solo lectura en vez de crear un sexto panel sin que se haya pedido.
-        $panelByRole = [
-            'admin'          => 'admin-general',
-            'director'       => 'admin-institucional',
-            'docente'        => 'docente',
-            'alumno'         => 'estudiante',
-            'padre'          => 'padre',
-            'administrativo' => 'padre',
-        ];
-        $panel = $panelByRole[$user['role']] ?? 'padre';
-
+        $panel = $user['role'] === 'director' ? 'panel-director' : 'panel-docente';
         $subtitles = [
-            'admin-general'       => 'Panel global: instituciones y estadísticas de todo el sistema',
-            'admin-institucional' => 'Administra alumnos, docentes, rutas de evacuación, simulacros y más',
-            'docente'             => 'Tus secciones, pase de lista, incidentes y simulacros',
-            'estudiante'          => 'Información de seguridad, rutas y simulacros de tu institución',
-            'padre'               => 'Información de seguridad, rutas y simulacros de la institución',
+            'panel-director' => 'Administra alumnos, docentes, rutas de evacuación, simulacros y más',
+            'panel-docente'  => 'Tus secciones, pase de lista, notificaciones y croquis',
         ];
-
-        // El Admin General no gestiona "una escuela", administra toda la
-        // plataforma (instituciones, usuarios, blog, recursos, contenido),
-        // asi que su panel usa un titulo distinto al del resto de roles.
-        $panelTitle = $panel === 'admin-general' ? 'Panel de Administración General' : 'Gestión Escolar';
 
         $data = [
-            'title' => $panelTitle,
+            'title' => 'Panel de Gestión',
             'user' => $user,
             'stats' => $stats,
             'students' => $students,
@@ -124,11 +180,165 @@ class SchoolController {
             'isSchoolAdmin' => $this->isSchoolAdmin(),
             'isSchoolStaff' => $this->isSchoolStaff(),
             'pendingRequestsCount' => $pendingRequestsCount,
-            'panelTitle' => $panelTitle,
+            'panelTitle' => 'Panel de Gestión',
             'panelSubtitle' => $subtitles[$panel],
         ];
 
-        view('school/panels/' . $panel, $data);
+        view('school/' . $panel, $data);
+    }
+
+    // Admin General: gestiona toda la plataforma (no una institucion
+    // especifica), sin cambios respecto a lo que ya existia.
+    private function renderAdminGeneral($db, $user) {
+        $stats = [
+            'students' => $db->query("SELECT COUNT(*) as total FROM estudiantes")->fetch()['total'] ?? 0,
+            'teachers' => $db->query("SELECT COUNT(*) as total FROM usuarios WHERE (role='docente' OR role='admin' OR role='director')")->fetch()['total'] ?? 0,
+            'classrooms' => $db->query("SELECT COUNT(*) as total FROM aulas")->fetch()['total'] ?? 0,
+            'routes' => $db->query("SELECT COUNT(*) as total FROM rutas_evacuacion")->fetch()['total'] ?? 0,
+            'drills' => $db->query("SELECT COUNT(*) as total FROM simulacros")->fetch()['total'] ?? 0,
+            'incidents' => $db->query("SELECT COUNT(*) as total FROM incidentes WHERE estado='abierto'")->fetch()['total'] ?? 0,
+        ];
+
+        $students = $db->query("
+            SELECT e.*, a.nombre as classroom, u.nombre as teacher
+            FROM estudiantes e
+            LEFT JOIN aulas a ON e.aulas_id = a.aulas_id
+            LEFT JOIN usuarios u ON a.maestro_id = u.usuarios_id
+            ORDER BY e.created_at DESC LIMIT 10
+        ")->fetchAll();
+        $drills = $db->query("SELECT * FROM simulacros ORDER BY fecha DESC LIMIT 5")->fetchAll();
+        $routes = $db->query("SELECT * FROM rutas_evacuacion ORDER BY created_at DESC LIMIT 5")->fetchAll();
+        $incidents = $db->query("SELECT i.*, u.nombre as reporter FROM incidentes i LEFT JOIN usuarios u ON i.usuario_id = u.usuarios_id ORDER BY i.created_at DESC LIMIT 5")->fetchAll();
+
+        $pendingRequestsCount = 0;
+
+        $data = [
+            'title' => 'Panel de Administración General',
+            'user' => $user,
+            'stats' => $stats,
+            'students' => $students,
+            'drills' => $drills,
+            'routes' => $routes,
+            'incidents' => $incidents,
+            'isSchoolAdmin' => true,
+            'isSchoolStaff' => true,
+            'pendingRequestsCount' => $pendingRequestsCount,
+            'panelTitle' => 'Panel de Administración General',
+            'panelSubtitle' => 'Panel global: instituciones y estadísticas de todo el sistema',
+        ];
+
+        view('school/panels/admin-general', $data);
+    }
+
+    // ============================================================
+    //  PAGINAS DE DETALLE (Noticias / Lugares en riesgo / Incidentes)
+    //  Reemplazan al modal de "leer mas": cada una es una pagina HTML
+    //  completa (no JSON), con "Me gusta" y comentarios propios via
+    //  InteraccionController.
+    // ============================================================
+
+    // Corta la ejecucion (redirect) si el usuario no puede ver esta fila:
+    // debe ser admin, o la fila debe pertenecer a su institucion, o (para
+    // noticias) ser un comunicado global (instituciones_id NULL).
+    private function ensureCanViewContenido($row, $instColumn = 'instituciones_id') {
+        $u = currentUser();
+        $contenidoInstId = $row[$instColumn] ?? null;
+        $esGlobal = $contenidoInstId === null;
+        if ($u['role'] !== 'admin' && !$esGlobal && (int) $contenidoInstId !== (int) $u['institucion_id']) {
+            redirect('school');
+            exit;
+        }
+    }
+
+    public function newsDetail() {
+        if (!isLoggedIn()) { redirect('login'); return; }
+        if (!$this->canAccessSchool()) { redirect('profile'); return; }
+
+        $id = $_GET['id'] ?? null;
+        if (!$id) { redirect('school'); return; }
+
+        $db = getDB();
+        $stmt = $db->prepare("
+            SELECT n.*, u.nombre as autor, i.nombre as institucion_nombre
+            FROM noticias_internas n
+            LEFT JOIN usuarios u ON u.usuarios_id = n.usuarios_id
+            LEFT JOIN instituciones i ON i.instituciones_id = n.instituciones_id
+            WHERE n.noticias_internas_id = ?
+        ");
+        $stmt->execute([$id]);
+        $item = $stmt->fetch();
+        if (!$item) { redirect('school'); return; }
+        $this->ensureCanViewContenido($item);
+
+        view('school/detail', [
+            'title' => $item['titulo'] . ' · NDA',
+            'user' => currentUser(),
+            'tipoContenido' => 'noticia',
+            'contenidoId' => $item['noticias_internas_id'],
+            'backAnchor' => 'tab-news',
+            'item' => $item,
+            'isSchoolAdmin' => $this->isSchoolAdmin(),
+        ]);
+    }
+
+    public function riesgoDetail() {
+        if (!isLoggedIn()) { redirect('login'); return; }
+        if (!$this->canAccessSchool()) { redirect('profile'); return; }
+
+        $id = $_GET['id'] ?? null;
+        if (!$id) { redirect('school'); return; }
+
+        $db = getDB();
+        $stmt = $db->prepare("
+            SELECT b.*, u.nombre as autor, u.role as autor_role
+            FROM blog_riesgos b
+            JOIN usuarios u ON u.usuarios_id = b.usuarios_id
+            WHERE b.blog_riesgos_id = ?
+        ");
+        $stmt->execute([$id]);
+        $item = $stmt->fetch();
+        if (!$item) { redirect('school'); return; }
+        $this->ensureCanViewContenido($item);
+
+        view('school/detail', [
+            'title' => $item['titulo'] . ' · NDA',
+            'user' => currentUser(),
+            'tipoContenido' => 'riesgo',
+            'contenidoId' => $item['blog_riesgos_id'],
+            'backAnchor' => 'tab-blog',
+            'item' => $item,
+            'isSchoolAdmin' => $this->isSchoolAdmin(),
+        ]);
+    }
+
+    public function incidentDetail() {
+        if (!isLoggedIn()) { redirect('login'); return; }
+        if (!$this->canAccessSchool()) { redirect('profile'); return; }
+
+        $id = $_GET['id'] ?? null;
+        if (!$id) { redirect('school'); return; }
+
+        $db = getDB();
+        $stmt = $db->prepare("
+            SELECT i.*, u.nombre as reporter
+            FROM incidentes i
+            LEFT JOIN usuarios u ON u.usuarios_id = i.usuario_id
+            WHERE i.incidentes_id = ?
+        ");
+        $stmt->execute([$id]);
+        $item = $stmt->fetch();
+        if (!$item) { redirect('school'); return; }
+        $this->ensureCanViewContenido($item);
+
+        view('school/detail', [
+            'title' => $item['tipo'] . ' · NDA',
+            'user' => currentUser(),
+            'tipoContenido' => 'incidente',
+            'contenidoId' => $item['incidentes_id'],
+            'backAnchor' => 'tab-incidents',
+            'item' => $item,
+            'isSchoolAdmin' => $this->isSchoolAdmin(),
+        ]);
     }
 
     // (ALUMNOS: ver controllers/EstudianteController.php)
@@ -165,7 +375,9 @@ class SchoolController {
     }
 
     public function addRoute() {
-        if (!isLoggedIn() || !$this->isSchoolStaff()) {
+        // Solo admin/director gestionan rutas; el docente las ve en solo
+        // lectura (antes usaba isSchoolStaff(), que tambien incluia a docente).
+        if (!isLoggedIn() || !$this->isSchoolAdmin()) {
             jsonResponse(['error' => 'No autorizado'], 401);
         }
 
@@ -174,6 +386,8 @@ class SchoolController {
         $descripcion = trim($input['descripcion'] ?? '');
         $institucion_id = $input['institucion_id'] ?? $this->myInstitutionId();
         $estado = $input['estado'] ?? 'despejada';
+        $lat = isset($input['lat']) && $input['lat'] !== '' ? (float) $input['lat'] : null;
+        $lng = isset($input['lng']) && $input['lng'] !== '' ? (float) $input['lng'] : null;
 
         if (empty($nombre)) {
             jsonResponse(['error' => 'El nombre de la ruta es obligatorio'], 400);
@@ -181,16 +395,16 @@ class SchoolController {
 
         $db = getDB();
         $stmt = $db->prepare("
-            INSERT INTO rutas_evacuacion (nombre, descripcion, instituciones_id, estado)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO rutas_evacuacion (nombre, descripcion, instituciones_id, estado, lat, lng)
+            VALUES (?, ?, ?, ?, ?, ?)
         ");
-        $stmt->execute([$nombre, $descripcion, $institucion_id, $estado]);
+        $stmt->execute([$nombre, $descripcion, $institucion_id, $estado, $lat, $lng]);
 
         jsonResponse(['success' => true, 'id' => $db->lastInsertId()]);
     }
 
     public function updateRoute() {
-        if (!isLoggedIn() || !$this->isSchoolStaff()) {
+        if (!isLoggedIn() || !$this->isSchoolAdmin()) {
             jsonResponse(['error' => 'No autorizado'], 401);
         }
 
@@ -201,16 +415,21 @@ class SchoolController {
             jsonResponse(['error' => 'ID de ruta requerido'], 400);
         }
 
+        $lat = isset($input['lat']) && $input['lat'] !== '' ? (float) $input['lat'] : null;
+        $lng = isset($input['lng']) && $input['lng'] !== '' ? (float) $input['lng'] : null;
+
         $db = getDB();
         $stmt = $db->prepare("
             UPDATE rutas_evacuacion
-            SET nombre = ?, descripcion = ?, estado = ?
+            SET nombre = ?, descripcion = ?, estado = ?, lat = ?, lng = ?
             WHERE rutas_evacuacion_id = ?
         ");
         $stmt->execute([
             $input['nombre'] ?? '',
             $input['descripcion'] ?? '',
             $input['estado'] ?? 'despejada',
+            $lat,
+            $lng,
             $id
         ]);
 
@@ -337,7 +556,7 @@ class SchoolController {
     }
 
     public function updateIncident() {
-        if (!isLoggedIn() || !$this->isSchoolStaff()) {
+        if (!isLoggedIn()) {
             jsonResponse(['error' => 'No autorizado'], 401);
         }
 
@@ -348,6 +567,20 @@ class SchoolController {
         }
 
         $db = getDB();
+
+        // Staff (admin/director/docente) puede editar cualquier incidente de su
+        // institucion; cualquier otro usuario (ej. personal administrativo,
+        // padre, alumno) solo puede editar el que el mismo reporto.
+        if (!$this->isSchoolStaff()) {
+            $u = currentUser();
+            $stmtOwner = $db->prepare("SELECT usuario_id FROM incidentes WHERE incidentes_id = ?");
+            $stmtOwner->execute([$id]);
+            $incidente = $stmtOwner->fetch();
+            if (!$incidente || (int) $incidente['usuario_id'] !== (int) $u['id']) {
+                jsonResponse(['error' => 'No autorizado'], 401);
+            }
+        }
+
         $stmt = $db->prepare("
             UPDATE incidentes SET tipo = ?, descripcion = ?, ubicacion = ?, prioridad = ?
             WHERE incidentes_id = ?
@@ -364,7 +597,7 @@ class SchoolController {
     }
 
     public function deleteIncident() {
-        if (!isLoggedIn() || !$this->isSchoolAdmin()) {
+        if (!isLoggedIn()) {
             jsonResponse(['error' => 'No autorizado'], 401);
         }
         $id = $_GET['id'] ?? null;
@@ -372,6 +605,19 @@ class SchoolController {
             jsonResponse(['error' => 'ID de incidente requerido'], 400);
         }
         $db = getDB();
+
+        // Igual que en updateIncident(): admin/director borran cualquiera de su
+        // institucion, el resto solo el propio.
+        if (!$this->isSchoolAdmin()) {
+            $u = currentUser();
+            $stmtOwner = $db->prepare("SELECT usuario_id FROM incidentes WHERE incidentes_id = ?");
+            $stmtOwner->execute([$id]);
+            $incidente = $stmtOwner->fetch();
+            if (!$incidente || (int) $incidente['usuario_id'] !== (int) $u['id']) {
+                jsonResponse(['error' => 'No autorizado'], 401);
+            }
+        }
+
         $db->prepare("DELETE FROM incidentes WHERE incidentes_id = ?")->execute([$id]);
         jsonResponse(['success' => true]);
     }
@@ -458,7 +704,7 @@ class SchoolController {
             jsonResponse(['error' => 'No autorizado'], 401);
         }
         $instId = $this->myInstitutionId();
-        if (!$instId) jsonResponse(['imagen' => null, 'puntos' => []]);
+        if (!$instId) jsonResponse(['imagen' => null, 'puntos' => [], 'lat' => null, 'lng' => null]);
 
         $db = getDB();
         $stmt = $db->prepare("SELECT imagen FROM croquis_institucion WHERE instituciones_id = ?");
@@ -468,10 +714,39 @@ class SchoolController {
         $stmtP = $db->prepare("SELECT * FROM puntos_croquis WHERE instituciones_id = ? ORDER BY puntos_croquis_id");
         $stmtP->execute([$instId]);
 
+        $stmtI = $db->prepare("SELECT lat, lng FROM instituciones WHERE instituciones_id = ?");
+        $stmtI->execute([$instId]);
+        $inst = $stmtI->fetch();
+
         jsonResponse([
             'imagen' => $croquis['imagen'] ?? null,
             'puntos' => $stmtP->fetchAll(),
+            'lat' => $inst['lat'] ?? null,
+            'lng' => $inst['lng'] ?? null,
         ]);
+    }
+
+    // Fija (o corrige) las coordenadas reales de la institucion, usadas para
+    // anclar el croquis sobre el mapa real (MapLibre) en la pestaña Croquis.
+    public function updateInstitutionLocation() {
+        if (!isLoggedIn() || !$this->isSchoolAdmin()) {
+            jsonResponse(['error' => 'No autorizado'], 401);
+        }
+        $instId = $this->myInstitutionId();
+        if (!$instId) jsonResponse(['error' => 'No tienes una institución asociada'], 400);
+
+        $input = json_decode(file_get_contents('php://input'), true);
+        $lat = isset($input['lat']) ? (float) $input['lat'] : null;
+        $lng = isset($input['lng']) ? (float) $input['lng'] : null;
+        if ($lat === null || $lng === null) {
+            jsonResponse(['error' => 'Coordenadas requeridas'], 400);
+        }
+
+        $db = getDB();
+        $db->prepare("UPDATE instituciones SET lat = ?, lng = ? WHERE instituciones_id = ?")
+           ->execute([$lat, $lng, $instId]);
+
+        jsonResponse(['success' => true]);
     }
 
     public function uploadCroquisImage() {

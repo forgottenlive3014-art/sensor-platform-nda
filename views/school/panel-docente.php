@@ -1,5 +1,5 @@
-<?php
-$title = $title ?? 'Gestión Escolar';
+﻿<?php
+$title = $title ?? 'Panel de Gestión';
 $user = $user ?? null;
 $stats = $stats ?? [];
 $students = $students ?? [];
@@ -14,9 +14,12 @@ ob_start();
 
 <div class="school-module">
 
-    <?php include __DIR__ . '/../partials/_header.php'; ?>
+    <?php include __DIR__ . '/partials/_header.php'; ?>
 
-    <div class="school-panel-header" style="padding:0 0 10px;">
+    <div class="school-panel-header" style="padding:0 0 10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+        <a href="?url=school" class="school-btn secondary">
+            Volver a la Página Principal
+        </a>
         <label class="school-btn secondary" style="cursor:pointer;">
             Subir foto de perfil
             <input type="file" accept="image/*" style="display:none" onchange="uploadTeacherPhoto(this)">
@@ -37,11 +40,8 @@ ob_start();
         <button class="school-tab" data-tab="attendance" onclick="showSchoolTab('attendance')">
             Pase de Lista
         </button>
-        <button class="school-tab" data-tab="incidents" onclick="showSchoolTab('incidents')">
-            Incidentes / Daños
-        </button>
-        <button class="school-tab" data-tab="drills" onclick="showSchoolTab('drills')">
-            Simulacros
+        <button class="school-tab" data-tab="teacher-notify" onclick="showSchoolTab('teacher-notify')">
+            Notificar a mis alumnos
         </button>
         <button class="school-tab" data-tab="routes" onclick="showSchoolTab('routes')">
             Rutas
@@ -49,38 +49,21 @@ ob_start();
         <button class="school-tab" data-tab="croquis" onclick="showSchoolTab('croquis')">
             Croquis
         </button>
-        <button class="school-tab" data-tab="board" onclick="showSchoolTab('board')">
-            Corcho
-        </button>
-        <button class="school-tab" data-tab="reports" onclick="showSchoolTab('reports')">
-            Reportes
-        </button>
-        <button class="school-tab" data-tab="news" onclick="showSchoolTab('news')">
-            Noticias
-        </button>
-        <button class="school-tab" data-tab="blog" onclick="showSchoolTab('blog')">
-            Lugares en riesgo
-        </button>
     </div>
 
     <div class="school-content">
-        <?php include __DIR__ . '/../partials/_tab-dashboard.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-news.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-blog.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-sections.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-students.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-attendance.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-incidents.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-drills.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-routes.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-croquis.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-board.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-reports.php'; ?>
+        <?php include __DIR__ . '/partials/_tab-dashboard.php'; ?>
+        <?php include __DIR__ . '/partials/_tab-sections.php'; ?>
+        <?php include __DIR__ . '/partials/_tab-students.php'; ?>
+        <?php include __DIR__ . '/partials/_tab-attendance.php'; ?>
+        <?php include __DIR__ . '/partials/_tab-teacher-notify.php'; ?>
+        <?php include __DIR__ . '/partials/_tab-routes.php'; ?>
+        <?php include __DIR__ . '/partials/_tab-croquis.php'; ?>
     </div>
     </div><!-- /.school-body -->
 </div>
 
-<?php include __DIR__ . '/../partials/_modals.php'; ?>
+<?php include __DIR__ . '/partials/_modals.php'; ?>
 
 <script>
     window.__ndaIsSchoolStaff = <?= !empty($isSchoolStaff) ? 'true' : 'false' ?>;

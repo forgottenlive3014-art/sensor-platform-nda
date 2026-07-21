@@ -175,4 +175,106 @@ class NotificacionController {
         $model->delete($id);
         jsonResponse(['success' => true]);
     }
+
+    // ---------------------------------------------------------------
+    // Notificaciones segmentadas: docente -> sus alumnos asignados,
+    // padre -> sus hijos. A diferencia de send() (institucion completa o
+    // global), estas insertan una notificacion por destinatario usando
+    // destinatario_usuario_id (columna que ya existia en el esquema, sin
+    // usarse hasta ahora).
+    // ---------------------------------------------------------------
+
+    private function validateMensajeYSeveridad($input) {
+        $mensaje = trim($input['mensaje'] ?? '');
+        $severidad = $input['severidad'] ?? 'informativo';
+        if (empty($mensaje)) {
+            jsonResponse(['error' => 'El mensaje es obligatorio'], 400);
+        }
+        if (strlen($mensaje) > 255) {
+            jsonResponse(['error' => 'El mensaje no puede superar los 255 caracteres'], 400);
+        }
+        $validSeveridad = ['seguro', 'informativo', 'precaucion', 'alerta', 'emergencia'];
+        if (!in_array($severidad, $validSeveridad, true)) {
+            jsonResponse(['error' => 'Severidad inválida'], 400);
+        }
+        return [$mensaje, $severidad];
+    }
+
+    public function sendToMyStudents() {
+        if (!isLoggedIn()) {
+            jsonResponse(['error' => 'No autorizado'], 401);
+        }
+        $u = currentUser();
+        if ($u['role'] !== 'docente') {
+            jsonResponse(['error' => 'No autorizado'], 401);
+        }
+
+        $input = json_decode(file_get_contents('php://input'), true);
+        [$mensaje, $severidad] = $this->validateMensajeYSeveridad($input);
+
+        $db = getDB();
+        $stmt = $db->prepare("
+            SELECT DISTINCT e.usuarios_id
+            FROM estudiantes e
+            JOIN aulas a ON e.aulas_id = a.aulas_id
+            WHERE a.maestro_id = ? AND e.usuarios_id IS NOT NULL
+        ");
+        $stmt->execute([$u['id']]);
+        $studentUserIds = array_column($stmt->fetchAll(), 'usuarios_id');
+
+        if (empty($studentUserIds)) {
+            jsonResponse(['error' => 'No tienes alumnos asignados con cuenta creada todavía'], 400);
+        }
+
+        $model = new NotificationModel();
+        foreach ($studentUserIds as $studentUserId) {
+            $model->create([
+                'tipo' => 'escolar',
+                'severidad' => $severidad,
+                'destinatario_usuario_id' => $studentUserId,
+                'mensaje' => $mensaje,
+            ]);
+        }
+
+        jsonResponse(['success' => true, 'enviados' => count($studentUserIds)]);
+    }
+
+    public function sendToMyChildren() {
+        if (!isLoggedIn()) {
+            jsonResponse(['error' => 'No autorizado'], 401);
+        }
+        $u = currentUser();
+        if ($u['role'] !== 'padre') {
+            jsonResponse(['error' => 'No autorizado'], 401);
+        }
+
+        $input = json_decode(file_get_contents('php://input'), true);
+        [$mensaje, $severidad] = $this->validateMensajeYSeveridad($input);
+
+        $db = getDB();
+        $stmt = $db->prepare("
+            SELECT DISTINCT e.usuarios_id
+            FROM padres_estudiantes pe
+            JOIN estudiantes e ON pe.estudiante_id = e.estudiantes_id
+            WHERE pe.padre_usuario_id = ? AND e.usuarios_id IS NOT NULL
+        ");
+        $stmt->execute([$u['id']]);
+        $childUserIds = array_column($stmt->fetchAll(), 'usuarios_id');
+
+        if (empty($childUserIds)) {
+            jsonResponse(['error' => 'No tienes hijos vinculados con cuenta creada todavía'], 400);
+        }
+
+        $model = new NotificationModel();
+        foreach ($childUserIds as $childUserId) {
+            $model->create([
+                'tipo' => 'escolar',
+                'severidad' => $severidad,
+                'destinatario_usuario_id' => $childUserId,
+                'mensaje' => $mensaje,
+            ]);
+        }
+
+        jsonResponse(['success' => true, 'enviados' => count($childUserIds)]);
+    }
 }

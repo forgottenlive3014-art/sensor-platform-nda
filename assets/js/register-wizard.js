@@ -7,6 +7,7 @@
     var fInstRole = document.getElementById('fInstRole');
     var fInstitucionId = document.getElementById('fInstitucionId');
     var fInstName = document.getElementById('fInstName');
+    var fInstEmail = document.getElementById('fInstEmail');
 
     var wizInstCreate = document.getElementById('wizInstCreate');
     var wizInstJoin = document.getElementById('wizInstJoin');
@@ -78,6 +79,11 @@
             if (!fInstName.value.trim()) {
                 fInstName.focus();
                 ndaAlert('Ingresa el nombre de la institución.');
+                return;
+            }
+            if (!fInstEmail.value.trim()) {
+                fInstEmail.focus();
+                ndaAlert('Ingresa el correo institucional: ahí te enviaremos el código de verificación.');
                 return;
             }
         } else {

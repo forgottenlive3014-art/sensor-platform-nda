@@ -26,7 +26,7 @@ class AuthController {
         }
 
         $db = getDB();
-        $stmt = $db->prepare("SELECT u.*, i.nombre AS institucion_nombre
+        $stmt = $db->prepare("SELECT u.*, i.nombre AS institucion_nombre, i.estado_verificacion AS institucion_estado_verificacion
                                FROM usuarios u
                                LEFT JOIN instituciones i ON i.instituciones_id = u.institucion_id
                                WHERE u.email = ?");
@@ -34,6 +34,16 @@ class AuthController {
         $user = $stmt->fetch();
 
         if ($user && $this->verifyPassword($password, $user)) {
+            // El director de una institucion cuyo correo institucional aun no
+            // se verifico no debe poder entrar de largo: lo mandamos de vuelta
+            // a la pantalla de codigo en vez de abrirle la sesion completa.
+            if ($user['role'] === 'director' && $user['institucion_estado_verificacion'] === 'pendiente') {
+                $_SESSION['pending_verify_institucion_id'] = $user['institucion_id'];
+                $_SESSION['pending_verify_user_id'] = $user['usuarios_id'];
+                $_SESSION['error'] = 'Primero debes verificar el correo de tu institución.';
+                redirect('register/verify');
+                return;
+            }
             $this->startSession($user);
             redirect('home');
         } else {
@@ -260,7 +270,7 @@ class AuthController {
             return;
         }
         $db = getDB();
-        $instituciones = $db->query("SELECT instituciones_id, nombre, correo FROM instituciones ORDER BY nombre ASC")->fetchAll();
+        $instituciones = $db->query("SELECT instituciones_id, nombre, correo FROM instituciones WHERE estado_verificacion = 'verificado' ORDER BY nombre ASC")->fetchAll();
 
         // Si venimos de "iniciar sesion con Google" sin cuenta existente,
         // rellenamos nombre/correo para que no los vuelva a escribir.
@@ -343,20 +353,46 @@ class AuthController {
             $role = $instRole;
 
             if ($instRole === 'director') {
-                // El director FUNDA la institucion: se crea y queda aprobado de inmediato.
+                // El director FUNDA la institucion: se crea con la verificacion de
+                // correo pendiente. El acceso al panel escolar queda bloqueado
+                // hasta que confirme el codigo que se le manda al correo
+                // institucional (ver processVerifyEmail()).
                 $instName = trim($_POST['inst_name'] ?? '');
+                $instTipo = $_POST['inst_tipo'] ?? '';
                 $instEmail = trim($_POST['inst_email'] ?? '');
+                $instDirectorEmail = trim($_POST['inst_director_email'] ?? '');
                 $instPhone = trim($_POST['inst_phone'] ?? '');
                 $instAddress = trim($_POST['inst_address'] ?? '');
 
+                $validTipos = ['colegio', 'escuela', 'instituto', 'universidad', 'otro'];
                 if (empty($instName)) {
                     $_SESSION['error'] = 'Ingresa el nombre de la institución que vas a administrar.';
                     redirect('register');
                     return;
                 }
+                if (!in_array($instTipo, $validTipos, true)) {
+                    $_SESSION['error'] = 'Selecciona el tipo de institución.';
+                    redirect('register');
+                    return;
+                }
+                if (!$this->isRealEmail($instEmail)) {
+                    $_SESSION['error'] = 'Ingresa un correo institucional real: ahí te enviaremos el código de verificación.';
+                    redirect('register');
+                    return;
+                }
+                if ($instDirectorEmail !== '' && !$this->isRealEmail($instDirectorEmail)) {
+                    $_SESSION['error'] = 'El correo personal del director/a no es válido.';
+                    redirect('register');
+                    return;
+                }
 
-                $stmtI = $db->prepare("INSERT INTO instituciones (nombre, correo, telefono, direccion) VALUES (?, ?, ?, ?)");
-                $stmtI->execute([$instName, $instEmail ?: null, $instPhone ?: null, $instAddress ?: null]);
+                $verifyCode = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+                $verifyExpira = date('Y-m-d H:i:s', time() + 15 * 60);
+
+                $stmtI = $db->prepare("INSERT INTO instituciones
+                    (nombre, tipo, correo, correo_director_personal, telefono, direccion, nombre_director, estado_verificacion, codigo_verificacion, codigo_verificacion_expira)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, 'pendiente', ?, ?)");
+                $stmtI->execute([$instName, $instTipo, $instEmail, $instDirectorEmail ?: null, $instPhone ?: null, $instAddress ?: null, $name, $verifyCode, $verifyExpira]);
                 $institucionId = $db->lastInsertId();
                 $estadoInstitucional = 'aprobado';
 
@@ -402,6 +438,19 @@ class AuthController {
             $stmtS->execute([$userId, $institucionId, $role, $msg ?: null]);
         }
 
+        if ($role === 'director') {
+            // No se inicia sesion todavia: primero debe confirmar el codigo
+            // que se le mando al correo institucional.
+            $_SESSION['pending_verify_institucion_id'] = $institucionId;
+            $_SESSION['pending_verify_user_id'] = $userId;
+            $sent = Mailer::sendVerificationCode($instEmail, $name, $verifyCode);
+            $_SESSION['success'] = $sent
+                ? 'Institución creada. Te enviamos un código de verificación a ' . $instEmail . '.'
+                : 'Institución creada, pero no pudimos enviar el correo de verificación. Usa "Reenviar código" en la siguiente pantalla.';
+            redirect('register/verify');
+            return;
+        }
+
         // Cargar datos completos (incluye nombre de institucion) e iniciar sesion.
         $stmtU = $db->prepare("SELECT u.*, i.nombre AS institucion_nombre
                                 FROM usuarios u
@@ -413,12 +462,136 @@ class AuthController {
 
         if ($estadoInstitucional === 'pendiente') {
             $_SESSION['success'] = 'Cuenta creada. Tu solicitud para unirte a la institución quedó pendiente de aprobación por el director.';
-        } elseif ($role === 'director') {
-            $_SESSION['success'] = '¡Institución registrada! Ya puedes configurar tu módulo de gestión escolar.';
         } else {
             $_SESSION['success'] = '¡Cuenta creada exitosamente! Bienvenido/a, ' . $name . '.';
         }
         redirect('home');
+    }
+
+    // ---------------------------------------------------------------
+    // VERIFICACION DE CORREO DE LA INSTITUCION (solo flujo de fundacion)
+    // ---------------------------------------------------------------
+    public function verifyEmail() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->processVerifyEmail();
+            return;
+        }
+
+        $institucionId = $_SESSION['pending_verify_institucion_id'] ?? null;
+        if (!$institucionId) {
+            redirect('login');
+            return;
+        }
+
+        $db = getDB();
+        $stmt = $db->prepare("SELECT nombre, correo FROM instituciones WHERE instituciones_id = ?");
+        $stmt->execute([$institucionId]);
+        $institucion = $stmt->fetch();
+        if (!$institucion) {
+            redirect('login');
+            return;
+        }
+
+        view('verify-email', [
+            'title' => 'Verifica tu institución · NDA',
+            'institucion' => $institucion,
+        ]);
+    }
+
+    private function processVerifyEmail() {
+        if (!csrfValid($_POST['csrf_token'] ?? '')) {
+            $_SESSION['error'] = 'Tu sesión expiró, intenta de nuevo.';
+            redirect('register/verify');
+            return;
+        }
+
+        $institucionId = $_SESSION['pending_verify_institucion_id'] ?? null;
+        $userId = $_SESSION['pending_verify_user_id'] ?? null;
+        if (!$institucionId || !$userId) {
+            redirect('login');
+            return;
+        }
+
+        $code = trim($_POST['code'] ?? '');
+        $db = getDB();
+        $stmt = $db->prepare("SELECT codigo_verificacion, codigo_verificacion_expira FROM instituciones WHERE instituciones_id = ?");
+        $stmt->execute([$institucionId]);
+        $institucion = $stmt->fetch();
+
+        if (!$institucion || empty($institucion['codigo_verificacion'])) {
+            $_SESSION['error'] = 'No hay una verificación pendiente. Solicita un nuevo código.';
+            redirect('register/verify');
+            return;
+        }
+        if (strtotime($institucion['codigo_verificacion_expira']) < time()) {
+            $_SESSION['error'] = 'El código venció. Solicita uno nuevo.';
+            redirect('register/verify');
+            return;
+        }
+        if (!hash_equals((string) $institucion['codigo_verificacion'], $code)) {
+            $_SESSION['error'] = 'El código no es correcto.';
+            redirect('register/verify');
+            return;
+        }
+
+        $db->prepare("UPDATE instituciones SET estado_verificacion = 'verificado', codigo_verificacion = NULL, codigo_verificacion_expira = NULL WHERE instituciones_id = ?")
+           ->execute([$institucionId]);
+
+        unset($_SESSION['pending_verify_institucion_id'], $_SESSION['pending_verify_user_id']);
+
+        $stmtU = $db->prepare("SELECT u.*, i.nombre AS institucion_nombre
+                                FROM usuarios u
+                                LEFT JOIN instituciones i ON i.instituciones_id = u.institucion_id
+                                WHERE u.usuarios_id = ?");
+        $stmtU->execute([$userId]);
+        $user = $stmtU->fetch();
+        if (!$user) {
+            redirect('login');
+            return;
+        }
+
+        $this->startSession($user);
+        $_SESSION['success'] = '¡Institución verificada! Ya puedes configurar tu módulo de gestión escolar.';
+        redirect('home');
+    }
+
+    public function resendVerificationCode() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            redirect('register/verify');
+            return;
+        }
+        if (!csrfValid($_POST['csrf_token'] ?? '')) {
+            $_SESSION['error'] = 'Tu sesión expiró, intenta de nuevo.';
+            redirect('register/verify');
+            return;
+        }
+
+        $institucionId = $_SESSION['pending_verify_institucion_id'] ?? null;
+        if (!$institucionId) {
+            redirect('login');
+            return;
+        }
+
+        $db = getDB();
+        $stmt = $db->prepare("SELECT nombre, correo, nombre_director FROM instituciones WHERE instituciones_id = ?");
+        $stmt->execute([$institucionId]);
+        $institucion = $stmt->fetch();
+        if (!$institucion || empty($institucion['correo'])) {
+            redirect('register/verify');
+            return;
+        }
+
+        $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $expira = date('Y-m-d H:i:s', time() + 15 * 60);
+        $db->prepare("UPDATE instituciones SET codigo_verificacion = ?, codigo_verificacion_expira = ? WHERE instituciones_id = ?")
+           ->execute([$code, $expira, $institucionId]);
+
+        $sent = Mailer::sendVerificationCode($institucion['correo'], $institucion['nombre_director'] ?: $institucion['nombre'], $code);
+
+        $_SESSION['success'] = $sent
+            ? 'Te enviamos un nuevo código a ' . $institucion['correo'] . '.'
+            : 'No pudimos enviar el correo. Intenta de nuevo en unos minutos.';
+        redirect('register/verify');
     }
 
     // ---------------------------------------------------------------
@@ -449,7 +622,7 @@ class AuthController {
             return;
         }
 
-        $instituciones = $db->query("SELECT instituciones_id, nombre, correo FROM instituciones ORDER BY nombre ASC")->fetchAll();
+        $instituciones = $db->query("SELECT instituciones_id, nombre, correo FROM instituciones WHERE estado_verificacion = 'verificado' ORDER BY nombre ASC")->fetchAll();
 
         $pendingRequest = null;
         if ($user['estado_institucional'] === 'pendiente') {
@@ -571,7 +744,7 @@ class AuthController {
     public function institutionsList() {
         $db = getDB();
         $q = '%' . ($_GET['q'] ?? '') . '%';
-        $stmt = $db->prepare("SELECT instituciones_id, nombre, correo FROM instituciones WHERE nombre LIKE ? ORDER BY nombre ASC LIMIT 20");
+        $stmt = $db->prepare("SELECT instituciones_id, nombre, correo FROM instituciones WHERE nombre LIKE ? AND estado_verificacion = 'verificado' ORDER BY nombre ASC LIMIT 20");
         $stmt->execute([$q]);
         jsonResponse($stmt->fetchAll());
     }

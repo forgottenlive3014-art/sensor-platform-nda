@@ -15,15 +15,17 @@
                     <thead>
                         <tr>
                             <th>Nombre</th>
+                            <th>Tipo</th>
                             <th>Correo</th>
                             <th>Teléfono</th>
                             <th>Dirección</th>
+                            <th>Verificación</th>
                             <th>Usuarios</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="institutionsTableBody">
-                        <tr><td colspan="6" class="text-center">Cargando...</td></tr>
+                        <tr><td colspan="8" class="text-center">Cargando...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -41,6 +43,16 @@
                         <div class="school-form-group">
                             <label>Nombre *</label>
                             <input type="text" id="institutionName" required>
+                        </div>
+                        <div class="school-form-group">
+                            <label>Tipo</label>
+                            <select id="institutionTipo" class="school-select">
+                                <option value="colegio">Colegio</option>
+                                <option value="escuela">Escuela</option>
+                                <option value="instituto">Instituto</option>
+                                <option value="universidad">Universidad</option>
+                                <option value="otro">Otro</option>
+                            </select>
                         </div>
                         <div class="school-form-group">
                             <label>Correo</label>
@@ -84,6 +96,16 @@
                         <div class="school-form-group">
                             <label>Nombre *</label>
                             <input type="text" id="editInstitutionName" required>
+                        </div>
+                        <div class="school-form-group">
+                            <label>Tipo</label>
+                            <select id="editInstitutionTipo" class="school-select">
+                                <option value="colegio">Colegio</option>
+                                <option value="escuela">Escuela</option>
+                                <option value="instituto">Instituto</option>
+                                <option value="universidad">Universidad</option>
+                                <option value="otro">Otro</option>
+                            </select>
                         </div>
                         <div class="school-form-group">
                             <label>Correo</label>

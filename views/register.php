@@ -104,9 +104,28 @@ ob_start();
                         </div>
                     </div>
                     <div class="auth-field">
-                        <label>Correo institucional (opcional)</label>
+                        <label>Tipo de institución</label>
                         <div class="auth-inp-wrap">
-                            <input type="email" name="inst_email" placeholder="info@colegio.edu.sv">
+                            <select name="inst_tipo" id="fInstTipo">
+                                <option value="colegio">Colegio</option>
+                                <option value="escuela">Escuela</option>
+                                <option value="instituto">Instituto</option>
+                                <option value="universidad">Universidad</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="auth-field">
+                        <label>Correo institucional</label>
+                        <div class="auth-inp-wrap">
+                            <input type="email" name="inst_email" id="fInstEmail" placeholder="info@colegio.edu.sv">
+                        </div>
+                        <p class="wiz-hint">Ahí te enviaremos un código para confirmar que la institución es real.</p>
+                    </div>
+                    <div class="auth-field">
+                        <label>Tu correo personal/profesional (opcional)</label>
+                        <div class="auth-inp-wrap">
+                            <input type="email" name="inst_director_email" placeholder="tunombre@gmail.com">
                         </div>
                     </div>
                     <div class="auth-field">

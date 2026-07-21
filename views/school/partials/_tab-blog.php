@@ -1,16 +1,24 @@
-        <!-- ========================================================== -->
+﻿        <!-- ========================================================== -->
         <!--  BLOG DE LUGARES EN RIESGO -->
         <!-- ========================================================== -->
         <div id="tab-blog" class="school-panel">
             <div class="school-panel-header">
-                <h3><span class="school-emoji" aria-hidden="true">📍</span> Lugares en riesgo</h3>
+                <h3>Lugares en riesgo</h3>
                 <button class="school-btn primary" onclick="openModal('addBlogModal')">
-                    <span class="school-emoji" aria-hidden="true">➕</span> Publicar
+                    Publicar
                 </button>
             </div>
             <p class="school-hint">Reporta un lugar con riesgo (grietas, objetos inestables, zonas obstruidas...) con una foto y descripción para que toda la comunidad lo vea.</p>
-            <div id="blogList" class="school-news-list">
-                <div class="text-center" style="padding:20px;color:var(--text3);">Cargando publicaciones...</div>
+            <div class="school-filters" id="blogFilters">
+                <button class="sfilter active" data-cat="all">Todos</button>
+                <button class="sfilter" data-cat="director">Director</button>
+                <button class="sfilter" data-cat="docente">Docentes</button>
+                <button class="sfilter" data-cat="alumno">Alumnos</button>
+                <button class="sfilter" data-cat="padre">Padres</button>
+                <button class="sfilter" data-cat="administrativo">Personal</button>
+            </div>
+            <div id="blogList" class="school-card-grid">
+                <div class="text-center" style="padding:20px;color:var(--text3);grid-column:1/-1;">Cargando publicaciones...</div>
             </div>
             <div class="school-pagination" id="blogPagination"></div>
         </div>

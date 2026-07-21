@@ -17,6 +17,27 @@ function renderPagination(containerId, page, totalPages, onPageClickFnName) {
     el.innerHTML = html;
 }
 
+// Filtro por categoria de tarjetas (mismo patron que .blog-filters/.bfilter
+// de views/blog.php): filtra que tarjetas se muestran, no restringe quien
+// puede verlas. barId = contenedor de los botones .sfilter[data-cat]; las
+// tarjetas a filtrar son las siguientes hermanas con [data-cat].
+function initCardFilterBar(barId) {
+    const bar = document.getElementById(barId);
+    if (!bar) return;
+    bar.addEventListener('click', function (e) {
+        const btn = e.target.closest('.sfilter');
+        if (!btn) return;
+        bar.querySelectorAll('.sfilter').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const cat = btn.dataset.cat;
+        const grid = bar.nextElementSibling;
+        if (!grid) return;
+        grid.querySelectorAll('[data-cat]').forEach(card => {
+            card.style.display = (cat === 'all' || card.dataset.cat === cat) ? '' : 'none';
+        });
+    });
+}
+
 function debounce(fn, wait) {
     let t;
     return function (...args) {
@@ -412,7 +433,7 @@ async function loadParents(page) {
                 <td>${p.email}</td>
                 <td>${p.hijos || 'Ninguno vinculado'}</td>
                 <td>
-                    <button class="school-attendance-btn" onclick="openLinkChildModal(${p.usuarios_id})">👪 Vincular hijo</button>
+                    <button class="school-attendance-btn" onclick="openLinkChildModal(${p.usuarios_id})">Vincular hijo</button>
                     <button class="school-attendance-btn" onclick="editParent(${p.usuarios_id})">Editar</button>
                     <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteParent(${p.usuarios_id})">Eliminar</button>
                 </td>
@@ -631,6 +652,51 @@ async function loadMyChildrenDrillStatus() {
         console.error(e);
     }
 }
+
+document.getElementById('notifyChildrenForm')?.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const data = {
+        mensaje: document.getElementById('notifyChildrenMessage').value,
+        severidad: document.getElementById('notifyChildrenSeveridad').value,
+    };
+    try {
+        const response = await fetch('?url=school/send-to-my-children', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
+        });
+        const result = await response.json();
+        if (result.success) {
+            ndaAlert(`✅ Notificación enviada a ${result.enviados} hijo(s)`);
+            this.reset();
+        } else {
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
+        }
+    } catch (e) {
+        ndaAlert('Error de conexión');
+    }
+});
+
+// ─── NOTIFICAR A MIS ALUMNOS (Docente) ───
+document.getElementById('notifyStudentsForm')?.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const data = {
+        mensaje: document.getElementById('notifyStudentsMessage').value,
+        severidad: document.getElementById('notifyStudentsSeveridad').value,
+    };
+    try {
+        const response = await fetch('?url=school/send-to-my-students', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
+        });
+        const result = await response.json();
+        if (result.success) {
+            ndaAlert(`✅ Notificación enviada a ${result.enviados} alumno(s)`);
+            this.reset();
+        } else {
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
+        }
+    } catch (e) {
+        ndaAlert('Error de conexión');
+    }
+});
 
 // ─── PERSONAL ADMINISTRATIVO ───
 let __staffCache = [];
@@ -999,6 +1065,188 @@ async function deleteClassroom(id) {
 
 // ─── RUTAS ───
 let __routesCache = [];
+let __routesMap = null;
+let __routesMapMarkers = [];
+
+// Mismas URLs de tiles CARTO que ya usa el mapa de riesgos/sismos en app.js (assets/js/app.js:911-921).
+function ndaTileLayerUrl() {
+    const light = document.documentElement.getAttribute('data-theme') === 'light';
+    return light
+        ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
+        : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+}
+
+const ROUTE_STATE_COLOR = { despejada: '#2a9d5c', bloqueada: '#e08a1e', peligro: '#e63946' };
+
+function initRoutesMap() {
+    const el = document.getElementById('routesMap');
+    if (!el || typeof L === 'undefined') return null;
+    if (__routesMap) return __routesMap;
+    __routesMap = L.map('routesMap', { center: [13.7942, -88.8965], zoom: 8 });
+    L.tileLayer(ndaTileLayerUrl(), { attribution: '© CARTO', maxZoom: 18 }).addTo(__routesMap);
+    return __routesMap;
+}
+
+function renderRoutesMap(routes) {
+    const map = initRoutesMap();
+    if (!map) return;
+    __routesMapMarkers.forEach(m => map.removeLayer(m));
+    __routesMapMarkers = [];
+
+    const withCoords = routes.filter(r => r.lat !== null && r.lat !== '' && r.lng !== null && r.lng !== '' && r.lat !== undefined && r.lng !== undefined);
+    withCoords.forEach(r => {
+        const color = ROUTE_STATE_COLOR[r.estado] || ROUTE_STATE_COLOR.despejada;
+        const marker = L.circleMarker([parseFloat(r.lat), parseFloat(r.lng)], {
+            radius: 9, color, fillColor: color, fillOpacity: 0.85, weight: 2
+        }).addTo(map);
+        marker.bindPopup(`<strong>${r.nombre}</strong><br>${r.descripcion || ''}<br><em>${r.estado || 'despejada'}</em>`);
+        __routesMapMarkers.push(marker);
+    });
+
+    if (withCoords.length > 0) {
+        map.fitBounds(L.featureGroup(__routesMapMarkers).getBounds().pad(0.3));
+    }
+    setTimeout(() => map.invalidateSize(), 50);
+}
+
+// Mapa embebido en los modales de agregar/editar ruta: clic para colocar el pin.
+function setupRoutePickerMap(mapId, latInputId, lngInputId, initialLat, initialLng) {
+    const el = document.getElementById(mapId);
+    if (!el || typeof L === 'undefined') return null;
+    if (el._ndaLeafletMap) {
+        el._ndaLeafletMap.remove();
+        el._ndaLeafletMap = null;
+    }
+    const hasInitial = initialLat !== null && initialLat !== undefined && !isNaN(initialLat);
+    const startLat = hasInitial ? initialLat : 13.7942;
+    const startLng = hasInitial ? initialLng : -88.8965;
+    const map = L.map(mapId, { center: [startLat, startLng], zoom: hasInitial ? 16 : 8 });
+    L.tileLayer(ndaTileLayerUrl(), { attribution: '© CARTO', maxZoom: 18 }).addTo(map);
+
+    let marker = hasInitial ? L.marker([startLat, startLng]).addTo(map) : null;
+    map.on('click', function (e) {
+        if (marker) map.removeLayer(marker);
+        marker = L.marker(e.latlng).addTo(map);
+        document.getElementById(latInputId).value = e.latlng.lat.toFixed(7);
+        document.getElementById(lngInputId).value = e.latlng.lng.toFixed(7);
+    });
+
+    el._ndaLeafletMap = map;
+    setTimeout(() => map.invalidateSize(), 80);
+    return map;
+}
+
+function useMyLocationForRoute(which) {
+    if (!navigator.geolocation) { ndaAlert('Tu navegador no soporta geolocalización.'); return; }
+    const latId = which === 'add' ? 'routeLat' : 'editRouteLat';
+    const lngId = which === 'add' ? 'routeLng' : 'editRouteLng';
+    const mapId = which === 'add' ? 'addRouteMap' : 'editRouteMap';
+    navigator.geolocation.getCurrentPosition(function (pos) {
+        const lat = pos.coords.latitude, lng = pos.coords.longitude;
+        document.getElementById(latId).value = lat.toFixed(7);
+        document.getElementById(lngId).value = lng.toFixed(7);
+        const el = document.getElementById(mapId);
+        if (el && el._ndaLeafletMap) {
+            el._ndaLeafletMap.setView([lat, lng], 16);
+            L.marker([lat, lng]).addTo(el._ndaLeafletMap);
+        }
+    }, function () {
+        ndaAlert('No pudimos obtener tu ubicación. Revisa los permisos del navegador.');
+    });
+}
+
+function openAddRouteModal() {
+    openModal('addRouteModal');
+    setTimeout(() => setupRoutePickerMap('addRouteMap', 'routeLat', 'routeLng', null, null), 50);
+}
+
+// ─── INICIO (Pagina Principal): mapa Leaflet con institucion + rutas + puntos de croquis ───
+let __inicioMap = null;
+const INICIO_MAP_RADIUS_M = 60;
+
+// Mapa interactivo de Inicio: institucion + rutas + puntos de croquis. Si
+// eres staff, hacer clic en el mapa agrega un punto de croquis ahi mismo
+// (mismo modal y mismo endpoint que el clic sobre la imagen del croquis en
+// _tab-croquis.php — es la misma funcionalidad, solo con otra entrada).
+async function initInicioMap() {
+    const el = document.getElementById('inicioMap');
+    if (!el || typeof L === 'undefined') return;
+
+    // Se re-consulta en vez de usar solo los datos embebidos al cargar la
+    // pagina, para que un punto agregado (desde el mapa o desde la imagen
+    // del croquis) aparezca sin recargar toda la pagina.
+    let lat = window.__ndaInstitutionLat, lng = window.__ndaInstitutionLng, puntos = window.__ndaInicioCroquisPoints || [];
+    try {
+        const response = await fetch('?url=school/croquis');
+        const data = await response.json();
+        if (data.lat !== null && data.lat !== undefined) lat = data.lat;
+        if (data.lng !== null && data.lng !== undefined) lng = data.lng;
+        puntos = data.puntos || puntos;
+    } catch (e) { /* si falla, se usan los datos ya embebidos por PHP */ }
+
+    const hasLoc = lat !== null && lat !== undefined && lat !== '';
+    const latN = hasLoc ? parseFloat(lat) : 13.7942;
+    const lngN = hasLoc ? parseFloat(lng) : -88.8965;
+
+    if (__inicioMap) {
+        __inicioMap.remove();
+        __inicioMap = null;
+    }
+
+    const map = L.map('inicioMap', { center: [latN, lngN], zoom: hasLoc ? 16 : 8 });
+    L.tileLayer(ndaTileLayerUrl(), { attribution: '© CARTO', maxZoom: 18 }).addTo(map);
+    __inicioMap = map;
+
+    const markers = [];
+    if (hasLoc) {
+        markers.push(L.marker([latN, lngN]).addTo(map).bindPopup('<strong>' + (window.__ndaInstitutionName || 'Tu institución') + '</strong>'));
+    }
+
+    (window.__ndaInicioRoutes || []).forEach(r => {
+        if (r.lat === null || r.lat === undefined || r.lat === '' || r.lng === null || r.lng === undefined || r.lng === '') return;
+        const color = ROUTE_STATE_COLOR[r.estado] || ROUTE_STATE_COLOR.despejada;
+        markers.push(
+            L.circleMarker([parseFloat(r.lat), parseFloat(r.lng)], { radius: 8, color, fillColor: color, fillOpacity: 0.85, weight: 2 })
+                .addTo(map)
+                .bindPopup(`<strong>${r.nombre}</strong><br>${r.descripcion || ''}<br><em>${r.estado || 'despejada'}</em>`)
+        );
+    });
+
+    // Puntos del croquis proyectados alrededor del centro (misma aproximacion
+    // de offset fijo que renderCroquisMapMarkers() usa en la vista MapLibre
+    // del croquis — no es geo-referenciacion de precision).
+    if (hasLoc) {
+        puntos.forEach(p => {
+            const px = parseFloat(p.pos_x), py = parseFloat(p.pos_y);
+            if (isNaN(px) || isNaN(py)) return;
+            const dLat = (((50 - py) / 50) * INICIO_MAP_RADIUS_M) / 111320;
+            const dLng = (((px - 50) / 50) * INICIO_MAP_RADIUS_M) / (111320 * Math.cos(latN * Math.PI / 180));
+            markers.push(
+                L.circleMarker([latN + dLat, lngN + dLng], { radius: 6, color: '#c98a3d', fillColor: '#c98a3d', fillOpacity: 0.9, weight: 1 })
+                    .addTo(map)
+                    .bindPopup(`<strong>${p.nombre}</strong><br>${CROQUIS_LABELS[p.tipo] || p.tipo}`)
+            );
+        });
+
+        // Clic en el mapa = agregar un punto de croquis ahi (solo staff).
+        if (window.__ndaIsSchoolStaff) {
+            map.on('click', function (e) {
+                const offsetYm = (e.latlng.lat - latN) * 111320;
+                const offsetXm = (e.latlng.lng - lngN) * 111320 * Math.cos(latN * Math.PI / 180);
+                const px = Math.min(100, Math.max(0, 50 + (offsetXm / INICIO_MAP_RADIUS_M) * 50));
+                const py = Math.min(100, Math.max(0, 50 - (offsetYm / INICIO_MAP_RADIUS_M) * 50));
+                document.getElementById('croquisPointX').value = px.toFixed(2);
+                document.getElementById('croquisPointY').value = py.toFixed(2);
+                openModal('addCroquisPointModal');
+            });
+        }
+    }
+
+    if (markers.length > 1) {
+        map.fitBounds(L.featureGroup(markers).getBounds().pad(0.3));
+    }
+    setTimeout(() => map.invalidateSize(), 50);
+}
 
 async function loadRoutes() {
     const container = document.getElementById('routesContainer');
@@ -1014,6 +1262,7 @@ async function loadRoutes() {
             return;
         }
         __routesCache = Array.isArray(routes) ? routes : [];
+        renderRoutesMap(__routesCache);
 
         if (routes.length === 0) {
             container.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);grid-column:1/-1;">No hay rutas registradas</div>';
@@ -1023,13 +1272,12 @@ async function loadRoutes() {
         container.innerHTML = routes.map(r => `
             <div class="school-route-card">
                 <div class="school-route-header">
-                    <span class="school-route-icon">🗺️</span>
                     <h4>${r.nombre}</h4>
                     <span class="school-route-status ${r.estado || 'despejada'}">${r.estado || 'Despejada'}</span>
                 </div>
                 <p style="font-size:0.82rem;color:var(--text2);">${r.descripcion || 'Sin descripción'}</p>
                 <div style="margin-top:8px;display:flex;gap:6px;">
-                    ${window.__ndaIsSchoolStaff ? `<button class="school-attendance-btn" onclick="editRoute(${r.rutas_evacuacion_id})"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>` : ''}
+                    ${window.__ndaIsSchoolAdmin ? `<button class="school-attendance-btn" onclick="editRoute(${r.rutas_evacuacion_id})"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>` : ''}
                     ${window.__ndaIsSchoolAdmin ? `<button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteRoute(${r.rutas_evacuacion_id})">Eliminar</button>` : ''}
                 </div>
             </div>
@@ -1045,7 +1293,9 @@ document.getElementById('addRouteForm')?.addEventListener('submit', async functi
     const data = {
         nombre: document.getElementById('routeName').value,
         descripcion: document.getElementById('routeDescription').value,
-        estado: document.getElementById('routeStatus').value
+        estado: document.getElementById('routeStatus').value,
+        lat: document.getElementById('routeLat').value,
+        lng: document.getElementById('routeLng').value
     };
 
     try {
@@ -1076,7 +1326,12 @@ function editRoute(id) {
     document.getElementById('editRouteName').value = r.nombre || '';
     document.getElementById('editRouteDescription').value = r.descripcion || '';
     document.getElementById('editRouteStatus').value = r.estado || 'despejada';
+    document.getElementById('editRouteLat').value = r.lat || '';
+    document.getElementById('editRouteLng').value = r.lng || '';
     openModal('editRouteModal');
+    const lat = r.lat ? parseFloat(r.lat) : null;
+    const lng = r.lng ? parseFloat(r.lng) : null;
+    setTimeout(() => setupRoutePickerMap('editRouteMap', 'editRouteLat', 'editRouteLng', lat, lng), 50);
 }
 
 document.getElementById('editRouteForm')?.addEventListener('submit', async function (e) {
@@ -1086,6 +1341,8 @@ document.getElementById('editRouteForm')?.addEventListener('submit', async funct
         nombre: document.getElementById('editRouteName').value,
         descripcion: document.getElementById('editRouteDescription').value,
         estado: document.getElementById('editRouteStatus').value,
+        lat: document.getElementById('editRouteLat').value,
+        lng: document.getElementById('editRouteLng').value,
     };
     try {
         const response = await fetch('?url=school/update-route', {
@@ -1272,21 +1529,22 @@ async function loadIncidents() {
         }
 
         container.innerHTML = incidents.map(inc => `
-            <div class="school-incident-item">
+            <div class="school-incident-item" data-cat="${inc.tipo}">
                 ${inc.imagen ? `<img class="school-incident-photo" src="${inc.imagen}" alt="Foto del daño" onclick="window.open('${inc.imagen}','_blank')">` : ''}
                 <div class="school-incident-item-header">
                     <span class="school-incident-type">${inc.tipo}</span>
                     <span class="school-incident-time">${new Date(inc.created_at).toLocaleString('es-SV')}</span>
                 </div>
-                ${inc.ubicacion ? `<div class="school-incident-location">${svgPin()} ${inc.ubicacion}</div>` : ''}
+                ${inc.ubicacion ? `<div class="school-incident-location">${inc.ubicacion}</div>` : ''}
                 <div class="school-incident-desc">${inc.descripcion}</div>
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;gap:6px;flex-wrap:wrap;">
-                    ${inc.estado === 'resuelto' ? '<span class="school-incident-resolved">' + svgCheck() + ' Resuelto</span>' : '<span></span>'}
+                    ${inc.estado === 'resuelto' ? '<span class="school-incident-resolved">Resuelto</span>' : '<span></span>'}
                     ${inc.reporter ? `<span style="font-size:0.7rem;color:var(--text3);">Reportado por: ${inc.reporter}</span>` : ''}
                     <span>
-                        ${window.__ndaIsSchoolStaff ? `<button class="school-attendance-btn" onclick="editIncident(${inc.incidentes_id})">Editar</button>` : ''}
-                        ${window.__ndaIsSchoolStaff && inc.estado !== 'resuelto' ? `<button class="school-attendance-btn" onclick="resolveIncident(${inc.incidentes_id})">${svgCheck()} Resolver</button>` : ''}
-                        ${window.__ndaIsSchoolAdmin ? `<button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteIncident(${inc.incidentes_id})">Eliminar</button>` : ''}
+                        <button class="school-attendance-btn" onclick="location.href='?url=school/incident-detail&id=${inc.incidentes_id}'">Ver / comentar</button>
+                        ${(window.__ndaIsSchoolStaff || String(inc.usuario_id) === String(window.__ndaMyUserId)) ? `<button class="school-attendance-btn" onclick="editIncident(${inc.incidentes_id})">Editar</button>` : ''}
+                        ${window.__ndaIsSchoolStaff && inc.estado !== 'resuelto' ? `<button class="school-attendance-btn" onclick="resolveIncident(${inc.incidentes_id})">Resolver</button>` : ''}
+                        ${(window.__ndaIsSchoolAdmin || String(inc.usuario_id) === String(window.__ndaMyUserId)) ? `<button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteIncident(${inc.incidentes_id})">Eliminar</button>` : ''}
                     </span>
                 </div>
             </div>
@@ -1349,9 +1607,6 @@ async function deleteIncident(id) {
         ndaAlert('Error de conexión');
     }
 }
-
-function svgPin() { return '📍'; }
-function svgCheck() { return '✅'; }
 
 document.getElementById('addIncidentForm')?.addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -1614,15 +1869,15 @@ async function loadReports() {
         container.innerHTML = `
             <div class="school-grid-2">
                 <div class="school-report-card">
-                    <h4>📊 Estadísticas de Asistencia</h4>
+                    <h4>Estadísticas de Asistencia</h4>
                     <div class="school-report-stat"><span>Total registros</span><span class="value">${att.total || 0}</span></div>
-                    <div class="school-report-stat"><span>✅ Presentes</span><span class="value" style="color:var(--teal);">${att.presentes || 0}</span></div>
-                    <div class="school-report-stat"><span>❌ Ausentes</span><span class="value" style="color:var(--acc2);">${att.ausentes || 0}</span></div>
-                    <div class="school-report-stat"><span>⚠️ Heridos</span><span class="value" style="color:var(--acc3);">${att.heridos || 0}</span></div>
+                    <div class="school-report-stat"><span>Presentes</span><span class="value" style="color:var(--teal);">${att.presentes || 0}</span></div>
+                    <div class="school-report-stat"><span>Ausentes</span><span class="value" style="color:var(--acc2);">${att.ausentes || 0}</span></div>
+                    <div class="school-report-stat"><span>Heridos</span><span class="value" style="color:var(--acc3);">${att.heridos || 0}</span></div>
                 </div>
 
                 <div class="school-report-card">
-                    <h4>📋 Incidentes por Tipo</h4>
+                    <h4>Incidentes por Tipo</h4>
                     ${incidentsByType.length === 0 ? '<p style="color:var(--text3);">No hay incidentes registrados</p>' :
                         incidentsByType.map(i => `
                             <div class="school-report-stat"><span>${i.tipo}</span><span class="value">${i.total}</span></div>
@@ -1631,7 +1886,7 @@ async function loadReports() {
                 </div>
 
                 <div class="school-report-card">
-                    <h4>🔔 Simulacros por Estado</h4>
+                    <h4>Simulacros por Estado</h4>
                     ${drillsByStatus.length === 0 ? '<p style="color:var(--text3);">No hay simulacros registrados</p>' :
                         drillsByStatus.map(d => `
                             <div class="school-report-stat"><span>${drillStatusLabel[d.estado] || d.estado}</span><span class="value">${d.total}</span></div>
@@ -1640,7 +1895,7 @@ async function loadReports() {
                 </div>
 
                 <div class="school-report-card" style="grid-column:1/-1;">
-                    <h4>🏢 Alumnos por Aula</h4>
+                    <h4>Alumnos por Aula</h4>
                     ${studentsByClassroom.length === 0 ? '<p style="color:var(--text3);">No hay datos de alumnos por aula</p>' :
                         `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;">
                             ${studentsByClassroom.map(c => `
@@ -1856,6 +2111,7 @@ async function loadCroquis() {
     try {
         const response = await fetch('?url=school/croquis');
         const data = await response.json();
+        __croquisLastData = data;
 
         if (!data.imagen) {
             board.innerHTML = `<div class="croquis-empty">
@@ -1897,6 +2153,141 @@ async function loadCroquis() {
     }
 }
 
+// ─── CROQUIS: vista en mapa real (MapLibre GL, mismo patron de terreno que hero-globe.js) ───
+let __croquisLastData = null;
+let __croquisMap = null;
+let __croquisMapMarkers = [];
+
+function showCroquisView(view) {
+    document.querySelectorAll('[data-croquis-view]').forEach(btn => {
+        btn.style.opacity = btn.dataset.croquisView === view ? '1' : '0.6';
+    });
+    const view2d = document.getElementById('croquisView2d');
+    const viewMap = document.getElementById('croquisViewMap');
+    if (view2d) view2d.style.display = view === '2d' ? '' : 'none';
+    if (viewMap) viewMap.style.display = view === 'map' ? '' : 'none';
+    if (view === 'map') initCroquisMap();
+}
+
+function initCroquisMap() {
+    const hint = document.getElementById('croquisMapHint');
+    if (!document.getElementById('croquisMap') || typeof ensureMapLibreLoaded !== 'function') {
+        if (hint) hint.textContent = 'No se pudo cargar el mapa.';
+        return;
+    }
+    const data = __croquisLastData || { lat: null, lng: null, puntos: [] };
+    const hasLoc = data.lat !== null && data.lat !== undefined && data.lat !== '' && data.lng !== null && data.lng !== undefined && data.lng !== '';
+
+    ensureMapLibreLoaded().then(() => {
+        if (!window.maplibregl) { if (hint) hint.textContent = 'No se pudo cargar el mapa.'; return; }
+
+        const lat = hasLoc ? parseFloat(data.lat) : 13.7942;
+        const lng = hasLoc ? parseFloat(data.lng) : -88.8965;
+        const theme = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+        const subs = ['a', 'b', 'c', 'd'];
+        const darkTiles = subs.map(s => `https://${s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png`);
+        const lightTiles = subs.map(s => `https://${s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png`);
+        const terrainTiles = 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png';
+
+        if (__croquisMap) {
+            __croquisMap.remove();
+            __croquisMap = null;
+            __croquisMapMarkers = [];
+        }
+
+        __croquisMap = new maplibregl.Map({
+            container: 'croquisMap',
+            style: {
+                version: 8,
+                sources: {
+                    'nda-base': { type: 'raster', tiles: theme === 'light' ? lightTiles : darkTiles, tileSize: 512, attribution: '© CARTO © OpenStreetMap' },
+                    'nda-terrain': { type: 'raster-dem', tiles: [terrainTiles], tileSize: 256, encoding: 'terrarium' },
+                },
+                layers: [{ id: 'nda-base-layer', type: 'raster', source: 'nda-base' }],
+                terrain: { source: 'nda-terrain', exaggeration: 1.6 },
+            },
+            center: [lng, lat],
+            zoom: hasLoc ? 17.5 : 8,
+            pitch: 60,
+            bearing: -15,
+        });
+
+        __croquisMap.on('load', function () {
+            renderCroquisMapMarkers(lat, lng, hasLoc, data.puntos || []);
+        });
+
+        if (hint) {
+            hint.textContent = hasLoc
+                ? (window.__ndaIsSchoolAdmin ? 'Ubicación aproximada de tu institución. Haz clic en el mapa para corregirla.' : 'Ubicación aproximada de tu institución (los puntos del croquis son una proyección aproximada, no coordenadas exactas).')
+                : (window.__ndaIsSchoolAdmin ? 'Tu institución todavía no tiene coordenadas: haz clic en el mapa para fijarlas.' : 'Tu institución todavía no tiene coordenadas registradas.');
+        }
+
+        if (window.__ndaIsSchoolAdmin) {
+            __croquisMap.on('click', function (e) {
+                saveInstitutionLocation(e.lngLat.lat, e.lngLat.lng);
+            });
+        }
+    }).catch(() => {
+        if (hint) hint.textContent = 'No se pudo cargar el mapa.';
+    });
+}
+
+function renderCroquisMapMarkers(lat, lng, hasLoc, puntos) {
+    if (!__croquisMap || typeof maplibregl === 'undefined') return;
+    __croquisMapMarkers.forEach(m => m.remove());
+    __croquisMapMarkers = [];
+
+    if (hasLoc) {
+        const centerMarker = new maplibregl.Marker({ color: '#c98a3d' })
+            .setLngLat([lng, lat])
+            .setPopup(new maplibregl.Popup().setHTML('<strong>Institución</strong>'))
+            .addTo(__croquisMap);
+        __croquisMapMarkers.push(centerMarker);
+    }
+
+    // Los puntos del croquis se guardan como % (0-100) sobre la imagen 2D, no
+    // como coordenadas reales: se proyectan alrededor del centro con un radio
+    // fijo aproximado (~60m), no es geo-referenciacion de precision.
+    const RADIUS_M = 60;
+    puntos.forEach(p => {
+        const px = parseFloat(p.pos_x), py = parseFloat(p.pos_y);
+        if (isNaN(px) || isNaN(py)) return;
+        const offsetXm = ((px - 50) / 50) * RADIUS_M;
+        const offsetYm = ((50 - py) / 50) * RADIUS_M;
+        const dLat = offsetYm / 111320;
+        const dLng = offsetXm / (111320 * Math.cos(lat * Math.PI / 180));
+
+        const el = document.createElement('div');
+        el.style.cssText = 'width:14px;height:14px;border-radius:50%;background:#e08a1e;border:2px solid #fff;box-shadow:0 0 4px rgba(0,0,0,.4);cursor:pointer;';
+        const marker = new maplibregl.Marker({ element: el })
+            .setLngLat([lng + dLng, lat + dLat])
+            .setPopup(new maplibregl.Popup().setHTML(`<strong>${p.nombre}</strong><br>${CROQUIS_LABELS[p.tipo] || p.tipo}`))
+            .addTo(__croquisMap);
+        __croquisMapMarkers.push(marker);
+    });
+}
+
+async function saveInstitutionLocation(lat, lng) {
+    try {
+        const response = await fetch('?url=school/institution-location', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ lat, lng })
+        });
+        const result = await response.json();
+        if (result.success) {
+            if (__croquisLastData) { __croquisLastData.lat = lat; __croquisLastData.lng = lng; }
+            const hint = document.getElementById('croquisMapHint');
+            if (hint) hint.textContent = 'Ubicación guardada. Haz clic de nuevo para corregirla.';
+            renderCroquisMapMarkers(lat, lng, true, (__croquisLastData && __croquisLastData.puntos) || []);
+        } else {
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
+        }
+    } catch (e) {
+        ndaAlert('Error de conexión');
+    }
+}
+
 async function uploadCroquisImage(input) {
     if (!input.files[0]) return;
     const formData = new FormData();
@@ -1935,6 +2326,7 @@ document.getElementById('addCroquisPointForm')?.addEventListener('submit', async
             closeModal('addCroquisPointModal');
             this.reset();
             loadCroquis();
+            if (document.getElementById('inicioMap')) initInicioMap();
         } else {
             ndaAlert('Error: ' + (result.error || 'Desconocido'));
         }
@@ -1972,7 +2364,7 @@ async function loadBoard() {
             <div class="sticky-note ${n.color}" data-id="${n.corcho_notas_id}" style="left:${n.pos_x}%; top:${n.pos_y}%; transform: rotate(${n.rotacion}deg);">
                 <button class="sticky-note-del" onclick="deleteBoardNote(${n.corcho_notas_id})" title="Quitar nota">&times;</button>
                 <p>${escapeHtml(n.texto)}</p>
-                <span class="sticky-note-author">${n.autor}${n.visibilidad && n.visibilidad !== 'todos' ? ' · 🔒' : ''}</span>
+                <span class="sticky-note-author">${n.autor}${n.visibilidad && n.visibilidad !== 'todos' ? ' · Privado' : ''}</span>
             </div>
         `).join('');
 
@@ -2162,17 +2554,20 @@ async function loadInstitutions(page) {
         __institutionsCache = result.data || [];
 
         if (__institutionsCache.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center">No hay instituciones registradas</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="8" class="text-center">No hay instituciones registradas</td></tr>';
             renderPagination('institutionsPagination', 1, 1, 'loadInstitutions');
             return;
         }
 
+        const tipoLabelMap = { colegio: 'Colegio', escuela: 'Escuela', instituto: 'Instituto', universidad: 'Universidad', otro: 'Otro' };
         tbody.innerHTML = __institutionsCache.map(i => `
             <tr>
                 <td><strong>${i.nombre}</strong></td>
+                <td>${tipoLabelMap[i.tipo] || '—'}</td>
                 <td>${i.correo || '—'}</td>
                 <td>${i.telefono || '—'}</td>
                 <td>${i.direccion || '—'}</td>
+                <td>${i.estado_verificacion === 'verificado' ? 'Verificada' : 'Pendiente'}</td>
                 <td>${i.total_usuarios || 0}</td>
                 <td>
                     <button class="school-attendance-btn" onclick="viewInstitutionStats(${i.instituciones_id}, '${(i.nombre || '').replace(/'/g, "\\'")}')">Ver detalle</button>
@@ -2229,6 +2624,7 @@ document.getElementById('addInstitutionForm')?.addEventListener('submit', async 
     e.preventDefault();
     const data = {
         nombre: document.getElementById('institutionName').value,
+        tipo: document.getElementById('institutionTipo').value,
         correo: document.getElementById('institutionEmail').value,
         telefono: document.getElementById('institutionPhone').value,
         direccion: document.getElementById('institutionAddress').value,
@@ -2256,6 +2652,7 @@ function editInstitution(id) {
     if (!i) { ndaAlert('No se encontró la institución.'); return; }
     document.getElementById('editInstitutionId').value = i.instituciones_id;
     document.getElementById('editInstitutionName').value = i.nombre || '';
+    document.getElementById('editInstitutionTipo').value = i.tipo || 'colegio';
     document.getElementById('editInstitutionEmail').value = i.correo || '';
     document.getElementById('editInstitutionPhone').value = i.telefono || '';
     document.getElementById('editInstitutionAddress').value = i.direccion || '';
@@ -2267,6 +2664,7 @@ document.getElementById('editInstitutionForm')?.addEventListener('submit', async
     const data = {
         id: document.getElementById('editInstitutionId').value,
         nombre: document.getElementById('editInstitutionName').value,
+        tipo: document.getElementById('editInstitutionTipo').value,
         correo: document.getElementById('editInstitutionEmail').value,
         telefono: document.getElementById('editInstitutionPhone').value,
         direccion: document.getElementById('editInstitutionAddress').value,
@@ -2467,7 +2865,7 @@ async function deleteUser(id) {
     }
 }
 
-// ─── NOTICIAS INTERNAS ───
+// ─── NOTICIAS INTERNAS (grid de tarjetas + modal de lectura completa) ───
 let __newsCache = [];
 let __newsPage = 1;
 
@@ -2475,55 +2873,64 @@ async function loadNews(page) {
     const list = document.getElementById('newsList');
     if (!list) return;
     __newsPage = page || 1;
-    list.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);">Cargando noticias...</div>';
+    list.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);grid-column:1/-1;">Cargando noticias...</div>';
 
     try {
-        const response = await fetch(`?url=school/news&page=${__newsPage}&per_page=10`);
+        const response = await fetch(`?url=school/news&page=${__newsPage}&per_page=12`);
         const result = await response.json();
 
         if (result.error) {
-            list.innerHTML = `<div class="text-center" style="padding:20px;color:var(--text3);">Error: ${result.error}</div>`;
+            list.innerHTML = `<div class="text-center" style="padding:20px;color:var(--text3);grid-column:1/-1;">Error: ${result.error}</div>`;
             return;
         }
         __newsCache = result.data || [];
 
         if (__newsCache.length === 0) {
-            list.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);">No hay noticias publicadas todavía</div>';
+            list.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);grid-column:1/-1;">No hay noticias publicadas todavía</div>';
             renderPagination('newsPagination', 1, 1, 'loadNews');
             return;
         }
 
         list.innerHTML = __newsCache.map(n => `
-            <div class="school-card" style="margin-bottom:12px;">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
-                    <h3 style="margin:0;">${n.titulo}${!n.instituciones_id ? ' <span class="chip b">Global</span>' : ''}</h3>
-                    ${window.__ndaIsSchoolAdmin ? `<span>
-                        <button class="school-attendance-btn" onclick="editNews(${n.noticias_internas_id})">Editar</button>
-                        <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteNews(${n.noticias_internas_id})">Eliminar</button>
-                    </span>` : ''}
+            <div class="school-blog-card" data-cat="${n.instituciones_id ? 'institucion' : 'global'}" onclick="location.href='?url=school/news-detail&id=${n.noticias_internas_id}'">
+                ${n.imagen
+                    ? `<img class="school-blog-card-thumb" src="${n.imagen}" alt="${escapeHtml(n.titulo)}">`
+                    : `<div class="school-blog-card-thumb placeholder">Sin imagen</div>`}
+                <div class="school-blog-card-body">
+                    <h4>${escapeHtml(n.titulo)}${!n.instituciones_id ? ' <span class="chip b">Global</span>' : ''}</h4>
+                    <p class="school-blog-card-excerpt">${escapeHtml(n.resumen || n.contenido).slice(0, 140)}</p>
+                    <div class="school-blog-card-meta">
+                        <span>${escapeHtml(n.autor || 'Administración')}</span>
+                        <span>${new Date(n.created_at).toLocaleDateString('es-SV')}</span>
+                    </div>
+                    <div class="school-blog-card-stats">${n.total_likes || 0} me gusta · ${n.total_comments || 0} comentarios</div>
                 </div>
-                <p style="white-space:pre-wrap;">${n.contenido}</p>
-                <span style="font-size:0.7rem;color:var(--text3);">Por ${n.autor || 'Administración'} · ${new Date(n.created_at).toLocaleString('es-SV')}</span>
+                ${window.__ndaIsSchoolAdmin ? `<div class="school-blog-card-actions" onclick="event.stopPropagation()">
+                    <button class="school-attendance-btn" onclick="editNews(${n.noticias_internas_id})">Editar</button>
+                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteNews(${n.noticias_internas_id})">Eliminar</button>
+                </div>` : ''}
             </div>
         `).join('');
 
         renderPagination('newsPagination', result.page, result.total_pages, 'loadNews');
     } catch (e) {
-        list.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);">Error al cargar noticias</div>';
+        list.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);grid-column:1/-1;">Error al cargar noticias</div>';
         console.error(e);
     }
 }
 
 document.getElementById('addNewsForm')?.addEventListener('submit', async function (e) {
     e.preventDefault();
-    const data = {
-        titulo: document.getElementById('newsTitle').value,
-        contenido: document.getElementById('newsContent').value,
-    };
+    const formData = new FormData();
+    formData.append('titulo', document.getElementById('newsTitle').value);
+    formData.append('resumen', document.getElementById('newsResumen').value);
+    formData.append('contenido', document.getElementById('newsContent').value);
+    const fileInput = document.getElementById('newsImage');
+    if (fileInput && fileInput.files[0]) {
+        formData.append('imagen', fileInput.files[0]);
+    }
     try {
-        const response = await fetch('?url=school/add-news', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
-        });
+        const response = await fetch('?url=school/add-news', { method: 'POST', body: formData });
         const result = await response.json();
         if (result.success) {
             closeModal('addNewsModal');
@@ -2542,21 +2949,24 @@ function editNews(id) {
     if (!n) { ndaAlert('No se encontró la noticia.'); return; }
     document.getElementById('editNewsId').value = n.noticias_internas_id;
     document.getElementById('editNewsTitle').value = n.titulo || '';
+    document.getElementById('editNewsResumen').value = n.resumen || '';
     document.getElementById('editNewsContent').value = n.contenido || '';
     openModal('editNewsModal');
 }
 
 document.getElementById('editNewsForm')?.addEventListener('submit', async function (e) {
     e.preventDefault();
-    const data = {
-        id: document.getElementById('editNewsId').value,
-        titulo: document.getElementById('editNewsTitle').value,
-        contenido: document.getElementById('editNewsContent').value,
-    };
+    const formData = new FormData();
+    formData.append('id', document.getElementById('editNewsId').value);
+    formData.append('titulo', document.getElementById('editNewsTitle').value);
+    formData.append('resumen', document.getElementById('editNewsResumen').value);
+    formData.append('contenido', document.getElementById('editNewsContent').value);
+    const fileInput = document.getElementById('editNewsImage');
+    if (fileInput && fileInput.files[0]) {
+        formData.append('imagen', fileInput.files[0]);
+    }
     try {
-        const response = await fetch('?url=school/update-news', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
-        });
+        const response = await fetch('?url=school/update-news', { method: 'POST', body: formData });
         const result = await response.json();
         if (result.success) {
             closeModal('editNewsModal');
@@ -2584,49 +2994,56 @@ async function deleteNews(id) {
     }
 }
 
-// ─── BLOG DE LUGARES EN RIESGO ───
+// ─── LUGARES EN RIESGO (grid de tarjetas + modal de lectura completa) ───
 let __blogPage = 1;
+let __blogCache = [];
 
 async function loadBlog(page) {
     const list = document.getElementById('blogList');
     if (!list) return;
     __blogPage = page || 1;
-    list.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);">Cargando publicaciones...</div>';
+    list.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);grid-column:1/-1;">Cargando publicaciones...</div>';
 
     try {
-        const response = await fetch(`?url=school/blog&page=${__blogPage}&per_page=10`);
+        const response = await fetch(`?url=school/blog&page=${__blogPage}&per_page=12`);
         const result = await response.json();
 
         if (result.error) {
-            list.innerHTML = `<div class="text-center" style="padding:20px;color:var(--text3);">Error: ${result.error}</div>`;
+            list.innerHTML = `<div class="text-center" style="padding:20px;color:var(--text3);grid-column:1/-1;">Error: ${result.error}</div>`;
             return;
         }
-        const rows = result.data || [];
+        __blogCache = result.data || [];
 
-        if (rows.length === 0) {
-            list.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);">Nadie ha publicado todavía. ¡Sé el primero en reportar un lugar en riesgo!</div>';
+        if (__blogCache.length === 0) {
+            list.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);grid-column:1/-1;">Nadie ha publicado todavía. ¡Sé el primero en reportar un lugar en riesgo!</div>';
             renderPagination('blogPagination', 1, 1, 'loadBlog');
             return;
         }
 
-        list.innerHTML = rows.map(b => `
-            <div class="school-card" style="margin-bottom:12px;">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
-                    <h3 style="margin:0;">📍 ${b.titulo}</h3>
-                    ${(window.__ndaIsSchoolAdmin || String(b.usuarios_id) === String(window.__ndaMyUserId)) ? `
-                        <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteBlogPost(${b.blog_riesgos_id})">Eliminar</button>
-                    ` : ''}
+        list.innerHTML = __blogCache.map(b => `
+            <div class="school-blog-card" data-cat="${b.autor_role}" onclick="location.href='?url=school/riesgo-detail&id=${b.blog_riesgos_id}'">
+                ${b.imagen
+                    ? `<img class="school-blog-card-thumb" src="${b.imagen}" alt="${escapeHtml(b.titulo)}">`
+                    : `<div class="school-blog-card-thumb placeholder">Sin imagen</div>`}
+                <div class="school-blog-card-body">
+                    <h4>${escapeHtml(b.titulo)}</h4>
+                    ${b.ubicacion ? `<div class="school-incident-location">${escapeHtml(b.ubicacion)}</div>` : ''}
+                    <p class="school-blog-card-excerpt">${escapeHtml(b.descripcion).slice(0, 140)}</p>
+                    <div class="school-blog-card-meta">
+                        <span>${escapeHtml(b.autor)} (${roleLabelMap[b.autor_role] || b.autor_role})</span>
+                        <span>${new Date(b.created_at).toLocaleDateString('es-SV')}</span>
+                    </div>
+                    <div class="school-blog-card-stats">${b.total_likes || 0} me gusta · ${b.total_comments || 0} comentarios</div>
                 </div>
-                ${b.imagen ? `<img class="school-incident-photo" src="${b.imagen}" alt="Foto del lugar" onclick="window.open('${b.imagen}','_blank')">` : ''}
-                ${b.ubicacion ? `<div class="school-incident-location">📍 ${b.ubicacion}</div>` : ''}
-                <p style="white-space:pre-wrap;">${escapeHtml(b.descripcion)}</p>
-                <span style="font-size:0.7rem;color:var(--text3);">Por ${b.autor} (${roleLabelMap[b.autor_role] || b.autor_role}) · ${new Date(b.created_at).toLocaleString('es-SV')}</span>
+                ${(window.__ndaIsSchoolAdmin || String(b.usuarios_id) === String(window.__ndaMyUserId)) ? `<div class="school-blog-card-actions" onclick="event.stopPropagation()">
+                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteBlogPost(${b.blog_riesgos_id})">Eliminar</button>
+                </div>` : ''}
             </div>
         `).join('');
 
         renderPagination('blogPagination', result.page, result.total_pages, 'loadBlog');
     } catch (e) {
-        list.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);">Error al cargar el blog</div>';
+        list.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);grid-column:1/-1;">Error al cargar el blog</div>';
         console.error(e);
     }
 }
@@ -2673,6 +3090,120 @@ async function deleteBlogPost(id) {
     }
 }
 
+// ─── "ME GUSTA" Y COMENTARIOS (paginas de detalle: Noticias / Riesgos / Incidentes) ───
+let __commentsCache = [];
+
+function initInteractionBar() {
+    if (!window.__ndaContentTipo || !window.__ndaContentId) return;
+    loadInteractionSummary();
+    loadComments();
+}
+
+async function loadInteractionSummary() {
+    try {
+        const response = await fetch(`?url=school/interaction-summary&tipo=${window.__ndaContentTipo}&id=${window.__ndaContentId}`);
+        const data = await response.json();
+        renderLikeButton(data.total_likes || 0, !!data.liked_by_me);
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+function renderLikeButton(total, likedByMe) {
+    const btn = document.getElementById('likeBtn');
+    if (!btn) return;
+    btn.classList.toggle('active', likedByMe);
+    document.getElementById('likeCount').textContent = total;
+}
+
+async function toggleLike() {
+    try {
+        const response = await fetch('?url=school/toggle-like', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tipo: window.__ndaContentTipo, id: window.__ndaContentId })
+        });
+        const result = await response.json();
+        if (result.success) {
+            renderLikeButton(result.total, result.liked);
+        } else {
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
+        }
+    } catch (e) {
+        ndaAlert('Error de conexión');
+    }
+}
+
+async function loadComments() {
+    const list = document.getElementById('commentsList');
+    if (!list) return;
+    list.innerHTML = '<div class="text-center" style="padding:14px;color:var(--text3);">Cargando comentarios...</div>';
+    try {
+        const response = await fetch(`?url=school/comments&tipo=${window.__ndaContentTipo}&id=${window.__ndaContentId}`);
+        const comments = await response.json();
+        if (comments.error) {
+            list.innerHTML = `<div class="text-center" style="padding:14px;color:var(--text3);">Error: ${comments.error}</div>`;
+            return;
+        }
+        __commentsCache = Array.isArray(comments) ? comments : [];
+
+        if (__commentsCache.length === 0) {
+            list.innerHTML = '<div class="text-center" style="padding:14px;color:var(--text3);">Sé el primero en comentar.</div>';
+            return;
+        }
+
+        list.innerHTML = __commentsCache.map(c => `
+            <div class="school-comment">
+                <div class="school-comment-head">
+                    <strong>${escapeHtml(c.autor)}</strong>
+                    <span>${roleLabelMap[c.autor_role] || c.autor_role} · ${new Date(c.created_at).toLocaleString('es-SV')}</span>
+                    ${(window.__ndaIsSchoolAdmin || String(c.usuarios_id) === String(window.__ndaMyUserId)) ? `<button class="school-comment-del" onclick="deleteComment(${c.interacciones_comentarios_id})">Eliminar</button>` : ''}
+                </div>
+                <p>${escapeHtml(c.texto)}</p>
+            </div>
+        `).join('');
+    } catch (e) {
+        list.innerHTML = '<div class="text-center" style="padding:14px;color:var(--text3);">Error al cargar comentarios</div>';
+        console.error(e);
+    }
+}
+
+document.getElementById('addCommentForm')?.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const textarea = document.getElementById('commentText');
+    try {
+        const response = await fetch('?url=school/add-comment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tipo: window.__ndaContentTipo, id: window.__ndaContentId, texto: textarea.value })
+        });
+        const result = await response.json();
+        if (result.success) {
+            textarea.value = '';
+            loadComments();
+        } else {
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
+        }
+    } catch (e) {
+        ndaAlert('Error de conexión');
+    }
+});
+
+async function deleteComment(id) {
+    if (!(await ndaConfirm('¿Eliminar este comentario?'))) return;
+    try {
+        const response = await fetch(`?url=school/delete-comment&id=${id}`);
+        const result = await response.json();
+        if (result.success) {
+            loadComments();
+        } else {
+            ndaAlert('Error: ' + (result.error || 'Desconocido'));
+        }
+    } catch (e) {
+        ndaAlert('Error de conexión');
+    }
+}
+
 // ─── BLOG PÚBLICO: ARTÍCULOS Y NOTICIAS (Admin General) ───
 let __articulosCache = [];
 let __articulosPage = 1;
@@ -2706,7 +3237,7 @@ async function loadArticulos(page) {
                 <td><strong>${escapeHtml(a.titulo)}</strong></td>
                 <td>${escapeHtml(a.cat)}</td>
                 <td>${escapeHtml(a.autor_nombre)}</td>
-                <td>${a.destacado == 1 ? '⭐ Sí' : '—'}</td>
+                <td>${a.destacado == 1 ? 'Sí' : '—'}</td>
                 <td>
                     <button class="school-attendance-btn" onclick="editArticulo(${a.blog_id})">Editar</button>
                     <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteArticulo(${a.blog_id})">Eliminar</button>
@@ -3025,6 +3556,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('studentsTableBody')) loadStudents();
     if (document.getElementById('institutionsTableBody')) loadInstitutions();
     if (document.getElementById('myClassroomInfo')) loadMyClassroom();
+    initCardFilterBar('newsFilters');
+    initCardFilterBar('blogFilters');
+    initCardFilterBar('incidentsFilters');
 });
 
 // ─── MI AULA (Estudiante) ───

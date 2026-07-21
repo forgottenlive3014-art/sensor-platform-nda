@@ -49,6 +49,7 @@ class InstitucionController {
 
         $id = $model->create([
             'nombre' => $nombre,
+            'tipo' => trim($input['tipo'] ?? ''),
             'correo' => $correo,
             'telefono' => trim($input['telefono'] ?? ''),
             'direccion' => trim($input['direccion'] ?? ''),
@@ -83,6 +84,7 @@ class InstitucionController {
 
         $model->update($id, [
             'nombre' => $nombre,
+            'tipo' => trim($input['tipo'] ?? ''),
             'correo' => $correo,
             'telefono' => trim($input['telefono'] ?? ''),
             'direccion' => trim($input['direccion'] ?? ''),

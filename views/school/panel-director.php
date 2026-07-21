@@ -1,5 +1,5 @@
-<?php
-$title = $title ?? 'Gestión Escolar';
+﻿<?php
+$title = $title ?? 'Panel de Gestión';
 $user = $user ?? null;
 $stats = $stats ?? [];
 $students = $students ?? [];
@@ -15,7 +15,13 @@ ob_start();
 
 <div class="school-module">
 
-    <?php include __DIR__ . '/../partials/_header.php'; ?>
+    <?php include __DIR__ . '/partials/_header.php'; ?>
+
+    <div class="school-panel-header" style="padding:0 0 10px;">
+        <a href="?url=school" class="school-btn secondary">
+            Volver a la Página Principal
+        </a>
+    </div>
 
     <div class="school-body">
     <div class="school-tabs school-sidebar">
@@ -24,9 +30,6 @@ ob_start();
         </button>
         <button class="school-tab" data-tab="users" onclick="showSchoolTab('users')">
             Usuarios
-        </button>
-        <button class="school-tab" data-tab="news" onclick="showSchoolTab('news')">
-            Noticias
         </button>
         <button class="school-tab" data-tab="notifications" onclick="showSchoolTab('notifications')">
             Notificaciones
@@ -52,17 +55,11 @@ ob_start();
         <button class="school-tab" data-tab="attendance" onclick="showSchoolTab('attendance')">
             Pase de Lista
         </button>
-        <button class="school-tab" data-tab="incidents" onclick="showSchoolTab('incidents')">
-            Incidentes / Daños
-        </button>
         <button class="school-tab" data-tab="sections" onclick="showSchoolTab('sections')">
             Secciones
         </button>
         <button class="school-tab" data-tab="croquis" onclick="showSchoolTab('croquis')">
             Croquis
-        </button>
-        <button class="school-tab" data-tab="board" onclick="showSchoolTab('board')">
-            Corcho
         </button>
         <button class="school-tab" data-tab="requests" onclick="showSchoolTab('requests')">
             Solicitudes
@@ -79,29 +76,26 @@ ob_start();
     </div>
 
     <div class="school-content">
-        <?php include __DIR__ . '/../partials/_tab-dashboard.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-users.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-news.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-notifications.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-students.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-teachers.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-parents.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-staff.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-classrooms.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-routes.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-attendance.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-incidents.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-drills.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-reports.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-sections.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-croquis.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-board.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-requests.php'; ?>
+        <?php include __DIR__ . '/partials/_tab-dashboard.php'; ?>
+        <?php include __DIR__ . '/partials/_tab-users.php'; ?>
+        <?php include __DIR__ . '/partials/_tab-notifications.php'; ?>
+        <?php include __DIR__ . '/partials/_tab-students.php'; ?>
+        <?php include __DIR__ . '/partials/_tab-teachers.php'; ?>
+        <?php include __DIR__ . '/partials/_tab-parents.php'; ?>
+        <?php include __DIR__ . '/partials/_tab-staff.php'; ?>
+        <?php include __DIR__ . '/partials/_tab-classrooms.php'; ?>
+        <?php include __DIR__ . '/partials/_tab-routes.php'; ?>
+        <?php include __DIR__ . '/partials/_tab-attendance.php'; ?>
+        <?php include __DIR__ . '/partials/_tab-drills.php'; ?>
+        <?php include __DIR__ . '/partials/_tab-reports.php'; ?>
+        <?php include __DIR__ . '/partials/_tab-sections.php'; ?>
+        <?php include __DIR__ . '/partials/_tab-croquis.php'; ?>
+        <?php include __DIR__ . '/partials/_tab-requests.php'; ?>
     </div>
     </div><!-- /.school-body -->
 </div>
 
-<?php include __DIR__ . '/../partials/_modals.php'; ?>
+<?php include __DIR__ . '/partials/_modals.php'; ?>
 
 <script>
     window.__ndaIsSchoolStaff = <?= !empty($isSchoolStaff) ? 'true' : 'false' ?>;

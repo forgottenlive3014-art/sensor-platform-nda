@@ -1,11 +1,11 @@
-        <!-- ========================================================== -->
+﻿        <!-- ========================================================== -->
         <!--  PERSONAL ADMINISTRATIVO -->
         <!-- ========================================================== -->
         <div id="tab-staff" class="school-panel">
             <div class="school-panel-header">
-                <h3><span class="school-emoji" aria-hidden="true">🧑‍💼</span> Personal Administrativo</h3>
+                <h3>Personal Administrativo</h3>
                 <button class="school-btn primary" onclick="openModal('addStaffModal')">
-                    <span class="school-emoji" aria-hidden="true">➕</span> Agregar Personal
+                    Agregar Personal
                 </button>
             </div>
             <div class="school-panel-header" style="margin-top:0;">

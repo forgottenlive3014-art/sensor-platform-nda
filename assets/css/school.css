@@ -80,6 +80,55 @@
     gap: 20px;
 }
 
+/* ─── PAGINA PRINCIPAL (school): pagina normal de una sola columna con
+   scroll, como el resto del sitio (home/blog/sismos) — sin sidebar de
+   pestañas. Las secciones son las mismas .school-panel de siempre, solo
+   que aqui se muestran todas apiladas en vez de una a la vez. ─── */
+html { scroll-behavior: smooth; }
+
+.school-scroll-nav {
+    position: sticky;
+    top: 78px;
+    z-index: 40;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin-bottom: 24px;
+}
+.school-scroll-nav a {
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text2);
+    text-decoration: none;
+    transition: all 0.2s;
+}
+.school-scroll-nav a:hover {
+    background: var(--bg3);
+    color: var(--text);
+}
+
+.school-scroll-page .school-panel {
+    display: block;
+    scroll-margin-top: 150px;
+    padding-bottom: 36px;
+    margin-bottom: 36px;
+    border-bottom: 1px solid var(--border);
+}
+.school-scroll-page .school-panel:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+.school-scroll-page > .school-panel > .school-panel-header h3 {
+    font-family: var(--fd);
+    font-size: 1.4rem;
+}
+
 .school-tabs {
     /* Antes: barra horizontal de tabs. Ahora: sidebar vertical fija a la
        izquierda. Se conserva el nombre de la clase porque school.js no la
@@ -233,6 +282,203 @@
     font-weight: 700;
     margin-bottom: 14px;
     color: var(--text);
+}
+
+/* ─── FILTROS DE VISIBILIDAD (mismo patron que .blog-filters/.bfilter en views/blog.php) ─── */
+.school-filters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+.sfilter {
+    background: transparent;
+    color: var(--text2);
+    border: 1px solid var(--border);
+    padding: 7px 16px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-family: var(--fn);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.sfilter:hover {
+    color: var(--text);
+    border-color: var(--acc);
+}
+.sfilter.active {
+    background: var(--acc);
+    color: #fff;
+    border-color: transparent;
+}
+
+/* ─── CARD GRID (Noticias / Lugares en riesgo) ─── */
+.school-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+.school-blog-card {
+    background: var(--card);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+}
+.school-blog-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--acc);
+}
+.school-blog-card-thumb {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    background: var(--bg3);
+}
+.school-blog-card-thumb.placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+.school-blog-card-body {
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+}
+.school-blog-card-body h4 {
+    font-family: var(--fd);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+}
+.school-blog-card-excerpt {
+    font-size: 0.8rem;
+    color: var(--text2);
+    flex: 1;
+}
+.school-blog-card-meta {
+    font-size: 0.7rem;
+    color: var(--text3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+.school-blog-card-stats {
+    font-size: 0.72rem;
+    color: var(--text3);
+    font-weight: 600;
+}
+.school-blog-card-actions {
+    padding: 0 16px 14px;
+    display: flex;
+    gap: 6px;
+}
+
+/* Modal ancho (heredado, ya no se usa para detalle pero se deja por si otro
+   modal lo necesita) */
+.school-modal-wide {
+    max-width: 720px;
+}
+
+/* ─── PAGINA DE DETALLE: imagen al costado del texto (lectura) ─── */
+.school-detail-layout {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+}
+.school-detail-media {
+    flex: 0 0 300px;
+}
+.school-detail-text {
+    flex: 1;
+    min-width: 0;
+}
+.school-detail-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+@media (max-width: 720px) {
+    .school-detail-layout {
+        flex-direction: column;
+    }
+    .school-detail-media {
+        flex: 0 0 auto;
+        width: 100%;
+    }
+    .school-detail-img {
+        height: 200px;
+    }
+}
+
+/* ─── ME GUSTA Y COMENTARIOS (paginas de detalle) ─── */
+.school-like-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: var(--fn);
+}
+.school-like-btn:hover {
+    border-color: var(--acc2);
+}
+.school-like-btn.active {
+    background: rgba(230, 57, 70, 0.1);
+    border-color: var(--acc2);
+    color: var(--acc2);
+}
+.school-comment {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+}
+.school-comment:last-child {
+    border-bottom: none;
+}
+.school-comment-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 0.75rem;
+    color: var(--text3);
+    margin-bottom: 4px;
+}
+.school-comment-head strong {
+    color: var(--text);
+    font-size: 0.85rem;
+}
+.school-comment p {
+    font-size: 0.85rem;
+    color: var(--text2);
+    white-space: pre-wrap;
+}
+.school-comment-del {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: var(--acc2);
+    font-size: 0.7rem;
+    cursor: pointer;
+}
+.school-comment-del:hover {
+    text-decoration: underline;
 }
 
 /* ─── TABLES ─── */

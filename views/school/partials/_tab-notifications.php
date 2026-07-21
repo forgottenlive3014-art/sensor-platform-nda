@@ -1,11 +1,11 @@
-        <!-- ========================================================== -->
+﻿        <!-- ========================================================== -->
         <!--  NOTIFICACIONES -->
         <!-- ========================================================== -->
         <div id="tab-notifications" class="school-panel">
             <div class="school-panel-header">
-                <h3><span class="school-emoji" aria-hidden="true">🔔</span> Notificaciones enviadas</h3>
+                <h3>Notificaciones enviadas</h3>
                 <button class="school-btn primary" onclick="openModal('sendNotificationModal')">
-                    <span class="school-emoji" aria-hidden="true">📣</span> Enviar notificación
+                    Enviar notificación
                 </button>
             </div>
             <p class="school-hint">Avisos enviados a la comunidad institucional (o de forma global, si eres Admin General).</p>
