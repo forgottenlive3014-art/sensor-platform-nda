@@ -202,16 +202,6 @@ ob_start();
   </div>
 </section>
 
-<!-- ENLACE AL SISMOGRAFO ARDUINO (ahora en su propia pagina) -->
-<section class="sec">
-  <div class="wrap">
-    <a href="?url=arduino" class="find-card" style="max-width:640px;margin:0 auto;">
-      <div class="find-card-visual" style="background:linear-gradient(135deg,#c98a3d,#8a5a24)"><svg width="1.8em" height="1.8em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><line x1="9" y1="2" x2="9" y2="6"/><line x1="15" y1="2" x2="15" y2="6"/><line x1="9" y1="18" x2="9" y2="22"/><line x1="15" y1="18" x2="15" y2="22"/></svg></div>
-      <div class="find-card-body"><h3>Sismógrafo de Arduino</h3><p>Una maqueta real de sensor de vibración: del hardware a la alerta en pantalla, con lectura en vivo.</p><span class="fc-cta">Ver hardware →</span></div>
-    </a>
-  </div>
-</section>
-
 <?php
 $content = ob_get_clean();
 require_once 'layout.php';

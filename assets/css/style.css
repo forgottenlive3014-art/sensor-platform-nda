@@ -182,7 +182,7 @@ canvas {
     gap: 0;
 }
 [data-theme="light"] .nav {
-    background: rgba(247, 247, 248, 0.93);
+    background: rgba(247, 247, 248, 0.72);
 }
 .nav.scrolled {
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
