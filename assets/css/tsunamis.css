@@ -1,0 +1,13 @@
+/* Tema visual propio de la pagina de Tsunamis. */
+.dis-page.dis-tsunamis { --dis-accent: #1f7aa8; --dis-accent2: #0e3a52; }
+
+.dis-tsunamis .dis-hero {
+    background: radial-gradient(ellipse at 30% 0%, rgba(120, 130, 145, .10) 0%, transparent 55%);
+}
+.dis-tsunamis .dis-hero-icon {
+    animation: dis-wave-bob 3s ease-in-out infinite;
+}
+@keyframes dis-wave-bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}

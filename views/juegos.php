@@ -112,13 +112,13 @@ ob_start();
     display:inline-block; font-size:.72rem; letter-spacing:3px; font-weight:800;
     color:#2e8b7f; background:rgba(46, 139, 127,.12); padding:6px 14px; border-radius:100px; margin-bottom:14px;
 }
-.games-title{ font-size:clamp(2rem,5vw,3rem); font-weight:900; color:var(--text1); margin:0; }
+.games-title{ font-family:var(--fd); font-size:clamp(2rem,5vw,3rem); font-weight:900; color:var(--text); margin:0; }
 .games-title .grad{ background:linear-gradient(135deg,#f29f05,#c2441c); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
 
 /* ===== Tabs ===== */
 .game-tabs{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-bottom:30px; }
 .gtab{
-    background:var(--card2); color:var(--text1); border:1px solid var(--border);
+    background:var(--card2); color:var(--text); border:1px solid var(--border);
     padding:10px 22px; border-radius:50px; font-size:.9rem; cursor:pointer; transition:all .2s; font-weight:600;
 }
 .gtab:hover{ transform:translateY(-2px); border-color:rgba(46, 139, 127,.4); }
@@ -132,7 +132,7 @@ ob_start();
     max-width:760px; margin:0 auto; position:relative; overflow:hidden;
 }
 .game-card-head{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:6px; }
-.game-card-head h2{ font-size:1.4rem; font-weight:900; color:var(--text1); margin:0; }
+.game-card-head h2{ font-family:var(--fd); font-size:1.4rem; font-weight:900; color:var(--text); margin:0; }
 .game-hint{ color:var(--text2); font-size:.9rem; margin:0 0 20px; }
 .big-emoji{ font-size:4.5rem; margin-bottom:8px; animation:bob 3s ease-in-out infinite; }
 .play-btn{
@@ -140,20 +140,20 @@ ob_start();
     border-radius:100px; font-weight:800; font-size:1rem; cursor:pointer; transition:transform .2s, box-shadow .2s; margin-top:8px;
 }
 .play-btn:hover{ transform:scale(1.05); box-shadow:0 8px 26px rgba(242, 159, 5,.4); }
-.mini-btn{ background:var(--card2); border:1px solid var(--border); color:var(--text1); padding:6px 14px; border-radius:100px; cursor:pointer; font-size:.8rem; transition:all .2s; }
+.mini-btn{ background:var(--card2); border:1px solid var(--border); color:var(--text); padding:6px 14px; border-radius:100px; cursor:pointer; font-size:.8rem; transition:all .2s; }
 .mini-btn:hover{ border-color:#f29f05; }
 
 /* ===== QUIZ ===== */
 .quiz-screen{ text-align:center; }
-.quiz-screen h2{ font-size:1.6rem; font-weight:900; color:var(--text1); margin:6px 0; }
+.quiz-screen h2{ font-family:var(--fd); font-size:1.6rem; font-weight:900; color:var(--text); margin:6px 0; }
 .quiz-screen > p{ color:var(--text2); margin:0 0 18px; }
 .quiz-top{ display:flex; justify-content:space-between; font-size:.85rem; color:var(--text2); font-weight:600; margin-bottom:8px; }
 .quiz-bar{ height:8px; background:var(--card2); border-radius:100px; overflow:hidden; margin-bottom:24px; }
 .quiz-bar-fill{ height:100%; width:0; background:linear-gradient(90deg,#f29f05,#2e8b7f); border-radius:100px; transition:width .4s ease; }
-.quiz-q{ font-size:1.25rem; font-weight:800; color:var(--text1); margin:0 0 22px; line-height:1.3; text-align:left; }
+.quiz-q{ font-size:1.25rem; font-weight:800; color:var(--text); margin:0 0 22px; line-height:1.3; text-align:left; }
 .quiz-options{ display:grid; gap:12px; }
 .quiz-opt{
-    background:var(--card2); border:1.5px solid var(--border); color:var(--text1); text-align:left;
+    background:var(--card2); border:1.5px solid var(--border); color:var(--text); text-align:left;
     padding:15px 18px; border-radius:14px; cursor:pointer; font-size:.95rem; transition:all .2s;
 }
 .quiz-opt:hover{ border-color:#f29f05; transform:translateX(4px); }
@@ -198,10 +198,10 @@ ob_start();
 }
 .drill-stage.go{ background:rgba(46, 139, 127,.16); border-color:#2e8b7f; }
 .drill-stage.wait{ background:rgba(242, 159, 5,.1); border-color:#f29f05; }
-.drill-msg{ font-size:1.3rem; font-weight:800; color:var(--text1); padding:0 16px; }
+.drill-msg{ font-size:1.3rem; font-weight:800; color:var(--text); padding:0 16px; }
 .drill-actions{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:18px; }
 .drill-act{
-    background:var(--card2); border:1.5px solid var(--border); color:var(--text1); padding:18px 8px;
+    background:var(--card2); border:1.5px solid var(--border); color:var(--text); padding:18px 8px;
     border-radius:14px; cursor:pointer; font-size:.95rem; font-weight:700; transition:all .15s;
 }
 .drill-act:hover{ border-color:#2e8b7f; transform:translateY(-2px); }

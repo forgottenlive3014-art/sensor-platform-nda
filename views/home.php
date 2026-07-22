@@ -30,7 +30,7 @@ ob_start();
           </div>
           <div class="hero-cta">
             <a href="?url=sismos" class="btn-acc"> Monitor Sísmico</a>
-            <a href="?url=monitoreo#arduino" class="btn-out"> Demo Arduino</a>
+            <a href="?url=arduino" class="btn-out"> Demo Arduino</a>
           </div>
         </div>
         <div class="hi-right">
@@ -215,7 +215,7 @@ ob_start();
         <div class="find-card-visual" style="background:linear-gradient(135deg,#597d4f,#33502b)"><svg width="1.8em" height="1.8em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="6"/><line x1="7" y1="12" x2="11" y2="12"/><line x1="9" y1="10" x2="9" y2="14"/><circle cx="16" cy="10.5" r="1"/><circle cx="18.5" cy="13" r="1"/></svg></div>
         <div class="find-card-body"><h3>Juegos y Trivias</h3><p>Pon a prueba lo aprendido con trivias y minijuegos sobre sismos, volcanes y prevención.</p><span class="fc-cta">Jugar →</span></div>
       </a>
-      <a href="?url=monitoreo#arduino" class="find-card">
+      <a href="?url=arduino" class="find-card">
         <div class="find-card-visual" style="background:linear-gradient(135deg,#335c67,#1c343b)"><svg width="1.8em" height="1.8em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><line x1="9" y1="2" x2="9" y2="6"/><line x1="15" y1="2" x2="15" y2="6"/><line x1="9" y1="18" x2="9" y2="22"/><line x1="15" y1="18" x2="15" y2="22"/><line x1="2" y1="9" x2="6" y2="9"/><line x1="2" y1="15" x2="6" y2="15"/><line x1="18" y1="9" x2="22" y2="9"/><line x1="18" y1="15" x2="22" y2="15"/></svg></div>
         <div class="find-card-body"><h3>Sismógrafo de Arduino</h3><p>Cómo funciona nuestra maqueta de sensor de vibración (MPU-6050) y su lectura en tiempo real.</p><span class="fc-cta">Ver demo →</span></div>
       </a>

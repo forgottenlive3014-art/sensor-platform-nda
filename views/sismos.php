@@ -55,7 +55,7 @@ ob_start();
         </div>
         <div class="sismo-body">
           <h3>¿Cómo se miden?</h3>
-          <p><strong>Sismógrafos y acelerómetros</strong> registran el movimiento del suelo en 3 ejes. Las ondas P (primarias) llegan primero; las ondas S (secundarias) llegan después y suelen causar más daño. La Red Sísmica de MARN opera más de 30 estaciones — esta plataforma incluye una maqueta con sensor Arduino, ver <a href="?url=monitoreo#arduino" style="color:var(--acc)">Monitoreo</a>.</p>
+          <p><strong>Sismógrafos y acelerómetros</strong> registran el movimiento del suelo en 3 ejes. Las ondas P (primarias) llegan primero; las ondas S (secundarias) llegan después y suelen causar más daño. La Red Sísmica de MARN opera más de 30 estaciones — esta plataforma incluye una maqueta con sensor Arduino, ver <a href="?url=arduino" style="color:var(--acc)">Sismógrafo Arduino</a>.</p>
           <div class="sismo-meta">
             <span class="mi">30+ estaciones · Red MARN</span>
           </div>

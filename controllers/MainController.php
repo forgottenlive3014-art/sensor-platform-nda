@@ -62,6 +62,46 @@ class MainController {
         view('monitoreo', $data);
     }
 
+    public function arduino() {
+        $data = [
+            'title' => 'Sismógrafo Arduino - NDA',
+            'user' => currentUser()
+        ];
+        view('arduino', $data);
+    }
+
+    // ---------------------------------------------------------------
+    // "Desastres" (dropdown del navbar): Sismos vive aparte (sismos()),
+    // estos 7 comparten la misma plantilla en views/desastres/.
+    // ---------------------------------------------------------------
+    public function volcanes() {
+        view('desastres/volcanes', ['title' => 'Volcanes - NDA', 'user' => currentUser()]);
+    }
+
+    public function tsunamis() {
+        view('desastres/tsunamis', ['title' => 'Tsunamis - NDA', 'user' => currentUser()]);
+    }
+
+    public function inundaciones() {
+        view('desastres/inundaciones', ['title' => 'Inundaciones - NDA', 'user' => currentUser()]);
+    }
+
+    public function deslizamientos() {
+        view('desastres/deslizamientos', ['title' => 'Deslizamientos - NDA', 'user' => currentUser()]);
+    }
+
+    public function incendiosForestales() {
+        view('desastres/incendios-forestales', ['title' => 'Incendios forestales - NDA', 'user' => currentUser()]);
+    }
+
+    public function tormentasTropicales() {
+        view('desastres/tormentas-tropicales', ['title' => 'Tormentas tropicales - NDA', 'user' => currentUser()]);
+    }
+
+    public function sequias() {
+        view('desastres/sequias', ['title' => 'Sequías - NDA', 'user' => currentUser()]);
+    }
+
     public function recursos() {
         $data = [
             'title' => 'Recursos - NDA',

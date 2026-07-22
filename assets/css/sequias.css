@@ -1,0 +1,6 @@
+/* Tema visual propio de la pagina de Sequias. */
+.dis-page.dis-sequias { --dis-accent: #b8862e; --dis-accent2: #5c4315; }
+
+.dis-sequias .dis-hero {
+    background: radial-gradient(ellipse at 30% 0%, rgba(120, 130, 145, .10) 0%, transparent 55%);
+}

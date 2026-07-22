@@ -1,0 +1,13 @@
+/* Tema visual propio de la pagina de Tormentas tropicales. */
+.dis-page.dis-tormentas { --dis-accent: #4a6fa5; --dis-accent2: #22334f; }
+
+.dis-tormentas .dis-hero {
+    background: radial-gradient(ellipse at 30% 0%, rgba(120, 130, 145, .10) 0%, transparent 55%);
+}
+.dis-tormentas .dis-hero-icon {
+    animation: dis-swirl 6s linear infinite;
+}
+@keyframes dis-swirl {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}

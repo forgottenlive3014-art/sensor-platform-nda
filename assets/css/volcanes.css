@@ -1,0 +1,14 @@
+/* Tema visual propio de la pagina de Volcanes. La estructura base
+   (grids, timeline, fuentes, etc.) vive en desastres-base.css. */
+.dis-page.dis-volcanes { --dis-accent: #e0631f; --dis-accent2: #7a2b0e; }
+
+.dis-volcanes .dis-hero {
+    background: radial-gradient(ellipse at 30% 0%, rgba(120, 130, 145, .10) 0%, transparent 55%);
+}
+.dis-volcanes .dis-hero-icon {
+    animation: dis-lava-pulse 2.6s ease-in-out infinite;
+}
+@keyframes dis-lava-pulse {
+    0%, 100% { box-shadow: 0 8px 28px -8px var(--dis-accent); }
+    50% { box-shadow: 0 8px 36px -4px var(--dis-accent); }
+}

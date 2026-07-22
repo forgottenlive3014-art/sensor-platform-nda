@@ -1,0 +1,19 @@
+<?php
+// Partial compartido: pastillas para saltar entre las 8 paginas de
+// "Desastres". $currentSlug (definido en cada vista) marca la actual.
+$__disItems = [
+    'sismos'                => 'Sismos',
+    'volcanes'              => 'Volcanes',
+    'tsunamis'              => 'Tsunamis',
+    'inundaciones'          => 'Inundaciones',
+    'deslizamientos'        => 'Deslizamientos',
+    'incendios-forestales'  => 'Incendios forestales',
+    'tormentas-tropicales'  => 'Tormentas tropicales',
+    'sequias'               => 'Sequías',
+];
+?>
+<div class="dis-quicknav">
+    <?php foreach ($__disItems as $__slug => $__label): ?>
+        <a class="dis-qn-item<?= $__slug === ($currentSlug ?? '') ? ' sel' : '' ?>" href="?url=<?= $__slug ?>"><?= $__label ?></a>
+    <?php endforeach; ?>
+</div>

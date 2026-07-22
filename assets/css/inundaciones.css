@@ -1,0 +1,6 @@
+/* Tema visual propio de la pagina de Inundaciones. */
+.dis-page.dis-inundaciones { --dis-accent: #2e7da6; --dis-accent2: #163f52; }
+
+.dis-inundaciones .dis-hero {
+    background: radial-gradient(ellipse at 30% 0%, rgba(120, 130, 145, .10) 0%, transparent 55%);
+}

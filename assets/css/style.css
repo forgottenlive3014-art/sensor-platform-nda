@@ -59,16 +59,16 @@
 
 /* ---------- TEMA CLARO ---------- */
 [data-theme="light"] {
-    --bg: #FDFBD4;
-    --bg2: #ece9e1;
-    --bg3: #e2ded3;
-    --bg4: #d6d1c4;
+    --bg: #f7f7f8;
+    --bg2: #eef0f2;
+    --bg3: #e4e6ea;
+    --bg4: #d7dade;
     --card: #ffffff;
-    --card2: #faf8f3;
-    --card3: #f0ede5;
-    --border: #E5E2DB;
-    --border2: #D6D0C2;
-    --border3: #C4BCA8;
+    --card2: #f5f6f7;
+    --card3: #edeef0;
+    --border: #e3e5e8;
+    --border2: #d3d6da;
+    --border3: #c0c4c9;
     --text: #1a2d3b;
     --text2: #5B6770;
     --text3: #6a7a85;
@@ -78,7 +78,7 @@
     --gB: rgba(61, 111, 143, 0.07);
     --sh: 0 4px 24px rgba(0, 0, 0, 0.09);
     --shl: 0 8px 40px rgba(0, 0, 0, 0.14);
-    --auth-wrap-bg: #FDFBD4;
+    --auth-wrap-bg: #f7f7f8;
     --auth-card-bg: rgba(255, 255, 255, 0.92);
     --auth-input-bg: #faf8f3;
     --auth-social-bg: #ffffff;
@@ -100,6 +100,24 @@ body {
     line-height: 1.65;
     overflow-x: hidden;
     transition: background var(--tr) var(--ez), color var(--tr) var(--ez);
+}
+
+/* Vineta suave en las esquinas para bajar el brillo del modo claro
+   (el modo oscuro ya tiene suficiente contraste propio, no la necesita). */
+.page-vignette {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    transition: background var(--tr) var(--ez);
+}
+[data-theme="light"] .page-vignette {
+    background:
+        radial-gradient(ellipse 70% 55% at 50% 50%, transparent 55%, rgba(20, 24, 32, 0.10) 100%),
+        radial-gradient(ellipse 40% 40% at 0% 0%, rgba(20, 24, 32, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 100% 0%, rgba(20, 24, 32, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 0% 100%, rgba(20, 24, 32, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 100% 100%, rgba(20, 24, 32, 0.08) 0%, transparent 60%);
 }
 
 a {
@@ -164,7 +182,7 @@ canvas {
     gap: 0;
 }
 [data-theme="light"] .nav {
-    background: rgba(253, 251, 212, 0.93);
+    background: rgba(247, 247, 248, 0.93);
 }
 .nav.scrolled {
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
@@ -5984,7 +6002,7 @@ body { top: 0 !important; }
 [data-theme="light"] .hero3d-vignette {
     background:
         radial-gradient(ellipse 70% 60% at 50% 105%, var(--bg) 0%, transparent 60%),
-        linear-gradient(180deg, rgba(253, 251, 212, 0.5) 0%, transparent 25%, transparent 75%, var(--bg) 100%);
+        linear-gradient(180deg, rgba(247, 247, 248, 0.5) 0%, transparent 25%, transparent 75%, var(--bg) 100%);
 }
 
 .h3d-phase {

@@ -1,0 +1,6 @@
+/* Tema visual propio de la pagina de Deslizamientos. */
+.dis-page.dis-deslizamientos { --dis-accent: #7a6a4a; --dis-accent2: #3d3320; }
+
+.dis-deslizamientos .dis-hero {
+    background: radial-gradient(ellipse at 30% 0%, rgba(120, 130, 145, .10) 0%, transparent 55%);
+}

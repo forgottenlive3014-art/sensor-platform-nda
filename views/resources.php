@@ -28,7 +28,7 @@ ob_start();
     <div class="wrap" style="padding-top: 80px; padding-bottom: 60px;">
 
         <div style="text-align: center; margin-bottom: 40px;">
-            <h1 style="font-size: 2.5rem; font-weight: 900; background: linear-gradient(135deg, #f97316, #ff5500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block;">
+            <h1 style="font-family: var(--fd); font-size: 2.5rem; font-weight: 900; background: linear-gradient(135deg, #f97316, #ff5500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block;">
                  Guías y Recursos Educativos
             </h1>
             <p style="color: var(--text2); font-size: 1.1rem; margin-top: 10px;">
@@ -38,11 +38,11 @@ ob_start();
 
         <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 30px;">
             <button class="filter-btn active" data-filter="all" style="background: #f97316; color: #fff; border: none; padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;">Todos</button>
-            <button class="filter-btn" data-filter="evacuacion" style="background: var(--card2); color: var(--text1); border: 1px solid var(--border); padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;"> Evacuación</button>
-            <button class="filter-btn" data-filter="mochila" style="background: var(--card2); color: var(--text1); border: 1px solid var(--border); padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;"> Mochila</button>
-            <button class="filter-btn" data-filter="plan" style="background: var(--card2); color: var(--text1); border: 1px solid var(--border); padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;"> Plan Familiar</button>
-            <button class="filter-btn" data-filter="sismo" style="background: var(--card2); color: var(--text1); border: 1px solid var(--border); padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;"> Sismos</button>
-            <button class="filter-btn" data-filter="lluvias" style="background: var(--card2); color: var(--text1); border: 1px solid var(--border); padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;"> Lluvias</button>
+            <button class="filter-btn" data-filter="evacuacion" style="background: var(--card2); color: var(--text); border: 1px solid var(--border); padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;"> Evacuación</button>
+            <button class="filter-btn" data-filter="mochila" style="background: var(--card2); color: var(--text); border: 1px solid var(--border); padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;"> Mochila</button>
+            <button class="filter-btn" data-filter="plan" style="background: var(--card2); color: var(--text); border: 1px solid var(--border); padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;"> Plan Familiar</button>
+            <button class="filter-btn" data-filter="sismo" style="background: var(--card2); color: var(--text); border: 1px solid var(--border); padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;"> Sismos</button>
+            <button class="filter-btn" data-filter="lluvias" style="background: var(--card2); color: var(--text); border: 1px solid var(--border); padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;"> Lluvias</button>
         </div>
 
         <div class="resources-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px;">
@@ -62,7 +62,7 @@ ob_start();
                     </div>
                     <div style="min-width:0;height:164px;overflow:hidden;">
                         <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:nowrap;">
-                            <h3 style="font-size: 1rem; font-weight: 700; color: var(--text1); margin: 0; min-width: 0; flex: 1 1 auto; min-height: 3.6em; line-height: 1.2;"><?= htmlspecialchars($r['titulo']) ?></h3>
+                            <h3 style="font-size: 1rem; font-weight: 700; color: var(--text); margin: 0; min-width: 0; flex: 1 1 auto; min-height: 3.6em; line-height: 1.2;"><?= htmlspecialchars($r['titulo']) ?></h3>
                             <span style="font-size: 0.75rem; color: var(--text3); white-space:nowrap; flex-shrink: 0;">PDF<?= $sizeLabel ? ' · ' . $sizeLabel : '' ?></span>
                         </div>
                         <p style="font-size: 0.85rem; color: var(--text2); margin: 6px 0 0; line-height: 1.5; height: 4.5em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
@@ -79,7 +79,7 @@ ob_start();
                     <a href="<?= htmlspecialchars($r['archivo']) ?>" target="_blank" onclick="return openPdfPreview(this.href,'<?= htmlspecialchars(addslashes($r['titulo'])) ?>')" style="flex: 1; background: linear-gradient(135deg, #f97316, #ea6c0a); color: #fff; border: none; border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-align: center; text-decoration: none; cursor: pointer; transition: opacity 0.2s;">
                         <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Previsualizar
                     </a>
-                    <a href="<?= htmlspecialchars($r['archivo']) ?>" download style="background: var(--card2); color: var(--text1); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-decoration: none; cursor: pointer; transition: background 0.2s;">
+                    <a href="<?= htmlspecialchars($r['archivo']) ?>" download style="background: var(--card2); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-decoration: none; cursor: pointer; transition: background 0.2s;">
                         <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
                     </a>
                 </div>
@@ -147,13 +147,13 @@ ob_start();
     display: flex; align-items: center; justify-content: space-between; gap: 12px;
     padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--card2); flex-shrink: 0;
 }
-.pdf-modal-title { font-weight: 700; font-size: .9rem; color: var(--text1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pdf-modal-title { font-weight: 700; font-size: .9rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pdf-modal-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 .pdf-modal-sep { width: 1px; height: 20px; background: var(--border); margin: 0 2px; flex-shrink: 0; }
 .pdf-modal-btn {
     width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
     border-radius: 8px; border: 1px solid var(--border); background: var(--card3, var(--card2));
-    color: var(--text1); cursor: pointer; text-decoration: none; font-size: .95rem; transition: background .2s, border-color .2s, color .2s;
+    color: var(--text); cursor: pointer; text-decoration: none; font-size: .95rem; transition: background .2s, border-color .2s, color .2s;
 }
 .pdf-modal-btn:hover { background: rgba(249, 115, 22, 0.15); border-color: #f97316; color: #f97316; }
 .pdf-modal-btn-close:hover { background: rgba(239, 68, 68, 0.15); border-color: #ef4444; color: #ef4444; }
@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', function() {
         btn.addEventListener('click', function() {
             filterBtns.forEach(b => {
                 b.style.background = 'var(--card2)';
-                b.style.color = 'var(--text1)';
+                b.style.color = 'var(--text)';
                 b.style.border = '1px solid var(--border)';
             });
             this.style.background = '#f97316';

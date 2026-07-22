@@ -1,0 +1,13 @@
+/* Tema visual propio de la pagina de Incendios forestales. */
+.dis-page.dis-incendios { --dis-accent: #d9481f; --dis-accent2: #6e1f0a; }
+
+.dis-incendios .dis-hero {
+    background: radial-gradient(ellipse at 30% 0%, rgba(120, 130, 145, .10) 0%, transparent 55%);
+}
+.dis-incendios .dis-hero-icon {
+    animation: dis-flame-flicker 1.8s ease-in-out infinite;
+}
+@keyframes dis-flame-flicker {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.15); }
+}

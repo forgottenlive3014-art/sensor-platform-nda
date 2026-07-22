@@ -488,3 +488,62 @@
     line-height: 1.6;
     color: var(--text3, #6a7a85);
 }
+
+/* ---------------------------------------------------------------
+   Navbar: dropdown "Desastres" (submenu de tipos de desastre)
+   --------------------------------------------------------------- */
+.nav-drop { position: relative; }
+.nav-drop-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text3);
+    font-size: .78rem;
+    font-weight: 500;
+    font-family: inherit;
+    padding: 6px 11px;
+    border-radius: var(--rs);
+    transition: all var(--tr) var(--ez);
+}
+.nav-drop-btn:hover,
+.nav-drop.open .nav-drop-btn {
+    color: var(--text);
+    background: var(--card2);
+}
+.nav-drop-car { font-size: .6rem; transition: transform var(--tr); }
+.nav-drop.open .nav-drop-car { transform: rotate(180deg); }
+.nav-drop-dd {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: var(--r);
+    min-width: 220px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    z-index: 9999;
+    overflow: hidden;
+    display: none;
+}
+.nav-drop-dd.open {
+    display: block;
+    animation: fadeUp 0.18s var(--ez);
+}
+.ndd-item {
+    display: block;
+    padding: 10px 16px;
+    font-size: .82rem;
+    color: var(--text2);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    transition: background var(--tr);
+    white-space: nowrap;
+}
+.ndd-item:last-child { border-bottom: none; }
+.ndd-item:hover {
+    background: var(--card2);
+    color: var(--text);
+}

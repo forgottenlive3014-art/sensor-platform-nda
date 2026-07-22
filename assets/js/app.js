@@ -903,6 +903,67 @@ window.setTL = function(i) {
 };
 
 
+//  11B. LINEA DE TIEMPO REUTILIZABLE (paginas de Desastres)
+
+// Misma UI/CSS que la linea de tiempo del home (tl-wrap/tl-track/tl-detail),
+// generalizada para poder tener una por pagina sin pisar tlData/renderTL.
+window.__ndaTlData = window.__ndaTlData || {};
+window.__ndaTlActive = window.__ndaTlActive || {};
+
+function ndaRenderTimeline(key) {
+    const data = window.__ndaTlData[key];
+    const track = document.getElementById('tlTrack-' + key);
+    const detail = document.getElementById('tlDetail-' + key);
+    if (!data || !track || !detail) return;
+    const active = window.__ndaTlActive[key] || 0;
+
+    track.innerHTML = data.map((e, i) =>
+        `<div class="tl-item${i === active ? ' active' : ''}" onclick="ndaSetTimeline('${key}', ${i})">
+            <div class="tli-year">${e.year}</div>
+            <div class="tli-node"></div>
+            <div class="tli-title">${e.title.split(' ').slice(0, 4).join(' ')}…</div>
+        </div>`
+    ).join('');
+
+    const e = data[active];
+    detail.innerHTML = `
+        <div class="tl-detail-inner">
+            <div class="tld-img">
+                <img src="${e.img}" alt="${e.title}" onerror="this.parentElement.style.background='linear-gradient(135deg,#182840,#0a1428)';this.style.display='none'"/>
+                <div class="tld-img-ov"></div>
+                <div style="position:absolute;bottom:12px;left:14px">
+                    <div class="tld-img-yr">${e.year}</div>
+                    <div class="tld-img-mag">${e.badge || ''}</div>
+                </div>
+            </div>
+            <div class="tld-info">
+                <div class="tld-badge"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> ${e.year}</div>
+                <h3>${e.title}</h3>
+                <p>${e.desc}</p>
+                <div class="tld-tags">${e.tags.map(t => `<span class="tlt ${t.c}">${t.t}</span>`).join('')}</div>
+                <div style="font-size:.76rem;color:var(--text3);margin-bottom:12px">${e.region}</div>
+                <div class="tld-stats">${e.stats.map(s => `<div class="tlds"><div class="tlds-v">${s.v}</div><div class="tlds-l">${s.l}</div></div>`).join('')}</div>
+                <div class="tld-nav">
+                    ${active > 0 ? `<button class="tldn-btn" onclick="ndaSetTimeline('${key}', ${active - 1})"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Anterior</button>` : ''}
+                    ${active < data.length - 1 ? `<button class="tldn-btn" onclick="ndaSetTimeline('${key}', ${active + 1})">Siguiente</button>` : ''}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+window.ndaSetTimeline = function (key, i) {
+    window.__ndaTlActive[key] = i;
+    ndaRenderTimeline(key);
+};
+
+window.ndaInitTimeline = function (key, data) {
+    window.__ndaTlData[key] = data;
+    window.__ndaTlActive[key] = 0;
+    ndaRenderTimeline(key);
+};
+
+
 //  11. LEAFLET MAP
   
 
@@ -2227,9 +2288,49 @@ window.fd = function(f) {
     }
 })();
 
-  
+
+//  19B. PARTICULAS TEMATICAS POR TIPO DE DESASTRE (paginas de Desastres)
+
+
+// Cada tipo de desastre tiene su propia forma/animacion (ver clases dis-p-*
+// y sus @keyframes en desastres-base.css). El color sale de --dis-accent
+// (currentColor), asi que no hace falta pasar colores aqui.
+const NDA_PARTICLE_CONFIGS = {
+    volcanes:       { cls: 'dis-p-ember',  count: 18, dur: [4, 8],    size: [6, 13] },
+    tsunamis:       { cls: 'dis-p-bubble', count: 12, dur: [3, 6],    size: [16, 38] },
+    inundaciones:   { cls: 'dis-p-drop',   count: 22, dur: [1.2, 2.4],size: [4, 7] },
+    deslizamientos: { cls: 'dis-p-debris', count: 16, dur: [3, 6],    size: [5, 10] },
+    incendios:      { cls: 'dis-p-spark',  count: 20, dur: [1.4, 2.8],size: [4, 9] },
+    tormentas:      { cls: 'dis-p-wind',   count: 10, dur: [2.6, 4.4],size: [46, 90] },
+    sequias:        { cls: 'dis-p-dust',   count: 14, dur: [7, 12],   size: [4, 8] }
+};
+
+window.ndaInitDisParticles = function (containerId, type) {
+    const container = document.getElementById(containerId);
+    const cfg = NDA_PARTICLE_CONFIGS[type];
+    if (!container || !cfg) return;
+
+    for (let i = 0; i < cfg.count; i++) {
+        const el = document.createElement('div');
+        el.className = 'dis-particle ' + cfg.cls;
+        const size = cfg.size[0] + Math.random() * (cfg.size[1] - cfg.size[0]);
+        const dur = cfg.dur[0] + Math.random() * (cfg.dur[1] - cfg.dur[0]);
+        el.style.cssText = `
+            left:${Math.random() * 100}%;
+            top:${Math.random() * 100}%;
+            width:${size.toFixed(1)}px;
+            height:${size.toFixed(1)}px;
+            animation-duration:${dur.toFixed(2)}s;
+            animation-delay:${(Math.random() * -dur).toFixed(2)}s;
+            opacity:${(0.55 + Math.random() * 0.4).toFixed(2)};
+        `;
+        container.appendChild(el);
+    }
+};
+
+
 //  20. 3D MOUSE PARALLAX ON HERO
-  
+
 
 (function() {
     const hero = document.getElementById('home');
@@ -2977,6 +3078,31 @@ function closeUserDD() {
 document.addEventListener('click', e => {
     const menu = document.getElementById('navUserMenu');
     if (menu && !menu.contains(e.target)) closeUserDD();
+});
+
+// Dropdown generico del navbar (Desastres, Monitoreo, etc.): boton llama
+// toggleNavDrop(this), sin necesitar un id distinto por cada menu.
+function toggleNavDrop(btn) {
+    const drop = btn.closest('.nav-drop');
+    if (!drop) return;
+    const isOpen = drop.classList.contains('open');
+    document.querySelectorAll('.nav-drop.open').forEach(d => {
+        d.classList.remove('open');
+        d.querySelector('.nav-drop-dd')?.classList.remove('open');
+    });
+    if (!isOpen) {
+        drop.classList.add('open');
+        drop.querySelector('.nav-drop-dd')?.classList.add('open');
+    }
+}
+
+document.addEventListener('click', e => {
+    document.querySelectorAll('.nav-drop.open').forEach(drop => {
+        if (!drop.contains(e.target)) {
+            drop.classList.remove('open');
+            drop.querySelector('.nav-drop-dd')?.classList.remove('open');
+        }
+    });
 });
 
   

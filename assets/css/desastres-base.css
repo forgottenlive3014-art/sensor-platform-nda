@@ -1,0 +1,526 @@
+/* ================================================================
+   NDA — Plantilla compartida para las paginas de "Desastres"
+   (Volcanes, Tsunamis, Inundaciones, Deslizamientos, Incendios
+   forestales, Tormentas tropicales, Sequias). Sismos.php no usa
+   este archivo: ya tiene su propio diseño en style.css.
+
+   Cada pagina de desastre define su propio --dis-accent (y opcional
+   --dis-accent2) en el wrapper .dis-page, mas un css propio en esta
+   misma carpeta para acentos/decoracion unica del tema.
+   ================================================================ */
+
+.dis-page { --dis-accent: #c98a3d; --dis-accent2: #8a5a24; }
+
+/* ---------- HERO ---------- */
+.dis-hero {
+    padding: 130px 0 40px;
+    position: relative;
+    overflow: hidden;
+}
+/* ---------- PARTICULAS TEMATICAS (JS: ndaInitDisParticles() en app.js) ---------- */
+.dis-particles {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+.dis-hero > .wrap { position: relative; z-index: 1; }
+
+.dis-particle {
+    position: absolute;
+    pointer-events: none;
+    color: var(--dis-accent);
+}
+
+/* Volcanes / Incendios: brasas y chispas que suben */
+.dis-p-ember,
+.dis-p-spark {
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 14px 2px currentColor;
+    animation-name: dis-rise;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-fill-mode: backwards;
+}
+@keyframes dis-rise {
+    0%   { transform: translateY(0) translateX(0); opacity: 0; }
+    15%  { opacity: 1; }
+    85%  { opacity: .9; }
+    100% { transform: translateY(-160px) translateX(16px); opacity: 0; }
+}
+
+/* Tsunamis: burbujas / ondas que se expanden */
+.dis-p-bubble {
+    border-radius: 50%;
+    border: 2.5px solid currentColor;
+    box-shadow: 0 0 10px currentColor;
+    animation-name: dis-ripple;
+    animation-timing-function: ease-out;
+    animation-iteration-count: infinite;
+    animation-fill-mode: backwards;
+}
+@keyframes dis-ripple {
+    0%   { transform: scale(0.3); opacity: .9; }
+    100% { transform: scale(1.6); opacity: 0; }
+}
+
+/* Inundaciones: gotas de lluvia cayendo */
+.dis-p-drop {
+    width: 3px !important;
+    border-radius: 3px;
+    background: currentColor;
+    box-shadow: 0 0 8px currentColor;
+    animation-name: dis-fall;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-fill-mode: backwards;
+}
+@keyframes dis-fall {
+    0%   { transform: translateY(-20px); opacity: 0; }
+    15%  { opacity: .95; }
+    100% { transform: translateY(160px); opacity: 0; }
+}
+
+/* Deslizamientos: escombros cayendo con rotacion */
+.dis-p-debris {
+    background: currentColor;
+    border-radius: 2px;
+    box-shadow: 0 0 8px currentColor;
+    animation-name: dis-tumble;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-fill-mode: backwards;
+}
+@keyframes dis-tumble {
+    0%   { transform: translateY(-20px) rotate(0deg); opacity: 0; }
+    15%  { opacity: .9; }
+    100% { transform: translateY(160px) rotate(220deg); opacity: 0; }
+}
+
+/* Tormentas tropicales: rachas de viento */
+.dis-p-wind {
+    height: 3px !important;
+    border-radius: 3px;
+    background: linear-gradient(90deg, transparent, currentColor, transparent);
+    box-shadow: 0 0 10px currentColor;
+    animation-name: dis-blow;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-fill-mode: backwards;
+}
+@keyframes dis-blow {
+    0%   { transform: translateX(-60px); opacity: 0; }
+    20%  { opacity: .85; }
+    100% { transform: translateX(200px); opacity: 0; }
+}
+
+/* Sequias: polvo suspendido, deriva lenta */
+.dis-p-dust {
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 6px currentColor;
+    animation-name: dis-drift;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-fill-mode: backwards;
+}
+@keyframes dis-drift {
+    0%, 100% { transform: translate(0, 0); opacity: .35; }
+    50%      { transform: translate(18px, -14px); opacity: .8; }
+}
+
+.dis-hero-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--fd);
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #fff;
+    background: linear-gradient(135deg, var(--dis-accent), var(--dis-accent2));
+    margin-bottom: 18px;
+    box-shadow: 0 8px 28px -8px var(--dis-accent);
+}
+
+/* ---------- NAV RAPIDA ENTRE DESASTRES ---------- */
+.dis-quicknav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 22px 0 0;
+}
+.dis-qn-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 100px;
+    background: var(--card2);
+    border: 1px solid var(--border2);
+    color: var(--text2);
+    font-size: .78rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all var(--tr);
+}
+.dis-qn-item:hover {
+    border-color: var(--dis-accent);
+    color: var(--text);
+}
+.dis-qn-item.sel {
+    background: var(--dis-accent);
+    border-color: var(--dis-accent);
+    color: #fff;
+}
+
+/* ---------- SUBTITULOS DE BLOQUE (Informacion general / de El Salvador) ---------- */
+.dis-subhead {
+    font-family: var(--fd);
+    font-size: .78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: var(--dis-accent);
+    margin: 30px 0 -6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.dis-subhead:first-child { margin-top: 0; }
+.dis-subhead::before {
+    content: '';
+    width: 18px;
+    height: 2px;
+    background: var(--dis-accent);
+    display: inline-block;
+}
+
+/* ---------- GRID DE INFO (que es / como se produce / por que en SV) ---------- */
+.dis-info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-top: 28px;
+}
+.dis-info-card {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: var(--r);
+    padding: 22px;
+    border-top: 3px solid var(--dis-accent);
+    transition: transform var(--tr), box-shadow var(--tr);
+}
+.dis-info-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 32px -14px rgba(0, 0, 0, .35);
+}
+.dis-info-card h3 {
+    font-family: var(--fd);
+    font-size: 1rem;
+    color: var(--text);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.dis-info-card p {
+    color: var(--text2);
+    font-size: .88rem;
+    line-height: 1.65;
+}
+.dis-info-card p + p { margin-top: 10px; }
+
+/* ---------- ZONAS VULNERABLES ---------- */
+.dis-zones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+}
+.dis-zone-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: var(--card2);
+    border: 1px solid var(--border2);
+    border-radius: var(--rl);
+    font-size: .82rem;
+    color: var(--text);
+    transition: all var(--tr);
+}
+.dis-zone-chip:hover {
+    border-color: var(--dis-accent);
+    background: var(--card3);
+}
+.dis-zone-chip .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--dis-accent);
+    flex-shrink: 0;
+}
+
+/* ---------- IMPACTOS ---------- */
+.dis-impact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    margin-top: 20px;
+}
+.dis-impact-card {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: var(--r);
+    padding: 18px;
+    text-align: center;
+    transition: all var(--tr);
+}
+.dis-impact-card:hover {
+    border-color: var(--dis-accent);
+    transform: translateY(-3px);
+}
+.dis-impact-card .ico {
+    font-size: 1.6rem;
+    margin-bottom: 8px;
+}
+.dis-impact-card h4 {
+    font-size: .88rem;
+    color: var(--text);
+    margin-bottom: 6px;
+}
+.dis-impact-card p {
+    font-size: .78rem;
+    color: var(--text3);
+    line-height: 1.5;
+}
+
+/* ---------- ANTES / DURANTE / DESPUES ---------- */
+.dis-actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-top: 24px;
+}
+.dis-action-col {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: var(--r);
+    padding: 20px;
+}
+.dis-action-col .dis-action-hd {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--fd);
+    font-weight: 700;
+    font-size: .95rem;
+    color: var(--dis-accent);
+    margin-bottom: 12px;
+}
+.dis-action-col ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+.dis-action-col li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: .84rem;
+    color: var(--text2);
+    line-height: 1.5;
+}
+.dis-action-col li::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--dis-accent);
+    margin-top: 6px;
+    flex-shrink: 0;
+}
+
+/* Nota: la linea de tiempo historica reutiliza tl-wrap/tl-track/tl-detail
+   de style.css (el mismo componente interactivo del home), en vez de un
+   componente propio — ver ndaRenderTimeline() en app.js. */
+
+/* ---------- FUENTES OFICIALES ---------- */
+.dis-sources {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+}
+.dis-source-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 15px;
+    background: var(--card2);
+    border: 1px solid var(--border2);
+    border-radius: 100px;
+    font-size: .78rem;
+    color: var(--text2);
+    text-decoration: none;
+    transition: all var(--tr);
+}
+.dis-source-item:hover {
+    border-color: var(--dis-accent);
+    color: var(--text);
+}
+
+/* ---------- ESCALA OFICIAL DE ALERTAS (Proteccion Civil / MIGOBDT) ---------- */
+.dis-alert-scale {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-top: 22px;
+}
+.dis-alert-card {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-top: 4px solid var(--ac-color);
+    border-radius: var(--r);
+    padding: 18px 16px;
+    position: relative;
+    overflow: hidden;
+    transition: transform var(--tr);
+}
+.dis-alert-card:hover { transform: translateY(-3px); }
+.dis-alert-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--ac-color) 10%, transparent), transparent 60%);
+    pointer-events: none;
+}
+.dis-alert-card.verde   { --ac-color: #6ba15a; }
+.dis-alert-card.amarilla{ --ac-color: #f2c94c; }
+.dis-alert-card.naranja { --ac-color: #e86a2a; }
+.dis-alert-card.roja    { --ac-color: #ff3b3f; }
+.dis-alert-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--ac-color);
+    display: inline-block;
+    margin-right: 7px;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--ac-color) 20%, transparent);
+}
+.dis-alert-card h4 {
+    font-family: var(--fd);
+    font-size: .92rem;
+    color: var(--text);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+}
+.dis-alert-card p {
+    font-size: .78rem;
+    color: var(--text2);
+    line-height: 1.55;
+    position: relative;
+}
+.dis-alert-note {
+    margin-top: 12px;
+    font-size: .74rem;
+    color: var(--text3);
+    text-align: center;
+}
+.dis-alert-note a { color: var(--dis-accent); text-decoration: none; }
+.dis-alert-note a:hover { text-decoration: underline; }
+
+/* ---------- APARTADO PARA AGREGAR IMAGENES ---------- */
+.dis-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-top: 22px;
+}
+.dis-gallery-item {
+    aspect-ratio: 4 / 3;
+    border: 2px dashed var(--border2);
+    border-radius: var(--r);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-align: center;
+    padding: 16px;
+    color: var(--text3);
+    background: var(--card2);
+    transition: all var(--tr);
+}
+.dis-gallery-item:hover {
+    border-color: var(--dis-accent);
+    color: var(--text2);
+}
+.dis-gallery-item .dis-gallery-ico {
+    font-size: 1.8rem;
+    opacity: .6;
+}
+.dis-gallery-item .dis-gallery-cap {
+    font-size: .78rem;
+    line-height: 1.4;
+    max-width: 90%;
+}
+.dis-gallery-item .dis-gallery-hint {
+    font-size: .68rem;
+    color: var(--text3);
+    opacity: .7;
+}
+/* Item con foto real (ver _gallery.php): quita el borde punteado y el
+   contenido queda como una imagen con leyenda superpuesta en degradado,
+   mismo lenguaje visual que la imagen de la linea de tiempo (tld-img-ov). */
+.dis-gallery-item.filled {
+    border-style: solid;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+}
+.dis-gallery-item.filled img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    opacity: .8;
+    transition: opacity var(--tr);
+}
+.dis-gallery-item.filled:hover img {
+    opacity: 1;
+}
+.dis-gallery-cap-ov {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to top, rgba(8, 10, 14, .82) 0%, transparent 75%);
+    color: #fff;
+    padding: 26px 12px 10px;
+    font-size: .78rem;
+    line-height: 1.35;
+    text-align: left;
+}
+.dis-gallery-cap-ov small {
+    display: block;
+    font-size: .64rem;
+    color: rgba(255, 255, 255, .65);
+    margin-top: 3px;
+}
+
+@media (max-width: 900px) {
+    .dis-info-grid { grid-template-columns: 1fr; }
+    .dis-actions { grid-template-columns: 1fr; }
+    .dis-alert-scale { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 520px) {
+    .dis-alert-scale { grid-template-columns: 1fr; }
+}

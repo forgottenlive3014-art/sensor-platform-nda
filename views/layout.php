@@ -69,10 +69,15 @@ function ensureThreeLoaded() {
 
 <!-- No redeclara --bg/--bg2/--bg3/--bg4, solo agrega estado y componentes nuevos -->
 <link rel="stylesheet" href="<?= asset('css/nda-extensions.css') ?>">
+
+<?php foreach ((array) ($extraCss ?? []) as $__cssFile): ?>
+<link rel="stylesheet" href="<?= asset($__cssFile) ?>">
+<?php endforeach; ?>
 </head>
 <body>
 
 <div class="seismic-particles" id="seismicParticles" aria-hidden="true"></div>
+<div class="page-vignette" aria-hidden="true"></div>
 
 
 <?php
@@ -110,8 +115,26 @@ $navDisplayName = $isLoggedIn
   
   <div class="nav-links">
     <a href="?url=home">Inicio</a>
-    <a href="?url=sismos">Sismos</a>
-    <a href="?url=monitoreo">Monitoreo</a>
+    <div class="nav-drop">
+      <button type="button" class="nav-drop-btn" onclick="toggleNavDrop(this)">Desastres <span class="nav-drop-car">▾</span></button>
+      <div class="nav-drop-dd">
+        <a class="ndd-item" href="?url=sismos">Sismos</a>
+        <a class="ndd-item" href="?url=volcanes">Volcanes</a>
+        <a class="ndd-item" href="?url=tsunamis">Tsunamis</a>
+        <a class="ndd-item" href="?url=inundaciones">Inundaciones</a>
+        <a class="ndd-item" href="?url=deslizamientos">Deslizamientos</a>
+        <a class="ndd-item" href="?url=incendios-forestales">Incendios forestales</a>
+        <a class="ndd-item" href="?url=tormentas-tropicales">Tormentas tropicales</a>
+        <a class="ndd-item" href="?url=sequias">Sequías</a>
+      </div>
+    </div>
+    <div class="nav-drop">
+      <button type="button" class="nav-drop-btn" onclick="toggleNavDrop(this)">Monitoreo <span class="nav-drop-car">▾</span></button>
+      <div class="nav-drop-dd">
+        <a class="ndd-item" href="?url=monitoreo">Sol, Luna y Clima</a>
+        <a class="ndd-item" href="?url=arduino">Sismógrafo Arduino</a>
+      </div>
+    </div>
     <a href="?url=blog">Blog</a>
     <a href="?url=juegos">Juegos</a>
     <?php
