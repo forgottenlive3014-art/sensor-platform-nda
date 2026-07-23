@@ -7,6 +7,23 @@ ob_start();
 ?>
 
 <div class="dis-page dis-inundaciones">
+<!-- BIG BANNER -->
+<section class="dis-bigbanner" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/Lo%20que%20dejo%20a%20su%20paso%20el%20huracan%20Ida%20(7%2C8%20Noviembre%202009)%20Playa%20de%20Las%20Hojas.%20-%20panoramio.jpg')">
+  <div class="dis-bigbanner-overlay"></div>
+  <div class="wrap dis-bigbanner-inner">
+    <h2 class="dis-bigbanner-word">inundaciones</h2>
+    <div class="dis-bigbanner-sub">
+      <span class="dis-bigbanner-rule"></span>
+      <div>
+        <h3>¿Cómo se producen las inundaciones?</h3>
+        <p>Las lluvias intensas saturan el suelo y superan la capacidad de ríos y quebradas, que se desbordan sobre zonas normalmente secas.</p>
+        <a href="#info-general" class="dis-bigbanner-btn">Aprender más</a>
+      </div>
+    </div>
+  </div>
+  <a href="#info-general" class="scroll-hint"><span>Scroll</span><div class="sh-arr"></div></a>
+</section>
+
 <section class="dis-hero">
   <div class="dis-particles" id="inundacionesParticles" aria-hidden="true"></div>
   <div class="wrap">
@@ -21,7 +38,7 @@ ob_start();
 </section>
 
 <!-- INFORMACION GENERAL -->
-<section class="sec">
+<section class="sec" id="info-general">
   <div class="wrap">
     <h3 class="dis-subhead">Información general</h3>
     <div class="dis-info-grid">

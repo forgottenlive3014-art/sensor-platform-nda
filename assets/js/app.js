@@ -2329,6 +2329,98 @@ window.ndaInitDisParticles = function (containerId, type) {
 };
 
 
+//  19C. GALERIA 3D DE DESASTRES (carga los visores de Sketchfab bajo demanda,
+//  no los 8 a la vez, para no abrir 8 contextos WebGL al cargar la pagina)
+
+
+window.loadSketchfabModel = function (btn) {
+    const viewport = btn.closest('.sk3d-viewport');
+    const uid = viewport && viewport.dataset.uid;
+    if (!uid) return;
+    viewport.innerHTML = `<iframe title="Modelo 3D" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" xr-spatial-tracking="true" execution-while-out-of-viewport="true" execution-while-not-rendered="true" web-share="true" src="https://sketchfab.com/models/${uid}/embed?autostart=1&ui_theme=dark"></iframe>`;
+};
+
+
+//  19D. GALERIA 3D: CARRUSEL "COVERFLOW" DEL HERO (una tarjeta activa al
+//  centro, en perspectiva 3D real vía CSS transforms)
+
+
+window.NDA_SK3D_ACTIVE = 0;
+
+function sk3dRender() {
+    const track = document.getElementById('sk3dTrack');
+    if (!track) return;
+    const slides = [...track.children];
+    const n = slides.length;
+    const active = window.NDA_SK3D_ACTIVE;
+
+    slides.forEach((slide, i) => {
+        let diff = i - active;
+        if (diff > n / 2) diff -= n;
+        if (diff < -n / 2) diff += n;
+        let pos = 'hidden';
+        if (diff === 0) pos = 'active';
+        else if (diff === -1) pos = 'prev1';
+        else if (diff === 1) pos = 'next1';
+        else if (diff === -2) pos = 'prev2';
+        else if (diff === 2) pos = 'next2';
+
+        // Si el slide deja de estar activo y tenia el modelo 3D cargado, lo
+        // devolvemos a su miniatura para no dejar un visor WebGL de fondo.
+        if (pos !== 'active' && slide.dataset.loaded === '1') {
+            const viewport = slide.querySelector('.sk3d-slide-viewport');
+            if (viewport) viewport.innerHTML = `<img src="${slide.dataset.thumb}" alt="" loading="lazy">`;
+            slide.dataset.loaded = '0';
+        }
+        slide.dataset.pos = pos;
+    });
+
+    document.querySelectorAll('#sk3dDots .sk3d-dot').forEach(d => {
+        d.classList.toggle('active', Number(d.dataset.index) === active);
+    });
+    document.querySelectorAll('#sk3dPanel .sk3d-panel-item').forEach(p => {
+        p.classList.toggle('active', Number(p.dataset.index) === active);
+    });
+}
+
+window.sk3dGoTo = function (index) {
+    const track = document.getElementById('sk3dTrack');
+    if (!track || index === window.NDA_SK3D_ACTIVE) return;
+    const n = track.children.length;
+    window.NDA_SK3D_ACTIVE = ((index % n) + n) % n;
+    sk3dRender();
+};
+
+window.sk3dNav = function (dir) {
+    const track = document.getElementById('sk3dTrack');
+    if (!track) return;
+    const n = track.children.length;
+    window.NDA_SK3D_ACTIVE = ((window.NDA_SK3D_ACTIVE + dir) % n + n) % n;
+    sk3dRender();
+};
+
+window.sk3dPlayActive = function () {
+    const track = document.getElementById('sk3dTrack');
+    if (!track) return;
+    const slide = track.children[window.NDA_SK3D_ACTIVE];
+    const viewport = slide && slide.querySelector('.sk3d-slide-viewport');
+    const uid = slide && slide.dataset.uid;
+    if (!uid || !viewport) return;
+    viewport.innerHTML = `<iframe title="Modelo 3D" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" xr-spatial-tracking="true" execution-while-out-of-viewport="true" execution-while-not-rendered="true" web-share="true" src="https://sketchfab.com/models/${uid}/embed?autostart=1&ui_theme=dark"></iframe>`;
+    slide.dataset.loaded = '1';
+};
+
+function initSk3dCarousel() {
+    if (!document.getElementById('sk3dTrack')) return;
+    sk3dRender();
+    document.addEventListener('keydown', (e) => {
+        if (!document.getElementById('sk3dHero')) return;
+        if (e.key === 'ArrowLeft') sk3dNav(-1);
+        if (e.key === 'ArrowRight') sk3dNav(1);
+    });
+}
+
+
 //  20. 3D MOUSE PARALLAX ON HERO
 
 
@@ -3309,4 +3401,5 @@ document.addEventListener('DOMContentLoaded', () => {
     safeInit(initEvacCanvas);
     safeInit(initMemoryGame);
     safeInit(initArduinoLive);
+    safeInit(initSk3dCarousel);
 });

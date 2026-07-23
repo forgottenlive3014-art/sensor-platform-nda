@@ -118,6 +118,7 @@ $navDisplayName = $isLoggedIn
     <div class="nav-drop">
       <button type="button" class="nav-drop-btn" onclick="toggleNavDrop(this)">Desastres <span class="nav-drop-car">▾</span></button>
       <div class="nav-drop-dd">
+        <a class="ndd-item" href="?url=galeria-3d">Desastres en 3D</a>
         <a class="ndd-item" href="?url=sismos">Sismos</a>
         <a class="ndd-item" href="?url=volcanes">Volcanes</a>
         <a class="ndd-item" href="?url=tsunamis">Tsunamis</a>

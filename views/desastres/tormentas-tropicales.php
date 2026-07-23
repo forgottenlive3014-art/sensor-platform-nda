@@ -7,6 +7,23 @@ ob_start();
 ?>
 
 <div class="dis-page dis-tormentas">
+<!-- BIG BANNER -->
+<section class="dis-bigbanner" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/Hurricane%20Katrina%20as%20Seen%20from%20Space%20(20749127551).jpg')">
+  <div class="dis-bigbanner-overlay"></div>
+  <div class="wrap dis-bigbanner-inner">
+    <h2 class="dis-bigbanner-word">tormentas</h2>
+    <div class="dis-bigbanner-sub">
+      <span class="dis-bigbanner-rule"></span>
+      <div>
+        <h3>¿Cómo se forma una tormenta tropical?</h3>
+        <p>Se forma sobre aguas oceánicas cálidas: la evaporación alimenta de energía al sistema y la rotación de la Tierra organiza los vientos en espiral.</p>
+        <a href="#info-general" class="dis-bigbanner-btn">Aprender más</a>
+      </div>
+    </div>
+  </div>
+  <a href="#info-general" class="scroll-hint"><span>Scroll</span><div class="sh-arr"></div></a>
+</section>
+
 <section class="dis-hero">
   <div class="dis-particles" id="tormentasParticles" aria-hidden="true"></div>
   <div class="wrap">
@@ -21,7 +38,7 @@ ob_start();
 </section>
 
 <!-- INFORMACION GENERAL -->
-<section class="sec">
+<section class="sec" id="info-general">
   <div class="wrap">
     <h3 class="dis-subhead">Información general</h3>
     <div class="dis-info-grid">

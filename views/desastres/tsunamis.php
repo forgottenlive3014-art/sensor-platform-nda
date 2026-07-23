@@ -7,6 +7,23 @@ ob_start();
 ?>
 
 <div class="dis-page dis-tsunamis">
+<!-- BIG BANNER -->
+<section class="dis-bigbanner" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/PLAYA%20SAN%20DIEGO%2C%20LA%20LIBERTAD%2C%20EL%20SALVADOR.%20-%20panoramio.jpg')">
+  <div class="dis-bigbanner-overlay"></div>
+  <div class="wrap dis-bigbanner-inner">
+    <h2 class="dis-bigbanner-word">tsunamis</h2>
+    <div class="dis-bigbanner-sub">
+      <span class="dis-bigbanner-rule"></span>
+      <div>
+        <h3>¿Cómo se forma un tsunami?</h3>
+        <p>Un sismo submarino desplaza verticalmente el fondo marino, moviendo toda la columna de agua sobre él en forma de olas de gran longitud.</p>
+        <a href="#info-general" class="dis-bigbanner-btn">Aprender más</a>
+      </div>
+    </div>
+  </div>
+  <a href="#info-general" class="scroll-hint"><span>Scroll</span><div class="sh-arr"></div></a>
+</section>
+
 <section class="dis-hero">
   <div class="dis-particles" id="tsunamisParticles" aria-hidden="true"></div>
   <div class="wrap">
@@ -21,7 +38,7 @@ ob_start();
 </section>
 
 <!-- INFORMACION GENERAL -->
-<section class="sec">
+<section class="sec" id="info-general">
   <div class="wrap">
     <h3 class="dis-subhead">Información general</h3>
     <div class="dis-info-grid">

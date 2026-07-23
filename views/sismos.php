@@ -1,8 +1,26 @@
 <?php
 $title = $title ?? 'Sismos - NDA';
 $user = $user ?? null;
+$extraCss = ['css/desastres-base.css'];
 ob_start();
 ?>
+
+<!-- BIG BANNER -->
+<section class="dis-bigbanner" style="--dis-accent:#c98a3d; background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/ElSalvadorslide.jpg')">
+  <div class="dis-bigbanner-overlay"></div>
+  <div class="wrap dis-bigbanner-inner">
+    <h2 class="dis-bigbanner-word">sismos</h2>
+    <div class="dis-bigbanner-sub">
+      <span class="dis-bigbanner-rule"></span>
+      <div>
+        <h3>¿Cómo se produce un sismo?</h3>
+        <p>La subducción de la Placa de Cocos bajo la Placa del Caribe libera energía acumulada en forma de ondas sísmicas que hacen vibrar el suelo.</p>
+        <a href="#zona-sismica" class="dis-bigbanner-btn">Aprender más</a>
+      </div>
+    </div>
+  </div>
+  <a href="#zona-sismica" class="scroll-hint"><span>Scroll</span><div class="sh-arr"></div></a>
+</section>
 
 <div class="wrap" style="padding-top: 100px;">
   <div class="sec-hd">

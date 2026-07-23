@@ -168,6 +168,7 @@ $routeMap = [
     'notifications/inbox' => ['NotificacionController', 'inbox'],
     'earthquakes'=> ['MainController', 'earthquakes'],
     'sismos'      => ['MainController', 'sismos'],
+    'galeria-3d'            => ['MainController', 'desastresGaleria'],
     'volcanes'              => ['MainController', 'volcanes'],
     'tsunamis'              => ['MainController', 'tsunamis'],
     'inundaciones'          => ['MainController', 'inundaciones'],
