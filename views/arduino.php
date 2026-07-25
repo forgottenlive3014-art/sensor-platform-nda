@@ -60,7 +60,7 @@ ob_start();
     </div>
 
     <p style="text-align:center;margin-top:24px">
-      <a href="?url=monitoreo" class="btn-out">← Volver a Sol, Luna y Clima</a>
+      <a href="?url=monitoreo" class="btn-out">← Volver a Monitoreo</a>
     </p>
   </div>
 </section>

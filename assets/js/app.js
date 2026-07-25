@@ -2329,8 +2329,8 @@ window.ndaInitDisParticles = function (containerId, type) {
 };
 
 
-//  19C. GALERIA 3D DE DESASTRES (carga los visores de Sketchfab bajo demanda,
-//  no los 8 a la vez, para no abrir 8 contextos WebGL al cargar la pagina)
+//  19C. GALERIA 3D: GRILLA DE ACCESO DIRECTO A LOS 8 VISORES (debajo del
+//  carrusel), carga cada modelo Sketchfab bajo demanda al hacer clic
 
 
 window.loadSketchfabModel = function (btn) {
@@ -2341,39 +2341,41 @@ window.loadSketchfabModel = function (btn) {
 };
 
 
-//  19D. GALERIA 3D: CARRUSEL "COVERFLOW" DEL HERO (una tarjeta activa al
-//  centro, en perspectiva 3D real vía CSS transforms)
+//  19D. GALERIA 3D: CARRUSEL DE TARJETAS DEL HERO (fila horizontal con
+//  varias tarjetas visibles, la activa se desliza al centro del visor;
+//  el modelo Sketchfab se carga bajo demanda solo para la tarjeta activa)
 
 
 window.NDA_SK3D_ACTIVE = 0;
 
 function sk3dRender() {
     const track = document.getElementById('sk3dTrack');
-    if (!track) return;
+    const viewport = document.getElementById('sk3dTrackViewport');
+    if (!track || !viewport) return;
     const slides = [...track.children];
-    const n = slides.length;
     const active = window.NDA_SK3D_ACTIVE;
 
     slides.forEach((slide, i) => {
-        let diff = i - active;
-        if (diff > n / 2) diff -= n;
-        if (diff < -n / 2) diff += n;
-        let pos = 'hidden';
-        if (diff === 0) pos = 'active';
-        else if (diff === -1) pos = 'prev1';
-        else if (diff === 1) pos = 'next1';
-        else if (diff === -2) pos = 'prev2';
-        else if (diff === 2) pos = 'next2';
-
+        const isActive = i === active;
+        slide.classList.toggle('active', isActive);
         // Si el slide deja de estar activo y tenia el modelo 3D cargado, lo
         // devolvemos a su miniatura para no dejar un visor WebGL de fondo.
-        if (pos !== 'active' && slide.dataset.loaded === '1') {
-            const viewport = slide.querySelector('.sk3d-slide-viewport');
-            if (viewport) viewport.innerHTML = `<img src="${slide.dataset.thumb}" alt="" loading="lazy">`;
+        if (!isActive && slide.dataset.loaded === '1') {
+            const slideViewport = slide.querySelector('.sk3d-slide-viewport');
+            if (slideViewport) slideViewport.innerHTML = `<img src="${slide.dataset.thumb}" alt="" loading="lazy">`;
             slide.dataset.loaded = '0';
         }
-        slide.dataset.pos = pos;
     });
+
+    // Centra la tarjeta activa dentro del visor, sin desplazarse mas alla
+    // del inicio/final de la fila.
+    const activeSlide = slides[active];
+    if (activeSlide) {
+        const maxTranslate = Math.max(0, track.scrollWidth - viewport.clientWidth);
+        const centered = activeSlide.offsetLeft - (viewport.clientWidth - activeSlide.offsetWidth) / 2;
+        const target = Math.min(maxTranslate, Math.max(0, centered));
+        track.style.transform = `translateX(${-target}px)`;
+    }
 
     document.querySelectorAll('#sk3dDots .sk3d-dot').forEach(d => {
         d.classList.toggle('active', Number(d.dataset.index) === active);
@@ -2381,6 +2383,31 @@ function sk3dRender() {
     document.querySelectorAll('#sk3dPanel .sk3d-panel-item').forEach(p => {
         p.classList.toggle('active', Number(p.dataset.index) === active);
     });
+
+    // El fondo del hero muestra la foto del modelo activo (como en el hero
+    // de referencia tipo Foxico/Kerala), con un degradado oscuro encima.
+    const heroBg = document.getElementById('sk3dHeroBg');
+    if (heroBg && activeSlide && activeSlide.dataset.thumb) {
+        heroBg.style.backgroundImage = `url(${activeSlide.dataset.thumb})`;
+    }
+
+    // Stepper vertical: nombre del modelo anterior/siguiente atenuado arriba
+    // y abajo del nombre activo (detalle de la referencia tipo Foxico/Bali).
+    const n = slides.length;
+    const prevSlide = slides[(active - 1 + n) % n];
+    const nextSlide = slides[(active + 1) % n];
+    const stepPrev = document.getElementById('sk3dStepPrev');
+    const stepActive = document.getElementById('sk3dStepActive');
+    const stepNext = document.getElementById('sk3dStepNext');
+    if (stepPrev) stepPrev.textContent = prevSlide ? prevSlide.dataset.nombre : '';
+    if (stepActive && activeSlide) stepActive.textContent = activeSlide.dataset.nombre || '';
+    if (stepNext) stepNext.textContent = nextSlide ? nextSlide.dataset.nombre : '';
+
+    // Circulo de indice + contador "01 / 08" al pie del carrusel.
+    const indexCircle = document.getElementById('sk3dIndexCircle');
+    if (indexCircle) indexCircle.textContent = String(active + 1);
+    const counterActive = document.getElementById('sk3dCounterActive');
+    if (counterActive) counterActive.textContent = String(active + 1).padStart(2, '0');
 }
 
 window.sk3dGoTo = function (index) {
@@ -2418,6 +2445,9 @@ function initSk3dCarousel() {
         if (e.key === 'ArrowLeft') sk3dNav(-1);
         if (e.key === 'ArrowRight') sk3dNav(1);
     });
+    // Recalcula el desplazamiento al cambiar el ancho del visor (rotacion de
+    // pantalla, resize de ventana, cambio de breakpoint).
+    window.addEventListener('resize', sk3dRender);
 }
 
 
@@ -2705,6 +2735,27 @@ function initArduinoLive() {
                 valEl.textContent = intensidad.toFixed(2) + 'G · ' + last.nivel;
                 barEl.style.width = Math.max(2, Math.min(100, (intensidad / 1.2) * 100)) + '%';
             }
+        } catch (e) { /* silencioso: se reintenta en el siguiente ciclo */ }
+    }
+    poll();
+    setInterval(poll, 4000);
+}
+
+
+//  26c. BURBUJA DE MONITOREO (sismografo Arduino, disponible en todo el sitio)
+
+
+let __monSinceId = 0;
+function initMonitorBubble() {
+    const fabDot = document.getElementById('monbotFabDot');
+    if (!fabDot) return;
+
+    async function poll() {
+        try {
+            const r = await fetch('?url=sensor/latest&since_id=' + __monSinceId);
+            const d = await r.json();
+            __monSinceId = d.last_id || __monSinceId;
+            fabDot.classList.toggle('live', !!d.connected);
         } catch (e) { /* silencioso: se reintenta en el siguiente ciclo */ }
     }
     poll();
@@ -3401,5 +3452,6 @@ document.addEventListener('DOMContentLoaded', () => {
     safeInit(initEvacCanvas);
     safeInit(initMemoryGame);
     safeInit(initArduinoLive);
+    safeInit(initMonitorBubble);
     safeInit(initSk3dCarousel);
 });

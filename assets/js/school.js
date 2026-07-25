@@ -1221,8 +1221,9 @@ async function initInicioMap() {
             if (isNaN(px) || isNaN(py)) return;
             const dLat = (((50 - py) / 50) * INICIO_MAP_RADIUS_M) / 111320;
             const dLng = (((px - 50) / 50) * INICIO_MAP_RADIUS_M) / (111320 * Math.cos(latN * Math.PI / 180));
+            const color = CROQUIS_COLORS[p.tipo] || CROQUIS_COLORS.otro;
             markers.push(
-                L.circleMarker([latN + dLat, lngN + dLng], { radius: 6, color: '#c98a3d', fillColor: '#c98a3d', fillOpacity: 0.9, weight: 1 })
+                L.circleMarker([latN + dLat, lngN + dLng], { radius: 8, color: '#fff', fillColor: color, fillOpacity: 0.95, weight: 2 })
                     .addTo(map)
                     .bindPopup(`<strong>${p.nombre}</strong><br>${CROQUIS_LABELS[p.tipo] || p.tipo}`)
             );
@@ -2102,6 +2103,16 @@ const CROQUIS_LABELS = {
     salida: 'Salida de emergencia',
     otro: 'Otro'
 };
+// Mismos colores que .croquis-dot en school.css, para que los marcadores del
+// mapa real y del board 2D se lean igual que la leyenda.
+const CROQUIS_COLORS = {
+    encuentro: '#5c7a54',
+    zona_segura: '#3d6f8f',
+    extintor: '#b8433f',
+    botiquin: '#c9a63f',
+    salida: '#a85736',
+    otro: '#6b73a0'
+};
 
 async function loadCroquis() {
     const board = document.getElementById('croquisBoard');
@@ -2232,15 +2243,32 @@ function initCroquisMap() {
     });
 }
 
+// Se abre un popup a la vez: MapLibre no cierra otros popups por su cuenta
+// (a diferencia de Leaflet), asi que sin esto dos puntos cercanos podian
+// quedar con su popup abierto al mismo tiempo, encimados y illegibles.
+let __croquisOpenPopup = null;
+function registerCroquisPopup(popup) {
+    popup.on('open', () => {
+        if (__croquisOpenPopup && __croquisOpenPopup !== popup) __croquisOpenPopup.remove();
+        __croquisOpenPopup = popup;
+    });
+    popup.on('close', () => {
+        if (__croquisOpenPopup === popup) __croquisOpenPopup = null;
+    });
+    return popup;
+}
+
 function renderCroquisMapMarkers(lat, lng, hasLoc, puntos) {
     if (!__croquisMap || typeof maplibregl === 'undefined') return;
     __croquisMapMarkers.forEach(m => m.remove());
     __croquisMapMarkers = [];
+    __croquisOpenPopup = null;
 
     if (hasLoc) {
+        const centerPopup = registerCroquisPopup(new maplibregl.Popup({ maxWidth: '220px' }).setHTML('<strong>Institución</strong>'));
         const centerMarker = new maplibregl.Marker({ color: '#c98a3d' })
             .setLngLat([lng, lat])
-            .setPopup(new maplibregl.Popup().setHTML('<strong>Institución</strong>'))
+            .setPopup(centerPopup)
             .addTo(__croquisMap);
         __croquisMapMarkers.push(centerMarker);
     }
@@ -2257,11 +2285,14 @@ function renderCroquisMapMarkers(lat, lng, hasLoc, puntos) {
         const dLat = offsetYm / 111320;
         const dLng = offsetXm / (111320 * Math.cos(lat * Math.PI / 180));
 
+        const color = CROQUIS_COLORS[p.tipo] || CROQUIS_COLORS.otro;
         const el = document.createElement('div');
-        el.style.cssText = 'width:14px;height:14px;border-radius:50%;background:#e08a1e;border:2px solid #fff;box-shadow:0 0 4px rgba(0,0,0,.4);cursor:pointer;';
+        el.className = 'croquis-map-marker';
+        el.style.cssText = `width:20px;height:20px;border-radius:50%;background:${color};border:3px solid #fff;box-shadow:0 0 0 2px ${color},0 2px 8px rgba(0,0,0,.5);cursor:pointer;`;
+        const popup = registerCroquisPopup(new maplibregl.Popup({ maxWidth: '240px' }).setHTML(`<strong>${p.nombre}</strong><br>${CROQUIS_LABELS[p.tipo] || p.tipo}`));
         const marker = new maplibregl.Marker({ element: el })
             .setLngLat([lng + dLng, lat + dLat])
-            .setPopup(new maplibregl.Popup().setHTML(`<strong>${p.nombre}</strong><br>${CROQUIS_LABELS[p.tipo] || p.tipo}`))
+            .setPopup(popup)
             .addTo(__croquisMap);
         __croquisMapMarkers.push(marker);
     });

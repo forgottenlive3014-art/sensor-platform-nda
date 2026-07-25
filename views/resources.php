@@ -10,10 +10,12 @@ $catColors = [
     'plan'       => ['#2d8fff', 'rgba(45, 143, 255, 0.15)'],
     'sismo'      => ['#f97316', 'rgba(249, 115, 22, 0.15)'],
     'lluvias'    => ['#2d8fff', 'rgba(45, 143, 255, 0.15)'],
+    'volcanes'   => ['#e0631f', 'rgba(224, 99, 31, 0.15)'],
+    'clima'      => ['#7c3aed', 'rgba(124, 58, 237, 0.15)'],
 ];
 $catLabels = [
     'evacuacion' => 'Evacuación', 'mochila' => 'Mochila', 'plan' => 'Plan Familiar',
-    'sismo' => 'Sismos', 'lluvias' => 'Lluvias',
+    'sismo' => 'Sismos', 'lluvias' => 'Lluvias', 'volcanes' => 'Volcanes', 'clima' => 'Clima',
 ];
 function formatResourceSize($bytes) {
     if (!$bytes || $bytes <= 0) return '';
@@ -43,6 +45,8 @@ ob_start();
             <button class="filter-btn" data-filter="plan" style="background: var(--card2); color: var(--text); border: 1px solid var(--border); padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;"> Plan Familiar</button>
             <button class="filter-btn" data-filter="sismo" style="background: var(--card2); color: var(--text); border: 1px solid var(--border); padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;"> Sismos</button>
             <button class="filter-btn" data-filter="lluvias" style="background: var(--card2); color: var(--text); border: 1px solid var(--border); padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;"> Lluvias</button>
+            <button class="filter-btn" data-filter="volcanes" style="background: var(--card2); color: var(--text); border: 1px solid var(--border); padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;"> Volcanes</button>
+            <button class="filter-btn" data-filter="clima" style="background: var(--card2); color: var(--text); border: 1px solid var(--border); padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;"> Clima</button>
         </div>
 
         <div class="resources-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px;">

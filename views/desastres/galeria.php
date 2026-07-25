@@ -1,5 +1,5 @@
 <?php
-$title = $title ?? 'Desastres en 3D - NDA';
+$title = $title ?? 'Desastres - NDA';
 $user = $user ?? null;
 $currentSlug = 'galeria-3d';
 $extraCss = ['css/desastres-base.css', 'css/galeria-3d.css'];
@@ -89,19 +89,28 @@ ob_start();
 <div class="dis-page">
 <!-- HERO 3D: info a un lado, carrusel "coverflow" con modelo Sketchfab real al otro -->
 <section class="sk3d-hero" id="sk3dHero">
-  <div class="sk3d-hero-bg" aria-hidden="true"></div>
+  <div class="sk3d-hero-bg" id="sk3dHeroBg" aria-hidden="true" style="background-image:url(<?= e($modelos[0]['thumb']) ?>)"></div>
 
   <div class="wrap sk3d-hero-inner">
+    <div class="sk3d-index-rail" aria-hidden="true">
+      <span class="sk3d-index-total">01</span>
+      <span class="sk3d-index-line"></span>
+      <span class="sk3d-index-circle" id="sk3dIndexCircle">1</span>
+      <span class="sk3d-index-total">0<?= count($modelos) ?></span>
+    </div>
+
     <div class="sk3d-hero-info">
-      <div class="sec-hd" style="text-align:left;margin:0 0 8px;">
-        <h1 class="sec-title">Desastres en <span class="acc">3D</span></h1>
-        <p class="sec-sub">Un modelo tridimensional real por cada amenaza — elegí uno y explorálo en 3D. Cortesía de la comunidad de Sketchfab.</p>
+      <div class="sk3d-eyebrow">Amenazas Naturales · El Salvador</div>
+
+      <div class="sk3d-stepper" id="sk3dStepper">
+        <div class="sk3d-step-name prev" id="sk3dStepPrev"></div>
+        <h1 class="sk3d-step-name active" id="sk3dStepActive">Desastres</h1>
+        <div class="sk3d-step-name next" id="sk3dStepNext"></div>
       </div>
 
       <div class="sk3d-panel" id="sk3dPanel">
         <?php foreach ($modelos as $i => $m): ?>
         <div class="sk3d-panel-item<?= $i === 0 ? ' active' : '' ?>" data-index="<?= $i ?>" style="--sk-accent:<?= e($m['accent']) ?>">
-          <h3><?= e($m['nombre']) ?></h3>
           <p class="sk3d-panel-desc"><?= e($m['desc']) ?></p>
           <p class="sk3d-panel-riesgo"><strong>En El Salvador:</strong> <?= e($m['riesgo']) ?></p>
           <div class="sk3d-panel-actions">
@@ -123,17 +132,19 @@ ob_start();
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
 
-        <div class="sk3d-track" id="sk3dTrack">
-          <?php foreach ($modelos as $i => $m): ?>
-          <div class="sk3d-slide" data-index="<?= $i ?>" data-uid="<?= e($m['uid']) ?>" data-thumb="<?= e($m['thumb']) ?>" style="--sk-accent:<?= e($m['accent']) ?>" onclick="sk3dGoTo(<?= $i ?>)">
-            <div class="sk3d-slide-viewport">
-              <img src="<?= e($m['thumb']) ?>" alt="<?= e($m['nombre']) ?>" loading="lazy">
+        <div class="sk3d-track-viewport" id="sk3dTrackViewport">
+          <div class="sk3d-track" id="sk3dTrack">
+            <?php foreach ($modelos as $i => $m): ?>
+            <div class="sk3d-slide<?= $i === 0 ? ' active' : '' ?>" data-index="<?= $i ?>" data-uid="<?= e($m['uid']) ?>" data-thumb="<?= e($m['thumb']) ?>" data-nombre="<?= e($m['nombre']) ?>" style="--sk-accent:<?= e($m['accent']) ?>" onclick="sk3dGoTo(<?= $i ?>)">
+              <div class="sk3d-slide-caption">
+                <span class="sk3d-slide-name"><?= e($m['nombre']) ?></span>
+              </div>
+              <div class="sk3d-slide-viewport">
+                <img src="<?= e($m['thumb']) ?>" alt="<?= e($m['nombre']) ?>" loading="lazy">
+              </div>
             </div>
-            <div class="sk3d-slide-caption">
-              <span class="sk3d-slide-name"><?= e($m['nombre']) ?></span>
-            </div>
+            <?php endforeach; ?>
           </div>
-          <?php endforeach; ?>
         </div>
 
         <button type="button" class="sk3d-arrow sk3d-arrow-next" onclick="sk3dNav(1)" aria-label="Modelo siguiente">
@@ -141,16 +152,23 @@ ob_start();
         </button>
       </div>
 
-      <div class="sk3d-dots" id="sk3dDots">
-        <?php foreach ($modelos as $i => $m): ?>
-        <button type="button" class="sk3d-dot<?= $i === 0 ? ' active' : '' ?>" data-index="<?= $i ?>" onclick="sk3dGoTo(<?= $i ?>)" aria-label="Ir a <?= e($m['nombre']) ?>"></button>
-        <?php endforeach; ?>
+      <div class="sk3d-carousel-footer">
+        <div class="sk3d-dots" id="sk3dDots">
+          <?php foreach ($modelos as $i => $m): ?>
+          <button type="button" class="sk3d-dot<?= $i === 0 ? ' active' : '' ?>" data-index="<?= $i ?>" onclick="sk3dGoTo(<?= $i ?>)" aria-label="Ir a <?= e($m['nombre']) ?>"></button>
+          <?php endforeach; ?>
+        </div>
+        <div class="sk3d-counter">
+          <span id="sk3dCounterActive">01</span>
+          <span class="sk3d-counter-line"></span>
+          <span>0<?= count($modelos) ?></span>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- GRILLA: acceso rapido a los 8, con su propio visor bajo demanda -->
+<!-- VISUALIZACIONES 3D: acceso directo a los 8 visores, uno por amenaza -->
 <section class="sec">
   <div class="wrap">
     <div class="sec-hd">
@@ -181,6 +199,7 @@ ob_start();
     </div>
   </div>
 </section>
+
 </div>
 
 <?php

@@ -2,7 +2,7 @@
 // Partial compartido: pastillas para saltar entre las 8 paginas de
 // "Desastres". $currentSlug (definido en cada vista) marca la actual.
 $__disItems = [
-    'galeria-3d'            => 'Desastres en 3D',
+    'galeria-3d'            => 'Desastres',
     'sismos'                => 'Sismos',
     'volcanes'              => 'Volcanes',
     'tsunamis'              => 'Tsunamis',

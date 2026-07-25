@@ -118,7 +118,7 @@ $navDisplayName = $isLoggedIn
     <div class="nav-drop">
       <button type="button" class="nav-drop-btn" onclick="toggleNavDrop(this)">Desastres <span class="nav-drop-car">▾</span></button>
       <div class="nav-drop-dd">
-        <a class="ndd-item" href="?url=galeria-3d">Desastres en 3D</a>
+        <a class="ndd-item" href="?url=galeria-3d">Desastres</a>
         <a class="ndd-item" href="?url=sismos">Sismos</a>
         <a class="ndd-item" href="?url=volcanes">Volcanes</a>
         <a class="ndd-item" href="?url=tsunamis">Tsunamis</a>
@@ -132,8 +132,9 @@ $navDisplayName = $isLoggedIn
     <div class="nav-drop">
       <button type="button" class="nav-drop-btn" onclick="toggleNavDrop(this)">Monitoreo <span class="nav-drop-car">▾</span></button>
       <div class="nav-drop-dd">
-        <a class="ndd-item" href="?url=monitoreo">Sol, Luna y Clima</a>
-        <a class="ndd-item" href="?url=arduino">Sismógrafo Arduino</a>
+        <a class="ndd-item" href="?url=monitoreo#sol">Sol</a>
+        <a class="ndd-item" href="?url=monitoreo#luna">Luna</a>
+        <a class="ndd-item" href="?url=monitoreo#clima">Clima</a>
       </div>
     </div>
     <a href="?url=blog">Blog</a>
@@ -276,52 +277,7 @@ $navDisplayName = $isLoggedIn
 
 <button class="scroll-top" id="scrollTop"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></button>
 
-<?php if ($__canSeeSchoolLink): ?>
-<a href="?url=school" class="school-fab" aria-label="Ir a Gestión Escolar" title="Gestión Escolar">
-  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M22 10 12 5 2 10l10 5 10-5Z"/>
-    <path d="M6 12v5c0 1 3 3 6 3s6-2 6-3v-5"/>
-  </svg>
-</a>
-<?php endif; ?>
-
-<!-- Chatbot, disponible en todo el sitio -->
-<div class="ndabot" id="ndabot">
-  <button class="ndabot-fab" id="ndabotFab" aria-label="Abrir chat de ayuda">
-    <img src="assets/media/img/chatbot.png" alt="Asistente NDA">
-    <span class="ndabot-fab-dot"></span>
-  </button>
-
-  <div class="ndabot-panel" id="ndabotPanel">
-    <div class="ndabot-head">
-      <img src="assets/media/img/chatbot.png" alt="">
-      <div>
-        <strong>Asistente NDA</strong>
-        <span>Pregúntame o pide que te lleve a una sección</span>
-      </div>
-      <button class="ndabot-close" id="ndabotClose" aria-label="Cerrar chat">
-        &times;
-      </button>
-    </div>
-
-    <div class="ndabot-messages" id="ndabotMessages"></div>
-
-    <div class="ndabot-suggestions" id="ndabotSuggestions">
-      <button data-q="¿Qué hacer durante un sismo?">¿Qué hacer durante un sismo?</button>
-      <button data-q="Llévame a Gestión Escolar">Gestión Escolar</button>
-      <button data-q="Muéstrame el clima">Clima ahora</button>
-      <button data-q="Quiero registrarme">Registrarme</button>
-    </div>
-
-    <form class="ndabot-input" id="ndabotForm">
-      <input type="text" id="ndabotInput" placeholder="Escribe tu pregunta..." autocomplete="off">
-      <button type="submit" aria-label="Enviar">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-      </button>
-    </form>
-    <button class="ndabot-clear" id="ndabotClear">Borrar historial</button>
-  </div>
-</div>
+<?php include __DIR__ . '/_nda_dock.php'; ?>
 
 <!-- Traductor ES/EN -->
 <div id="google_translate_element" style="display:none"></div>

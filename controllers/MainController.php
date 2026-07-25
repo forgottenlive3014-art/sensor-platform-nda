@@ -75,7 +75,7 @@ class MainController {
     // estos 7 comparten la misma plantilla en views/desastres/.
     // ---------------------------------------------------------------
     public function desastresGaleria() {
-        view('desastres/galeria', ['title' => 'Desastres en 3D - NDA', 'user' => currentUser()]);
+        view('desastres/galeria', ['title' => 'Desastres - NDA', 'user' => currentUser()]);
     }
 
     public function volcanes() {

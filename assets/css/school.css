@@ -10,67 +10,88 @@
 
 /* ─── HEADER ─── */
 .school-header {
+    position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: var(--card);
-    border-radius: 16px;
-    padding: 24px 30px;
-    border: 1px solid var(--border);
-    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+    background: linear-gradient(150deg, var(--card2) 0%, var(--card) 65%);
+    border-radius: 22px;
+    padding: 28px 32px;
+    border: 1px solid var(--border2);
+    margin-bottom: 22px;
+    box-shadow: var(--sh);
+    overflow: hidden;
+}
+.school-header::before {
+    content: '';
+    position: absolute; top: -70px; right: -60px; width: 240px; height: 240px;
+    background: radial-gradient(circle, var(--gA) 0%, transparent 72%);
+    pointer-events: none;
 }
 .school-header-left {
+    position: relative;
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 18px;
 }
 .school-header-icon {
-    width: 52px;
-    height: 52px;
-    border-radius: 14px;
-    background: var(--gA);
-    color: var(--acc);
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--acc), var(--acc3));
+    color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    box-shadow: 0 8px 22px var(--gA);
 }
 .school-header h1 {
     font-family: var(--fd);
-    font-size: 1.6rem;
+    font-size: 1.7rem;
     font-weight: 800;
     color: var(--text);
+    letter-spacing: -0.01em;
 }
 .school-header-sub {
     color: var(--text3);
     font-size: 0.85rem;
+    margin-top: 4px;
 }
+.school-header-right { position: relative; }
 .school-role-badge {
-    padding: 6px 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 16px 6px 6px;
     border-radius: 100px;
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     font-weight: 600;
+    background: var(--card2);
+    border: 1px solid var(--border2);
 }
-.school-role-badge.admin {
-    background: rgba(124, 58, 237, 0.15);
-    color: var(--purple);
-    border: 1px solid rgba(124, 58, 237, 0.3);
+.school-role-avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--fd); font-weight: 700; font-size: 0.8rem;
+    color: #fff; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--acc), var(--acc3));
 }
-.school-role-badge.docente {
-    background: rgba(45, 143, 255, 0.12);
-    color: var(--blue);
-    border: 1px solid rgba(45, 143, 255, 0.28);
+.school-role-badge-text { display: flex; flex-direction: column; line-height: 1.25; }
+.school-role-badge-text em {
+    font-style: normal; font-size: 0.66rem; font-weight: 600;
+    opacity: 0.65; text-transform: capitalize;
 }
-.school-role-badge.alumno {
-    background: rgba(0, 212, 176, 0.1);
-    color: var(--teal);
-    border: 1px solid rgba(0, 212, 176, 0.22);
-}
-.school-role-badge.padre {
-    background: rgba(22, 198, 94, 0.1);
-    color: var(--green);
-    border: 1px solid rgba(22, 198, 94, 0.22);
-}
+.school-role-badge.admin .school-role-avatar { background: linear-gradient(135deg, var(--purple), #8b5cf6); }
+.school-role-badge.admin { border-color: rgba(124, 58, 237, 0.3); color: var(--purple); }
+.school-role-badge.docente .school-role-avatar { background: linear-gradient(135deg, var(--blue), #2d8fff); }
+.school-role-badge.docente { border-color: rgba(45, 143, 255, 0.28); color: var(--blue); }
+.school-role-badge.alumno .school-role-avatar { background: linear-gradient(135deg, var(--teal), #00d4b0); }
+.school-role-badge.alumno { border-color: rgba(0, 212, 176, 0.22); color: var(--teal); }
+.school-role-badge.padre .school-role-avatar { background: linear-gradient(135deg, var(--green), #22c55e); }
+.school-role-badge.padre { border-color: rgba(22, 198, 94, 0.22); color: var(--green); }
 
 /* ─── TABS ─── */
 /* ─── LAYOUT: sidebar + contenido ─── */
@@ -92,26 +113,30 @@ html { scroll-behavior: smooth; }
     z-index: 40;
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 10px 14px;
+    gap: 6px;
+    background: rgba(13, 20, 32, 0.6);
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    border: 1px solid var(--border2);
+    border-radius: 16px;
+    padding: 8px;
     margin-bottom: 24px;
+    box-shadow: var(--sh);
 }
 .school-scroll-nav a {
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-size: 0.85rem;
+    padding: 9px 16px;
+    border-radius: 11px;
+    font-size: 0.83rem;
     font-weight: 600;
     color: var(--text2);
     text-decoration: none;
-    transition: all 0.2s;
+    transition: background 0.2s var(--ez), color 0.2s var(--ez);
 }
 .school-scroll-nav a:hover {
-    background: var(--bg3);
-    color: var(--text);
+    background: var(--gA);
+    color: var(--acc);
 }
+[data-theme="light"] .school-scroll-nav { background: rgba(255, 255, 255, 0.7); }
 
 .school-scroll-page .school-panel {
     display: block;
@@ -553,12 +578,14 @@ html { scroll-behavior: smooth; }
     gap: 6px;
 }
 .school-btn.primary {
-    background: var(--acc);
+    background: linear-gradient(135deg, var(--acc), var(--acc3));
     color: #fff;
+    box-shadow: 0 6px 18px var(--gA);
 }
 .school-btn.primary:hover {
-    background: var(--acc2);
+    filter: brightness(1.08);
     transform: translateY(-1px);
+    box-shadow: 0 8px 22px var(--gA);
 }
 .school-btn.secondary {
     background: var(--bg3);
@@ -1083,6 +1110,15 @@ html { scroll-behavior: smooth; }
     box-shadow: 0 2px 8px rgba(0,0,0,0.4);
     transform: translate(-50%, -50%);
     cursor: pointer;
+    z-index: 1;
+    transition: transform 0.15s var(--ez);
+}
+/* Al pasar el mouse, el marcador pasa al frente: si dos puntos estan muy
+   cerca (ej. dos "punto de encuentro" a pocos metros), el que esta activo
+   no debe quedar debajo del tooltip del vecino. */
+.croquis-marker:hover {
+    z-index: 30;
+    transform: translate(-50%, -50%) scale(1.15);
 }
 .croquis-marker-tooltip {
     display: none;
@@ -1092,17 +1128,50 @@ html { scroll-behavior: smooth; }
     transform: translateX(-50%);
     background: var(--card);
     border: 1px solid var(--border2);
-    border-radius: 8px;
-    padding: 8px 10px;
-    font-size: 0.72rem;
+    border-top: 3px solid var(--text3);
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-size: 0.74rem;
+    line-height: 1.45;
     color: var(--text2);
-    white-space: nowrap;
+    /* Antes: white-space:nowrap forzaba una caja muy ancha con textos largos
+       (la descripcion admite hasta 255 caracteres), lo que hacia que se
+       montara sobre el punto vecino cuando dos estaban cerca. Con wrap +
+       ancho fijo, el tooltip siempre ocupa el mismo espacio. */
+    white-space: normal;
+    width: 200px;
     box-shadow: var(--shl);
     z-index: 10;
+    pointer-events: none;
 }
-.croquis-marker-tooltip strong { color: var(--text); }
-.croquis-marker-tooltip a { color: var(--red); font-size: 0.68rem; }
+.croquis-marker-tooltip strong { display: block; margin-bottom: 2px; color: var(--text); font-size: 0.78rem; }
+.croquis-marker-tooltip a { display: inline-block; margin-top: 4px; color: var(--red); font-size: 0.68rem; pointer-events: auto; }
 .croquis-marker:hover .croquis-marker-tooltip { display: block; }
+.croquis-marker.encuentro .croquis-marker-tooltip { border-top-color: var(--green); }
+.croquis-marker.zona_segura .croquis-marker-tooltip { border-top-color: var(--blue); }
+.croquis-marker.extintor .croquis-marker-tooltip { border-top-color: var(--red); }
+.croquis-marker.botiquin .croquis-marker-tooltip { border-top-color: var(--acc4); }
+.croquis-marker.salida .croquis-marker-tooltip { border-top-color: var(--acc3); }
+.croquis-marker.otro .croquis-marker-tooltip { border-top-color: var(--purple); }
+
+/* Marcadores y popups del mapa real (MapLibre) dentro de #croquisMap */
+.croquis-map-marker { transition: transform 0.15s var(--ez); }
+.croquis-map-marker:hover { transform: scale(1.15); }
+#croquisMap .maplibregl-popup-content {
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    box-shadow: var(--shl);
+    padding: 10px 14px;
+    font-family: var(--fn);
+    font-size: 0.78rem;
+    line-height: 1.5;
+}
+#croquisMap .maplibregl-popup-content strong { color: var(--text); font-family: var(--fd); font-size: 0.8rem; }
+#croquisMap .maplibregl-popup-tip { border-top-color: var(--card) !important; border-bottom-color: var(--card) !important; }
+#croquisMap .maplibregl-popup-close-button { color: var(--text3); font-size: 1rem; padding: 4px 8px; }
+#croquisMap .maplibregl-popup-close-button:hover { color: var(--text); background: transparent; }
 
 /* ============================================================
    TABLERO DE CORCHO
