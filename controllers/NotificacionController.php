@@ -89,16 +89,26 @@ class NotificacionController {
         return $u['institucion_id'] ?? null;
     }
 
+    // Solo para LECTURA (ver EstudianteController::readScopeInstitutionId()
+    // para la explicacion completa). Nunca se usa en escritura (send()).
+    private function readScopeInstitutionId() {
+        $u = currentUser();
+        if ($u['role'] === 'admin' && !empty($_SESSION['admin_view_institucion_id'])) {
+            return (int) $_SESSION['admin_view_institucion_id'];
+        }
+        return $this->scopeInstitutionId();
+    }
+
     public function manageList() {
         if (!isLoggedIn() || !$this->isSchoolAdmin()) {
             jsonResponse(['error' => 'No autorizado'], 401);
         }
         $u = currentUser();
-        $isGlobalAdmin = $u['role'] === 'admin';
         $model = new NotificationModel();
         $page = (int) ($_GET['page'] ?? 1);
         $perPage = (int) ($_GET['per_page'] ?? 10);
-        $instId = $this->scopeInstitutionId();
+        $instId = $this->readScopeInstitutionId();
+        $isGlobalAdmin = $u['role'] === 'admin' && $instId === null;
 
         $rows = $model->getSentPage($instId, $isGlobalAdmin, $page, $perPage);
         $total = $model->countSent($instId, $isGlobalAdmin);

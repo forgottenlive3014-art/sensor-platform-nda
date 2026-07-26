@@ -162,3 +162,23 @@ ALTER TABLE asistencia_simulacros
 ALTER TABLE asistencia_simulacros
   MODIFY estado ENUM('presente', 'ausente', 'herido') DEFAULT 'presente';
 UPDATE asistencia_simulacros SET estado = 'herido' WHERE estado = 'lesionado';
+
+-- ============================================================
+-- MIGRACION: verificacion del correo personal al registrarse.
+-- Antes, isRealEmail() solo comprobaba que el DOMINIO reciba correo
+-- (ej. "gmail.com" existe), no que esa cuenta en particular sea real o le
+-- pertenezca a quien se registro — cualquier "inventado123@gmail.com"
+-- pasaba el registro y quedaba con sesion iniciada de una vez. Ahora se
+-- manda un codigo de 6 digitos al correo y hay que confirmarlo antes de
+-- poder entrar (igual que ya se hacia con el correo institucional del
+-- director, solo que aqui es el correo personal de cada quien).
+-- ============================================================
+
+ALTER TABLE usuarios
+  ADD COLUMN email_verificado TINYINT(1) NOT NULL DEFAULT 0 AFTER contra,
+  ADD COLUMN codigo_verificacion_email VARCHAR(6) NULL AFTER email_verificado,
+  ADD COLUMN codigo_verificacion_email_expira DATETIME NULL AFTER codigo_verificacion_email;
+
+-- Las cuentas que ya existian antes de este cambio no deben quedar
+-- bloqueadas de golpe la proxima vez que inicien sesion.
+UPDATE usuarios SET email_verificado = 1 WHERE email_verificado = 0;

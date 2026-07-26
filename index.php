@@ -1,5 +1,36 @@
 <?php
+// Cookie de sesion endurecida: HttpOnly (no accesible desde JS, mitiga robo
+// de sesion via XSS), SameSite=Lax (no se envia en requests cross-site, mitiga
+// CSRF) y Secure solo si la conexion ya es HTTPS (en HTTP local del dev no se
+// puede exigir Secure o el navegador descartaria la cookie).
+$__ndaIsHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (($_SERVER['SERVER_PORT'] ?? '') == 443);
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path'     => '/',
+    'domain'   => '',
+    'secure'   => $__ndaIsHttps,
+    'httponly' => true,
+    'samesite' => 'Lax',
+]);
 session_start();
+
+// Cierra la sesion sola tras 2 horas sin actividad (cada request logueado
+// renueva el contador), para no dejar sesiones abiertas indefinidamente en
+// equipos compartidos. No afecta a visitantes anonimos.
+const NDA_SESSION_INACTIVITY_LIMIT = 7200; // 2 horas
+if (isset($_SESSION['user_id'])) {
+    if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > NDA_SESSION_INACTIVITY_LIMIT) {
+        $_SESSION = [];
+        if (ini_get('session.use_cookies')) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
+        }
+        session_destroy();
+        session_start();
+        $_SESSION['error'] = 'Tu sesión se cerró por inactividad. Inicia sesión de nuevo.';
+    }
+    $_SESSION['last_activity'] = time();
+}
 
 // Amortigua warnings/notices de PHP para que jsonResponse() siempre mande JSON limpio.
 ob_start();
@@ -153,6 +184,8 @@ $routeMap = [
     'register'   => ['AuthController', 'register'],
     'register/verify'       => ['AuthController', 'verifyEmail'],
     'register/resend-code'  => ['AuthController', 'resendVerificationCode'],
+    'register/verify-account'      => ['AuthController', 'verifyAccountEmail'],
+    'register/resend-account-code' => ['AuthController', 'resendAccountVerificationCode'],
     'logout'     => ['AuthController', 'logout'],
     'profile'          => ['AuthController', 'profile'],
     'profile/update'   => ['AuthController', 'updateProfile'],
@@ -186,6 +219,8 @@ $routeMap = [
     // ============================================================
     'school'                    => ['SchoolController', 'index'],
     'school/panel'              => ['SchoolController', 'panel'],
+    'school/view-institution'   => ['SchoolController', 'viewInstitution'],
+    'school/exit-view'          => ['SchoolController', 'exitInstitutionView'],
     'school/news-detail'        => ['SchoolController', 'newsDetail'],
     'school/riesgo-detail'      => ['SchoolController', 'riesgoDetail'],
     'school/incident-detail'    => ['SchoolController', 'incidentDetail'],

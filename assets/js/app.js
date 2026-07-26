@@ -3,6 +3,15 @@
 //  TODOS LOS SCRIPTS ORDENADOS
 
 
+// Usado para texto que viene de APIs externas (USGS, etc.) antes de
+// insertarlo con innerHTML — el resto del contenido de este archivo es
+// data estatica escrita por el equipo, no necesita escape.
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str == null ? '' : str;
+    return div.innerHTML;
+}
+
 
 //  0. AVISOS EN LA PÁGINA (reemplaza alert()/confirm() nativos del navegador)
 
@@ -113,6 +122,18 @@ window.addEventListener('pageshow', function (e) {
         window.location.reload();
     }
 });
+
+// Boton "Volver" que aparece en toda pagina menos Inicio (ver .nda-back-btn).
+// Si hay historial de navegacion dentro del propio sitio lo usa (conserva
+// scroll/estado); si se abrio el link de forma directa, cae a Inicio.
+window.ndaGoBack = function () {
+    var cameFromSite = document.referrer && document.referrer.indexOf(window.location.origin) === 0;
+    if (cameFromSite && window.history.length > 1) {
+        window.history.back();
+    } else {
+        window.location.href = '?url=home';
+    }
+};
 
   
 //  1B. BANNER DE SIMULACRO EN VIVO (visible en todo el sitio)
@@ -511,7 +532,7 @@ async function loadQuakes() {
                 el.className = 'qfi';
                 el.innerHTML = `<div class="qfi-mag ${cls}">${m.toFixed(1)}</div>
                                 <div class="qfi-info">
-                                    <div class="qfi-place">${q.properties.place || '—'}</div>
+                                    <div class="qfi-place">${escapeHtml(q.properties.place || '—')}</div>
                                     <div class="qfi-meta">${tm}</div>
                                 </div>
                                 <div class="qfi-depth">Prof ${dep}km</div>`;
@@ -1074,7 +1095,7 @@ window._addQuakesToMap = function(qs) {
         const col = m < 3 ? '#22c55e' : m < 5 ? '#ff9500' : '#e63946';
         L.circleMarker([lat, lng], { radius: Math.max(4, m * 2.2), color: col, fillColor: col, fillOpacity: .5,
                 weight: 1.5 })
-            .bindPopup(`<b>M ${m}</b><br>${q.properties.place}<br>${new Date(q.properties.time).toLocaleString('es')}<br><small>Fuente: USGS</small>`)
+            .bindPopup(`<b>M ${m}</b><br>${escapeHtml(q.properties.place)}<br>${new Date(q.properties.time).toLocaleString('es')}<br><small>Fuente: USGS</small>`)
             .addTo(qLayer2);
     });
 };
@@ -2682,7 +2703,7 @@ async function loadTsunamiFeed() {
             return `<div class="ts-feed-item">
                 <div class="ts-mag-badge ${potential ? 'ts-potential' : 'ts-watch'}">${m.toFixed(1)}</div>
                 <div class="ts-info">
-                    <div class="ts-info-place">${place}</div>
+                    <div class="ts-info-place">${escapeHtml(place)}</div>
                     <div class="ts-info-meta">${time} · Prof: ${Math.round(depth)}km</div>
                 </div>
                 <span class="ts-alert-chip ${potential ? 'red' : watch ? 'org' : 'ok'}">${potential ? 'Alerta' : watch ? 'Vigilancia' : 'Sin alerta'}</span>

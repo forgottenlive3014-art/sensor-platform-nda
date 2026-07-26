@@ -10,6 +10,15 @@
     var lastId = 0;
     var items = []; // en memoria, mas recientes primero
 
+    // El mensaje de una notificacion lo escribe cualquier docente/director
+    // (NotificacionController), y esta campana la ve todo el sitio: sin
+    // escapar aqui, un mensaje malicioso se ejecutaria en cada destinatario.
+    function escapeHtml(str) {
+        var div = document.createElement('div');
+        div.textContent = str == null ? '' : str;
+        return div.innerHTML;
+    }
+
     function severityRank(sev) {
         return { seguro: 0, informativo: 1, precaucion: 2, alerta: 3, emergencia: 4 }[sev] ?? 1;
     }
@@ -20,8 +29,8 @@
             return;
         }
         list.innerHTML = items.map(function (n) {
-            return '<div class="nda-notif-item' + (n.leida ? '' : ' unread') + '" data-severidad="' + n.severidad + '" data-id="' + n.notificaciones_id + '">' +
-                '<div>' + n.mensaje + '<br><small style="opacity:.6">' + new Date(n.created_at).toLocaleString('es-SV') + '</small></div>' +
+            return '<div class="nda-notif-item' + (n.leida ? '' : ' unread') + '" data-severidad="' + escapeHtml(n.severidad) + '" data-id="' + n.notificaciones_id + '">' +
+                '<div>' + escapeHtml(n.mensaje) + '<br><small style="opacity:.6">' + new Date(n.created_at).toLocaleString('es-SV') + '</small></div>' +
                 '</div>';
         }).join('');
     }
@@ -101,9 +110,9 @@
                 return;
             }
             inboxList.innerHTML = rows.map(function (n) {
-                return '<div class="nda-notif-item' + (n.leida ? '' : ' unread') + '" data-severidad="' + n.severidad + '">' +
-                    '<div>' + n.mensaje +
-                    '<br><small style="opacity:.6">' + severityLabel(n.severidad) + ' · ' + new Date(n.created_at).toLocaleString('es-SV') + '</small></div>' +
+                return '<div class="nda-notif-item' + (n.leida ? '' : ' unread') + '" data-severidad="' + escapeHtml(n.severidad) + '">' +
+                    '<div>' + escapeHtml(n.mensaje) +
+                    '<br><small style="opacity:.6">' + escapeHtml(severityLabel(n.severidad)) + ' · ' + new Date(n.created_at).toLocaleString('es-SV') + '</small></div>' +
                     '</div>';
             }).join('');
 

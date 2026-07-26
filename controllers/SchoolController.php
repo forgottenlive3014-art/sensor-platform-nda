@@ -33,6 +33,26 @@ class SchoolController {
         return $u['institucion_id'] ?? null;
     }
 
+    // El Admin General puede "ver" el panel completo de una institucion en
+    // modo solo lectura (ver viewInstitution()/exitInstitutionView() mas
+    // abajo). Esto SOLO se usa para decidir que datos leer/mostrar — nunca
+    // para crear/editar/borrar, que siguen atados a myInstitutionId() (null
+    // para admin), asi la vista es de solo lectura incluso si alguien
+    // intenta forzar una peticion de escritura mientras esta activa.
+    private function adminViewingInstitutionId() {
+        $u = currentUser();
+        if ($u && $u['role'] === 'admin' && !empty($_SESSION['admin_view_institucion_id'])) {
+            return (int) $_SESSION['admin_view_institucion_id'];
+        }
+        return null;
+    }
+
+    // Institucion a usar en endpoints de LECTURA: la del usuario, o la que
+    // el Admin General este viendo. No usar en escritura (ver arriba).
+    private function readInstitutionId() {
+        return $this->adminViewingInstitutionId() ?? $this->myInstitutionId();
+    }
+
     // True si el usuario pertenece de forma aprobada a alguna institucion,
     // o es un admin global del sistema.
     private function canAccessSchool() {
@@ -59,13 +79,50 @@ class SchoolController {
         // El Admin General no gestiona "una escuela", administra toda la
         // plataforma (instituciones, usuarios, blog, recursos, contenido) —
         // no es uno de los 5 roles institucionales, su panel no cambia con
-        // la separacion Pagina Principal / Panel de Gestion.
-        if ($user['role'] === 'admin') {
+        // la separacion Pagina Principal / Panel de Gestion. Excepcion: si
+        // esta "viendo" una institucion especifica (viewInstitution()), ve
+        // la Pagina Principal de esa institucion en modo solo lectura.
+        if ($user['role'] === 'admin' && !$this->adminViewingInstitutionId()) {
             $this->renderAdminGeneral($db, $user);
             return;
         }
 
         $this->renderMainPage($db, $user);
+    }
+
+    // Admin General: activa el modo "ver institucion" (solo lectura) y lo
+    // manda a esa institucion — a su Pagina Principal (como la ve cualquier
+    // miembro: noticias, croquis, lugares en riesgo, corcho) por defecto, o
+    // directo al Panel de Gestion completo si viene con ?dest=panel. Ambas
+    // paginas se pueden cruzar entre si mientras el modo vista sigue activo
+    // (se guarda en sesion, asi las llamadas AJAX de cada pestaña tambien
+    // leen de ahi).
+    public function viewInstitution() {
+        if (!isLoggedIn() || currentUser()['role'] !== 'admin') {
+            redirect('school');
+            return;
+        }
+        $id = (int) ($_GET['id'] ?? 0);
+        if (!$id) {
+            redirect('school');
+            return;
+        }
+        $db = getDB();
+        $stmt = $db->prepare("SELECT instituciones_id FROM instituciones WHERE instituciones_id = ?");
+        $stmt->execute([$id]);
+        if (!$stmt->fetch()) {
+            $_SESSION['error'] = 'Esa institución no existe.';
+            redirect('school');
+            return;
+        }
+        $_SESSION['admin_view_institucion_id'] = $id;
+        redirect(($_GET['dest'] ?? '') === 'panel' ? 'school/panel' : 'school');
+    }
+
+    // Sale del modo "ver institucion" y regresa al panel del Admin General.
+    public function exitInstitutionView() {
+        unset($_SESSION['admin_view_institucion_id']);
+        redirect('school');
     }
 
     // Pagina Principal Institucional (ruta "school"): un solo archivo
@@ -74,7 +131,8 @@ class SchoolController {
     // lectura — el CRUD completo vive en panel() (ruta "school/panel"),
     // exclusiva de director/docente.
     private function renderMainPage($db, $user) {
-        $instId = $this->myInstitutionId();
+        $isReadOnlyView = $user['role'] === 'admin' && $this->adminViewingInstitutionId();
+        $instId = $isReadOnlyView ? $this->readInstitutionId() : $this->myInstitutionId();
         $instFilter = $instId ? " WHERE instituciones_id = " . intval($instId) : '';
 
         $institucion = null;
@@ -101,32 +159,40 @@ class SchoolController {
             'drills' => $drills,
             'routes' => $routes,
             'croquisPoints' => $croquisPoints,
-            'isSchoolAdmin' => $this->isSchoolAdmin(),
-            'isSchoolStaff' => $this->isSchoolStaff(),
-            'isPanelRole' => $this->isPanelRole(),
-            'panelTitle' => 'Gestión Escolar',
-            'panelSubtitle' => 'Información de seguridad, noticias y comunidad de tu institución',
+            // Ver EstudianteController::readScopeInstitutionId() y
+            // SchoolController::panel(): en modo "ver institucion" del Admin
+            // General se fuerza a false para que quede de solo lectura.
+            'isSchoolAdmin' => $isReadOnlyView ? false : $this->isSchoolAdmin(),
+            'isSchoolStaff' => $isReadOnlyView ? false : $this->isSchoolStaff(),
+            'isPanelRole' => $isReadOnlyView ? true : $this->isPanelRole(),
+            'isReadOnlyView' => $isReadOnlyView,
+            'panelTitle' => $isReadOnlyView ? ('Gestión Escolar — ' . ($institucion['nombre'] ?? '')) : 'Gestión Escolar',
+            'panelSubtitle' => $isReadOnlyView
+                ? 'Estás viendo esta institución como Admin General — modo solo lectura.'
+                : 'Información de seguridad, noticias y comunidad de tu institución',
         ];
 
         view('school/main', $data);
     }
 
-    // Panel de Gestion (ruta "school/panel"): solo director (completo) y
-    // docente (reducido). Alumno/padre/administrativo ya no tienen panel
-    // propio — todo lo suyo vive en la Pagina Principal.
+    // Panel de Gestion (ruta "school/panel"): director (completo), docente
+    // (reducido), o el Admin General "viendo" una institucion en modo solo
+    // lectura (ver viewInstitution() arriba).
     public function panel() {
         if (!isLoggedIn()) {
             redirect('login');
             return;
         }
-        if (!$this->canAccessSchool() || !$this->isPanelRole()) {
+        $viewingInstId = $this->adminViewingInstitutionId();
+        if (!$this->canAccessSchool() || (!$this->isPanelRole() && !$viewingInstId)) {
             redirect('school');
             return;
         }
 
         $db = getDB();
         $user = currentUser();
-        $instId = $this->myInstitutionId();
+        $isReadOnlyView = $user['role'] === 'admin' && $viewingInstId;
+        $instId = $this->readInstitutionId();
         $instFilter = $instId ? " WHERE instituciones_id = " . intval($instId) : '';
         $instFilterAlias = $instId ? " WHERE a.instituciones_id = " . intval($instId) : '';
 
@@ -157,17 +223,24 @@ class SchoolController {
         $incidents = $db->query($incidentsQ)->fetchAll();
 
         $pendingRequestsCount = 0;
-        if ($this->isSchoolAdmin() && $instId) {
+        if (!$isReadOnlyView && $this->isSchoolAdmin() && $instId) {
             $stmtPR = $db->prepare("SELECT COUNT(*) as total FROM solicitudes_institucion WHERE instituciones_id = ? AND estado = 'pendiente'");
             $stmtPR->execute([$instId]);
             $pendingRequestsCount = $stmtPR->fetch()['total'] ?? 0;
         }
 
-        $panel = $user['role'] === 'director' ? 'panel-director' : 'panel-docente';
+        $panel = ($user['role'] === 'director' || $isReadOnlyView) ? 'panel-director' : 'panel-docente';
         $subtitles = [
             'panel-director' => 'Administra alumnos, docentes, rutas de evacuación, simulacros y más',
             'panel-docente'  => 'Tus secciones, pase de lista, notificaciones y croquis',
         ];
+
+        $institucionNombre = null;
+        if ($isReadOnlyView && $instId) {
+            $stmtN = $db->prepare("SELECT nombre FROM instituciones WHERE instituciones_id = ?");
+            $stmtN->execute([$instId]);
+            $institucionNombre = $stmtN->fetchColumn() ?: null;
+        }
 
         $data = [
             'title' => 'Panel de Gestión',
@@ -177,11 +250,20 @@ class SchoolController {
             'drills' => $drills,
             'routes' => $routes,
             'incidents' => $incidents,
-            'isSchoolAdmin' => $this->isSchoolAdmin(),
-            'isSchoolStaff' => $this->isSchoolStaff(),
+            // En modo "ver institucion" del Admin General se fuerzan a false
+            // sin importar lo que devuelvan isSchoolAdmin()/isSchoolStaff()
+            // (que si son true para el rol admin): asi todos los botones de
+            // crear/editar/borrar de las pestañas quedan ocultos y la vista
+            // queda estrictamente de solo lectura.
+            'isSchoolAdmin' => $isReadOnlyView ? false : $this->isSchoolAdmin(),
+            'isSchoolStaff' => $isReadOnlyView ? false : $this->isSchoolStaff(),
+            'isReadOnlyView' => $isReadOnlyView,
+            'viewingInstitucionNombre' => $institucionNombre,
             'pendingRequestsCount' => $pendingRequestsCount,
-            'panelTitle' => 'Panel de Gestión',
-            'panelSubtitle' => $subtitles[$panel],
+            'panelTitle' => $isReadOnlyView ? 'Panel de Gestión (solo lectura)' : 'Panel de Gestión',
+            'panelSubtitle' => $isReadOnlyView
+                ? 'Estás viendo el panel de ' . ($institucionNombre ?? 'esta institución') . ' como Admin General — modo solo lectura.'
+                : $subtitles[$panel],
         ];
 
         view('school/' . $panel, $data);
@@ -358,15 +440,16 @@ class SchoolController {
 
         $db = getDB();
         $u = currentUser();
+        $readInstId = $this->readInstitutionId();
         $sql = "
             SELECT r.*, i.nombre as institution
             FROM rutas_evacuacion r
             LEFT JOIN instituciones i ON r.instituciones_id = i.instituciones_id
         ";
         $params = [];
-        if ($u['role'] !== 'admin' && $u['institucion_id']) {
+        if ($readInstId) {
             $sql .= " WHERE r.instituciones_id = ?";
-            $params[] = $u['institucion_id'];
+            $params[] = $readInstId;
         }
         $sql .= " ORDER BY r.nombre";
         $stmt = $db->prepare($sql);
@@ -466,15 +549,16 @@ class SchoolController {
 
         $db = getDB();
         $u = currentUser();
+        $readInstId = $this->readInstitutionId();
         $sql = "
             SELECT i.*, u.nombre as reporter
             FROM incidentes i
             LEFT JOIN usuarios u ON i.usuario_id = u.usuarios_id
         ";
         $params = [];
-        if ($u['role'] !== 'admin' && $u['institucion_id']) {
+        if ($readInstId) {
             $sql .= " WHERE i.instituciones_id = ?";
-            $params[] = $u['institucion_id'];
+            $params[] = $readInstId;
         }
         $sql .= " ORDER BY i.created_at DESC LIMIT 40";
         $stmt = $db->prepare($sql);
@@ -703,7 +787,7 @@ class SchoolController {
         if (!isLoggedIn() || !$this->canAccessSchool()) {
             jsonResponse(['error' => 'No autorizado'], 401);
         }
-        $instId = $this->myInstitutionId();
+        $instId = $this->readInstitutionId();
         if (!$instId) jsonResponse(['imagen' => null, 'puntos' => [], 'lat' => null, 'lng' => null]);
 
         $db = getDB();
@@ -827,7 +911,7 @@ class SchoolController {
         if (!isLoggedIn() || !$this->canAccessSchool()) {
             jsonResponse(['error' => 'No autorizado'], 401);
         }
-        $instId = $this->myInstitutionId();
+        $instId = $this->readInstitutionId();
         if (!$instId) jsonResponse([]);
         $u = currentUser();
 

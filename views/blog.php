@@ -227,7 +227,15 @@ $icoHighlight = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stro
 
 $slug = isset($_GET['post']) ? $_GET['post'] : null;
 $post = ($slug !== null && isset($ARTÍCULOS[$slug])) ? $ARTÍCULOS[$slug] : null;
-if ($post) { $title = $post['titulo'] . ' - NDA'; }
+if ($post) {
+    $title = $post['titulo'] . ' - NDA';
+    // El color se inserta sin escapar dentro de un atributo style; se
+    // valida aqui tambien (no solo al guardarlo) por si un registro viejo
+    // en la BD no paso por ArticuloController::sanitizeColor().
+    if (!preg_match('/^#[0-9a-fA-F]{3,8}$/', $post['color'] ?? '')) {
+        $post['color'] = '#f29f05';
+    }
+}
 
 // Generar ID único para el artículo
 $postId = $slug ? md5($slug) : '';

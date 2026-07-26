@@ -1,13 +1,13 @@
 
 
 <?php
-// Dock flotante NDA: Monitor Sismico + Gestion Escolar + Asistente NDA,
-// unificados en un solo componente glassmorphism (ver .nda-dock en style.css).
-// Sustituye los botones independientes que existian antes (school-fab,
-// monbot-fab, ndabot-fab). $__canSeeSchoolLink ya viene calculado en layout.php.
+// Dock flotante NDA: Monitor Sismico + Colegio + Panel/Gestion Escolar +
+// Asistente NDA, unificados en un solo componente glassmorphism (ver
+// .nda-dock en style.css). $__canSeeSchoolLink ya viene calculado en layout.php.
 $__dockUrl = $_GET['url'] ?? 'home';
 $__dockArduinoActive = ($__dockUrl === 'arduino');
-$__dockSchoolActive = (strpos($__dockUrl, 'school') === 0);
+$__dockSchoolActive = ($__dockUrl === 'school');
+$__dockPanelActive = ($__dockUrl === 'school/panel');
 ?>
 <div class="nda-dock" id="ndaDock">
   <a href="?url=arduino" class="dock-btn dock-orange<?= $__dockArduinoActive ? ' active' : '' ?>" aria-label="Monitor Sísmico">
@@ -17,12 +17,19 @@ $__dockSchoolActive = (strpos($__dockUrl, 'school') === 0);
   </a>
 
   <?php if ($__canSeeSchoolLink): ?>
-  <a href="?url=school" class="dock-btn dock-blue<?= $__dockSchoolActive ? ' active' : '' ?>" aria-label="Gestión Escolar">
+  <a href="?url=school" class="dock-btn dock-blue<?= $__dockSchoolActive ? ' active' : '' ?>" aria-label="Colegio">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M22 10 12 5 2 10l10 5 10-5Z"/>
       <path d="M6 12v5c0 1 3 3 6 3s6-2 6-3v-5"/>
     </svg>
-    <span class="dock-tip" aria-hidden="true">Gestión Escolar</span>
+    <span class="dock-tip" aria-hidden="true">Colegio</span>
+  </a>
+
+  <a href="?url=school/panel" class="dock-btn dock-blue<?= $__dockPanelActive ? ' active' : '' ?>" aria-label="Panel de Gestión Escolar">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/>
+    </svg>
+    <span class="dock-tip" aria-hidden="true">Panel de Gestión</span>
   </a>
   <?php endif; ?>
 

@@ -124,10 +124,10 @@ async function loadStudents(page) {
 
         tbody.innerHTML = __studentsCache.map(s => `
             <tr>
-                <td><code>${s.codigo || '—'}</code></td>
-                <td>${s.nombre} ${s.apellido || ''}</td>
-                <td>${s.classroom || 'Sin aula'}</td>
-                <td>${s.teacher || 'Sin asignar'}</td>
+                <td><code>${escapeHtml(s.codigo || '—')}</code></td>
+                <td>${escapeHtml(s.nombre)} ${escapeHtml(s.apellido || '')}</td>
+                <td>${escapeHtml(s.classroom || 'Sin aula')}</td>
+                <td>${escapeHtml(s.teacher || 'Sin asignar')}</td>
                 <td><span style="color:var(--teal);">Activo</span></td>
                 <td>
                     ${window.__ndaIsSchoolStaff ? `<button class="school-attendance-btn" onclick="editStudent(${s.estudiantes_id})">Editar</button>` : ''}
@@ -277,10 +277,10 @@ async function loadTeachers(page) {
 
         tbody.innerHTML = __teachersCache.map(t => `
             <tr>
-                <td><strong>${t.nombre}</strong></td>
-                <td>${t.email}</td>
-                <td>${t.materia || '—'}</td>
-                <td>${t.aulas || 'Sin asignar'}</td>
+                <td><strong>${escapeHtml(t.nombre)}</strong></td>
+                <td>${escapeHtml(t.email)}</td>
+                <td>${escapeHtml(t.materia || '—')}</td>
+                <td>${escapeHtml(t.aulas || 'Sin asignar')}</td>
                 <td>
                     <button class="school-attendance-btn" onclick="editTeacher(${t.usuarios_id})">Editar</button>
                     <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteTeacher(${t.usuarios_id})">Eliminar</button>
@@ -429,9 +429,9 @@ async function loadParents(page) {
 
         tbody.innerHTML = __parentsCache.map(p => `
             <tr>
-                <td><strong>${p.nombre}</strong></td>
-                <td>${p.email}</td>
-                <td>${p.hijos || 'Ninguno vinculado'}</td>
+                <td><strong>${escapeHtml(p.nombre)}</strong></td>
+                <td>${escapeHtml(p.email)}</td>
+                <td>${escapeHtml(p.hijos || 'Ninguno vinculado')}</td>
                 <td>
                     <button class="school-attendance-btn" onclick="openLinkChildModal(${p.usuarios_id})">Vincular hijo</button>
                     <button class="school-attendance-btn" onclick="editParent(${p.usuarios_id})">Editar</button>
@@ -532,7 +532,7 @@ async function openLinkChildModal(parentId) {
         const links = await res.json();
         if (Array.isArray(links) && links.length > 0) {
             currentList.innerHTML = 'Vinculados actualmente: ' + links.map(l =>
-                `${l.nombre} ${l.apellido} (${l.parentesco}) <button class="school-attendance-btn" onclick="unlinkChild(${l.padres_estudiantes_id}, ${parentId})">Quitar</button>`
+                `${escapeHtml(l.nombre)} ${escapeHtml(l.apellido)} (${escapeHtml(l.parentesco)}) <button class="school-attendance-btn" onclick="unlinkChild(${l.padres_estudiantes_id}, ${parentId})">Quitar</button>`
             ).join(' · ');
         } else {
             currentList.innerHTML = 'Todavía no tiene hijos vinculados.';
@@ -545,7 +545,7 @@ async function openLinkChildModal(parentId) {
         const res = await fetch('?url=school/students&per_page=200');
         const result = await res.json();
         const students = result.data || [];
-        select.innerHTML = students.map(s => `<option value="${s.estudiantes_id}">${s.nombre} ${s.apellido} (${s.codigo || ''})</option>`).join('');
+        select.innerHTML = students.map(s => `<option value="${s.estudiantes_id}">${escapeHtml(s.nombre)} ${escapeHtml(s.apellido)} (${escapeHtml(s.codigo || '')})</option>`).join('');
     } catch (e) { select.innerHTML = '<option value="">Error al cargar alumnos</option>'; }
 
     openModal('linkChildModal');
@@ -612,10 +612,10 @@ async function loadMyChildren() {
 
         tbody.innerHTML = children.map(c => `
             <tr>
-                <td><code>${c.codigo || '—'}</code></td>
-                <td>${c.nombre} ${c.apellido || ''}</td>
-                <td>${c.classroom || 'Sin aula'}</td>
-                <td>${c.teacher || 'Sin asignar'}</td>
+                <td><code>${escapeHtml(c.codigo || '—')}</code></td>
+                <td>${escapeHtml(c.nombre)} ${escapeHtml(c.apellido || '')}</td>
+                <td>${escapeHtml(c.classroom || 'Sin aula')}</td>
+                <td>${escapeHtml(c.teacher || 'Sin asignar')}</td>
             </tr>
         `).join('');
     } catch (e) {
@@ -642,9 +642,9 @@ async function loadMyChildrenDrillStatus() {
 
         tbody.innerHTML = rows.map(r => `
             <tr>
-                <td>${r.nombre} ${r.apellido || ''}</td>
-                <td>${r.simulacro || 'Sin simulacros registrados'}</td>
-                <td>${r.status ? `<span class="school-attendance-status ${r.status}">${r.status}</span>` : '—'}</td>
+                <td>${escapeHtml(r.nombre)} ${escapeHtml(r.apellido || '')}</td>
+                <td>${escapeHtml(r.simulacro || 'Sin simulacros registrados')}</td>
+                <td>${r.status ? `<span class="school-attendance-status ${escapeHtml(r.status)}">${escapeHtml(r.status)}</span>` : '—'}</td>
             </tr>
         `).join('');
     } catch (e) {
@@ -728,9 +728,9 @@ async function loadStaff(page) {
 
         tbody.innerHTML = __staffCache.map(s => `
             <tr>
-                <td><strong>${s.nombre}</strong></td>
-                <td>${s.email}</td>
-                <td>${s.telefono || '—'}</td>
+                <td><strong>${escapeHtml(s.nombre)}</strong></td>
+                <td>${escapeHtml(s.email)}</td>
+                <td>${escapeHtml(s.telefono || '—')}</td>
                 <td>
                     <button class="school-attendance-btn" onclick="editStaff(${s.usuarios_id})">Editar</button>
                     <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteStaff(${s.usuarios_id})">Eliminar</button>
@@ -848,8 +848,8 @@ async function loadNotifications(page) {
 
         tbody.innerHTML = rows.map(n => `
             <tr>
-                <td>${n.mensaje}</td>
-                <td><span class="chip b">${severityLabelMap[n.severidad] || n.severidad}</span></td>
+                <td>${escapeHtml(n.mensaje)}</td>
+                <td><span class="chip b">${escapeHtml(severityLabelMap[n.severidad] || n.severidad)}</span></td>
                 <td>${n.es_global == 1 ? 'Global' : 'Institución'}</td>
                 <td>${new Date(n.created_at).toLocaleString('es-SV')}</td>
                 <td><button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteNotification(${n.notificaciones_id})">Eliminar</button></td>
@@ -938,11 +938,11 @@ async function loadClassrooms(page) {
 
         tbody.innerHTML = __classroomsCache.map(c => `
             <tr>
-                <td><strong>${c.nombre}</strong></td>
-                <td>${c.grado || '—'}</td>
-                <td>${c.nivel || '—'}</td>
-                <td>${c.seccion || '—'}</td>
-                <td>${c.teacher || 'Sin asignar'}</td>
+                <td><strong>${escapeHtml(c.nombre)}</strong></td>
+                <td>${escapeHtml(c.grado || '—')}</td>
+                <td>${escapeHtml(c.nivel || '—')}</td>
+                <td>${escapeHtml(c.seccion || '—')}</td>
+                <td>${escapeHtml(c.teacher || 'Sin asignar')}</td>
                 <td>
                     <button class="school-attendance-btn" onclick="editClassroom(${c.aulas_id})">Editar</button>
                     <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteClassroom(${c.aulas_id})">Eliminar</button>
@@ -1099,7 +1099,7 @@ function renderRoutesMap(routes) {
         const marker = L.circleMarker([parseFloat(r.lat), parseFloat(r.lng)], {
             radius: 9, color, fillColor: color, fillOpacity: 0.85, weight: 2
         }).addTo(map);
-        marker.bindPopup(`<strong>${r.nombre}</strong><br>${r.descripcion || ''}<br><em>${r.estado || 'despejada'}</em>`);
+        marker.bindPopup(`<strong>${escapeHtml(r.nombre)}</strong><br>${escapeHtml(r.descripcion || '')}<br><em>${escapeHtml(r.estado || 'despejada')}</em>`);
         __routesMapMarkers.push(marker);
     });
 
@@ -1199,7 +1199,7 @@ async function initInicioMap() {
 
     const markers = [];
     if (hasLoc) {
-        markers.push(L.marker([latN, lngN]).addTo(map).bindPopup('<strong>' + (window.__ndaInstitutionName || 'Tu institución') + '</strong>'));
+        markers.push(L.marker([latN, lngN]).addTo(map).bindPopup('<strong>' + escapeHtml(window.__ndaInstitutionName || 'Tu institución') + '</strong>'));
     }
 
     (window.__ndaInicioRoutes || []).forEach(r => {
@@ -1208,7 +1208,7 @@ async function initInicioMap() {
         markers.push(
             L.circleMarker([parseFloat(r.lat), parseFloat(r.lng)], { radius: 8, color, fillColor: color, fillOpacity: 0.85, weight: 2 })
                 .addTo(map)
-                .bindPopup(`<strong>${r.nombre}</strong><br>${r.descripcion || ''}<br><em>${r.estado || 'despejada'}</em>`)
+                .bindPopup(`<strong>${escapeHtml(r.nombre)}</strong><br>${escapeHtml(r.descripcion || '')}<br><em>${escapeHtml(r.estado || 'despejada')}</em>`)
         );
     });
 
@@ -1225,7 +1225,7 @@ async function initInicioMap() {
             markers.push(
                 L.circleMarker([latN + dLat, lngN + dLng], { radius: 8, color: '#fff', fillColor: color, fillOpacity: 0.95, weight: 2 })
                     .addTo(map)
-                    .bindPopup(`<strong>${p.nombre}</strong><br>${CROQUIS_LABELS[p.tipo] || p.tipo}`)
+                    .bindPopup(`<strong>${escapeHtml(p.nombre)}</strong><br>${escapeHtml(CROQUIS_LABELS[p.tipo] || p.tipo)}`)
             );
         });
 
@@ -1273,10 +1273,10 @@ async function loadRoutes() {
         container.innerHTML = routes.map(r => `
             <div class="school-route-card">
                 <div class="school-route-header">
-                    <h4>${r.nombre}</h4>
-                    <span class="school-route-status ${r.estado || 'despejada'}">${r.estado || 'Despejada'}</span>
+                    <h4>${escapeHtml(r.nombre)}</h4>
+                    <span class="school-route-status ${escapeHtml(r.estado || 'despejada')}">${escapeHtml(r.estado || 'Despejada')}</span>
                 </div>
-                <p style="font-size:0.82rem;color:var(--text2);">${r.descripcion || 'Sin descripción'}</p>
+                <p style="font-size:0.82rem;color:var(--text2);">${escapeHtml(r.descripcion || 'Sin descripción')}</p>
                 <div style="margin-top:8px;display:flex;gap:6px;">
                     ${window.__ndaIsSchoolAdmin ? `<button class="school-attendance-btn" onclick="editRoute(${r.rutas_evacuacion_id})"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>` : ''}
                     ${window.__ndaIsSchoolAdmin ? `<button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteRoute(${r.rutas_evacuacion_id})">Eliminar</button>` : ''}
@@ -1391,7 +1391,7 @@ async function loadDrillSelect() {
 
         if (!drills.error && drills.length > 0) {
             select.innerHTML = `<option value="">Seleccionar simulacro</option>` +
-                drills.map(d => `<option value="${d.simulacros_id}">${d.nombre} (${d.fecha})</option>`).join('');
+                drills.map(d => `<option value="${d.simulacros_id}">${escapeHtml(d.nombre)} (${escapeHtml(d.fecha)})</option>`).join('');
         }
     } catch (e) {
         console.error('Error loading drill select:', e);
@@ -1433,11 +1433,11 @@ async function loadAttendance() {
 
         tbody.innerHTML = students.map((s, i) => `
             <tr>
-                <td>${s.nombre} ${s.apellido || ''}</td>
-                <td>${s.aula || '—'}</td>
+                <td>${escapeHtml(s.nombre)} ${escapeHtml(s.apellido || '')}</td>
+                <td>${escapeHtml(s.aula || '—')}</td>
                 <td>
-                    <span class="school-attendance-status ${s.status || 'pendiente'}" id="att-status-${i}">
-                        ${s.status || 'Pendiente'}
+                    <span class="school-attendance-status ${escapeHtml(s.status || 'pendiente')}" id="att-status-${i}">
+                        ${escapeHtml(s.status || 'Pendiente')}
                     </span>
                 </td>
                 <td>
@@ -1530,17 +1530,17 @@ async function loadIncidents() {
         }
 
         container.innerHTML = incidents.map(inc => `
-            <div class="school-incident-item" data-cat="${inc.tipo}">
-                ${inc.imagen ? `<img class="school-incident-photo" src="${inc.imagen}" alt="Foto del daño" onclick="window.open('${inc.imagen}','_blank')">` : ''}
+            <div class="school-incident-item" data-cat="${escapeHtml(inc.tipo)}">
+                ${inc.imagen ? `<img class="school-incident-photo" src="${escapeHtml(inc.imagen)}" alt="Foto del daño" onclick="window.open(this.src,'_blank')">` : ''}
                 <div class="school-incident-item-header">
-                    <span class="school-incident-type">${inc.tipo}</span>
+                    <span class="school-incident-type">${escapeHtml(inc.tipo)}</span>
                     <span class="school-incident-time">${new Date(inc.created_at).toLocaleString('es-SV')}</span>
                 </div>
-                ${inc.ubicacion ? `<div class="school-incident-location">${inc.ubicacion}</div>` : ''}
-                <div class="school-incident-desc">${inc.descripcion}</div>
+                ${inc.ubicacion ? `<div class="school-incident-location">${escapeHtml(inc.ubicacion)}</div>` : ''}
+                <div class="school-incident-desc">${escapeHtml(inc.descripcion)}</div>
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;gap:6px;flex-wrap:wrap;">
                     ${inc.estado === 'resuelto' ? '<span class="school-incident-resolved">Resuelto</span>' : '<span></span>'}
-                    ${inc.reporter ? `<span style="font-size:0.7rem;color:var(--text3);">Reportado por: ${inc.reporter}</span>` : ''}
+                    ${inc.reporter ? `<span style="font-size:0.7rem;color:var(--text3);">Reportado por: ${escapeHtml(inc.reporter)}</span>` : ''}
                     <span>
                         <button class="school-attendance-btn" onclick="location.href='?url=school/incident-detail&id=${inc.incidentes_id}'">Ver / comentar</button>
                         ${(window.__ndaIsSchoolStaff || String(inc.usuario_id) === String(window.__ndaMyUserId)) ? `<button class="school-attendance-btn" onclick="editIncident(${inc.incidentes_id})">Editar</button>` : ''}
@@ -1681,9 +1681,9 @@ async function loadDrills() {
 
         tbody.innerHTML = drills.map(d => `
             <tr>
-                <td><strong>${d.nombre}</strong></td>
-                <td>${d.fecha}</td>
-                <td>${d.hora}</td>
+                <td><strong>${escapeHtml(d.nombre)}</strong></td>
+                <td>${escapeHtml(d.fecha)}</td>
+                <td>${escapeHtml(d.hora)}</td>
                 <td>${d.total_asistencia || 0} registros</td>
                 <td>${d.estado === 'activo'
                         ? '<span class="drill-status active">En curso</span>'
@@ -1881,7 +1881,7 @@ async function loadReports() {
                     <h4>Incidentes por Tipo</h4>
                     ${incidentsByType.length === 0 ? '<p style="color:var(--text3);">No hay incidentes registrados</p>' :
                         incidentsByType.map(i => `
-                            <div class="school-report-stat"><span>${i.tipo}</span><span class="value">${i.total}</span></div>
+                            <div class="school-report-stat"><span>${escapeHtml(i.tipo)}</span><span class="value">${i.total}</span></div>
                         `).join('')
                     }
                 </div>
@@ -1901,7 +1901,7 @@ async function loadReports() {
                         `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;">
                             ${studentsByClassroom.map(c => `
                                 <div style="background:var(--bg3);padding:10px;border-radius:8px;text-align:center;border:1px solid var(--border);">
-                                    <div style="font-weight:700;color:var(--text);">${c.nombre}</div>
+                                    <div style="font-weight:700;color:var(--text);">${escapeHtml(c.nombre)}</div>
                                     <div style="color:var(--acc);font-size:1.2rem;font-weight:800;">${c.total}</div>
                                     <div style="font-size:0.65rem;color:var(--text3);">alumnos</div>
                                 </div>
@@ -1983,7 +1983,7 @@ async function loadClassroomSelect() {
 
             if (!classrooms.error && classrooms.length > 0) {
                 select.innerHTML = `<option value="">Seleccionar aula</option>` +
-                    classrooms.map(c => `<option value="${c.aulas_id}">${c.nombre}</option>`).join('');
+                    classrooms.map(c => `<option value="${c.aulas_id}">${escapeHtml(c.nombre)}</option>`).join('');
             }
         } catch (e) {
             console.error('Error loading classrooms:', e);
@@ -2029,16 +2029,16 @@ async function loadSections() {
                 <div class="section-cards">
                     ${grados[grado].map(s => `
                         <div class="section-card">
-                            <div class="section-card-top" onclick="filterStudentsBySection(${s.aulas_id}, '${s.nombre}')" style="cursor:pointer;">
-                                <strong>Sección ${s.seccion}</strong>
+                            <div class="section-card-top" data-aula-id="${s.aulas_id}" data-aula-nombre="${escapeHtml(s.nombre)}" onclick="filterStudentsBySection(this.dataset.aulaId, this.dataset.aulaNombre)" style="cursor:pointer;">
+                                <strong>Sección ${escapeHtml(s.seccion)}</strong>
                                 <span class="section-count">${s.total_alumnos || 0} alumnos</span>
                             </div>
                             ${window.__ndaIsSchoolAdmin ? `
                                 <select class="section-teacher-select" onchange="assignSectionTeacher(${s.aulas_id}, this.value)" onclick="event.stopPropagation()">
                                     <option value="">Sin docente asignado</option>
-                                    ${teachers.map(t => `<option value="${t.usuarios_id}" ${String(t.usuarios_id) === String(s.maestro_id) ? 'selected' : ''}>${t.nombre}</option>`).join('')}
+                                    ${teachers.map(t => `<option value="${t.usuarios_id}" ${String(t.usuarios_id) === String(s.maestro_id) ? 'selected' : ''}>${escapeHtml(t.nombre)}</option>`).join('')}
                                 </select>
-                            ` : `<div class="section-teacher">${s.teacher ? s.teacher : 'Sin docente asignado'}</div>`}
+                            ` : `<div class="section-teacher">${escapeHtml(s.teacher || 'Sin docente asignado')}</div>`}
                         </div>
                     `).join('')}
                 </div>
@@ -2069,22 +2069,22 @@ function filterStudentsBySection(aulaId, nombre) {
     setTimeout(async () => {
         const tbody = document.getElementById('studentsTableBody');
         if (!tbody) return;
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center">Cargando alumnos de ${nombre}...</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center">Cargando alumnos de ${escapeHtml(nombre)}...</td></tr>`;
         try {
             const response = await fetch('?url=school/students&aula_id=' + aulaId + '&per_page=100');
             const result = await response.json();
             const students = result.data || [];
             if (students.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center">No hay alumnos registrados en ${nombre}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center">No hay alumnos registrados en ${escapeHtml(nombre)}</td></tr>`;
                 return;
             }
             tbody.innerHTML = students.map(s => `
                 <tr>
-                    <td>${s.codigo || ''}</td>
-                    <td>${s.nombre} ${s.apellido || ''}</td>
-                    <td>${s.classroom || nombre}</td>
-                    <td>${s.telefono_emergencia || '-'}</td>
-                    <td>${s.teacher || '-'}</td>
+                    <td>${escapeHtml(s.codigo || '')}</td>
+                    <td>${escapeHtml(s.nombre)} ${escapeHtml(s.apellido || '')}</td>
+                    <td>${escapeHtml(s.classroom || nombre)}</td>
+                    <td>${escapeHtml(s.telefono_emergencia || '-')}</td>
+                    <td>${escapeHtml(s.teacher || '-')}</td>
                     <td><button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteStudent(${s.estudiantes_id})">Eliminar</button></td>
                 </tr>
             `).join('');
@@ -2133,7 +2133,7 @@ async function loadCroquis() {
         }
 
         board.innerHTML = `<div class="croquis-image-wrap" id="croquisImageWrap">
-            <img src="${data.imagen}" alt="Croquis de la institución" draggable="false">
+            <img src="${escapeHtml(data.imagen)}" alt="Croquis de la institución" draggable="false">
         </div>`;
 
         const wrap = document.getElementById('croquisImageWrap');
@@ -2143,7 +2143,7 @@ async function loadCroquis() {
             dot.style.left = p.pos_x + '%';
             dot.style.top = p.pos_y + '%';
             dot.title = p.nombre;
-            dot.innerHTML = `<span class="croquis-marker-tooltip"><strong>${p.nombre}</strong><br>${CROQUIS_LABELS[p.tipo] || p.tipo}${p.descripcion ? '<br>' + p.descripcion : ''}${window.__ndaIsSchoolStaff ? `<br><a href="#" onclick="deleteCroquisPoint(${p.puntos_croquis_id});return false;">Eliminar</a>` : ''}</span>`;
+            dot.innerHTML = `<span class="croquis-marker-tooltip"><strong>${escapeHtml(p.nombre)}</strong><br>${escapeHtml(CROQUIS_LABELS[p.tipo] || p.tipo)}${p.descripcion ? '<br>' + escapeHtml(p.descripcion) : ''}${window.__ndaIsSchoolStaff ? `<br><a href="#" onclick="deleteCroquisPoint(${p.puntos_croquis_id});return false;">Eliminar</a>` : ''}</span>`;
             wrap.appendChild(dot);
         });
 
@@ -2289,7 +2289,7 @@ function renderCroquisMapMarkers(lat, lng, hasLoc, puntos) {
         const el = document.createElement('div');
         el.className = 'croquis-map-marker';
         el.style.cssText = `width:20px;height:20px;border-radius:50%;background:${color};border:3px solid #fff;box-shadow:0 0 0 2px ${color},0 2px 8px rgba(0,0,0,.5);cursor:pointer;`;
-        const popup = registerCroquisPopup(new maplibregl.Popup({ maxWidth: '240px' }).setHTML(`<strong>${p.nombre}</strong><br>${CROQUIS_LABELS[p.tipo] || p.tipo}`));
+        const popup = registerCroquisPopup(new maplibregl.Popup({ maxWidth: '240px' }).setHTML(`<strong>${escapeHtml(p.nombre)}</strong><br>${escapeHtml(CROQUIS_LABELS[p.tipo] || p.tipo)}`));
         const marker = new maplibregl.Marker({ element: el })
             .setLngLat([lng + dLng, lat + dLat])
             .setPopup(popup)
@@ -2392,10 +2392,10 @@ async function loadBoard() {
         }
 
         board.innerHTML = notes.map(n => `
-            <div class="sticky-note ${n.color}" data-id="${n.corcho_notas_id}" style="left:${n.pos_x}%; top:${n.pos_y}%; transform: rotate(${n.rotacion}deg);">
+            <div class="sticky-note ${escapeHtml(n.color)}" data-id="${n.corcho_notas_id}" style="left:${n.pos_x}%; top:${n.pos_y}%; transform: rotate(${n.rotacion}deg);">
                 <button class="sticky-note-del" onclick="deleteBoardNote(${n.corcho_notas_id})" title="Quitar nota">&times;</button>
                 <p>${escapeHtml(n.texto)}</p>
-                <span class="sticky-note-author">${n.autor}${n.visibilidad && n.visibilidad !== 'todos' ? ' · Privado' : ''}</span>
+                <span class="sticky-note-author">${escapeHtml(n.autor)}${n.visibilidad && n.visibilidad !== 'todos' ? ' · Privado' : ''}</span>
             </div>
         `).join('');
 
@@ -2524,9 +2524,9 @@ async function loadJoinRequests() {
         list.innerHTML = requests.map(r => `
             <div class="request-card">
                 <div>
-                    <strong>${r.usuario_nombre}</strong>
-                    <span class="request-role">${roleLabels[r.rol_solicitado] || r.rol_solicitado}</span>
-                    <p class="school-hint" style="margin:4px 0 0;">${r.usuario_email}</p>
+                    <strong>${escapeHtml(r.usuario_nombre)}</strong>
+                    <span class="request-role">${escapeHtml(roleLabels[r.rol_solicitado] || r.rol_solicitado)}</span>
+                    <p class="school-hint" style="margin:4px 0 0;">${escapeHtml(r.usuario_email)}</p>
                     ${r.mensaje ? `<p class="request-message">"${escapeHtml(r.mensaje)}"</p>` : ''}
                 </div>
                 <div class="request-actions">
@@ -2593,15 +2593,17 @@ async function loadInstitutions(page) {
         const tipoLabelMap = { colegio: 'Colegio', escuela: 'Escuela', instituto: 'Instituto', universidad: 'Universidad', otro: 'Otro' };
         tbody.innerHTML = __institutionsCache.map(i => `
             <tr>
-                <td><strong>${i.nombre}</strong></td>
-                <td>${tipoLabelMap[i.tipo] || '—'}</td>
-                <td>${i.correo || '—'}</td>
-                <td>${i.telefono || '—'}</td>
-                <td>${i.direccion || '—'}</td>
+                <td><strong>${escapeHtml(i.nombre)}</strong></td>
+                <td>${escapeHtml(tipoLabelMap[i.tipo] || '—')}</td>
+                <td>${escapeHtml(i.correo || '—')}</td>
+                <td>${escapeHtml(i.telefono || '—')}</td>
+                <td>${escapeHtml(i.direccion || '—')}</td>
                 <td>${i.estado_verificacion === 'verificado' ? 'Verificada' : 'Pendiente'}</td>
                 <td>${i.total_usuarios || 0}</td>
                 <td>
-                    <button class="school-attendance-btn" onclick="viewInstitutionStats(${i.instituciones_id}, '${(i.nombre || '').replace(/'/g, "\\'")}')">Ver detalle</button>
+                    <button class="school-attendance-btn" data-inst-id="${i.instituciones_id}" data-inst-nombre="${escapeHtml(i.nombre)}" onclick="viewInstitutionStats(this.dataset.instId, this.dataset.instNombre)">Ver detalle</button>
+                    <a class="school-attendance-btn" href="?url=school/view-institution&id=${i.instituciones_id}">Ver página general</a>
+                    <a class="school-attendance-btn" href="?url=school/view-institution&id=${i.instituciones_id}&dest=panel">Ver panel completo</a>
                     <button class="school-attendance-btn" onclick="editInstitution(${i.instituciones_id})">Editar</button>
                     <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteInstitution(${i.instituciones_id})">Eliminar</button>
                 </td>
@@ -2755,7 +2757,7 @@ async function populateInstitutionSelect(selectId, selectedId) {
         const result = await res.json();
         const list = result.data || [];
         select.innerHTML = '<option value="">Sin institución</option>' +
-            list.map(i => `<option value="${i.instituciones_id}" ${String(i.instituciones_id) === String(selectedId) ? 'selected' : ''}>${i.nombre}</option>`).join('');
+            list.map(i => `<option value="${i.instituciones_id}" ${String(i.instituciones_id) === String(selectedId) ? 'selected' : ''}>${escapeHtml(i.nombre)}</option>`).join('');
     } catch (e) { /* deja el select con la opcion vacia */ }
 }
 
@@ -2786,11 +2788,11 @@ async function loadUsers(page) {
 
         tbody.innerHTML = __usersCache.map(u => `
             <tr>
-                <td><strong>${u.nombre}</strong></td>
-                <td>${u.email}</td>
-                <td><span class="chip b">${roleLabelMap[u.role] || u.role}</span></td>
-                <td>${u.institucion_nombre || '—'}</td>
-                <td>${u.estado_institucional || '—'}</td>
+                <td><strong>${escapeHtml(u.nombre)}</strong></td>
+                <td>${escapeHtml(u.email)}</td>
+                <td><span class="chip b">${escapeHtml(roleLabelMap[u.role] || u.role)}</span></td>
+                <td>${escapeHtml(u.institucion_nombre || '—')}</td>
+                <td>${escapeHtml(u.estado_institucional || '—')}</td>
                 <td>
                     <button class="school-attendance-btn" onclick="editUser(${u.usuarios_id})">Editar</button>
                     <button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteUser(${u.usuarios_id})">Eliminar</button>
@@ -2925,7 +2927,7 @@ async function loadNews(page) {
         list.innerHTML = __newsCache.map(n => `
             <div class="school-blog-card" data-cat="${n.instituciones_id ? 'institucion' : 'global'}" onclick="location.href='?url=school/news-detail&id=${n.noticias_internas_id}'">
                 ${n.imagen
-                    ? `<img class="school-blog-card-thumb" src="${n.imagen}" alt="${escapeHtml(n.titulo)}">`
+                    ? `<img class="school-blog-card-thumb" src="${escapeHtml(n.imagen)}" alt="${escapeHtml(n.titulo)}">`
                     : `<div class="school-blog-card-thumb placeholder">Sin imagen</div>`}
                 <div class="school-blog-card-body">
                     <h4>${escapeHtml(n.titulo)}${!n.instituciones_id ? ' <span class="chip b">Global</span>' : ''}</h4>
@@ -3052,9 +3054,9 @@ async function loadBlog(page) {
         }
 
         list.innerHTML = __blogCache.map(b => `
-            <div class="school-blog-card" data-cat="${b.autor_role}" onclick="location.href='?url=school/riesgo-detail&id=${b.blog_riesgos_id}'">
+            <div class="school-blog-card" data-cat="${escapeHtml(b.autor_role)}" onclick="location.href='?url=school/riesgo-detail&id=${b.blog_riesgos_id}'">
                 ${b.imagen
-                    ? `<img class="school-blog-card-thumb" src="${b.imagen}" alt="${escapeHtml(b.titulo)}">`
+                    ? `<img class="school-blog-card-thumb" src="${escapeHtml(b.imagen)}" alt="${escapeHtml(b.titulo)}">`
                     : `<div class="school-blog-card-thumb placeholder">Sin imagen</div>`}
                 <div class="school-blog-card-body">
                     <h4>${escapeHtml(b.titulo)}</h4>
@@ -3566,9 +3568,9 @@ async function loadMyAttendance() {
 
         tbody.innerHTML = records.map(r => `
             <tr>
-                <td>${r.nombre}</td>
-                <td>${r.fecha}</td>
-                <td><span class="school-attendance-status ${r.status || 'pendiente'}">${r.status || 'Pendiente'}</span></td>
+                <td>${escapeHtml(r.nombre)}</td>
+                <td>${escapeHtml(r.fecha)}</td>
+                <td><span class="school-attendance-status ${escapeHtml(r.status || 'pendiente')}">${escapeHtml(r.status || 'Pendiente')}</span></td>
             </tr>
         `).join('');
     } catch (e) {
@@ -3607,8 +3609,8 @@ async function loadMyClassroom() {
         el.classList.remove('text-center');
         el.innerHTML = `
             <div class="school-grid-2">
-                <div><strong>Aula:</strong> ${c.classroom} (${c.grado || ''} ${c.seccion || ''})</div>
-                <div><strong>Docente:</strong> ${c.teacher || 'Sin asignar'}</div>
+                <div><strong>Aula:</strong> ${escapeHtml(c.classroom)} (${escapeHtml(c.grado || '')} ${escapeHtml(c.seccion || '')})</div>
+                <div><strong>Docente:</strong> ${escapeHtml(c.teacher || 'Sin asignar')}</div>
                 <div><strong>Compañeros:</strong> ${c.total_alumnos || 0} alumnos</div>
             </div>
         `;

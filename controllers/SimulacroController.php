@@ -22,13 +22,24 @@ class SimulacroController {
         return $u['institucion_id'] ?? null;
     }
 
+    // Solo para LECTURA (ver EstudianteController::readScopeInstitutionId()
+    // para la explicacion completa). Nunca se usa en escritura.
+    private function readScopeInstitutionId() {
+        $u = currentUser();
+        if ($u['role'] === 'admin' && !empty($_SESSION['admin_view_institucion_id'])) {
+            return (int) $_SESSION['admin_view_institucion_id'];
+        }
+        return $this->scopeInstitutionId();
+    }
+
     public function list() {
         if (!isLoggedIn()) {
             jsonResponse(['error' => 'No autorizado'], 401);
         }
         $u = currentUser();
+        $instId = $this->readScopeInstitutionId();
         $model = new DrillModel();
-        jsonResponse($model->getRecent($this->scopeInstitutionId(), $u['role'] === 'admin'));
+        jsonResponse($model->getRecent($instId, $u['role'] === 'admin' && $instId === null));
     }
 
     public function create() {

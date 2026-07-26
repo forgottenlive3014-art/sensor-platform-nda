@@ -29,18 +29,30 @@ class EstudianteController {
         return $u['institucion_id'] ?? null;
     }
 
+    // Solo para LECTURA: si el Admin General esta "viendo" una institucion
+    // (SchoolController::viewInstitution()), las listas deben mostrar esa
+    // institucion en vez de todo el sistema. Nunca se usa para escritura —
+    // create()/update()/delete() siguen con scopeInstitutionId() sin tocar.
+    private function readScopeInstitutionId() {
+        $u = currentUser();
+        if ($u['role'] === 'admin' && !empty($_SESSION['admin_view_institucion_id'])) {
+            return (int) $_SESSION['admin_view_institucion_id'];
+        }
+        return $this->scopeInstitutionId();
+    }
+
     public function list() {
         if (!isLoggedIn() || !$this->canAccessSchool()) {
             jsonResponse(['error' => 'No autorizado'], 401);
         }
         $u = currentUser();
-        $isGlobalAdmin = $u['role'] === 'admin';
         $model = new StudentModel();
         $search = trim($_GET['q'] ?? '');
         $aulaId = trim($_GET['aula_id'] ?? '');
         $page = (int) ($_GET['page'] ?? 1);
         $perPage = (int) ($_GET['per_page'] ?? 10);
-        $instId = $this->scopeInstitutionId();
+        $instId = $this->readScopeInstitutionId();
+        $isGlobalAdmin = $u['role'] === 'admin' && $instId === null;
 
         // Un docente ve por defecto solo los alumnos de sus propias aulas
         // asignadas (igual que ya hacia SeccionController con "?all=1").

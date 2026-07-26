@@ -8,9 +8,12 @@ class ReporteController {
             jsonResponse(['error' => 'No autorizado'], 401);
         }
         $u = currentUser();
-        $instId = $u['institucion_id'] ?? null;
-        // Admin global ve todo; el resto solo lo de su institucion.
-        $filterByInst = ($u['role'] !== 'admin' && $instId);
+        // Admin viendo una institucion especifica (SchoolController::
+        // viewInstitution()) reporta solo de esa; el resto de admin ve todo.
+        $instId = ($u['role'] === 'admin' && !empty($_SESSION['admin_view_institucion_id']))
+            ? (int) $_SESSION['admin_view_institucion_id']
+            : ($u['institucion_id'] ?? null);
+        $filterByInst = ($u['role'] !== 'admin' && $instId) || ($u['role'] === 'admin' && !empty($_SESSION['admin_view_institucion_id']));
 
         $model = new ReportModel();
 

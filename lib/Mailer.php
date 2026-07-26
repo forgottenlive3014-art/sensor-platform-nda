@@ -61,4 +61,20 @@ class Mailer {
               . '</div>';
         return self::send($toEmail, $toName, $subject, $body);
     }
+
+    // Correo de verificacion de cuenta personal (codigo de 6 digitos), usado
+    // al registrarse (cuenta general o institucional no-director) para
+    // confirmar que el correo ingresado es real y le pertenece a quien se
+    // registro, antes de dejarlo entrar.
+    public static function sendAccountVerificationCode($toEmail, $toName, $code) {
+        $subject = 'Verifica tu correo · svNDA';
+        $body = '<div style="font-family:sans-serif;max-width:480px;margin:0 auto">'
+              . '<h2 style="color:#021526">Verifica tu correo</h2>'
+              . '<p>Hola ' . htmlspecialchars($toName, ENT_QUOTES, 'UTF-8') . ',</p>'
+              . '<p>Usa este codigo para confirmar tu cuenta en svNDA:</p>'
+              . '<p style="font-size:32px;font-weight:700;letter-spacing:6px;color:#c98a3d;text-align:center;margin:24px 0">' . htmlspecialchars($code, ENT_QUOTES, 'UTF-8') . '</p>'
+              . '<p>El codigo vence en 15 minutos. Si tu no solicitaste esto, puedes ignorar este correo.</p>'
+              . '</div>';
+        return self::send($toEmail, $toName, $subject, $body);
+    }
 }

@@ -8,6 +8,7 @@ $croquisPoints = $croquisPoints ?? [];
 $isSchoolAdmin = $isSchoolAdmin ?? false;
 $isSchoolStaff = $isSchoolStaff ?? false;
 $isPanelRole = $isPanelRole ?? false;
+$isReadOnlyView = $isReadOnlyView ?? false;
 $role = $user['role'] ?? '';
 ob_start();
 ?>
@@ -17,7 +18,14 @@ ob_start();
 
     <?php include __DIR__ . '/partials/_header.php'; ?>
 
-    <?php if ($isPanelRole): ?>
+    <?php if ($isReadOnlyView): ?>
+    <div class="school-readonly-banner">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+        <span>Estás viendo <strong><?= e($institucion['nombre'] ?? 'esta institución') ?></strong> como Admin General — modo solo lectura.</span>
+        <a href="?url=school/panel" class="school-btn primary">Ver Panel completo</a>
+        <a href="?url=school/exit-view" class="school-btn secondary">Salir</a>
+    </div>
+    <?php elseif ($isPanelRole): ?>
     <div class="school-panel-header" style="padding:0 0 10px;">
         <a href="?url=school/panel" class="school-btn primary">
             Ir al Panel de Gestión

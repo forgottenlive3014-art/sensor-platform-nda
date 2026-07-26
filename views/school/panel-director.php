@@ -9,6 +9,8 @@ $incidents = $incidents ?? [];
 $isSchoolAdmin = $isSchoolAdmin ?? false;
 $isSchoolStaff = $isSchoolStaff ?? false;
 $pendingRequestsCount = $pendingRequestsCount ?? 0;
+$isReadOnlyView = $isReadOnlyView ?? false;
+$viewingInstitucionNombre = $viewingInstitucionNombre ?? null;
 ob_start();
 ?>
 <link rel="stylesheet" href="<?= asset('css/school.css') ?>">
@@ -17,11 +19,20 @@ ob_start();
 
     <?php include __DIR__ . '/partials/_header.php'; ?>
 
+    <?php if ($isReadOnlyView): ?>
+    <div class="school-readonly-banner">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+        <span>Estás viendo el panel de <strong><?= e($viewingInstitucionNombre ?? 'esta institución') ?></strong> como Admin General — modo solo lectura, sin poder crear, editar ni borrar nada.</span>
+        <a href="?url=school" class="school-btn secondary">Ver página general</a>
+        <a href="?url=school/exit-view" class="school-btn secondary">Salir y volver a Instituciones</a>
+    </div>
+    <?php else: ?>
     <div class="school-panel-header" style="padding:0 0 10px;">
         <a href="?url=school" class="school-btn secondary">
             Volver a la Página Principal
         </a>
     </div>
+    <?php endif; ?>
 
     <div class="school-body">
     <div class="school-tabs school-sidebar">

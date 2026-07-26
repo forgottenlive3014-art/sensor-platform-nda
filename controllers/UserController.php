@@ -23,6 +23,15 @@ class UserController {
         return $u['institucion_id'] ?? null;
     }
 
+    // Solo para LECTURA (ver EstudianteController::readScopeInstitutionId()
+    // para la explicacion completa). Nunca se usa en escritura.
+    private function readScopeInstitutionId() {
+        if ($this->isGlobalAdmin() && !empty($_SESSION['admin_view_institucion_id'])) {
+            return (int) $_SESSION['admin_view_institucion_id'];
+        }
+        return $this->scopeInstitutionId();
+    }
+
     public function list() {
         if (!isLoggedIn() || !$this->isSchoolAdmin()) {
             jsonResponse(['error' => 'No autorizado'], 401);
@@ -32,7 +41,7 @@ class UserController {
         $role = trim($_GET['role'] ?? '');
         $page = (int) ($_GET['page'] ?? 1);
         $perPage = (int) ($_GET['per_page'] ?? 10);
-        $instId = $this->scopeInstitutionId();
+        $instId = $this->readScopeInstitutionId();
 
         $rows = $model->getPage($search, $instId, $role, $page, $perPage);
         $total = $model->countAll($search, $instId, $role);

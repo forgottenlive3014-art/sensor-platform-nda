@@ -3120,6 +3120,37 @@ canvas {
     transform: translateX(-50%) translateY(-2px);
 }
 
+/* ---------- BOTON "VOLVER" (en toda pagina excepto Inicio) ---------- */
+.nda-back-btn {
+    position: fixed;
+    top: calc(var(--nh) + 16px);
+    left: 20px;
+    z-index: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(13, 20, 32, 0.6);
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    border: 1px solid var(--border2);
+    color: var(--text2);
+    border-radius: 100px;
+    padding: 8px 16px 8px 12px;
+    font-family: var(--fn);
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--sh);
+    transition: background 0.2s var(--ez), color 0.2s var(--ez), transform 0.2s var(--ez);
+}
+.nda-back-btn:hover { background: var(--gA); color: var(--acc); transform: translateX(-2px); }
+[data-theme="light"] .nda-back-btn { background: rgba(255, 255, 255, 0.7); }
+
+@media (max-width: 640px) {
+    .nda-back-btn { left: 12px; top: calc(var(--nh) + 10px); padding: 7px 14px 7px 10px; font-size: 0.74rem; }
+    .nda-back-btn span { display: none; }
+}
+
 /* ---------- AUTH MODAL ---------- */
 .auth-overlay {
     position: fixed;

@@ -32,6 +32,78 @@ class ArticuloController {
         return $slug;
     }
 
+    // El color se inserta tal cual en un atributo style (blog.php) — sin
+    // esto, un admin comprometido podria salirse del atributo (') o inyectar
+    // reglas CSS. Solo se acepta un codigo hex valido; cualquier otra cosa
+    // cae al color por defecto.
+    private function sanitizeColor($color) {
+        return preg_match('/^#[0-9a-fA-F]{3,8}$/', $color) ? $color : '#f29f05';
+    }
+
+    // El cuerpo del articulo se guarda como HTML (el editor permite negritas,
+    // links, imagenes, etc.), asi que no se puede escapar por completo sin
+    // romper el formato. En su lugar se limpia con una lista blanca de tags
+    // y atributos: cualquier <script>, atributo onerror/onclick, o tag fuera
+    // de la lista se elimina (desenvolviendo su texto/hijos en vez de
+    // borrarlos, para no perder contenido legitimo mal etiquetado).
+    private function sanitizeArticleHtml($html) {
+        $html = trim($html);
+        if ($html === '') return '';
+
+        $allowedTags = ['p','br','b','strong','i','em','u','a','ul','ol','li','h2','h3','h4','blockquote','img','span'];
+        $allowedAttrs = ['a' => ['href', 'title', 'target', 'rel'], 'img' => ['src', 'alt', 'title']];
+
+        $doc = new DOMDocument();
+        libxml_use_internal_errors(true);
+        $doc->loadHTML('<?xml encoding="utf-8"?><html><body>' . $html . '</body></html>', LIBXML_NOERROR | LIBXML_NOWARNING);
+        libxml_clear_errors();
+
+        $body = $doc->getElementsByTagName('body')->item(0);
+        if (!$body) return '';
+        $this->sanitizeNode($body, $allowedTags, $allowedAttrs);
+
+        $out = '';
+        foreach ($body->childNodes as $child) {
+            $out .= $doc->saveHTML($child);
+        }
+        return $out;
+    }
+
+    private function sanitizeNode($node, $allowedTags, $allowedAttrs) {
+        foreach (iterator_to_array($node->childNodes) as $child) {
+            if ($child->nodeType === XML_COMMENT_NODE) {
+                $node->removeChild($child);
+                continue;
+            }
+            if ($child->nodeType !== XML_ELEMENT_NODE) {
+                continue; // nodo de texto: se deja tal cual
+            }
+
+            $tag = strtolower($child->nodeName);
+            if (!in_array($tag, $allowedTags, true)) {
+                // Tag no permitido (incluye <script>, <iframe>, <svg>...): se
+                // descarta el tag pero se conserva su contenido interno.
+                while ($child->firstChild) {
+                    $node->insertBefore($child->firstChild, $child);
+                }
+                $node->removeChild($child);
+                continue;
+            }
+
+            $allowed = $allowedAttrs[$tag] ?? [];
+            foreach (iterator_to_array($child->attributes) as $attr) {
+                $name = strtolower($attr->nodeName);
+                $value = trim($attr->nodeValue);
+                $isUrlAttr = in_array($name, ['href', 'src'], true);
+                if (!in_array($name, $allowed, true) || ($isUrlAttr && stripos($value, 'javascript:') === 0)) {
+                    $child->removeAttribute($attr->nodeName);
+                }
+            }
+
+            $this->sanitizeNode($child, $allowedTags, $allowedAttrs);
+        }
+    }
+
     // Guarda una imagen de portada en assets/media/uploads/articulos/.
     private function storeUploadedImage($file) {
         $allowed = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
@@ -105,14 +177,14 @@ class ArticuloController {
             'titulo' => $titulo,
             'cat' => $cat,
             'tag' => $tag,
-            'color' => $color,
+            'color' => $this->sanitizeColor($color),
             'autor_id' => $u['id'],
             'autor_nombre' => $autorNombre,
             'tiempo' => $tiempo,
             'destacado' => $destacado,
             'extracto' => $extracto,
             'imagen' => $imagen,
-            'cuerpo' => $cuerpo,
+            'cuerpo' => $this->sanitizeArticleHtml($cuerpo),
         ]);
 
         jsonResponse(['success' => true, 'id' => $id, 'slug' => $slug]);
@@ -164,13 +236,13 @@ class ArticuloController {
             'titulo' => $titulo,
             'cat' => $cat,
             'tag' => $tag,
-            'color' => $color,
+            'color' => $this->sanitizeColor($color),
             'autor_nombre' => $autorNombre,
             'tiempo' => $tiempo,
             'destacado' => $destacado,
             'extracto' => $extracto,
             'imagen' => $imagen,
-            'cuerpo' => $cuerpo,
+            'cuerpo' => $this->sanitizeArticleHtml($cuerpo),
         ]);
 
         jsonResponse(['success' => true]);

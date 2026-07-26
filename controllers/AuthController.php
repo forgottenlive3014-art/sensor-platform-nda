@@ -44,6 +44,14 @@ class AuthController {
                 redirect('register/verify');
                 return;
             }
+            // Cuenta creada antes de confirmar el codigo de su correo personal
+            // (o que nunca lo confirmo): no la dejamos entrar hasta que lo haga.
+            if (empty($user['email_verificado'])) {
+                $_SESSION['pending_verify_account_user_id'] = $user['usuarios_id'];
+                $_SESSION['error'] = 'Primero debes verificar tu correo electrónico.';
+                redirect('register/verify-account');
+                return;
+            }
             $this->startSession($user);
             redirect('home');
         } else {
@@ -245,8 +253,10 @@ class AuthController {
             // partir del nombre; el usuario puede cambiarlo despues en su perfil.
             $randomHash = password_hash(bin2hex(random_bytes(32)), PASSWORD_DEFAULT);
             $newUsername = $this->generateUsername($name);
-            $db->prepare("INSERT INTO usuarios (nombre, username, email, contra, role, institucion_id, estado_institucional)
-                           VALUES (?, ?, ?, ?, 'user', NULL, 'ninguno')")
+            // email_verificado = 1: Google ya confirmo mas arriba que
+            // email_verified === 'true' antes de llegar aqui.
+            $db->prepare("INSERT INTO usuarios (nombre, username, email, contra, role, institucion_id, estado_institucional, email_verificado)
+                           VALUES (?, ?, ?, ?, 'user', NULL, 'ninguno', 1)")
                ->execute([$name, $newUsername, $email, $randomHash]);
             $stmt->execute([$email]);
             $user = $stmt->fetch();
@@ -421,9 +431,13 @@ class AuthController {
         }
 
         $hashed = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $db->prepare("INSERT INTO usuarios (nombre, username, email, contra, role, institucion_id, estado_institucional)
-                               VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$name, $username, $email, $hashed, $role, $institucionId, $estadoInstitucional]);
+        // El director verifica su correo indirectamente al confirmar el
+        // codigo que se manda al correo institucional (mas abajo), asi que
+        // no necesita ademas verificar su correo personal.
+        $emailVerificado = $role === 'director' ? 1 : 0;
+        $stmt = $db->prepare("INSERT INTO usuarios (nombre, username, email, contra, role, institucion_id, estado_institucional, email_verificado)
+                               VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$name, $username, $email, $hashed, $role, $institucionId, $estadoInstitucional, $emailVerificado]);
         $userId = $db->lastInsertId();
 
         if ($role === 'director') {
@@ -451,21 +465,20 @@ class AuthController {
             return;
         }
 
-        // Cargar datos completos (incluye nombre de institucion) e iniciar sesion.
-        $stmtU = $db->prepare("SELECT u.*, i.nombre AS institucion_nombre
-                                FROM usuarios u
-                                LEFT JOIN instituciones i ON i.instituciones_id = u.institucion_id
-                                WHERE u.usuarios_id = ?");
-        $stmtU->execute([$userId]);
-        $newUser = $stmtU->fetch();
-        $this->startSession($newUser);
+        // No se inicia sesion todavia: primero debe confirmar el codigo que
+        // se le manda a SU correo personal (evita cuentas con un correo
+        // inventado/ajeno que "dejaban entrar" sin comprobar nada).
+        $verifyCodeAccount = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $verifyExpiraAccount = date('Y-m-d H:i:s', time() + 15 * 60);
+        $db->prepare("UPDATE usuarios SET codigo_verificacion_email = ?, codigo_verificacion_email_expira = ? WHERE usuarios_id = ?")
+           ->execute([$verifyCodeAccount, $verifyExpiraAccount, $userId]);
 
-        if ($estadoInstitucional === 'pendiente') {
-            $_SESSION['success'] = 'Cuenta creada. Tu solicitud para unirte a la institución quedó pendiente de aprobación por el director.';
-        } else {
-            $_SESSION['success'] = '¡Cuenta creada exitosamente! Bienvenido/a, ' . $name . '.';
-        }
-        redirect('home');
+        $_SESSION['pending_verify_account_user_id'] = $userId;
+        $sentAccount = Mailer::sendAccountVerificationCode($email, $name, $verifyCodeAccount);
+        $_SESSION['success'] = $sentAccount
+            ? 'Casi listo — te enviamos un código de verificación a ' . $email . '.'
+            : 'Cuenta creada, pero no pudimos enviar el correo de verificación. Usa "Reenviar código" en la siguiente pantalla.';
+        redirect('register/verify-account');
     }
 
     // ---------------------------------------------------------------
@@ -592,6 +605,135 @@ class AuthController {
             ? 'Te enviamos un nuevo código a ' . $institucion['correo'] . '.'
             : 'No pudimos enviar el correo. Intenta de nuevo en unos minutos.';
         redirect('register/verify');
+    }
+
+    // ---------------------------------------------------------------
+    // VERIFICACION DEL CORREO PERSONAL (registro general / institucional
+    // no-director). Sin esto, isRealEmail() solo comprobaba que el DOMINIO
+    // reciba correo (ej. "gmail.com"), no que esa cuenta en particular sea
+    // real o le pertenezca a quien se registro — cualquier
+    // "cosaqueseinventen@gmail.com" pasaba el registro y entraba de una vez.
+    // ---------------------------------------------------------------
+    public function verifyAccountEmail() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->processVerifyAccountEmail();
+            return;
+        }
+
+        $userId = $_SESSION['pending_verify_account_user_id'] ?? null;
+        if (!$userId) {
+            redirect('login');
+            return;
+        }
+
+        $db = getDB();
+        $stmt = $db->prepare("SELECT nombre, email FROM usuarios WHERE usuarios_id = ?");
+        $stmt->execute([$userId]);
+        $accountUser = $stmt->fetch();
+        if (!$accountUser) {
+            redirect('login');
+            return;
+        }
+
+        view('verify-account-email', [
+            'title' => 'Verifica tu correo · NDA',
+            'accountUser' => $accountUser,
+        ]);
+    }
+
+    private function processVerifyAccountEmail() {
+        if (!csrfValid($_POST['csrf_token'] ?? '')) {
+            $_SESSION['error'] = 'Tu sesión expiró, intenta de nuevo.';
+            redirect('register/verify-account');
+            return;
+        }
+
+        $userId = $_SESSION['pending_verify_account_user_id'] ?? null;
+        if (!$userId) {
+            redirect('login');
+            return;
+        }
+
+        $code = trim($_POST['code'] ?? '');
+        $db = getDB();
+        $stmt = $db->prepare("SELECT codigo_verificacion_email, codigo_verificacion_email_expira FROM usuarios WHERE usuarios_id = ?");
+        $stmt->execute([$userId]);
+        $row = $stmt->fetch();
+
+        if (!$row || empty($row['codigo_verificacion_email'])) {
+            $_SESSION['error'] = 'No hay una verificación pendiente. Inicia sesión o regístrate de nuevo.';
+            redirect('login');
+            return;
+        }
+        if (strtotime($row['codigo_verificacion_email_expira']) < time()) {
+            $_SESSION['error'] = 'El código venció. Solicita uno nuevo.';
+            redirect('register/verify-account');
+            return;
+        }
+        if (!hash_equals((string) $row['codigo_verificacion_email'], $code)) {
+            $_SESSION['error'] = 'El código no es correcto.';
+            redirect('register/verify-account');
+            return;
+        }
+
+        $db->prepare("UPDATE usuarios SET email_verificado = 1, codigo_verificacion_email = NULL, codigo_verificacion_email_expira = NULL WHERE usuarios_id = ?")
+           ->execute([$userId]);
+
+        unset($_SESSION['pending_verify_account_user_id']);
+
+        $stmtU = $db->prepare("SELECT u.*, i.nombre AS institucion_nombre
+                                FROM usuarios u
+                                LEFT JOIN instituciones i ON i.instituciones_id = u.institucion_id
+                                WHERE u.usuarios_id = ?");
+        $stmtU->execute([$userId]);
+        $user = $stmtU->fetch();
+        if (!$user) {
+            redirect('login');
+            return;
+        }
+
+        $this->startSession($user);
+        $_SESSION['success'] = '¡Correo verificado! Bienvenido/a, ' . $user['nombre'] . '.';
+        redirect('home');
+    }
+
+    public function resendAccountVerificationCode() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            redirect('register/verify-account');
+            return;
+        }
+        if (!csrfValid($_POST['csrf_token'] ?? '')) {
+            $_SESSION['error'] = 'Tu sesión expiró, intenta de nuevo.';
+            redirect('register/verify-account');
+            return;
+        }
+
+        $userId = $_SESSION['pending_verify_account_user_id'] ?? null;
+        if (!$userId) {
+            redirect('login');
+            return;
+        }
+
+        $db = getDB();
+        $stmt = $db->prepare("SELECT nombre, email FROM usuarios WHERE usuarios_id = ?");
+        $stmt->execute([$userId]);
+        $accountUser = $stmt->fetch();
+        if (!$accountUser) {
+            redirect('login');
+            return;
+        }
+
+        $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $expira = date('Y-m-d H:i:s', time() + 15 * 60);
+        $db->prepare("UPDATE usuarios SET codigo_verificacion_email = ?, codigo_verificacion_email_expira = ? WHERE usuarios_id = ?")
+           ->execute([$code, $expira, $userId]);
+
+        $sent = Mailer::sendAccountVerificationCode($accountUser['email'], $accountUser['nombre'], $code);
+
+        $_SESSION['success'] = $sent
+            ? 'Te enviamos un nuevo código a ' . $accountUser['email'] . '.'
+            : 'No pudimos enviar el correo. Intenta de nuevo en unos minutos.';
+        redirect('register/verify-account');
     }
 
     // ---------------------------------------------------------------

@@ -39,14 +39,17 @@ INSERT INTO aulas (nombre, grado, nivel, seccion, instituciones_id) VALUES
 ('3° Año F', '3° Año', 'Bachillerato', 'F', @inst_id);
 
 -- Usuarios de prueba — TODOS con la contraseña: Demo2026!
-INSERT INTO usuarios (nombre, email, contra, role, institucion_id, estado_institucional) VALUES
-('Directora Demo',         'director.demo@nda.com',       SHA2('Demo2026!', 256), 'director',       @inst_id,  'aprobado'),
-('Docente Demo',           'docente.demo@nda.com',        SHA2('Demo2026!', 256), 'docente',        @inst_id,  'aprobado'),
-('Alumno Demo',            'alumno.demo@nda.com',         SHA2('Demo2026!', 256), 'alumno',         @inst_id,  'aprobado'),
-('Padre Demo',             'padre.demo@nda.com',          SHA2('Demo2026!', 256), 'padre',          @inst_id,  'aprobado'),
-('Administrativo Demo',    'administrativo.demo@nda.com', SHA2('Demo2026!', 256), 'administrativo', @inst_id,  'aprobado'),
-('Usuario General Demo',   'usuario.demo@nda.com',        SHA2('Demo2026!', 256), 'user',           NULL,      'ninguno'),
-('Docente Pendiente Demo', 'pendiente.demo@nda.com',      SHA2('Demo2026!', 256), 'docente',        @inst_id,  'pendiente');
+-- email_verificado = 1 en todas: son cuentas de demostracion con correos
+-- inventados (@nda.com), asi que no tiene sentido pedirles verificar un
+-- codigo que nunca llegaria a una bandeja real.
+INSERT INTO usuarios (nombre, email, contra, role, institucion_id, estado_institucional, email_verificado) VALUES
+('Directora Demo',         'director.demo@nda.com',       SHA2('Demo2026!', 256), 'director',       @inst_id,  'aprobado', 1),
+('Docente Demo',           'docente.demo@nda.com',        SHA2('Demo2026!', 256), 'docente',        @inst_id,  'aprobado', 1),
+('Alumno Demo',            'alumno.demo@nda.com',         SHA2('Demo2026!', 256), 'alumno',         @inst_id,  'aprobado', 1),
+('Padre Demo',             'padre.demo@nda.com',          SHA2('Demo2026!', 256), 'padre',          @inst_id,  'aprobado', 1),
+('Administrativo Demo',    'administrativo.demo@nda.com', SHA2('Demo2026!', 256), 'administrativo', @inst_id,  'aprobado', 1),
+('Usuario General Demo',   'usuario.demo@nda.com',        SHA2('Demo2026!', 256), 'user',           NULL,      'ninguno',  1),
+('Docente Pendiente Demo', 'pendiente.demo@nda.com',      SHA2('Demo2026!', 256), 'docente',        @inst_id,  'pendiente', 1);
 
 -- La institución queda administrada por la directora demo
 UPDATE instituciones SET director_id = (SELECT usuarios_id FROM usuarios WHERE email = 'director.demo@nda.com')

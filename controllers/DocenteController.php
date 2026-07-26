@@ -23,6 +23,16 @@ class DocenteController {
         return $u['institucion_id'] ?? null;
     }
 
+    // Solo para LECTURA (ver EstudianteController::readScopeInstitutionId()
+    // para la explicacion completa). Nunca se usa en create/update/delete.
+    private function readScopeInstitutionId() {
+        $u = currentUser();
+        if ($u['role'] === 'admin' && !empty($_SESSION['admin_view_institucion_id'])) {
+            return (int) $_SESSION['admin_view_institucion_id'];
+        }
+        return $this->scopeInstitutionId();
+    }
+
     // Guarda una foto subida en assets/media/uploads/perfiles/ y devuelve
     // la ruta relativa (o false si el archivo no es una imagen valida).
     private function storeUploadedPhoto($file) {
@@ -45,12 +55,12 @@ class DocenteController {
             jsonResponse(['error' => 'No autorizado'], 401);
         }
         $u = currentUser();
-        $isGlobalAdmin = $u['role'] === 'admin';
         $model = new TeacherModel();
         $search = trim($_GET['q'] ?? '');
         $page = (int) ($_GET['page'] ?? 1);
         $perPage = (int) ($_GET['per_page'] ?? 10);
-        $instId = $this->scopeInstitutionId();
+        $instId = $this->readScopeInstitutionId();
+        $isGlobalAdmin = $u['role'] === 'admin' && $instId === null;
 
         $rows = $model->getPage($instId, $isGlobalAdmin, $search, $page, $perPage);
         $total = $model->countAll($instId, $isGlobalAdmin, $search);
@@ -73,7 +83,7 @@ class DocenteController {
             jsonResponse(['error' => 'No autorizado'], 401);
         }
         $db = getDB();
-        $instId = $this->scopeInstitutionId();
+        $instId = $this->readScopeInstitutionId();
         $sql = "SELECT usuarios_id, nombre FROM usuarios WHERE role = 'docente'";
         $params = [];
         if ($instId !== null) {

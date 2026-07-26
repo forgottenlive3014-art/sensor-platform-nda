@@ -17,13 +17,23 @@ class NoticiaController {
             && $u['estado_institucional'] === 'aprobado';
     }
 
+    // Solo para LECTURA (ver EstudianteController::readScopeInstitutionId()
+    // para la explicacion completa). Nunca se usa en escritura.
+    private function readScopeInstitutionId() {
+        $u = currentUser();
+        if ($u['role'] === 'admin' && !empty($_SESSION['admin_view_institucion_id'])) {
+            return (int) $_SESSION['admin_view_institucion_id'];
+        }
+        return $u['institucion_id'] ?? null;
+    }
+
     public function list() {
         if (!isLoggedIn() || !$this->canAccessSchool()) {
             jsonResponse(['error' => 'No autorizado'], 401);
         }
         $u = currentUser();
-        $isGlobalAdmin = $u['role'] === 'admin';
-        $instId = $u['institucion_id'] ?? null;
+        $instId = $this->readScopeInstitutionId();
+        $isGlobalAdmin = $u['role'] === 'admin' && $instId === null;
 
         $model = new NewsModel();
         $search = trim($_GET['q'] ?? '');

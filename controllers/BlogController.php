@@ -33,12 +33,22 @@ class BlogController {
         return 'assets/media/uploads/blog/' . $name;
     }
 
+    // Solo para LECTURA (ver EstudianteController::readScopeInstitutionId()
+    // para la explicacion completa). Nunca se usa en escritura.
+    private function readScopeInstitutionId() {
+        $u = currentUser();
+        if ($u['role'] === 'admin' && !empty($_SESSION['admin_view_institucion_id'])) {
+            return (int) $_SESSION['admin_view_institucion_id'];
+        }
+        return $u['institucion_id'] ?? null;
+    }
+
     public function list() {
         if (!isLoggedIn() || !$this->canAccessSchool()) {
             jsonResponse(['error' => 'No autorizado'], 401);
         }
         $u = currentUser();
-        $instId = $u['institucion_id'] ?? null;
+        $instId = $this->readScopeInstitutionId();
         if (!$instId) {
             jsonResponse(['data' => [], 'total' => 0, 'page' => 1, 'per_page' => 10, 'total_pages' => 0]);
         }

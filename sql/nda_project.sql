@@ -6,6 +6,12 @@ usuarios_id INT PRIMARY KEY AUTO_INCREMENT,
 nombre VARCHAR(100),
 email VARCHAR(100) UNIQUE,
 contra VARCHAR(255),
+-- Verificacion del correo personal al registrarse (codigo de 6 digitos
+-- enviado por correo). Los directores no lo usan: verifican en su lugar
+-- el correo institucional (ver codigo_verificacion en instituciones).
+email_verificado TINYINT(1) NOT NULL DEFAULT 0,
+codigo_verificacion_email VARCHAR(6) NULL,
+codigo_verificacion_email_expira DATETIME NULL,
 role ENUM('user','admin','director','docente','alumno','padre','administrativo') DEFAULT 'user',
 institucion_id INT NULL,
 estado_institucional ENUM('ninguno','pendiente','aprobado','rechazado') DEFAULT 'ninguno',
