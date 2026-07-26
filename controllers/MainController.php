@@ -62,6 +62,22 @@ class MainController {
         view('monitoreo', $data);
     }
 
+    public function clima() {
+        $data = [
+            'title' => 'Clima en Tiempo Real - NDA',
+            'user' => currentUser()
+        ];
+        view('monitoreo/clima', $data);
+    }
+
+    public function luna() {
+        $data = [
+            'title' => 'Fases de la Luna - NDA',
+            'user' => currentUser()
+        ];
+        view('monitoreo/luna', $data);
+    }
+
     public function arduino() {
         $data = [
             'title' => 'Sismógrafo Arduino - NDA',

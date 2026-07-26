@@ -49,7 +49,7 @@ ob_start();
                     </button>
                     <button type="button" class="wiz-card" data-account-type="institutional">
                         <strong>Comunidad de una institución</strong>
-                        <span>Director, docente, alumno, padre/encargado o personal administrativo de un centro educativo.</span>
+                        <span>Director, docente, estudiante, padre/encargado o personal administrativo de un centro educativo.</span>
                     </button>
                 </div>
                 <div class="wiz-nav">
@@ -72,7 +72,7 @@ ob_start();
                         <span>Gestiona tus secciones y pasa lista en simulacros.</span>
                     </button>
                     <button type="button" class="wiz-card wiz-card-sm" data-inst-role="alumno">
-                        <strong>Alumno</strong>
+                        <strong>Estudiante</strong>
                         <span>Consulta rutas, participa en simulacros y actividades.</span>
                     </button>
                     <button type="button" class="wiz-card wiz-card-sm" data-inst-role="padre">

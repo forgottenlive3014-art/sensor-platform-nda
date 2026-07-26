@@ -8,6 +8,11 @@
     const MOON_TEXTURE = 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/moon_1024.jpg';
 
     function currentMoonPhaseRaw() {
+        // luna.js puede fijar window.__ndaMoonPhaseOverride (0..1) para que el
+        // modelo 3D "explore" una fase elegida por el usuario en vez de la
+        // fase real del momento; null/undefined = tiempo real (comportamiento
+        // original).
+        if (typeof window.__ndaMoonPhaseOverride === 'number') return window.__ndaMoonPhaseOverride;
         const synodic = 29.530588853;
         const known = new Date(2000, 0, 6, 18, 14);
         const now = new Date();
@@ -69,6 +74,8 @@
         }
         applyPhaseLighting();
         setInterval(applyPhaseLighting, 60000); // recalcula cada minuto, la fase cambia muy despacio
+        // Recalcula al instante cuando luna.js cambia la fase explorada (o vuelve a tiempo real).
+        window.addEventListener('nda-moon-phase-change', applyPhaseLighting);
 
         // Arrastre manual para orbitar
         let dragging = false, lastX = 0, lastY = 0;

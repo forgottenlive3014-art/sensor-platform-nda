@@ -11,6 +11,7 @@ ob_start();
     <canvas id="particles"></canvas>
 
     <div class="auth-card">
+        <img src="assets/media/img/alegre.png" alt="" class="auth-mascot">
         <h1 class="auth-title">VERIFICA TU INSTITUCIÓN</h1>
         <p class="auth-subtitle">
             Enviamos un código de 6 dígitos a

@@ -35,13 +35,13 @@ ob_start();
             Mis Secciones
         </button>
         <button class="school-tab" data-tab="students" onclick="showSchoolTab('students')">
-            Alumnos
+            Estudiantes
         </button>
         <button class="school-tab" data-tab="attendance" onclick="showSchoolTab('attendance')">
             Pase de Lista
         </button>
         <button class="school-tab" data-tab="teacher-notify" onclick="showSchoolTab('teacher-notify')">
-            Notificar a mis alumnos
+            Notificar a mis estudiantes
         </button>
         <button class="school-tab" data-tab="routes" onclick="showSchoolTab('routes')">
             Rutas

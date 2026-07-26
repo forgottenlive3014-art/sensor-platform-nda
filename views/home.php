@@ -187,13 +187,13 @@ ob_start();
       <p class="sec-sub">Un recorrido rápido por todo lo que la plataforma tiene para ti</p>
     </div>
     <div class="find-cards-grid">
-      <a href="?url=monitoreo#clima" class="find-card">
+      <a href="?url=clima" class="find-card">
         <div class="find-card-visual" style="background:linear-gradient(135deg,#2d8fff,#3d6f8f)"><svg width="1.8em" height="1.8em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 0 0 0-9 6 6 0 0 0-11.3-1.5A5 5 0 0 0 6 19z"/><path d="M12 2v2M4.2 4.2l1.4 1.4"/></svg></div>
-        <div class="find-card-body"><h3>Clima en Tiempo Real</h3><p>Temperatura, lluvia y viento en las principales ciudades de El Salvador, con datos en vivo.</p><span class="fc-cta">Ver clima →</span></div>
+        <div class="find-card-body"><h3>Clima en Tiempo Real</h3><p>Temperatura, pronóstico y mapa de lluvia en vivo, según tu ubicación real.</p><span class="fc-cta">Ver clima →</span></div>
       </a>
-      <a href="?url=monitoreo#luna" class="find-card">
+      <a href="?url=luna" class="find-card">
         <div class="find-card-visual" style="background:linear-gradient(135deg,#4b3f72,#26314f)"><svg width="1.8em" height="1.8em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>
-        <div class="find-card-body"><h3>Fases de la Luna en 3D</h3><p>Modelo lunar en tiempo real y su relación directa con las mareas y la pesca en la costa.</p><span class="fc-cta">Ver luna 3D →</span></div>
+        <div class="find-card-body"><h3>Fases de la Luna en 3D</h3><p>Modelo lunar en tiempo real, calendario de fases y datos astronómicos actualizados.</p><span class="fc-cta">Ver luna 3D →</span></div>
       </a>
       <a href="?url=sismos" class="find-card">
         <div class="find-card-visual" style="background:linear-gradient(135deg,#c98a3d,#b8433f)"><svg width="1.8em" height="1.8em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 12 7 12 9 18 13 4 16 16 18 12 22 12"/></svg></div>

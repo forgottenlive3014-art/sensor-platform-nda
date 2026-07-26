@@ -249,7 +249,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function showQuestion() {
         const cur = QUESTIONS[qi];
         document.getElementById('quizProgress').textContent = `Pregunta ${qi+1} de ${QUESTIONS.length}`;
-        document.getElementById('quizScore').textContent = `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><polygon points="12,2 15,9 22,9.5 16.5,14 18,21 12,17.5 6,21 7.5,14 2,9.5 9,9"/></svg> ${qscore}`;
+        document.getElementById('quizScore').innerHTML = `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><polygon points="12,2 15,9 22,9.5 16.5,14 18,21 12,17.5 6,21 7.5,14 2,9.5 9,9"/></svg> ${qscore}`;
         document.getElementById('quizBar').style.width = `${(qi/QUESTIONS.length)*100}%`;
         document.getElementById('quizQuestion').textContent = cur.q;
         const box = document.getElementById('quizOptions'); box.innerHTML = '';
@@ -268,7 +268,7 @@ document.addEventListener('DOMContentLoaded', function () {
             else if (idx === i) b.classList.add('wrong');
         });
         if (i === cur.a) qscore++;
-        document.getElementById('quizScore').textContent = `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><polygon points="12,2 15,9 22,9.5 16.5,14 18,21 12,17.5 6,21 7.5,14 2,9.5 9,9"/></svg> ${qscore}`;
+        document.getElementById('quizScore').innerHTML = `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><polygon points="12,2 15,9 22,9.5 16.5,14 18,21 12,17.5 6,21 7.5,14 2,9.5 9,9"/></svg> ${qscore}`;
         setTimeout(() => { qi++; (qi < QUESTIONS.length) ? showQuestion() : endQuiz(); }, 950);
     }
     function endQuiz() {
@@ -279,7 +279,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (qscore <= 2) { emo='<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M3 9v6c0 1.5 4 3 9 3s9-1.5 9-3V9"/></svg>'; title='Vas comenzando'; text='Repasa nuestras guías y vuelve a intentarlo. ¡Cada dato cuenta!'; }
         else if (qscore <= 4) { emo='<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M6 4v6a3 3 0 0 0 3 3h1v7h6v-9l3-3V4h-4l-3 3-3-3z"/></svg>'; title='¡Bien preparado!'; text='Sabes lo importante. Afina los últimos detalles y serás un experto.'; }
         else { emo='<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M17 5h3a2 2 0 0 1-2 4M7 5H4a2 2 0 0 0 2 4"/></svg>'; title='¡Experto en emergencias!'; text='Impecable. Comparte lo que sabes con tu familia y comunidad.'; }
-        document.getElementById('quizResultEmoji').textContent = emo;
+        document.getElementById('quizResultEmoji').innerHTML = emo;
         document.getElementById('quizResultTitle').textContent = title;
         document.getElementById('quizResultText').textContent = text;
     }
@@ -354,7 +354,7 @@ document.addEventListener('DOMContentLoaded', function () {
             else if (it.good && !sel) { d.classList.add('reveal-bad'); }
         });
         const res = document.getElementById('bpResult');
-        if (correct===8 && mistakes===0){ res.style.color='#2e8b7f'; res.textContent='<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M17 5h3a2 2 0 0 1-2 4M7 5H4a2 2 0 0 0 2 4"/></svg> ¡Mochila perfecta! Llevas todo lo esencial.'; }
+        if (correct===8 && mistakes===0){ res.style.color='#2e8b7f'; res.innerHTML='<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M17 5h3a2 2 0 0 1-2 4M7 5H4a2 2 0 0 0 2 4"/></svg> ¡Mochila perfecta! Llevas todo lo esencial.'; }
         else { res.style.color='#f29f05'; res.textContent=`Acertaste ${correct}/8 esenciales. ${mistakes? 'Quita lo que no sirve (en rojo).':'¡Casi! Te faltan algunos en rojo.'}`; }
     };
     buildBackpack();
@@ -366,7 +366,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const stage = document.getElementById('drillStage'), dmsg = document.getElementById('drillMsg');
     function startDrill() {
         clearTimeout(drillTimeout); drillTarget=null;
-        stage.className='drill-stage wait'; dmsg.textContent='Prepárate… <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="8" cy="12" r="3"/><circle cx="16" cy="12" r="3"/></svg>';
+        stage.className='drill-stage wait'; dmsg.innerHTML='Prepárate… <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="8" cy="12" r="3"/><circle cx="16" cy="12" r="3"/></svg>';
         const wait = 900 + Math.random()*2200;
         drillTimeout = setTimeout(() => {
             drillTarget = ACTS[Math.floor(Math.random()*ACTS.length)];
@@ -379,9 +379,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const ms = Math.round(performance.now() - drillStart);
             if (btn.dataset.act === drillTarget.k) {
                 if (drillBest===null || ms<drillBest){ drillBest=ms; document.getElementById('drillBest').textContent = ms+' ms'; }
-                stage.className='drill-stage'; dmsg.textContent=`<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg> ¡Correcto en ${ms} ms! Toca "Empezar" otra vez.`;
+                stage.className='drill-stage'; dmsg.innerHTML=`<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg> ¡Correcto en ${ms} ms! Toca "Empezar" otra vez.`;
             } else {
-                stage.className='drill-stage'; dmsg.textContent='<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> Acción equivocada. La señal pedía otra cosa.';
+                stage.className='drill-stage'; dmsg.innerHTML='<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> Acción equivocada. La señal pedía otra cosa.';
             }
             drillTarget=null;
         });

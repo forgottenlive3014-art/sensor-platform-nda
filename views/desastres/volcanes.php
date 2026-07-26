@@ -11,7 +11,7 @@ ob_start();
 <section class="dis-bigbanner" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/Eruption%20of%20Santa%20Ana%20(Ilamatepec)%20Volcano%20(15656).jpg')">
   <div class="dis-bigbanner-overlay"></div>
   <div class="wrap dis-bigbanner-inner">
-    <h2 class="dis-bigbanner-word">volcanes</h2>
+    <h2 class="dis-bigbanner-word">Volcanes</h2>
     <div class="dis-bigbanner-sub">
       <span class="dis-bigbanner-rule"></span>
       <div>
@@ -78,13 +78,27 @@ ob_start();
       <h2 class="sec-title">Volcanes <span class="acc">activos</span></h2>
       <p class="sec-sub">Los complejos volcánicos con mayor actividad o monitoreo permanente del MARN</p>
     </div>
-    <div class="dis-zones">
-      <div class="dis-zone-chip"><span class="dot"></span>Santa Ana / Ilamatepec (el más alto del país, 2,381 msnm)</div>
-      <div class="dis-zone-chip"><span class="dot"></span>San Salvador / Boquerón — Quezaltepec</div>
-      <div class="dis-zone-chip"><span class="dot"></span>San Miguel / Chaparrastique</div>
-      <div class="dis-zone-chip"><span class="dot"></span>San Vicente / Chichontepec</div>
-      <div class="dis-zone-chip"><span class="dot"></span>Izalco — "El Faro del Pacífico"</div>
-      <div class="dis-zone-chip"><span class="dot"></span>Conchagua (La Unión)</div>
+    <?php
+    $volcanes = [
+        ['id' => 'santa-ana', 'nombre' => 'Santa Ana / Ilamatepec', 'fact' => 'El más alto del país — 2,381 msnm', 'img' => 'Volcán Santa Ana (Ilamatepec).jpg', 'lat' => 13.8535, 'lng' => -89.6299],
+        ['id' => 'san-salvador', 'nombre' => 'San Salvador / Boquerón', 'fact' => 'Quezaltepec — junto a la capital', 'img' => 'Volcán San Salvador (Boquerón).jpg', 'lat' => 13.7342, 'lng' => -89.2939],
+        ['id' => 'san-miguel', 'nombre' => 'San Miguel / Chaparrastique', 'fact' => 'Uno de los más activos del país', 'img' => 'Volcán San Miguel (Chaparrastique).jpg', 'lat' => 13.4344, 'lng' => -88.2694],
+        ['id' => 'san-vicente', 'nombre' => 'San Vicente / Chichontepec', 'fact' => 'Cordillera de Apaneca-Ilamatepec, sector oriente', 'img' => 'Volcán San Vicente (Chinchontepec).jpg', 'lat' => 13.5936, 'lng' => -88.8394],
+        ['id' => 'izalco', 'nombre' => 'Izalco', 'fact' => '"El Faro del Pacífico" — activo 1770–1966', 'img' => 'Volcán Izalco.jpg', 'lat' => 13.8136, 'lng' => -89.6327],
+        ['id' => 'conchagua', 'nombre' => 'Conchagua', 'fact' => 'La Unión, extremo oriental del país', 'img' => 'Volcán Conchagua.jpg', 'lat' => 13.2789, 'lng' => -87.7556],
+    ];
+    ?>
+    <div class="dis-volcan-grid">
+      <?php foreach ($volcanes as $v): ?>
+      <div class="dis-volcan-card">
+        <img class="dis-volcan-photo" src="assets/media/img/<?= rawurlencode($v['img']) ?>" alt="<?= e($v['nombre']) ?>" loading="lazy">
+        <div class="dis-volcan-body">
+          <div class="dis-volcan-name"><?= e($v['nombre']) ?></div>
+          <div class="dis-volcan-fact"><?= e($v['fact']) ?></div>
+          <div class="dis-volcan-map" id="volcanMap-<?= e($v['id']) ?>" data-lat="<?= $v['lat'] ?>" data-lng="<?= $v['lng'] ?>"></div>
+        </div>
+      </div>
+      <?php endforeach; ?>
     </div>
   </div>
 </section>
@@ -122,7 +136,7 @@ ob_start();
   <div class="wrap">
     <div class="sec-hd">
       <div class="sec-eyebrow">Protocolo</div>
-      <h2 class="sec-title">Qué hacer <span class="acc">antes, durante y después</span></h2>
+      <h2 class="sec-title">¿Qué hacer <span class="acc">antes, durante y después</span>?</h2>
     </div>
     <div class="dis-actions">
       <div class="dis-action-col">
@@ -167,12 +181,31 @@ ob_start();
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     ndaInitDisParticles('volcanesParticles', 'volcanes');
+
+    // Mini-mapas de ubicacion, uno por volcan (Leaflet ya viene cargado
+    // globalmente en layout.php). Solo lectura: sin drag/zoom para que no
+    // capturen el scroll de la pagina.
+    document.querySelectorAll('.dis-volcan-map').forEach(function (el) {
+        if (!window.L) return;
+        var lat = parseFloat(el.dataset.lat), lng = parseFloat(el.dataset.lng);
+        var isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+        var tileUrl = isDark
+            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+            : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+        var map = L.map(el, {
+            zoomControl: false, attributionControl: false, dragging: false,
+            scrollWheelZoom: false, doubleClickZoom: false, touchZoom: false, keyboard: false
+        }).setView([lat, lng], 10);
+        L.tileLayer(tileUrl, { subdomains: 'abcd', maxZoom: 14 }).addTo(map);
+        L.circleMarker([lat, lng], { radius: 8, color: '#e0631f', fillColor: '#e0631f', fillOpacity: .9, weight: 2 }).addTo(map);
+    });
+
     ndaInitTimeline('volcanes', [
         { year: '1658', title: 'Nacimiento de El Playón', badge: 'Erupción efusiva', region: 'Volcán de San Salvador',
           desc: 'Una erupción prolongada (1658–1671) formó el campo de lava conocido como "El Playón", al norte de la capital.',
           tags: [{ t: 'Histórico', c: '' }, { t: 'San Salvador', c: 'o' }],
           stats: [{ v: '1658', l: 'Inicio' }, { v: '13 años', l: 'Duración' }, { v: 'Efusiva', l: 'Tipo' }],
-          img: 'assets/media/desastres/volcanes/1658-el-playon.jpg' },
+          img: 'assets/media/img/<?= rawurlencode('Volcán El Playón.webp') ?>' },
         { year: '1770', title: 'Izalco, "El Faro del Pacífico"', badge: '196 años activo', region: 'Volcán de Izalco',
           desc: 'Casi dos siglos de actividad casi continua (1770–1966) lo hicieron visible —y usado como referencia de navegación— desde el océano.',
           tags: [{ t: 'Histórico', c: '' }, { t: 'Izalco', c: 'o' }],

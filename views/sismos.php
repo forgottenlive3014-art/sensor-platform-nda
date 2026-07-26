@@ -9,7 +9,7 @@ ob_start();
 <section class="dis-bigbanner" style="--dis-accent:#c98a3d; background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/ElSalvadorslide.jpg')">
   <div class="dis-bigbanner-overlay"></div>
   <div class="wrap dis-bigbanner-inner">
-    <h2 class="dis-bigbanner-word">sismos</h2>
+    <h2 class="dis-bigbanner-word">Sismos</h2>
     <div class="dis-bigbanner-sub">
       <span class="dis-bigbanner-rule"></span>
       <div>

@@ -231,7 +231,7 @@ class SchoolController {
 
         $panel = ($user['role'] === 'director' || $isReadOnlyView) ? 'panel-director' : 'panel-docente';
         $subtitles = [
-            'panel-director' => 'Administra alumnos, docentes, rutas de evacuación, simulacros y más',
+            'panel-director' => 'Administra estudiantes, docentes, rutas de evacuación, simulacros y más',
             'panel-docente'  => 'Tus secciones, pase de lista, notificaciones y croquis',
         ];
 

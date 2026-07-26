@@ -11,7 +11,7 @@ ob_start();
 <section class="dis-bigbanner" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/Drought%20land%20dry%20mud%20BOUHANIFIA%20Algeria%2002.jpg')">
   <div class="dis-bigbanner-overlay"></div>
   <div class="wrap dis-bigbanner-inner">
-    <h2 class="dis-bigbanner-word">sequías</h2>
+    <h2 class="dis-bigbanner-word">Sequías</h2>
     <div class="dis-bigbanner-sub">
       <span class="dis-bigbanner-rule"></span>
       <div>
@@ -116,7 +116,7 @@ ob_start();
   <div class="wrap">
     <div class="sec-hd">
       <div class="sec-eyebrow">Protocolo</div>
-      <h2 class="sec-title">Qué hacer <span class="acc">antes, durante y después</span></h2>
+      <h2 class="sec-title">¿Qué hacer <span class="acc">antes, durante y después</span>?</h2>
     </div>
     <div class="dis-actions">
       <div class="dis-action-col">

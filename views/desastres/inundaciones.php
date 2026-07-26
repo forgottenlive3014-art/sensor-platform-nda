@@ -11,7 +11,7 @@ ob_start();
 <section class="dis-bigbanner" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/Lo%20que%20dejo%20a%20su%20paso%20el%20huracan%20Ida%20(7%2C8%20Noviembre%202009)%20Playa%20de%20Las%20Hojas.%20-%20panoramio.jpg')">
   <div class="dis-bigbanner-overlay"></div>
   <div class="wrap dis-bigbanner-inner">
-    <h2 class="dis-bigbanner-word">inundaciones</h2>
+    <h2 class="dis-bigbanner-word">Inundaciones</h2>
     <div class="dis-bigbanner-sub">
       <span class="dis-bigbanner-rule"></span>
       <div>
@@ -120,7 +120,7 @@ ob_start();
   <div class="wrap">
     <div class="sec-hd">
       <div class="sec-eyebrow">Protocolo</div>
-      <h2 class="sec-title">Qué hacer <span class="acc">antes, durante y después</span></h2>
+      <h2 class="sec-title">¿Qué hacer <span class="acc">antes, durante y después</span>?</h2>
     </div>
     <div class="dis-actions">
       <div class="dis-action-col">

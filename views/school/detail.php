@@ -50,7 +50,7 @@ if ($tipoContenido === 'noticia') {
                 </h1>
 
                 <?php
-                $roleLabels = ['director' => 'Director', 'docente' => 'Docente', 'alumno' => 'Alumno', 'padre' => 'Padre/Encargado', 'administrativo' => 'Personal', 'admin' => 'Administración'];
+                $roleLabels = ['director' => 'Director', 'docente' => 'Docente', 'alumno' => 'Estudiante', 'padre' => 'Padre/Encargado', 'administrativo' => 'Personal', 'admin' => 'Administración'];
                 ?>
                 <div class="school-blog-card-meta" style="margin-bottom:16px;">
                     <span><?= e($autor) ?><?= $autorRole ? ' (' . e($roleLabels[$autorRole] ?? $autorRole) . ')' : '' ?></span>

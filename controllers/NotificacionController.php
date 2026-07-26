@@ -233,7 +233,7 @@ class NotificacionController {
         $studentUserIds = array_column($stmt->fetchAll(), 'usuarios_id');
 
         if (empty($studentUserIds)) {
-            jsonResponse(['error' => 'No tienes alumnos asignados con cuenta creada todavía'], 400);
+            jsonResponse(['error' => 'No tienes estudiantes asignados con cuenta creada todavía'], 400);
         }
 
         $model = new NotificationModel();

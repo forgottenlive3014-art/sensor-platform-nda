@@ -102,7 +102,7 @@ async function loadStudents(page) {
     const tbody = document.getElementById('studentsTableBody');
     if (!tbody) return;
     __studentsPage = page || 1;
-    tbody.innerHTML = '<tr><td colspan="6" class="text-center">Cargando alumnos...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" class="text-center">Cargando estudiantes...</td></tr>';
 
     const q = document.getElementById('studentsSearch')?.value.trim() || '';
 
@@ -117,7 +117,7 @@ async function loadStudents(page) {
         __studentsCache = result.data || [];
 
         if (__studentsCache.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center">No hay alumnos registrados</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center">No hay estudiantes registrados</td></tr>';
             renderPagination('studentsPagination', 1, 1, 'loadStudents');
             return;
         }
@@ -138,7 +138,7 @@ async function loadStudents(page) {
 
         renderPagination('studentsPagination', result.page, result.total_pages, 'loadStudents');
     } catch (e) {
-        tbody.innerHTML = '<tr><td colspan="6" class="text-center">Error al cargar alumnos</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center">Error al cargar estudiantes</td></tr>';
         console.error(e);
     }
 }
@@ -163,7 +163,7 @@ document.getElementById('addStudentForm')?.addEventListener('submit', async func
         });
         const result = await response.json();
         if (result.success) {
-            ndaAlert('✅ Alumno agregado correctamente. Contraseña temporal: ' + result.password_temporal);
+            ndaAlert('✅ Estudiante agregado correctamente. Contraseña temporal: ' + result.password_temporal);
             closeModal('addStudentModal');
             this.reset();
             loadStudents(__studentsPage);
@@ -178,7 +178,7 @@ document.getElementById('addStudentForm')?.addEventListener('submit', async func
 
 async function editStudent(id) {
     const s = __studentsCache.find(x => String(x.estudiantes_id) === String(id));
-    if (!s) { ndaAlert('No se encontró el alumno.'); return; }
+    if (!s) { ndaAlert('No se encontró el estudiante.'); return; }
 
     document.getElementById('editStudentId').value = s.estudiantes_id;
     document.getElementById('editStudentName').value = s.nombre || '';
@@ -231,12 +231,12 @@ document.getElementById('editStudentForm')?.addEventListener('submit', async fun
 });
 
 async function deleteStudent(id) {
-    if (!(await ndaConfirm('¿Eliminar este alumno?'))) return;
+    if (!(await ndaConfirm('¿Eliminar este estudiante?'))) return;
     try {
         const response = await fetch(`?url=school/delete-student&id=${id}`);
         const result = await response.json();
         if (result.success) {
-            ndaAlert('✅ Alumno eliminado');
+            ndaAlert('✅ Estudiante eliminado');
             loadStudents(__studentsPage);
         } else {
             ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
@@ -540,13 +540,13 @@ async function openLinkChildModal(parentId) {
     } catch (e) { currentList.innerHTML = ''; }
 
     const select = document.getElementById('linkChildStudent');
-    select.innerHTML = '<option value="">Cargando alumnos...</option>';
+    select.innerHTML = '<option value="">Cargando estudiantes...</option>';
     try {
         const res = await fetch('?url=school/students&per_page=200');
         const result = await res.json();
         const students = result.data || [];
         select.innerHTML = students.map(s => `<option value="${s.estudiantes_id}">${escapeHtml(s.nombre)} ${escapeHtml(s.apellido)} (${escapeHtml(s.codigo || '')})</option>`).join('');
-    } catch (e) { select.innerHTML = '<option value="">Error al cargar alumnos</option>'; }
+    } catch (e) { select.innerHTML = '<option value="">Error al cargar estudiantes</option>'; }
 
     openModal('linkChildModal');
 }
@@ -688,7 +688,7 @@ document.getElementById('notifyStudentsForm')?.addEventListener('submit', async 
         });
         const result = await response.json();
         if (result.success) {
-            ndaAlert(`✅ Notificación enviada a ${result.enviados} alumno(s)`);
+            ndaAlert(`✅ Notificación enviada a ${result.enviados} estudiante(s)`);
             this.reset();
         } else {
             ndaAlert('Error: ' + (result.error || 'Desconocido'));
@@ -1424,7 +1424,7 @@ async function loadAttendance() {
         }
 
         if (students.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" class="text-center">No hay alumnos para este simulacro</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center">No hay estudiantes para este simulacro</td></tr>';
             return;
         }
 
@@ -1896,14 +1896,14 @@ async function loadReports() {
                 </div>
 
                 <div class="school-report-card" style="grid-column:1/-1;">
-                    <h4>Alumnos por Aula</h4>
-                    ${studentsByClassroom.length === 0 ? '<p style="color:var(--text3);">No hay datos de alumnos por aula</p>' :
+                    <h4>Estudiantes por Aula</h4>
+                    ${studentsByClassroom.length === 0 ? '<p style="color:var(--text3);">No hay datos de estudiantes por aula</p>' :
                         `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;">
                             ${studentsByClassroom.map(c => `
                                 <div style="background:var(--bg3);padding:10px;border-radius:8px;text-align:center;border:1px solid var(--border);">
                                     <div style="font-weight:700;color:var(--text);">${escapeHtml(c.nombre)}</div>
                                     <div style="color:var(--acc);font-size:1.2rem;font-weight:800;">${c.total}</div>
-                                    <div style="font-size:0.65rem;color:var(--text3);">alumnos</div>
+                                    <div style="font-size:0.65rem;color:var(--text3);">estudiantes</div>
                                 </div>
                             `).join('')}
                         </div>`
@@ -1948,7 +1948,7 @@ function exportReport() {
     (data.drills_by_status || []).forEach(d => rows.push([drillStatusLabel[d.estado] || d.estado, d.total]));
     rows.push([]);
 
-    rows.push(['Alumnos por aula']);
+    rows.push(['Estudiantes por aula']);
     rows.push(['Aula', 'Total']);
     (data.students_by_classroom || []).forEach(c => rows.push([c.nombre, c.total]));
 
@@ -2031,7 +2031,7 @@ async function loadSections() {
                         <div class="section-card">
                             <div class="section-card-top" data-aula-id="${s.aulas_id}" data-aula-nombre="${escapeHtml(s.nombre)}" onclick="filterStudentsBySection(this.dataset.aulaId, this.dataset.aulaNombre)" style="cursor:pointer;">
                                 <strong>Sección ${escapeHtml(s.seccion)}</strong>
-                                <span class="section-count">${s.total_alumnos || 0} alumnos</span>
+                                <span class="section-count">${s.total_alumnos || 0} estudiantes</span>
                             </div>
                             ${window.__ndaIsSchoolAdmin ? `
                                 <select class="section-teacher-select" onchange="assignSectionTeacher(${s.aulas_id}, this.value)" onclick="event.stopPropagation()">
@@ -2069,13 +2069,13 @@ function filterStudentsBySection(aulaId, nombre) {
     setTimeout(async () => {
         const tbody = document.getElementById('studentsTableBody');
         if (!tbody) return;
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center">Cargando alumnos de ${escapeHtml(nombre)}...</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center">Cargando estudiantes de ${escapeHtml(nombre)}...</td></tr>`;
         try {
             const response = await fetch('?url=school/students&aula_id=' + aulaId + '&per_page=100');
             const result = await response.json();
             const students = result.data || [];
             if (students.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center">No hay alumnos registrados en ${escapeHtml(nombre)}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center">No hay estudiantes registrados en ${escapeHtml(nombre)}</td></tr>`;
                 return;
             }
             tbody.innerHTML = students.map(s => `
@@ -2089,7 +2089,7 @@ function filterStudentsBySection(aulaId, nombre) {
                 </tr>
             `).join('');
         } catch (e) {
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center">Error al cargar alumnos</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center">Error al cargar estudiantes</td></tr>';
         }
     }, 50);
 }
@@ -2510,7 +2510,7 @@ async function loadJoinRequests() {
     if (!list) return;
     list.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);">Cargando solicitudes...</div>';
 
-    const roleLabels = { docente: 'Docente', alumno: 'Alumno', padre: 'Padre / Encargado', administrativo: 'Personal administrativo' };
+    const roleLabels = { docente: 'Docente', alumno: 'Estudiante', padre: 'Padre / Encargado', administrativo: 'Personal administrativo' };
 
     try {
         const response = await fetch('?url=school/join-requests');
@@ -2632,7 +2632,7 @@ async function viewInstitutionStats(id, nombre) {
         const s = result.stats;
         const tiles = [
             ['Docentes', s.docentes],
-            ['Alumnos', s.alumnos],
+            ['Estudiantes', s.alumnos],
             ['Personal administrativo', s.administrativos],
             ['Padres/Encargados', s.padres],
             ['Rutas de evacuación', s.rutas],
@@ -2883,7 +2883,7 @@ document.getElementById('editUserForm')?.addEventListener('submit', async functi
 });
 
 async function deleteUser(id) {
-    if (!(await ndaConfirm('¿Eliminar este usuario? Se eliminarán también sus datos asociados (alumno, docente, etc.).'))) return;
+    if (!(await ndaConfirm('¿Eliminar este usuario? Se eliminarán también sus datos asociados (estudiante, docente, etc.).'))) return;
     try {
         const response = await fetch(`?url=school/delete-user&id=${id}`);
         const result = await response.json();
@@ -3611,7 +3611,7 @@ async function loadMyClassroom() {
             <div class="school-grid-2">
                 <div><strong>Aula:</strong> ${escapeHtml(c.classroom)} (${escapeHtml(c.grado || '')} ${escapeHtml(c.seccion || '')})</div>
                 <div><strong>Docente:</strong> ${escapeHtml(c.teacher || 'Sin asignar')}</div>
-                <div><strong>Compañeros:</strong> ${c.total_alumnos || 0} alumnos</div>
+                <div><strong>Compañeros:</strong> ${c.total_alumnos || 0} estudiantes</div>
             </div>
         `;
     } catch (e) {

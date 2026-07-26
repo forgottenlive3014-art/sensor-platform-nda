@@ -1,0 +1,239 @@
+/* ============================================================
+   FASES DE LA LUNA — observatorio astronómico
+   Usa exclusivamente la paleta ya predeterminada del sitio (definida en
+   :root / [data-theme="light"] de style.css: --bg,--card,--border,--text,
+   --acc,--acc2,--acc3,--acc4,--teal,--blue,--purple,--green,--red,--fn,--fd,
+   --r,--rl,--sh,--shl) — sin colores nuevos, para que se vea igual de
+   consistente en modo claro y oscuro que el resto de la página.
+   ============================================================ */
+
+.luna-page {
+    color: var(--text); padding-bottom: 60px; position: relative;
+    background: radial-gradient(ellipse at 20% 0%, var(--gT), transparent 55%),
+                radial-gradient(ellipse at 85% 15%, var(--gB), transparent 45%),
+                var(--bg);
+}
+.luna-stars {
+    position: absolute; inset: 0; height: 900px; pointer-events: none; z-index: 0;
+    display: none;
+}
+[data-theme="dark"] .luna-stars {
+    display: block;
+    background-image:
+        radial-gradient(1.5px 1.5px at 10% 15%, var(--text), transparent),
+        radial-gradient(1px 1px at 25% 35%, var(--text2), transparent),
+        radial-gradient(1.5px 1.5px at 40% 8%, var(--text), transparent),
+        radial-gradient(1px 1px at 60% 25%, var(--text), transparent),
+        radial-gradient(1.5px 1.5px at 75% 12%, var(--text2), transparent),
+        radial-gradient(1px 1px at 90% 30%, var(--text), transparent),
+        radial-gradient(1.5px 1.5px at 15% 55%, var(--text), transparent),
+        radial-gradient(1px 1px at 55% 60%, var(--text2), transparent),
+        radial-gradient(1.5px 1.5px at 85% 65%, var(--text), transparent);
+    opacity: .35;
+    animation: luStarTwinkle 5s ease-in-out infinite alternate;
+}
+@keyframes luStarTwinkle { from { opacity: .2; } to { opacity: .45; } }
+
+.luna-page .wrap { position: relative; z-index: 1; }
+
+.luna-topnav {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 18px; flex-wrap: wrap; gap: 10px;
+}
+.luna-back-link, .luna-switch-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--fn); font-size: .82rem; font-weight: 600;
+    color: var(--text2); text-decoration: none; transition: color var(--tr) var(--ez);
+}
+.luna-back-link:hover, .luna-switch-link:hover { color: var(--purple); }
+
+.luna-header { margin-bottom: 18px; }
+.luna-eyebrow {
+    font-family: var(--fn); font-size: .72rem; font-weight: 700; letter-spacing: .09em;
+    text-transform: uppercase; color: var(--purple); margin-bottom: 8px;
+}
+.luna-loc-line {
+    display: flex; align-items: center; gap: 7px;
+    font-family: var(--fd); font-size: 1.5rem; font-weight: 600; color: var(--text);
+}
+.luna-loc-line svg { color: var(--purple); flex-shrink: 0; }
+.luna-approx-badge {
+    display: inline-flex; font-family: var(--fn); font-size: .64rem; font-weight: 700;
+    padding: 2px 8px; border-radius: 20px; background: var(--gA);
+    color: var(--acc3); border: 1px solid var(--border2);
+}
+.luna-date-line { font-family: var(--fn); font-size: .82rem; color: var(--text3); margin-top: 4px; text-transform: capitalize; }
+
+/* ---------- MODELO 3D — solo el texto y la luna, sin tarjeta ---------- */
+.luna-hero-card {
+    position: relative;
+    padding: 10px 24px 26px; margin-bottom: 20px;
+}
+.luna-hero-glow {
+    position: absolute; top: 10%; left: 50%; width: 280px; height: 280px;
+    transform: translateX(-50%); border-radius: 50%;
+    background: radial-gradient(circle, var(--gT), transparent 70%);
+    pointer-events: none; z-index: 0;
+}
+.luna-hero-layout {
+    position: relative; z-index: 1;
+    display: flex; align-items: center; justify-content: center; gap: 30px;
+}
+.luna-hero-center {
+    flex: 0 1 420px; min-width: 0;
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+}
+.luna-moon3d {
+    width: 260px; height: 260px; max-width: 70vw; max-height: 70vw;
+    position: relative; cursor: grab; overflow: visible;
+}
+.luna-moon3d canvas { display: block; width: 100%; height: 100%; }
+.luna-hero-info { margin-top: 6px; }
+.luna-phase-name { font-family: var(--fd); font-size: 1.7rem; font-weight: 700; color: var(--text); }
+.luna-illum-big { font-family: var(--fn); font-size: .95rem; color: var(--purple); margin-top: 6px; font-weight: 600; }
+.luna-age-big { font-family: var(--fn); font-size: .82rem; color: var(--text3); margin-top: 3px; }
+
+/* ---------- ESTADO: EN VIVO / EXPLORANDO ---------- */
+.luna-explore-status {
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--fn); font-size: .74rem; font-weight: 600; color: var(--text2);
+    background: var(--card2); border: 1px solid var(--border);
+    padding: 6px 12px 6px 10px; border-radius: 20px; margin-bottom: 14px;
+}
+.les-dot {
+    width: 7px; height: 7px; border-radius: 50%; background: var(--teal);
+    animation: blink 1.6s infinite;
+}
+.les-dot.exploring { background: var(--acc3); animation: none; }
+#lunaLiveBtn {
+    font-family: var(--fn); font-size: .7rem; font-weight: 700; color: #fff;
+    background: var(--purple); border: none; border-radius: 14px; padding: 4px 10px;
+    cursor: pointer; margin-left: 4px; transition: transform var(--tr) var(--ez);
+}
+#lunaLiveBtn:hover { transform: scale(1.05); }
+
+/* ---------- SELECTOR DE FASES (explorador 3D) — columna izquierda ---------- */
+.luna-phase-selector {
+    flex-shrink: 0; width: 190px;
+    display: flex; flex-direction: column; gap: 6px;
+}
+.lps-btn {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--bg3); border: 1.5px solid var(--border);
+    border-radius: var(--rs); padding: 8px 10px; width: 100%; cursor: pointer;
+    color: var(--text3); transition: all var(--tr) var(--ez); font-family: var(--fn);
+    text-align: left;
+}
+.lps-btn svg { flex-shrink: 0; }
+.lps-btn span { font-size: .74rem; font-weight: 600; line-height: 1.2; }
+.lps-btn:hover { border-color: var(--border3); background: var(--card2); transform: translateX(2px); color: var(--text); }
+.lps-btn.active {
+    background: var(--gA); color: var(--text);
+    border-color: var(--border); border-left: 3px solid var(--acc3);
+    padding-left: 8px;
+}
+
+/* ---------- SECCIONES GENERICAS ---------- */
+.luna-section { margin-bottom: 20px; }
+.luna-section-title { font-family: var(--fd); font-size: 1.02rem; font-weight: 600; color: var(--text); margin-bottom: 10px; }
+
+/* ---------- INFO ASTRONOMICA ---------- */
+.luna-astro-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px;
+}
+.luna-astro-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--r);
+    padding: 16px;
+}
+.lac-lbl { font-family: var(--fn); font-size: .7rem; color: var(--text3); margin-bottom: 6px; }
+.lac-val { font-family: var(--fd); font-size: 1.25rem; font-weight: 700; color: var(--text); }
+
+/* ---------- DESCRIPCION DE FASE ---------- */
+.luna-desc-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--rl);
+    padding: 20px 22px;
+}
+.luna-desc-hdr { display: flex; align-items: center; gap: 9px; font-family: var(--fn); font-size: .95rem; color: var(--text); margin-bottom: 10px; }
+.luna-desc-hdr svg { color: var(--purple); flex-shrink: 0; }
+.luna-desc-card p { font-family: var(--fn); font-size: .86rem; line-height: 1.6; color: var(--text2); margin: 0 0 10px; }
+.luna-desc-illum { font-family: var(--fn); font-size: .8rem; color: var(--purple); }
+
+/* ---------- CALENDARIO DE FASES (proximas 4) ---------- */
+.luna-next-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+.luna-next-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--r);
+    padding: 18px 14px; text-align: center;
+    transition: transform var(--tr) var(--ez), border-color var(--tr) var(--ez);
+}
+.luna-next-card.current { border-color: var(--purple); box-shadow: 0 0 0 1px var(--purple); }
+.luna-next-card:hover { transform: translateY(-3px); }
+.lnc-icon { color: var(--text); display: flex; justify-content: center; margin-bottom: 8px; animation: lncPulse 3.5s ease-in-out infinite; }
+@keyframes lncPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+.lnc-name { font-family: var(--fn); font-size: .88rem; font-weight: 700; color: var(--text); }
+.lnc-date { font-family: var(--fn); font-size: .74rem; color: var(--text3); margin-top: 5px; text-transform: capitalize; }
+.lnc-days { font-family: var(--fn); font-size: .72rem; color: var(--purple); margin-top: 4px; }
+
+/* ---------- MAREAS ---------- */
+.luna-tide-next { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; margin-bottom: 12px; }
+.luna-tide-next-item {
+    display: flex; flex-direction: column; gap: 3px;
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--r);
+    padding: 12px 16px; border-left: 3px solid var(--teal);
+}
+.luna-tide-next-item.neap { border-left-color: var(--purple); }
+.ltn-lbl { font-family: var(--fn); font-size: .7rem; font-weight: 700; color: var(--text3); }
+.ltn-val { font-family: var(--fn); font-size: .86rem; font-weight: 600; color: var(--text); text-transform: capitalize; }
+.ltn-days { font-family: var(--fn); font-size: .74rem; color: var(--teal); }
+.luna-tide-next-item.neap .ltn-days { color: var(--purple); }
+
+.luna-tide-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+.luna-tide-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--r);
+    padding: 16px 18px;
+}
+.ltc-badge {
+    display: inline-block; font-family: var(--fn); font-size: .62rem; font-weight: 700;
+    padding: 3px 9px; border-radius: 20px; margin-bottom: 8px;
+    background: var(--gT); color: var(--purple); border: 1px solid var(--border2);
+}
+.luna-tide-card.spring .ltc-badge { background: var(--gT); color: var(--teal); }
+.luna-tide-card.warn .ltc-badge { background: var(--gA); color: var(--red); }
+.luna-tide-card.fish .ltc-badge { background: var(--gA); color: var(--green); }
+.ltc-title { font-family: var(--fn); font-size: .9rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.luna-tide-card p { font-family: var(--fn); font-size: .78rem; line-height: 1.55; color: var(--text2); margin: 0; }
+
+/* ---------- CURIOSIDADES ---------- */
+.luna-curio-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--rl);
+    padding: 22px;
+}
+.luna-curio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+.luna-curio-item {
+    background: var(--bg3); border: 1px solid var(--border); border-radius: var(--r);
+    padding: 16px; transition: transform var(--tr) var(--ez), border-color var(--tr) var(--ez);
+}
+.luna-curio-item:hover { transform: translateY(-3px); border-color: var(--border3); }
+.lci-icon {
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 12px; transition: transform var(--tr) var(--ez);
+}
+.luna-curio-item:hover .lci-icon { transform: scale(1.1) rotate(-4deg); }
+.lci-icon-a { background: var(--gT); color: var(--teal); }
+.lci-icon-b { background: var(--gB); color: var(--blue); }
+.lci-icon-c { background: var(--gA); color: var(--acc3); }
+.lci-icon-d { background: rgba(107, 115, 160, .16); color: var(--purple); }
+.lci-title { font-family: var(--fn); font-size: .84rem; font-weight: 700; color: var(--text); margin-bottom: 5px; }
+.luna-curio-item p { font-family: var(--fn); font-size: .78rem; line-height: 1.55; color: var(--text2); margin: 0; }
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 720px) {
+    .luna-hero-layout { flex-direction: column; }
+    .luna-hero-center { flex: none; width: 100%; }
+    .luna-phase-selector { width: 100%; flex-direction: row; flex-wrap: wrap; }
+    .lps-btn { width: calc(50% - 3px); }
+    .luna-next-cards { grid-template-columns: repeat(2, 1fr); }
+    .luna-loc-line { font-size: 1.2rem; }
+    .luna-moon3d { width: 200px; height: 200px; }
+    .luna-phase-name { font-size: 1.35rem; }
+}

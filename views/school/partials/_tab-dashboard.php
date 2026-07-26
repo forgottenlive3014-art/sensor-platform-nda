@@ -3,7 +3,7 @@
                 <div class="school-stat">
                     <div class="school-stat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 4h9l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M9 12h6M9 16h6"/></svg></div>
                     <div class="school-stat-number"><?= $stats['students'] ?? 0 ?></div>
-                    <div class="school-stat-label">Alumnos</div>
+                    <div class="school-stat-label">Estudiantes</div>
                 </div>
                 <div class="school-stat">
                     <div class="school-stat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M3 9v6c0 1.5 4 3 9 3s9-1.5 9-3V9"/></svg></div>
@@ -34,14 +34,14 @@
 
             <div class="school-grid-2">
                 <div class="school-card">
-                    <h3>Últimos Alumnos</h3>
+                    <h3>Últimos Estudiantes</h3>
                     <table class="school-table">
                         <thead>
                             <tr><th>Nombre</th><th>Aula</th><th>Docente</th></tr>
                         </thead>
                         <tbody>
                             <?php if (empty($students)): ?>
-                                <tr><td colspan="3" class="text-center">No hay alumnos registrados</td></tr>
+                                <tr><td colspan="3" class="text-center">No hay estudiantes registrados</td></tr>
                             <?php else: ?>
                                 <?php foreach ($students as $s): ?>
                                     <tr>

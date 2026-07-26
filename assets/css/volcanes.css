@@ -12,3 +12,22 @@
     0%, 100% { box-shadow: 0 8px 28px -8px var(--dis-accent); }
     50% { box-shadow: 0 8px 36px -4px var(--dis-accent); }
 }
+
+/* ---------- TARJETAS DE VOLCANES (foto + mapa de ubicacion) ---------- */
+.dis-volcan-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 20px; margin-top: 24px;
+}
+.dis-volcan-card {
+    background: var(--card); border: 1px solid var(--border2); border-radius: var(--r);
+    overflow: hidden; transition: transform var(--tr), box-shadow var(--tr);
+}
+.dis-volcan-card:hover { transform: translateY(-4px); box-shadow: 0 14px 32px -14px rgba(0, 0, 0, .35); }
+.dis-volcan-photo { width: 100%; height: 170px; object-fit: cover; display: block; }
+.dis-volcan-body { padding: 16px 18px; }
+.dis-volcan-name { font-family: var(--fd); font-size: 1rem; color: var(--text); margin-bottom: 4px; }
+.dis-volcan-fact { font-size: .8rem; color: var(--text3); margin-bottom: 12px; line-height: 1.4; }
+.dis-volcan-map {
+    height: 150px; border-radius: var(--rs); overflow: hidden;
+    border: 1px solid var(--border2); background: var(--card2);
+}

@@ -11,7 +11,7 @@ ob_start();
 <section class="dis-bigbanner" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/PLAYA%20SAN%20DIEGO%2C%20LA%20LIBERTAD%2C%20EL%20SALVADOR.%20-%20panoramio.jpg')">
   <div class="dis-bigbanner-overlay"></div>
   <div class="wrap dis-bigbanner-inner">
-    <h2 class="dis-bigbanner-word">tsunamis</h2>
+    <h2 class="dis-bigbanner-word">Tsunamis</h2>
     <div class="dis-bigbanner-sub">
       <span class="dis-bigbanner-rule"></span>
       <div>
@@ -122,7 +122,7 @@ ob_start();
   <div class="wrap">
     <div class="sec-hd">
       <div class="sec-eyebrow">Protocolo · Evacuación</div>
-      <h2 class="sec-title">Qué hacer <span class="acc">antes, durante y después</span></h2>
+      <h2 class="sec-title">¿Qué hacer <span class="acc">antes, durante y después</span>?</h2>
     </div>
     <div class="dis-actions">
       <div class="dis-action-col">

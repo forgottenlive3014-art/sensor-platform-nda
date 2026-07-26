@@ -94,7 +94,7 @@ $b_vecinos = <<<HTML
 HTML;
 
 $b_simulacro = <<<HTML
-<p class="art-lead">"Lo practicamos tantas veces que parecía un juego. Hasta que dejó de serlo." Así recuerda una maestra el día en que el simulacro que tantos alumnos refunfuñaban terminó protegiéndolos de verdad.</p>
+<p class="art-lead">"Lo practicamos tantas veces que parecía un juego. Hasta que dejó de serlo." Así recuerda una maestra el día en que el simulacro que tantos estudiantes refunfuñaban terminó protegiéndolos de verdad.</p>
 <h3 class="art-h3">El simulacro que nadie tomaba en serio</h3>
 <p>Cada mes, la escuela hacía lo mismo: sonaba la alarma, los niños se agachaban bajo los pupitres, se cubrían la cabeza y, al cesar la señal, salían en fila al patio. Para muchos era una pausa divertida en clase. Para la maestra, era repetición con propósito.</p>
 <h3 class="art-h3">El día que tembló de verdad</h3>

@@ -9,15 +9,16 @@
             </div>
             <div>
                 <h1><?= e($panelTitle ?? 'Gestión Escolar') ?></h1>
-                <p class="school-header-sub"><?= e($panelSubtitle ?? 'Administra alumnos, docentes, rutas de evacuación, simulacros y más') ?></p>
+                <p class="school-header-sub"><?= e($panelSubtitle ?? 'Administra estudiantes, docentes, rutas de evacuación, simulacros y más') ?></p>
             </div>
         </div>
         <div class="school-header-right">
+            <?php $__headerRoleLabels = ['director' => 'Director', 'docente' => 'Docente', 'alumno' => 'Estudiante', 'padre' => 'Padre/Encargado', 'administrativo' => 'Personal', 'admin' => 'Administración']; ?>
             <span class="school-role-badge <?= $user['role'] ?? 'user' ?>">
                 <span class="school-role-avatar"><?= e(mb_strtoupper(mb_substr($user['nombre'] ?? 'U', 0, 1))) ?></span>
                 <span class="school-role-badge-text">
                     <?= e($user['nombre'] ?? 'Usuario') ?>
-                    <em><?= e($user['role'] ?? '') ?></em>
+                    <em><?= e($__headerRoleLabels[$user['role'] ?? ''] ?? ($user['role'] ?? '')) ?></em>
                 </span>
             </span>
         </div>

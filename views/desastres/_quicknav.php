@@ -8,8 +8,8 @@ $__disItems = [
     'tsunamis'              => 'Tsunamis',
     'inundaciones'          => 'Inundaciones',
     'deslizamientos'        => 'Deslizamientos',
-    'incendios-forestales'  => 'Incendios forestales',
-    'tormentas-tropicales'  => 'Tormentas tropicales',
+    'incendios-forestales'  => 'Incendios Forestales',
+    'tormentas-tropicales'  => 'Tormentas Tropicales',
     'sequias'               => 'Sequías',
 ];
 ?>

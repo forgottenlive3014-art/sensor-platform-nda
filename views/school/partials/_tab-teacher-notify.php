@@ -3,9 +3,9 @@
         <!-- ========================================================== -->
         <div id="tab-teacher-notify" class="school-panel">
             <div class="school-panel-header">
-                <h3>Notificar a mis alumnos</h3>
+                <h3>Notificar a mis estudiantes</h3>
             </div>
-            <p class="school-hint">Envía un aviso o recordatorio a todos los alumnos de tus secciones asignadas.</p>
+            <p class="school-hint">Envía un aviso o recordatorio a todos los estudiantes de tus secciones asignadas.</p>
             <div class="school-card">
                 <form id="notifyStudentsForm">
                     <div class="school-form-group">
@@ -22,7 +22,7 @@
                             <option value="emergencia">Emergencia</option>
                         </select>
                     </div>
-                    <button type="submit" class="school-btn primary">Enviar a mis alumnos</button>
+                    <button type="submit" class="school-btn primary">Enviar a mis estudiantes</button>
                 </form>
             </div>
         </div>

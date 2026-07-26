@@ -1,18 +1,18 @@
 <div class="school-modal" id="addStudentModal">
     <div class="school-modal-content">
         <div class="school-modal-header">
-            <h3>Agregar Alumno</h3>
+            <h3>Agregar Estudiante</h3>
             <button class="school-modal-close" onclick="closeModal('addStudentModal')">&times;</button>
         </div>
         <div class="school-modal-body">
             <form id="addStudentForm">
                 <div class="school-form-group">
                     <label>Nombre *</label>
-                    <input type="text" id="studentName" placeholder="Nombre del alumno" required>
+                    <input type="text" id="studentName" placeholder="Nombre del estudiante" required>
                 </div>
                 <div class="school-form-group">
                     <label>Apellido *</label>
-                    <input type="text" id="studentLastName" placeholder="Apellido del alumno" required>
+                    <input type="text" id="studentLastName" placeholder="Apellido del estudiante" required>
                 </div>
                 <div class="school-form-group">
                     <label>Correo electrónico *</label>
@@ -28,7 +28,7 @@
                         <option value="">Seleccionar aula</option>
                     </select>
                 </div>
-                <button type="submit" class="school-btn primary">Guardar Alumno</button>
+                <button type="submit" class="school-btn primary">Guardar Estudiante</button>
             </form>
         </div>
     </div>
@@ -219,7 +219,7 @@
 <div class="school-modal" id="editStudentModal">
     <div class="school-modal-content">
         <div class="school-modal-header">
-            <h3>Editar Alumno</h3>
+            <h3>Editar Estudiante</h3>
             <button class="school-modal-close" onclick="closeModal('editStudentModal')">&times;</button>
         </div>
         <div class="school-modal-body">
@@ -429,7 +429,7 @@
                         <span id="noteVisRoles" style="display:none;">
                             <label><input type="checkbox" class="noteVisRole" value="director"> Directores</label>
                             <label><input type="checkbox" class="noteVisRole" value="docente"> Docentes</label>
-                            <label><input type="checkbox" class="noteVisRole" value="alumno"> Alumnos</label>
+                            <label><input type="checkbox" class="noteVisRole" value="alumno"> Estudiantes</label>
                             <label><input type="checkbox" class="noteVisRole" value="padre"> Padres</label>
                             <label><input type="checkbox" class="noteVisRole" value="administrativo"> Personal</label>
                         </span>

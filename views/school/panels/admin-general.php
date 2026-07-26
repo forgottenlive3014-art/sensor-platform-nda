@@ -43,7 +43,7 @@ ob_start();
             Recursos PDF
         </button>
         <button class="school-tab" data-tab="quehacer-content" onclick="showSchoolTab('quehacer-content')">
-            Qué hacer ahora
+            ¿Qué hacer ahora?
         </button>
         <button class="school-tab" data-tab="acercade-content" onclick="showSchoolTab('acercade-content')">
             Acerca de NDA

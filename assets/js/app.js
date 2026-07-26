@@ -3106,7 +3106,7 @@ window.evacClick = function(r, c) {
     if (cell === 'W') return;
 
     if (cell === 'D') {
-        document.getElementById('evacMsg').textContent = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="12" cy="11" r="8"/><circle cx="9" cy="10" r="1.2" fill="currentColor"/><circle cx="15" cy="10" r="1.2" fill="currentColor"/><path d="M9 19v2M15 19v2"/></svg> ¡Tocaste el tsunami! Reinicia.';
+        document.getElementById('evacMsg').innerHTML = '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="12" cy="11" r="8"/><circle cx="9" cy="10" r="1.2" fill="currentColor"/><circle cx="15" cy="10" r="1.2" fill="currentColor"/><path d="M9 19v2M15 19v2"/></svg> ¡Tocaste el tsunami! Reinicia.';
         clearInterval(evacTimerI);
         evacDone = true;
         evacMoves.push([r, c]);
@@ -3301,10 +3301,10 @@ const cbKnowledge = [
         r: '🗺️ **Rutas de evacuación:** El sistema NDA incluye un módulo de colegio donde los docentes pueden ver las rutas asignadas y hacer pase de lista. Conoce la ruta de tu institución ANTES de una emergencia. Practica con simulacros.',
         chips: ['Módulo Colegio', 'Simulacros'] },
     { k: ['registrar', 'registro', 'crear cuenta', 'cómo entrar', 'login'],
-        r: '👤 **Para registrarte:** Haz clic en "Registrarse" en la barra de navegación. Puedes entrar como alumno, docente, padre/madre o administrador. El módulo de colegio está disponible para docentes y administradores.',
+        r: '👤 **Para registrarte:** Haz clic en "Registrarse" en la barra de navegación. Puedes entrar como estudiante, docente, padre/madre o administrador. El módulo de colegio está disponible para docentes y administradores.',
         chips: ['¿Qué puede hacer cada rol?', 'Ir a registro'] },
-    { k: ['admin', 'administrador', 'docente', 'alumno', 'padre', 'rol'],
-        r: '🛡️ **Roles en NDA:**\n• **Administrador:** Gestión total del módulo colegio, alumnos, docentes, incidentes y simulacros.\n• **Docente:** Pase de lista, ver rutas y reportar incidentes.\n• **Alumno:** Acceso a información y sección de evacuación.\n• **Padre/Madre:** Información general y estado del estudiante.',
+    { k: ['admin', 'administrador', 'docente', 'alumno', 'estudiante', 'padre', 'rol'],
+        r: '🛡️ **Roles en NDA:**\n• **Administrador:** Gestión total del módulo colegio, estudiantes, docentes, incidentes y simulacros.\n• **Docente:** Pase de lista, ver rutas y reportar incidentes.\n• **Estudiante:** Acceso a información y sección de evacuación.\n• **Padre/Madre:** Información general y estado del estudiante.',
         chips: ['Módulo Colegio', '¿Cómo registro a mi hijo?'] },
     { k: ['marn', 'usgs', 'datos', 'tiempo real', 'api'],
         r: '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M4 4l16 16M12 8a4 4 0 0 1 4 4M12 4a8 8 0 0 1 8 8"/><circle cx="6" cy="18" r="2"/></svg> **Fuentes de datos:** NDA usa datos en tiempo real del USGS (sismos globales y regionales), Open-Meteo (clima), y datos astronómicos de la API sunrise-sunset. Los datos se actualizan automáticamente al cargar la página.',
@@ -3417,7 +3417,7 @@ function processCbMsg(text) {
 
     if (lower.includes('módulo colegio') || lower.includes('modulo colegio')) {
         addCbMsg('bot',
-            '🏫 Para acceder al **Módulo Colegio**, necesitas iniciar sesión. Haz clic en "Iniciar sesión" en la navegación. Los docentes y administradores tienen acceso completo a gestión de alumnos, rutas de evacuación, pase de lista e incidentes.',
+            '🏫 Para acceder al **Módulo Colegio**, necesitas iniciar sesión. Haz clic en "Iniciar sesión" en la navegación. Los docentes y administradores tienen acceso completo a gestión de estudiantes, rutas de evacuación, pase de lista e incidentes.',
             ['Iniciar sesión', '¿Cómo me registro?']);
         return;
     }

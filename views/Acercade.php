@@ -20,7 +20,16 @@ ob_start();
         <div class="about-hero reveal">
             <div class="about-glow"></div>
             <span class="kicker"><?= htmlspecialchars($A['hero.kicker']) ?></span>
-            <h1 class="grad"><?= htmlspecialchars($A['hero.titulo']) ?></h1>
+            <?php
+                // Se parte en 2 lineas en la primera coma (ej. "Preparar a El
+                // Salvador, un hogar a la vez") para que no quede todo en una
+                // sola linea larga. Si el texto no trae coma, se muestra normal.
+                $heroTituloPartes = explode(',', $A['hero.titulo'], 2);
+            ?>
+            <h1 class="grad">
+                <?= htmlspecialchars(trim($heroTituloPartes[0])) ?><?= isset($heroTituloPartes[1]) ? ',' : '' ?>
+                <?php if (isset($heroTituloPartes[1])): ?><br><?= htmlspecialchars(trim($heroTituloPartes[1])) ?><?php endif; ?>
+            </h1>
             <p><?= htmlspecialchars($A['hero.texto']) ?></p>
         </div>
 

@@ -12,92 +12,19 @@ ob_start();
   </div>
 </div>
 
-<!-- SOL Y CLIMA -->
+<!-- CLIMA Y LUNA: paginas dedicadas -->
 <section class="sec sec-dark" id="clima">
   <div class="wrap">
-    <div class="sec-hd"><div class="page-eyebrow" style="color:var(--blue)">Meteorología · El Salvador</div><div class="page-title">Clima, Lluvia <span class="acc3">& Sol</span></div></div>
-    <div class="weather-cities" id="weatherCities"><div class="loading-s"><div class="spin"></div>Cargando datos de clima…</div></div>
-    <div class="weather-bottom">
-      <div class="solar-card" id="sol"><div class="sc-hdr">Recorrido Solar — San Salvador</div><div class="sc-canvas-wrap"><canvas id="sunArc"></canvas></div><div class="sc-sunboxes"><div class="sc-sunbox"><div class="sc-sunbox-emoji"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="4.2" y1="10.2" x2="5.6" y2="11.6"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.4" y1="11.6" x2="19.8" y2="10.2"/><line x1="1" y1="22" x2="23" y2="22"/></svg></div><div class="sc-sunbox-time" id="sunriseBig">—</div><div class="sc-sunbox-lbl">Amanecer</div></div><div class="sc-sunbox"><div class="sc-sunbox-emoji"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M3 21V9l6-4v16M13 21V13l6-4v12"/><line x1="3" y1="21" x2="21" y2="21"/></svg></div><div class="sc-sunbox-time" id="sunsetBig">—</div><div class="sc-sunbox-lbl">Atardecer</div></div></div><div class="sc-dur" id="sunDur">—</div></div>
-      <div class="precip-card"><div class="prec-hdr"> Precipitación Mensual (mm)</div><div class="prec-chart" id="precipChart"></div></div>
-    </div>
-    <div class="weather-extra">
-      <div class="we-radar">
-        <div class="phdr"><span class="wdot"></span>Radar Meteorológico<div class="chip o" style="margin-left:auto">— Vigilancia</div></div>
-        <div class="radar-body" id="radarBody">
-          <div class="radar-ring"></div><div class="radar-ring"></div><div class="radar-ring"></div><div class="radar-ring"></div>
-          <div class="radar-cross"></div><div class="radar-cross-h"></div><div class="radar-sweep-line"></div>
-          <canvas id="radarCanvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2"></canvas>
-          <div class="radar-center-dot"></div><div class="radar-city">San Salvador</div>
-        </div>
-        <div class="radar-legend">
-          <span style="font-size:.67rem;font-weight:700;color:var(--text2);margin-right:4px">Precipitación:</span>
-          <div class="radar-legend-item"><div class="rl-dot" style="background:#22c55e"></div>Nula</div>
-          <div class="radar-legend-item"><div class="rl-dot" style="background:#3b82f6"></div>Ligera</div>
-          <div class="radar-legend-item"><div class="rl-dot" style="background:#f97316"></div>Moderada</div>
-          <div class="radar-legend-item"><div class="rl-dot" style="background:#ef4444"></div>Intensa</div>
-          <div id="radarStatus" class="chip o" style="margin-left:auto;font-size:.65rem">— Vigilancia</div>
-        </div>
-      </div>
-      <div class="we-alerts">
-        <div class="phdr"><span class="ldot"></span>Alertas y Avisos</div>
-        <div class="alert-list">
-          <div class="al-item"><div class="al-dot orange"></div><div><strong>Vigilancia costera activa</strong>Zona de baja presión en el Pacífico. Probabilidad 40% de desarrollo en 5 días.</div></div>
-          <div class="al-item"><div class="al-dot blue"></div><div><strong>Ríos Lempa y Grande en vigilancia</strong>Niveles elevados por lluvias en cabeceras. Monitoreo continuo MARN.</div></div>
-          <div class="al-item"><div class="al-dot green"></div><div><strong>Sin alerta de tsunami</strong>Sistema IOC-UNESCO en estado normal. Mar en calma en toda la costa.</div></div>
-        </div>
-        <div class="storms-table" style="border-top:1px solid var(--border)">
-          <div class="st-hdr">Tormentas más dañinas — su relación con lluvias intensas</div>
-          <div class="st-row"><span class="st-name">Mitch 1998</span><span class="st-victims">240 víctimas</span><span class="st-cat c5">Categ. 5</span></div>
-          <div class="st-row"><span class="st-name">Ida 2009</span><span class="st-victims">198 víctimas</span><span class="st-cat ct">Tormenta</span></div>
-          <div class="st-row"><span class="st-name">Amanda 2020</span><span class="st-victims">inundaciones</span><span class="st-cat c1">Cat. 1</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- LUNA Y MAREAS -->
-<section class="sec" id="luna">
-  <div class="wrap">
-    <div class="sec-hd"><div class="sec-eyebrow">Astronomía · Mareas</div><h2 class="sec-title">Fases Lunares y <span class="acc2">Mareas</span></h2><p class="sec-sub">Explora el ciclo lunar completo, su modelo 3D en tiempo real y su influencia en las mareas del Pacífico salvadoreño</p></div>
-    <div class="moon-layout">
-      <div class="moon-vis-card">
-        <div class="moon-phase-selector" id="moonPhaseSelector">
-          <button class="mps-btn" data-phase="0"><span><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="12" cy="12" r="9" fill="currentColor"/></svg></span><span class="mps-lbl">Nueva</span></button>
-          <button class="mps-btn" data-phase="1"><span><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor" opacity="0.5"/><circle cx="12" cy="12" r="9"/></svg></span><span class="mps-lbl">Creciente</span></button>
-          <button class="mps-btn" data-phase="2"><span><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/><circle cx="12" cy="12" r="9"/></svg></span><span class="mps-lbl">Cuarto Crec.</span></button>
-          <button class="mps-btn" data-phase="3"><span><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" opacity="0.85"/><circle cx="12" cy="12" r="9"/></svg></span><span class="mps-lbl">Gibosa Crec.</span></button>
-          <button class="mps-btn" data-phase="4"><span><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="12" cy="12" r="9"/></svg></span><span class="mps-lbl">Llena</span></button>
-          <button class="mps-btn" data-phase="5"><span><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" opacity="0.5"/><circle cx="12" cy="12" r="9"/></svg></span><span class="mps-lbl">Gibosa Men.</span></button>
-          <button class="mps-btn" data-phase="6"><span><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/><circle cx="12" cy="12" r="9"/></svg></span><span class="mps-lbl">Cuarto Men.</span></button>
-          <button class="mps-btn" data-phase="7"><span><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor" opacity="0.85"/><circle cx="12" cy="12" r="9"/></svg></span><span class="mps-lbl">Menguante</span></button>
-        </div>
-        <div class="moon-canvas-wr"><canvas id="moonCv" width="170" height="170"></canvas><div class="moon-glow-el" id="moonGlowEl"></div></div>
-        <div class="moon-name" id="moonName">Calculando…</div>
-        <div class="moon-date-str" id="moonDateStr"></div>
-        <div class="moon-next-date" id="moonNextDate"> Próxima: —</div>
-        <div class="moon-cycle" style="margin-top:12px"><div class="mc-lbl"><span>Ciclo Lunar</span><span id="moonPct">—%</span></div><div class="mc-track"><div class="mc-fill" id="moonFill"></div></div></div>
-        <div class="moon-phases-mini"><div class="mpm" onclick="setMoonPhase(0)"><span class="mpm-i"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="12" cy="12" r="9" fill="currentColor"/></svg></span>Nueva</div><div class="mpm" onclick="setMoonPhase(2)"><span class="mpm-i"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/><circle cx="12" cy="12" r="9"/></svg></span>Creciente</div><div class="mpm" onclick="setMoonPhase(4)"><span class="mpm-i"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="12" cy="12" r="9"/></svg></span>Llena</div><div class="mpm" onclick="setMoonPhase(6)"><span class="mpm-i"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/><circle cx="12" cy="12" r="9"/></svg></span>Menguante</div></div>
-      </div>
-      <div class="moon-right">
-        <div class="tide-graph-card">
-          <div class="phdr"><span class="ldot"></span>Gráfico de Mareas — Costa Pacífica El Salvador</div>
-          <div class="tide-chart-wrap"><canvas id="tideCv"></canvas><div class="tide-label-bar"><span><span class="tide-swatch" style="background:#3d9bff"></span>Marea alta (viva)</span><span><span class="tide-swatch" style="background:#00d4b0"></span>Marea media</span><span><span class="tide-swatch" style="background:rgba(255,77,26,.6)"></span>Marea baja (muerta)</span><span id="tideCurPhase" style="color:var(--acc3);font-weight:700">—</span></div></div>
-          <div class="tide-info"><div class="ti-item"><div class="ti-icon"></div><div class="ti-name">Mareas Vivas</div><div class="ti-desc">Luna nueva y llena. Máxima diferencia entre marea alta y baja.</div></div><div class="ti-item"><div class="ti-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M9.6 4.6a2 2 0 1 1 1.4 3.4H2M12.6 19.4a2 2 0 1 0 1.4-3.4H2M17.6 8.6a2.5 2.5 0 1 1 1.8 4.4H2"/></svg></div><div class="ti-name">Mareas Muertas</div><div class="ti-desc">Cuartos creciente y menguante. Menor variación de nivel.</div></div><div class="ti-item"><div class="ti-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M2 12s4-6 11-6c5 0 9 3 9 6s-4 6-9 6c-7 0-11-6-11-6z"/><circle cx="17" cy="11" r="0.6" fill="currentColor"/></svg></div><div class="ti-name">Pesca Activa</div><div class="ti-desc">Mayor actividad pesquera en mareas altas con luna favorable.</div></div><div class="ti-item"><div class="ti-icon"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div class="ti-name">Riesgo Costero</div><div class="ti-desc">Mareas vivas + lluvia = alto riesgo de inundación costera.</div></div></div>
-        </div>
-        <div class="moon3d-card">
-          <div class="phdr"><span class="ldot"></span>Luna 3D en Vivo (posición e iluminación reales)</div>
-          <div id="moon3dContainer"></div>
-        </div>
-        <div class="moon-edu-cards">
-          <div class="mec"><div class="mec-icon"></div><div class="mec-title">Mareas Vivas (Spring Tides)</div><div class="mec-body">Ocurren en luna nueva y llena cuando el Sol, la Luna y la Tierra se alinean. La diferencia entre marea alta y baja puede llegar a <strong>2.4 metros</strong> en el Pacífico de El Salvador.</div><span class="mec-badge spring">Luna Nueva · Luna Llena</span></div>
-          <div class="mec"><div class="mec-icon"></div><div class="mec-title">Mareas Muertas (Neap Tides)</div><div class="mec-body">Suceden en cuartos creciente y menguante. El Sol y la Luna forman 90°, reduciendo la fuerza gravitacional. Variación mínima de marea, ideal para navegación costera.</div><span class="mec-badge neap">Cuarto Creciente · Cuarto Menguante</span></div>
-          <div class="mec"><div class="mec-icon"></div><div class="mec-title">Pesca y Ciclo Lunar</div><div class="mec-body">Los pescadores de La Libertad y Acajutla calendarizan su actividad según el ciclo lunar. Las mareas altas traen peces al litoral. Mayor actividad en luna llena y nueva.</div><span class="mec-badge fish">Alta Actividad Pesquera</span></div>
-          <div class="mec"><div class="mec-icon"></div><div class="mec-title">Efectos Costeros El Salvador</div><div class="mec-body">Zonas como Los Blancos y El Espino son vulnerables durante mareas vivas con lluvia intensa. Monitoreo MARN activo en épocas de huracanes del Atlántico.</div><span class="mec-badge warn">Riesgo en Mareas Vivas</span></div>
-        </div>
-        <div class="moon-facts"><div class="mf-title">Datos Astronómicos Actuales</div><div class="mf-row"><span></span><span>Ciclo sinódico: <strong>29.53 días</strong> — El tiempo de luna nueva a luna nueva.</span></div><div class="mf-row"><span><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z"/></svg></span><span>Distancia media Luna-Tierra: <strong>384,400 km</strong> — varía ±5.5% en su órbita elíptica.</span></div><div class="mf-row"><span><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M2 12c1.5-1.5 3-1.5 4.5 0s3 1.5 4.5 0 3-1.5 4.5 0 3 1.5 4.5 0"/><path d="M2 18c1.5-1.5 3-1.5 4.5 0s3 1.5 4.5 0 3-1.5 4.5 0 3 1.5 4.5 0"/></svg></span><span>Las mareas del Pacífico varían hasta <strong>2.4 metros</strong> durante mareas vivas en luna llena.</span></div></div>
-      </div>
+    <div class="sec-hd"><div class="page-eyebrow" style="color:var(--blue)">Meteorología y Astronomía</div><div class="page-title">Clima <span class="acc3">& Luna</span></div></div>
+    <div class="find-cards-grid">
+      <a href="?url=clima" class="find-card">
+        <div class="find-card-visual" style="background:linear-gradient(135deg,#2d8fff,#3d6f8f)"><svg width="1.8em" height="1.8em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 0 0 0-9 6 6 0 0 0-11.3-1.5A5 5 0 0 0 6 19z"/><path d="M12 2v2M4.2 4.2l1.4 1.4"/></svg></div>
+        <div class="find-card-body"><h3>Clima en Tiempo Real</h3><p>Temperatura, pronóstico por horas y 7 días, mapa de lluvia en vivo, alertas e indicadores completos según tu ubicación.</p><span class="fc-cta">Ver clima →</span></div>
+      </a>
+      <a href="?url=luna" class="find-card">
+        <div class="find-card-visual" style="background:linear-gradient(135deg,#4b3f72,#26314f)"><svg width="1.8em" height="1.8em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>
+        <div class="find-card-body"><h3>Fases de la Luna</h3><p>Modelo lunar 3D en tiempo real, calendario de fases, iluminación, edad y distancia Tierra-Luna calculadas al minuto.</p><span class="fc-cta">Ver fases lunares →</span></div>
+      </a>
     </div>
   </div>
 </section>

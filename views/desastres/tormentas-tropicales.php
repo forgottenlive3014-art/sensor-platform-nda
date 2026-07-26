@@ -1,5 +1,5 @@
 <?php
-$title = $title ?? 'Tormentas tropicales - NDA';
+$title = $title ?? 'Tormentas Tropicales - NDA';
 $user = $user ?? null;
 $currentSlug = 'tormentas-tropicales';
 $extraCss = ['css/desastres-base.css', 'css/tormentas-tropicales.css'];
@@ -11,7 +11,7 @@ ob_start();
 <section class="dis-bigbanner" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/Hurricane%20Katrina%20as%20Seen%20from%20Space%20(20749127551).jpg')">
   <div class="dis-bigbanner-overlay"></div>
   <div class="wrap dis-bigbanner-inner">
-    <h2 class="dis-bigbanner-word">tormentas</h2>
+    <h2 class="dis-bigbanner-word">Tormentas</h2>
     <div class="dis-bigbanner-sub">
       <span class="dis-bigbanner-rule"></span>
       <div>
@@ -119,7 +119,7 @@ ob_start();
   <div class="wrap">
     <div class="sec-hd">
       <div class="sec-eyebrow">Protocolo</div>
-      <h2 class="sec-title">Qué hacer <span class="acc">antes, durante y después</span></h2>
+      <h2 class="sec-title">¿Qué hacer <span class="acc">antes, durante y después</span>?</h2>
     </div>
     <div class="dis-actions">
       <div class="dis-action-col">

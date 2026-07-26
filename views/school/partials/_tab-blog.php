@@ -13,7 +13,7 @@
                 <button class="sfilter active" data-cat="all">Todos</button>
                 <button class="sfilter" data-cat="director">Director</button>
                 <button class="sfilter" data-cat="docente">Docentes</button>
-                <button class="sfilter" data-cat="alumno">Alumnos</button>
+                <button class="sfilter" data-cat="alumno">Estudiantes</button>
                 <button class="sfilter" data-cat="padre">Padres</button>
                 <button class="sfilter" data-cat="administrativo">Personal</button>
             </div>

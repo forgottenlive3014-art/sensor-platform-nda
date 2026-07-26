@@ -74,6 +74,13 @@
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
 }
 
+.auth-mascot {
+    display: block;
+    width: 96px;
+    height: auto;
+    margin: 0 auto 14px;
+}
+
 .auth-title {
     font-family: var(--fd);
     font-size: 28px;

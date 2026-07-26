@@ -9,7 +9,7 @@ $roleLabels = [
     'user' => 'Usuario general',
     'director' => 'Director',
     'docente' => 'Docente',
-    'alumno' => 'Alumno',
+    'alumno' => 'Estudiante',
     'padre' => 'Padre / Encargado',
     'administrativo' => 'Personal administrativo',
     'admin' => 'Administrador',
@@ -130,7 +130,7 @@ $roleLabel = $roleLabels[$profileUser['role']] ?? $profileUser['role'];
                         <select name="rol_solicitado" required>
                             <option value="">Selecciona...</option>
                             <option value="docente">Docente</option>
-                            <option value="alumno">Alumno</option>
+                            <option value="alumno">Estudiante</option>
                             <option value="padre">Padre / Encargado</option>
                             <option value="administrativo">Personal administrativo</option>
                         </select>

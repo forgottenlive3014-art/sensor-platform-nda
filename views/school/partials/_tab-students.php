@@ -1,8 +1,8 @@
         <div id="tab-students" class="school-panel">
             <div class="school-panel-header">
-                <h3>Lista de Alumnos</h3>
+                <h3>Lista de Estudiantes</h3>
                 <button class="school-btn primary" onclick="openModal('addStudentModal')">
-                    Agregar Alumno
+                    Agregar Estudiante
                 </button>
             </div>
             <div class="school-panel-header" style="margin-top:0;">

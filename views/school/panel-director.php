@@ -46,7 +46,7 @@ ob_start();
             Notificaciones
         </button>
         <button class="school-tab" data-tab="students" onclick="showSchoolTab('students')">
-            Alumnos
+            Estudiantes
         </button>
         <button class="school-tab" data-tab="teachers" onclick="showSchoolTab('teachers')">
             Docentes

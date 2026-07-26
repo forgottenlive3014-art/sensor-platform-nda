@@ -132,9 +132,9 @@ $navDisplayName = $isLoggedIn
     <div class="nav-drop">
       <button type="button" class="nav-drop-btn" onclick="toggleNavDrop(this)">Monitoreo <span class="nav-drop-car">▾</span></button>
       <div class="nav-drop-dd">
-        <a class="ndd-item" href="?url=monitoreo#sol">Sol</a>
-        <a class="ndd-item" href="?url=monitoreo#luna">Luna</a>
-        <a class="ndd-item" href="?url=monitoreo#clima">Clima</a>
+        <a class="ndd-item" href="?url=clima">Clima</a>
+        <a class="ndd-item" href="?url=luna">Luna</a>
+        <a class="ndd-item" href="?url=monitoreo#zonas-riesgo">Riesgo y Tsunamis</a>
       </div>
     </div>
     <a href="?url=blog">Blog</a>
@@ -172,6 +172,7 @@ $navDisplayName = $isLoggedIn
 
     <div style="position:relative;">
       <button class="nda-notif-btn" id="ndaNotifBtn" title="Notificaciones" aria-label="Ver notificaciones">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="nda-notif-dot" id="ndaNotifDot"></span>
       </button>
       <div class="nda-notif-panel nda-glass" id="ndaNotifPanel">
@@ -276,10 +277,10 @@ $navDisplayName = $isLoggedIn
         </div>
         <p>Natural Disaster Alert — Plataforma educativa para la comunidad escolar de El Salvador. Datos en tiempo real y simulaciones interactivas.</p>
       </div>
-      <div class="ftc"><h5>Secciones</h5><a href="?url=sismos">Monitor Sísmico</a><a href="?url=home#placas">Placas Tectónicas</a><a href="?url=home#timeline">Historia</a><a href="?url=monitoreo#luna">Fases Lunares</a><a href="?url=home#zona-sismica">Mapa de Peligros</a><a href="?url=quehacer">¿Qué hacer AHORA?</a></div>
+      <div class="ftc"><h5>Secciones</h5><a href="?url=sismos">Monitor Sísmico</a><a href="?url=home#placas">Placas Tectónicas</a><a href="?url=home#timeline">Historia</a><a href="?url=luna">Fases Lunares</a><a href="?url=home#zona-sismica">Mapa de Peligros</a><a href="?url=quehacer">¿Qué hacer AHORA?</a></div>
       <div class="ftc"><h5>Fuentes</h5><a href="https://earthquake.usgs.gov" target="_blank">USGS Earthquakes</a><a href="https://www.marn.gob.sv" target="_blank">MARN El Salvador</a><a href="https://api.open-meteo.com" target="_blank">Open-Meteo API</a><a href="https://api.sunrise-sunset.org" target="_blank">Sunrise-Sunset API</a></div>
     </div>
-    <div class="ft-btm"><p>© 2025 svNDA — Natural Disaster Alert · Proyecto educativo El Salvador · Datos USGS · Solo fines educativos</p></div>
+    <div class="ft-btm"><p>© 2026 svNDA — Natural Disaster Alert · Proyecto educativo El Salvador · Proyecto con fines educativos</p></div>
   </div>
 </footer>
 
