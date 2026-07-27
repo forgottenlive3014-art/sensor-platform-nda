@@ -8,7 +8,7 @@
 
 <title>Centro Sísmico de El Salvador</title>
 
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="../../assets/css/centrosismico-web.css">
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -75,7 +75,7 @@
 
 </section>
 
-<script src="js/app.js"></script>
+<script src="../../assets/js/centrosismico-web.js"></script>
 
 </body>
 

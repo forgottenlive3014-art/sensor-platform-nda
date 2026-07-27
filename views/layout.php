@@ -105,6 +105,19 @@ $navDisplayName = $isLoggedIn
     <span id="drillAlertText">Simulacro en curso</span>
 </div>
 
+<!-- ALERTA SISMO FUERTE: global, se muestra sin importar en que apartado
+     de la pagina este el usuario (Centro Sismico, monitoreo.js la controla) -->
+<div class="csi-alert-overlay" id="csiAlertOverlay" role="alertdialog" aria-hidden="true">
+  <div class="csi-alert-box">
+    <div class="csi-alert-icon">⚠️</div>
+    <div class="csi-alert-title">SISMO DETECTADO</div>
+    <div class="csi-alert-mag">Magnitud <span id="csiAlertMag">—</span></div>
+    <div class="csi-alert-nivel" id="csiAlertNivel">—</div>
+    <p class="csi-alert-msg">Se detectó actividad sísmica fuerte en la estación. Toma precauciones: aléjate de objetos que puedan caer, protégete y ubícate en una zona segura.</p>
+    <button class="csi-alert-close" id="csiAlertClose">Entendido</button>
+  </div>
+</div>
+
 <nav class="nav" id="nav">
   <a class="nav-brand" href="?url=home">
     <div class="nda-logo-wave">
@@ -301,6 +314,7 @@ $navDisplayName = $isLoggedIn
 
 
 <script src="<?= asset('js/app.js') ?>"></script>
+<script src="<?= asset('js/centrosismico-alerta.js') ?>"></script>
 <?php if (isset($_SESSION['success']) || isset($_SESSION['error'])): ?>
 <script>
 document.addEventListener('DOMContentLoaded', function () {

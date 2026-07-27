@@ -147,31 +147,32 @@ void calcularMagnitud(){
 
   float energia = sqrt(dx*dx + dy*dy + dz*dz);
 
-  magnitud = energia * 2.4;
+  // Subido de 3.2 a 6.0: cualquier roce o vibración leve debe notarse ya.
+  magnitud = energia * 6.0;
 
-  if(magnitud<2){
+  if(magnitud<1){
 
     nivel="NORMAL";
 
-  }else if(magnitud<3){
+  }else if(magnitud<2.5){
 
     nivel="MICRO SISMO";
 
-  }else if(magnitud<4){
+  }else if(magnitud<3.5){
 
-    nivel="LEVE";
+    nivel="LEVE";           // 2.5 - 3.4
 
-  }else if(magnitud<5){
+  }else if(magnitud<4.5){
 
-    nivel="MODERADO";
+    nivel="MODERADO";       // 3.5 - 4.4
 
-  }else if(magnitud<6){
+  }else if(magnitud<5.5){
 
-    nivel="FUERTE";
+    nivel="FUERTE";         // 4.5 - 5.4
 
   }else{
 
-    nivel="TERREMOTO";
+    nivel="TERREMOTO";      // 5.5 en adelante
 
   }
 
