@@ -1508,50 +1508,56 @@ async function saveAttendance() {
 // ─── INCIDENTES / DAÑOS ───
 let __incidentsCache = [];
 
+// Prioridad -> variante de .chip (mismo sistema de chips que el resto del sitio)
+const prioridadChip = { alta: 'r', media: 'o', baja: 'g' };
+
 async function loadIncidents() {
     const container = document.getElementById('incidentList');
     if (!container) return;
 
-    container.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);">Cargando incidentes...</div>';
+    container.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);grid-column:1/-1;">Cargando incidentes...</div>';
 
     try {
         const response = await fetch('?url=school/incidents');
         const incidents = await response.json();
 
         if (incidents.error) {
-            container.innerHTML = `<div class="text-center" style="padding:20px;color:var(--text3);">Error: ${incidents.error}</div>`;
+            container.innerHTML = `<div class="text-center" style="padding:20px;color:var(--text3);grid-column:1/-1;">Error: ${incidents.error}</div>`;
             return;
         }
         __incidentsCache = Array.isArray(incidents) ? incidents : [];
 
         if (incidents.length === 0) {
-            container.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);">No hay incidentes reportados</div>';
+            container.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);grid-column:1/-1;">No hay incidentes reportados</div>';
             return;
         }
 
         container.innerHTML = incidents.map(inc => `
-            <div class="school-incident-item" data-cat="${escapeHtml(inc.tipo)}">
-                ${inc.imagen ? `<img class="school-incident-photo" src="${escapeHtml(inc.imagen)}" alt="Foto del daño" onclick="window.open(this.src,'_blank')">` : ''}
-                <div class="school-incident-item-header">
-                    <span class="school-incident-type">${escapeHtml(inc.tipo)}</span>
-                    <span class="school-incident-time">${new Date(inc.created_at).toLocaleString('es-SV')}</span>
+            <div class="school-blog-card" data-cat="${escapeHtml(inc.tipo)}" onclick="location.href='?url=school/incident-detail&id=${inc.incidentes_id}'">
+                ${inc.imagen
+                    ? `<img class="school-blog-card-thumb" src="${escapeHtml(inc.imagen)}" alt="${escapeHtml(inc.tipo)}">`
+                    : `<div class="school-blog-card-thumb placeholder">Sin imagen</div>`}
+                <div class="school-blog-card-body">
+                    <h4>${escapeHtml(inc.tipo)}
+                        <span class="chip ${prioridadChip[inc.prioridad] || 'o'}">${escapeHtml(inc.prioridad || 'media')}</span>
+                        ${inc.estado === 'resuelto' ? '<span class="chip t">Resuelto</span>' : ''}
+                    </h4>
+                    ${inc.ubicacion ? `<div class="school-incident-location">${escapeHtml(inc.ubicacion)}</div>` : ''}
+                    <p class="school-blog-card-excerpt">${escapeHtml(inc.descripcion).slice(0, 140)}</p>
+                    <div class="school-blog-card-meta">
+                        <span>${inc.reporter ? escapeHtml(inc.reporter) : 'Comunidad'}</span>
+                        <span>${new Date(inc.created_at).toLocaleDateString('es-SV')}</span>
+                    </div>
                 </div>
-                ${inc.ubicacion ? `<div class="school-incident-location">${escapeHtml(inc.ubicacion)}</div>` : ''}
-                <div class="school-incident-desc">${escapeHtml(inc.descripcion)}</div>
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;gap:6px;flex-wrap:wrap;">
-                    ${inc.estado === 'resuelto' ? '<span class="school-incident-resolved">Resuelto</span>' : '<span></span>'}
-                    ${inc.reporter ? `<span style="font-size:0.7rem;color:var(--text3);">Reportado por: ${escapeHtml(inc.reporter)}</span>` : ''}
-                    <span>
-                        <button class="school-attendance-btn" onclick="location.href='?url=school/incident-detail&id=${inc.incidentes_id}'">Ver / comentar</button>
-                        ${(window.__ndaIsSchoolStaff || String(inc.usuario_id) === String(window.__ndaMyUserId)) ? `<button class="school-attendance-btn" onclick="editIncident(${inc.incidentes_id})">Editar</button>` : ''}
-                        ${window.__ndaIsSchoolStaff && inc.estado !== 'resuelto' ? `<button class="school-attendance-btn" onclick="resolveIncident(${inc.incidentes_id})">Resolver</button>` : ''}
-                        ${(window.__ndaIsSchoolAdmin || String(inc.usuario_id) === String(window.__ndaMyUserId)) ? `<button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteIncident(${inc.incidentes_id})">Eliminar</button>` : ''}
-                    </span>
+                <div class="school-blog-card-actions" onclick="event.stopPropagation()">
+                    ${(window.__ndaIsSchoolStaff || String(inc.usuario_id) === String(window.__ndaMyUserId)) ? `<button class="school-attendance-btn" onclick="editIncident(${inc.incidentes_id})">Editar</button>` : ''}
+                    ${window.__ndaIsSchoolStaff && inc.estado !== 'resuelto' ? `<button class="school-attendance-btn" onclick="resolveIncident(${inc.incidentes_id})">Resolver</button>` : ''}
+                    ${(window.__ndaIsSchoolAdmin || String(inc.usuario_id) === String(window.__ndaMyUserId)) ? `<button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteIncident(${inc.incidentes_id})">Eliminar</button>` : ''}
                 </div>
             </div>
         `).join('');
     } catch (e) {
-        container.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);">Error al cargar incidentes</div>';
+        container.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);grid-column:1/-1;">Error al cargar incidentes</div>';
         console.error(e);
     }
 }

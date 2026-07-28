@@ -14,7 +14,7 @@
                 <button class="sfilter" data-cat="Falla estructural">Falla estructural</button>
                 <button class="sfilter" data-cat="Otro">Otro</button>
             </div>
-            <div class="school-incident-list" id="incidentList">
-                <div class="text-center" style="padding:20px;color:var(--text3);">Cargando incidentes...</div>
+            <div class="school-card-grid" id="incidentList">
+                <div class="text-center" style="padding:20px;color:var(--text3);grid-column:1/-1;">Cargando incidentes...</div>
             </div>
         </div>
