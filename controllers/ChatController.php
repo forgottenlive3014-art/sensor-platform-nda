@@ -80,7 +80,10 @@ class ChatController {
     private function faqKnowledge() {
         return [
             ['keywords' => ['hola', 'hey', 'buenas', 'saludos'],
-                'reply' => 'Hola. Soy el asistente de NDA. Puedo ayudarte con dudas sobre sismos, tsunamis, evacuación, la mochila de emergencia, el módulo de colegio o cómo usar la plataforma. ¿En qué te ayudo?'],
+                'reply' => 'Hola. Soy el asistente de NDA (Natural Disaster Alert), la plataforma educativa de prevención de desastres naturales de El Salvador. Dato rápido: El Salvador registra en promedio ~100 sismos perceptibles al año por la subducción de la Placa de Cocos bajo la Placa del Caribe. Puedo ayudarte con dudas sobre sismos, volcanes, tsunamis, evacuación, la mochila de emergencia, el módulo de colegio o cómo usar la plataforma. ¿En qué te ayudo?'],
+            ['keywords' => ['que es nda', 'que es esta pagina', 'que es este sitio', 'de que trata', 'de que se trata', 'para que sirve esta pagina', 'para que sirve esta plataforma', 'que hace esta plataforma', 'que hace este sitio', 'que puedo hacer en esta pagina', 'que puedo hacer aqui'],
+                'reply' => 'NDA (Natural Disaster Alert) es una plataforma educativa sobre prevención de desastres naturales en El Salvador, pensada para la comunidad escolar. Reúne: monitoreo sísmico en tiempo real (datos reales del USGS), un sismógrafo interactivo y un simulador de movimiento sísmico, mapa de riesgos (sismos, volcanes, tsunamis, deslizamientos), clima y fases lunares en tiempo real, una maqueta de sensor Arduino/ESP32 (MPU-6050) que mide vibración en 3 ejes, guías de "¿qué hacer AHORA?" ante una emergencia, juegos y trivias educativas, y un módulo de Gestión Escolar para que colegios organicen simulacros, rutas de evacuación y reportes de incidentes. Algunos datos clave de El Salvador: 26 volcanes, subducción de la Placa de Cocos a ~8 cm/año, y el terremoto más devastador reciente fue el del 13 de enero de 2001 (M7.7).',
+                'navigate' => 'home', 'navigateLabel' => 'Explorar NDA'],
             ['keywords' => ['sismo', 'terremoto', 'tiembla', 'movimiento sismico', 'cuando tiembla'],
                 'reply' => 'Durante un sismo: agáchate, cúbrete bajo un mueble resistente y agárrate hasta que termine el movimiento. No corras ni uses el ascensor. Aléjate de ventanas y objetos que puedan caer. Al terminar, revisa heridos y aléjate de estructuras dañadas antes de salir.',
                 'navigate' => 'quehacer', 'navigateLabel' => '¿Qué hacer AHORA?'],
@@ -99,8 +102,8 @@ class ChatController {
             ['keywords' => ['rol', 'roles', 'que puede hacer un docente', 'que puede hacer un alumno', 'que puede hacer un estudiante', 'que puede hacer el admin'],
                 'reply' => 'En el módulo de colegio: el Administrador gestiona toda la institución (usuarios, aulas, simulacros, reportes). El Docente pasa lista, ve sus aulas y reporta incidentes. El Estudiante ve su aula y los simulacros futuros. El Padre/Madre ve el estado de sus hijos durante un simulacro. El Personal Administrativo apoya con publicaciones y estado durante una emergencia.',
                 'navigate' => 'school', 'navigateLabel' => 'Gestión Escolar'],
-            ['keywords' => ['marn', 'usgs', 'de donde salen los datos', 'fuente de los datos'],
-                'reply' => 'Los datos sísmicos en tiempo real vienen del USGS (Servicio Geológico de EE.UU.), filtrados a la región de Centroamérica y El Salvador. La información institucional y de alertas se basa en criterios del MARN (Ministerio de Medio Ambiente de El Salvador).',
+            ['keywords' => ['marn', 'usgs', 'emsc', 'de donde salen los datos', 'fuente de los datos'],
+                'reply' => 'Los datos sísmicos en tiempo real se combinan de dos catálogos públicos: el USGS (Servicio Geológico de EE.UU.) y el EMSC (European-Mediterranean Seismological Centre), filtrados a la región de Centroamérica y El Salvador — se combinan porque ninguno de los dos detecta el 100% de la actividad local por sí solo. La información institucional y de alertas se basa en criterios del MARN (Ministerio de Medio Ambiente de El Salvador), que no publica una API pública propia.',
                 'navigate' => 'home#sismos', 'navigateLabel' => 'Monitor Sísmico'],
             ['keywords' => ['magnitud', 'richter', 'escala sismica', 'que tan fuerte'],
                 'reply' => 'La escala de magnitud mide la energía liberada por un sismo: M1-2 es imperceptible, M3-4 leve (puede sentirse), M5 moderado (posibles daños), M6 fuerte (daños estructurales), M7+ es un gran terremoto. El terremoto de El Salvador de 2001 fue de magnitud 7.7.',
@@ -245,9 +248,18 @@ class ChatController {
         }
 
         $systemPrompt = "Eres el asistente virtual de NDA (Natural Disaster Alert), una plataforma educativa "
-            . "sobre prevención de desastres naturales en El Salvador. Responde de forma breve, clara y amable, "
-            . "SIEMPRE en español, salvo que el usuario escriba en inglés. Si la pregunta es sobre algo fuera de "
-            . "desastres naturales, prevención o el uso de la plataforma, redirige amablemente el tema.\n\n"
+            . "sobre prevención de desastres naturales en El Salvador dirigida a la comunidad escolar. Responde de "
+            . "forma breve, clara y amable, SIEMPRE en español, salvo que el usuario escriba en inglés. Si la "
+            . "pregunta es sobre algo fuera de desastres naturales, prevención o el uso de la plataforma, redirige "
+            . "amablemente el tema. Cuando tenga sentido, cierra tu respuesta con un dato relevante y concreto "
+            . "(una cifra, un nombre de volcán o falla, un porcentaje) tomado de los datos de referencia de abajo, "
+            . "para reforzar el aprendizaje, pero sin forzarlo si la pregunta no lo amerita.\n\n"
+            . "Qué es NDA y qué contiene la plataforma (usa esto si preguntan de qué trata el sitio): monitoreo "
+            . "sísmico en tiempo real con datos del USGS, sismógrafo interactivo y simulador de movimiento sísmico, "
+            . "mapa de riesgos (sismos, volcanes, tsunamis, deslizamientos), clima y fases lunares en tiempo real, "
+            . "una maqueta de sensor Arduino/ESP32 (MPU-6050) que mide vibración en 3 ejes, guías de \"¿qué hacer "
+            . "AHORA?\", juegos/trivias educativas, y un módulo de Gestión Escolar (simulacros, rutas de evacuación, "
+            . "reportes de incidentes) para directores, docentes, estudiantes, padres y personal administrativo.\n\n"
             . "Datos geológicos y geográficos de El Salvador que DEBES usar como referencia (no inventes otras "
             . "placas, fallas o cifras si el usuario pregunta sobre esto):\n"
             . "- El Salvador está en el límite entre la Placa de Cocos (oceánica) y la Placa del Caribe "
@@ -266,7 +278,8 @@ class ChatController {
             . "(13 de enero M7.7 y 13 de febrero M6.6, el más devastador del siglo, incluyendo el deslizamiento "
             . "de Las Colinas).\n"
             . "- La Red Sísmica de MARN (Ministerio de Medio Ambiente y Recursos Naturales) opera más de 30 "
-            . "estaciones en el país. Los datos sísmicos en tiempo real de esta plataforma vienen del USGS.\n"
+            . "estaciones en el país. Los datos sísmicos en tiempo real de esta plataforma combinan el USGS y el "
+            . "EMSC (European-Mediterranean Seismological Centre), dos catálogos públicos internacionales.\n"
             . "- Riesgo de tsunami: sismos submarinos M≥7.0 frente a la costa pueden generar olas que llegan "
             . "en 15-20 minutos a zonas como La Libertad o Acajutla; la evacuación es a terreno alto (mínimo "
             . "30 m sobre el nivel del mar).\n"

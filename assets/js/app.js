@@ -376,7 +376,11 @@ let sgCurrentMag = 3,
     draw();
 })();
 
-// SG Controls
+// SG Controls -- estos botones/slider SOLO cambian la simulacion visual de
+// la onda (amplitud, color, velocidad segun magnitud elegida). La profundidad
+// y el resto de estadisticas ("ultimo evento", "sismos hoy", etc.) nunca se
+// tocan aqui: siempre reflejan el ultimo sismo REAL reportado por el USGS,
+// actualizado por loadQuakes() arriba.
 document.querySelectorAll('.sg-preset').forEach(btn => {
     btn.onclick = () => {
         document.querySelectorAll('.sg-preset').forEach(b => b.classList.remove('on', 'm3', 'm6', 'm7', 'm85'));
@@ -385,10 +389,6 @@ document.querySelectorAll('.sg-preset').forEach(btn => {
         sgCurrentMag = parseFloat(btn.dataset.mag);
         document.getElementById('sgMagSlider').value = sgCurrentMag;
         document.getElementById('sgMagDisp').textContent = sgCurrentMag;
-        document.getElementById('sgDepth').textContent = sgCurrentMag >= 7 ? '8 KM' : '36 KM';
-        document.getElementById('sg-depth-v').textContent = (sgCurrentMag >= 7 ? '8' : '36') + ' km';
-        document.getElementById('sg-depth-l').textContent = sgCurrentMag >= 7 ? 'corteza superior' : 'corteza media';
-        document.getElementById('sg-last-mag').textContent = 'M' + sgCurrentMag;
     };
 });
 
@@ -417,9 +417,6 @@ if (document.getElementById('simBtn')) {
         document.getElementById('sgMagDisp').textContent = '8.5';
         document.querySelectorAll('.sg-preset').forEach(b => b.classList.remove('on'));
         document.querySelector('.sg-preset.m85').classList.add('on');
-        document.getElementById('sgDepth').textContent = '8 KM';
-        document.getElementById('sg-last-mag').textContent = 'M8.5';
-        document.getElementById('sg-last-loc').textContent = 'San Miguel';
     };
 }
 
@@ -466,8 +463,8 @@ if (document.getElementById('simBtn')) {
 })();
 
   
-//  6. USGS EARTHQUAKE DATA
-  
+//  6. SISMOS EN VIVO: USGS + EMSC COMBINADOS
+
 
 // Helpers null-safe: cada pagina del sitio solo tiene un subconjunto de estos
 // elementos (el resto vive en otra pagina), asi que nunca asumimos que existen.
@@ -480,60 +477,201 @@ function ndaSetHtml(id, val) {
     if (el) el.innerHTML = val;
 }
 
+// Cajas delimitadoras ajustadas al territorio de El Salvador + la zona de
+// subduccion frente a su costa Pacifico (de donde salen la mayoria de los
+// sismos que se sienten en el pais). Cada API usa nombres de parametros
+// distintos para la misma caja, por eso hay una version por API.
+const EL_SALVADOR_BBOX_USGS = 'minlatitude=12.6&maxlatitude=14.6&minlongitude=-90.6&maxlongitude=-87.0';
+const EL_SALVADOR_BBOX_EMSC = 'minlat=12.6&maxlat=14.6&minlon=-90.6&maxlon=-87.0';
+const REGIONAL_BBOX_USGS = 'minlatitude=8&maxlatitude=18&minlongitude=-95&maxlongitude=-82';
+const REGIONAL_BBOX_EMSC = 'minlat=8&maxlat=18&minlon=-95&maxlon=-82';
+
+// Trae sismos del USGS (fdsnws-event, formato geojson estandar: mag, place,
+// time en epoch ms, geometry.coordinates=[lon,lat,profundidad_km]).
+async function fetchUSGS(bbox, minMag) {
+    try {
+        const r = await fetch(`https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&${bbox}&limit=25&orderby=time&minmagnitude=${minMag}`);
+        const d = await r.json();
+        const feats = d.features || [];
+        feats.forEach(f => { f.properties.source = 'USGS'; });
+        return feats;
+    } catch (e) {
+        return [];
+    }
+}
+
+// Trae sismos de EMSC (European-Mediterranean Seismological Centre,
+// seismicportal.eu) y los normaliza a la misma forma que usa el USGS arriba,
+// porque EMSC nombra los campos distinto: "time" es texto ISO (no epoch ms),
+// el lugar viene en "flynn_region" (no "place"), y la profundidad real esta
+// en "properties.depth" -- NO en geometry.coordinates[2], que EMSC reporta
+// en negativo (elevacion) y no coincide con el positivo que usa el USGS.
+// En la prueba en vivo, EMSC detecto sismos reales "Offshore El Salvador"
+// que el USGS todavia no tenia en su catalogo, por eso se combinan las dos.
+async function fetchEMSC(bbox, minMag) {
+    try {
+        const r = await fetch(`https://www.seismicportal.eu/fdsnws/event/1/query?format=json&${bbox}&limit=25&minmag=${minMag}`);
+        const d = await r.json();
+        return (d.features || []).map(f => {
+            const region = (f.properties.flynn_region || 'Región desconocida')
+                .toLowerCase().replace(/(^|\s)\S/g, c => c.toUpperCase());
+            const depthKm = f.properties.depth != null ? f.properties.depth : Math.abs((f.geometry.coordinates || [])[2] || 0);
+            return {
+                id: 'emsc-' + (f.id || f.properties.unid || f.properties.source_id),
+                properties: {
+                    mag: f.properties.mag || 0,
+                    place: region,
+                    time: new Date(f.properties.time).getTime(),
+                    source: 'EMSC',
+                },
+                geometry: { coordinates: [f.geometry.coordinates[0], f.geometry.coordinates[1], depthKm] },
+            };
+        });
+    } catch (e) {
+        return [];
+    }
+}
+
+function haversineKm(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+// El mismo sismo real puede aparecer en ambos catalogos con id, hora y
+// magnitud ligeramente distintos (cada red lo procesa por separado). Se
+// considera "el mismo evento" si ocurrio a menos de 2 minutos de diferencia
+// y a menos de 60km de distancia -- en ese caso se queda solo el primero
+// (ya viene ordenado por tiempo, no importa cual API lo reporto).
+function mergeAndDedupeQuakes(lists) {
+    const all = [].concat(...lists);
+    all.sort((a, b) => b.properties.time - a.properties.time);
+    const kept = [];
+    for (const q of all) {
+        const isDup = kept.some(k =>
+            Math.abs(k.properties.time - q.properties.time) < 120000 &&
+            haversineKm(k.geometry.coordinates[1], k.geometry.coordinates[0], q.geometry.coordinates[1], q.geometry.coordinates[0]) < 60
+        );
+        if (!isDup) kept.push(q);
+    }
+    return kept;
+}
+
+// Recuerda el id del ultimo sismo real ya mostrado, para detectar cuando las
+// APIs reportan uno NUEVO entre un poll y el siguiente (p. ej. "acaba de
+// temblar") y resaltarlo en vez de solo re-pintar los mismos datos.
+let __ndaLastQuakeId = null;
+
 async function loadQuakes() {
     try {
-        const url = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minlatitude=8&maxlatitude=18&minlongitude=-95&maxlongitude=-82&limit=25&orderby=time&minmagnitude=1.5';
-        const r = await fetch(url);
-        const d = await r.json();
-        const qs = d.features;
+        let [usgsList, emscList] = await Promise.all([
+            fetchUSGS(EL_SALVADOR_BBOX_USGS, 1.0),
+            fetchEMSC(EL_SALVADOR_BBOX_EMSC, 1.0),
+        ]);
+        let qs = mergeAndDedupeQuakes([usgsList, emscList]);
+
+        // Si ninguna de las dos APIs tiene suficiente actividad detectada
+        // dentro de El Salvador (puede pasar varios dias sin sismos M>=1.0
+        // registrados en un area tan pequena), se amplia a la region de
+        // Centroamerica -- se marca la fuente real en cada caso, nunca se
+        // inventa un numero.
+        let regional = false;
+        if (qs.length < 3) {
+            const [usgsRegional, emscRegional] = await Promise.all([
+                fetchUSGS(REGIONAL_BBOX_USGS, 1.5),
+                fetchEMSC(REGIONAL_BBOX_EMSC, 1.5),
+            ]);
+            qs = mergeAndDedupeQuakes([qs, usgsRegional, emscRegional]);
+            regional = true;
+        }
         if (!qs.length) throw 'empty';
+        qs = qs.slice(0, 25);
+
+        ndaSetText('sgSubtitle', regional
+            ? 'Estación SSN · San Salvador · 13.692°N, 89.218°W · Región Centroamérica (USGS+EMSC)'
+            : 'Estación SSN · San Salvador · 13.692°N, 89.218°W · El Salvador (USGS+EMSC) · EN VIVO');
 
         const now = Date.now();
         const h24 = qs.filter(q => now - q.properties.time < 86400000).length;
         const maxM = Math.max(...qs.map(q => q.properties.mag || 0));
-        const avgD = Math.round(qs.reduce((s, q) => s + (q.geometry.coordinates[2] || 0), 0) / qs.length);
+
+        // "Ultimo evento" = SIEMPRE el sismo mas reciente por tiempo (qs[0],
+        // porque orderby=time trae el mas nuevo primero). Magnitud, lugar y
+        // profundidad deben salir todos del MISMO registro -- antes la
+        // magnitud mostrada era el maximo del lote (maxM), que podia ser un
+        // sismo distinto (mas viejo) al de la ubicacion/profundidad mostrada,
+        // pareciendo datos inconsistentes o inventados.
+        const last = qs[0];
+        const lastMag = last.properties.mag || 0;
+        const lastDepth = Math.round(last.geometry?.coordinates?.[2] || 0);
+        const lastPlace = (last.properties.place || '').split(' of ').pop()?.slice(0, 25) || '—';
 
         // Hero stats (pagina Inicio)
         ndaSetText('hp-quakes', h24);
         ndaSetText('hm-today', h24);
         ndaSetText('hm-max', maxM.toFixed(1));
-        ndaSetText('hm-depth', avgD);
+        ndaSetText('hm-depth', lastDepth);
         ndaSetText('h3d-actividad-reciente', h24 > 0
             ? `${h24} sismo${h24 === 1 ? '' : 's'} registrados en las últimas 24 horas cerca de El Salvador, con magnitud máxima de ${maxM.toFixed(1)}.`
             : 'Sin sismos significativos registrados cerca de El Salvador en las últimas 24 horas.');
 
-        // Side stats (pagina Sismos)
-        ndaSetText('sc-last', 'M' + maxM.toFixed(1));
+        // Side stats (pagina Sismos) -- todo sobre el MISMO ultimo evento real.
+        ndaSetText('sc-last', 'M' + lastMag.toFixed(1));
         ndaSetText('sc-24h', h24);
-        ndaSetHtml('sc-depth', avgD + '<span style="font-size:.8rem;color:var(--text3)">km</span>');
-
-        const last = qs[0];
+        ndaSetHtml('sc-depth', lastDepth + '<span style="font-size:.8rem;color:var(--text3)">km</span>');
         ndaSetText('sc-time', new Date(last.properties.time).toLocaleString('es-SV', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }));
 
-        // SG bar (pagina Sismos)
-        ndaSetText('sg-last-mag', 'M' + maxM.toFixed(1));
-        ndaSetText('sg-last-loc', (qs[0].properties.place || '').split(' of ').pop()?.slice(0, 25) || '—');
+        // SG bar (pagina Sismos) -- profundidad y magnitud SIEMPRE vienen del
+        // ultimo sismo real reportado por USGS o EMSC, nunca de un valor
+        // inventado segun la magnitud elegida en el simulador (ver botones
+        // .sg-preset mas abajo, que ya NO tocan estos campos).
+        ndaSetText('sg-last-mag', 'M' + lastMag.toFixed(1));
+        ndaSetText('sg-last-loc', lastPlace);
         ndaSetText('sg-today', h24);
-        ndaSetText('sg-depth-v', avgD + ' km');
+        ndaSetText('sg-depth-v', lastDepth + ' km');
+        ndaSetText('sg-depth-l', lastDepth <= 15 ? 'corteza superior' : lastDepth <= 40 ? 'corteza media' : 'manto superior / subducción');
+        ndaSetText('sgDepth', lastDepth + ' KM');
 
-        // Nav alert (comun a todo el sitio)
-        ndaSetText('navAlertText', `M${maxM.toFixed(1)} · ${(qs[0].properties.place || '').split(', ')[0]?.slice(0, 15)}`);
+        // Nav alert (comun a todo el sitio) -- mismo ultimo evento real.
+        ndaSetText('navAlertText', `M${lastMag.toFixed(1)} · ${(last.properties.place || '').split(', ')[0]?.slice(0, 15)}`);
+
+        // Marca "actualizado hace..." -- confirma visualmente que esto es un
+        // fetch en vivo y no un valor estatico.
+        window.__ndaQuakesFetchedAt = Date.now();
+        ndaSetText('quakeUpdatedAt', 'actualizado justo ahora');
+
+        // Si el sismo mas reciente cambio desde el ultimo poll, es un evento
+        // NUEVO detectado en tiempo real: resalta los stats en vez de solo
+        // re-pintarlos en silencio.
+        const isNewQuake = __ndaLastQuakeId !== null && last.id !== __ndaLastQuakeId;
+        __ndaLastQuakeId = last.id;
+        if (isNewQuake) {
+            ['sgDepth', 'sg-last-mag', 'sg-depth-v', 'sc-last', 'sc-depth', 'rtm-mag', 'rtm-depth'].forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.classList.remove('nda-flash');
+                void el.offsetWidth; // reinicia la animacion si ya estaba corriendo
+                el.classList.add('nda-flash');
+            });
+        }
 
         // Feed (pagina Sismos)
         const feed = document.getElementById('quakeFeed');
         if (feed) {
             feed.innerHTML = '';
-            qs.slice(0, 18).forEach((q) => {
+            qs.slice(0, 18).forEach((q, i) => {
                 const m = q.properties.mag || 0;
                 const cls = m < 3 ? 'ml' : m < 5 ? 'mm' : 'mh';
                 const dep = (q.geometry.coordinates[2] || 0).toFixed(0);
                 const tm = new Date(q.properties.time).toLocaleString('es-SV', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
                 const el = document.createElement('div');
-                el.className = 'qfi';
+                el.className = 'qfi' + (isNewQuake && i === 0 ? ' qfi-new' : '');
                 el.innerHTML = `<div class="qfi-mag ${cls}">${m.toFixed(1)}</div>
                                 <div class="qfi-info">
-                                    <div class="qfi-place">${escapeHtml(q.properties.place || '—')}</div>
-                                    <div class="qfi-meta">${tm}</div>
+                                    <div class="qfi-place">${escapeHtml(q.properties.place || '—')}${isNewQuake && i === 0 ? ' <span class="qfi-new-tag">NUEVO</span>' : ''}</div>
+                                    <div class="qfi-meta">${tm} · ${q.properties.source || 'USGS'}</div>
                                 </div>
                                 <div class="qfi-depth">Prof ${dep}km</div>`;
                 feed.appendChild(el);
@@ -544,10 +682,24 @@ async function loadQuakes() {
         if (window.updateRTMStats) window.updateRTMStats(qs);
 
     } catch (e) {
-        ndaSetHtml('quakeFeed', '<div class="loading-s">⚠️ Error USGS — revisa conexión</div>');
+        ndaSetHtml('quakeFeed', '<div class="loading-s">⚠️ Error USGS/EMSC — revisa conexión</div>');
         ndaSetText('navAlertText', 'Sistema activo');
     }
 }
+
+// Sondeo automatico: sin esto, un sismo real que ocurra despues de cargar la
+// pagina no aparecia hasta que alguien le diera clic manual al boton de
+// refrescar. Cada 30s es suficientemente seguido para sentirse "en vivo" sin
+// saturar la API publica del USGS.
+setInterval(loadQuakes, 30000);
+
+// Cuenta "actualizado hace Xs" en vivo, independiente del poll de 30s.
+setInterval(() => {
+    if (!window.__ndaQuakesFetchedAt) return;
+    const secs = Math.floor((Date.now() - window.__ndaQuakesFetchedAt) / 1000);
+    const label = secs < 5 ? 'actualizado justo ahora' : secs < 60 ? `actualizado hace ${secs}s` : `actualizado hace ${Math.floor(secs / 60)} min`;
+    ndaSetText('quakeUpdatedAt', label);
+}, 1000);
 
 if (document.getElementById('refreshQ')) document.getElementById('refreshQ').onclick = loadQuakes;
 
@@ -1095,7 +1247,7 @@ window._addQuakesToMap = function(qs) {
         const col = m < 3 ? '#22c55e' : m < 5 ? '#ff9500' : '#e63946';
         L.circleMarker([lat, lng], { radius: Math.max(4, m * 2.2), color: col, fillColor: col, fillOpacity: .5,
                 weight: 1.5 })
-            .bindPopup(`<b>M ${m}</b><br>${escapeHtml(q.properties.place)}<br>${new Date(q.properties.time).toLocaleString('es')}<br><small>Fuente: USGS</small>`)
+            .bindPopup(`<b>M ${m}</b><br>${escapeHtml(q.properties.place)}<br>${new Date(q.properties.time).toLocaleString('es')}<br><small>Fuente: ${q.properties.source || 'USGS'}</small>`)
             .addTo(qLayer2);
     });
 };
@@ -2350,24 +2502,42 @@ window.ndaInitDisParticles = function (containerId, type) {
 };
 
 
-//  19C. GALERIA 3D: GRILLA DE ACCESO DIRECTO A LOS 8 VISORES (debajo del
-//  carrusel), carga cada modelo Sketchfab bajo demanda al hacer clic
+//  19C. GALERIA 3D: GRILLA DE ACCESO DIRECTO A LOS VISORES (debajo del
+//  carrusel), monta la escena Three.js SOLA en cuanto la tarjeta entra en
+//  pantalla al hacer scroll -- sin necesidad de darle clic a nada. Se usa
+//  IntersectionObserver para no montar los 11 visores WebGL de una vez
+//  apenas carga la pagina (ver assets/js/disaster3d.js -- window.NDA_Disaster3D).
 
 
-window.loadSketchfabModel = function (btn) {
-    const viewport = btn.closest('.sk3d-viewport');
-    const uid = viewport && viewport.dataset.uid;
-    if (!uid) return;
-    viewport.innerHTML = `<iframe title="Modelo 3D" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" xr-spatial-tracking="true" execution-while-out-of-viewport="true" execution-while-not-rendered="true" web-share="true" src="https://sketchfab.com/models/${uid}/embed?autostart=1&ui_theme=dark"></iframe>`;
-};
+function initAutoMount3D() {
+    const targets = document.querySelectorAll('.nda-auto3d');
+    if (!targets.length) return;
+    if (!window.IntersectionObserver) {
+        // Sin soporte para IntersectionObserver (muy raro hoy en dia): monta
+        // todo de una vez en vez de no mostrar nada.
+        targets.forEach(t => { if (window.NDA_Disaster3D) window.NDA_Disaster3D.mount(t, t.dataset.slug); });
+        return;
+    }
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting || !window.NDA_Disaster3D) return;
+            window.NDA_Disaster3D.mount(entry.target, entry.target.dataset.slug);
+            io.unobserve(entry.target);
+        });
+    }, { rootMargin: '250px' });
+    targets.forEach(t => io.observe(t));
+}
 
 
 //  19D. GALERIA 3D: CARRUSEL DE TARJETAS DEL HERO (fila horizontal con
-//  varias tarjetas visibles, la activa se desliza al centro del visor;
-//  el modelo Sketchfab se carga bajo demanda solo para la tarjeta activa)
+//  varias tarjetas visibles; la escena Three.js de la tarjeta activa se
+//  monta sola en cuanto se centra, sin necesidad de darle clic a nada)
 
 
 window.NDA_SK3D_ACTIVE = 0;
+// Guarda el HTML original (placeholder) de cada visor de slide para poder
+// restaurarlo al desactivar una tarjeta que tenia la escena 3D montada.
+const __sk3dOriginalViewportHtml = new WeakMap();
 
 function sk3dRender() {
     const track = document.getElementById('sk3dTrack');
@@ -2379,11 +2549,16 @@ function sk3dRender() {
     slides.forEach((slide, i) => {
         const isActive = i === active;
         slide.classList.toggle('active', isActive);
-        // Si el slide deja de estar activo y tenia el modelo 3D cargado, lo
-        // devolvemos a su miniatura para no dejar un visor WebGL de fondo.
+        // Si el slide deja de estar activo y tenia la escena 3D montada, la
+        // desmontamos (libera el contexto WebGL) y devolvemos el visor a su
+        // placeholder original para no dejar renders de fondo innecesarios.
         if (!isActive && slide.dataset.loaded === '1') {
             const slideViewport = slide.querySelector('.sk3d-slide-viewport');
-            if (slideViewport) slideViewport.innerHTML = `<img src="${slide.dataset.thumb}" alt="" loading="lazy">`;
+            if (slideViewport) {
+                if (window.NDA_Disaster3D) window.NDA_Disaster3D.unmount(slideViewport);
+                const original = __sk3dOriginalViewportHtml.get(slideViewport);
+                if (original !== undefined) slideViewport.innerHTML = original;
+            }
             slide.dataset.loaded = '0';
         }
     });
@@ -2398,6 +2573,15 @@ function sk3dRender() {
         track.style.transform = `translateX(${-target}px)`;
     }
 
+    // La tarjeta activa monta su escena 3D sola, sin esperar un clic.
+    if (activeSlide && activeSlide.dataset.loaded !== '1' && window.NDA_Disaster3D) {
+        const activeViewport = activeSlide.querySelector('.sk3d-slide-viewport');
+        if (activeViewport) {
+            window.NDA_Disaster3D.mount(activeViewport, activeSlide.dataset.slug);
+            activeSlide.dataset.loaded = '1';
+        }
+    }
+
     document.querySelectorAll('#sk3dDots .sk3d-dot').forEach(d => {
         d.classList.toggle('active', Number(d.dataset.index) === active);
     });
@@ -2405,11 +2589,11 @@ function sk3dRender() {
         p.classList.toggle('active', Number(p.dataset.index) === active);
     });
 
-    // El fondo del hero muestra la foto del modelo activo (como en el hero
-    // de referencia tipo Foxico/Kerala), con un degradado oscuro encima.
+    // El fondo del hero refleja el color de acento del modelo activo con un
+    // resplandor sutil (antes mostraba la foto Sketchfab del modelo).
     const heroBg = document.getElementById('sk3dHeroBg');
-    if (heroBg && activeSlide && activeSlide.dataset.thumb) {
-        heroBg.style.backgroundImage = `url(${activeSlide.dataset.thumb})`;
+    if (heroBg && activeSlide) {
+        heroBg.style.setProperty('--sk-accent', getComputedStyle(activeSlide).getPropertyValue('--sk-accent'));
     }
 
     // Stepper vertical: nombre del modelo anterior/siguiente atenuado arriba
@@ -2447,19 +2631,14 @@ window.sk3dNav = function (dir) {
     sk3dRender();
 };
 
-window.sk3dPlayActive = function () {
+function initSk3dCarousel() {
     const track = document.getElementById('sk3dTrack');
     if (!track) return;
-    const slide = track.children[window.NDA_SK3D_ACTIVE];
-    const viewport = slide && slide.querySelector('.sk3d-slide-viewport');
-    const uid = slide && slide.dataset.uid;
-    if (!uid || !viewport) return;
-    viewport.innerHTML = `<iframe title="Modelo 3D" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" xr-spatial-tracking="true" execution-while-out-of-viewport="true" execution-while-not-rendered="true" web-share="true" src="https://sketchfab.com/models/${uid}/embed?autostart=1&ui_theme=dark"></iframe>`;
-    slide.dataset.loaded = '1';
-};
-
-function initSk3dCarousel() {
-    if (!document.getElementById('sk3dTrack')) return;
+    // Guarda el placeholder original de cada slide antes de montar nada,
+    // para poder restaurarlo cuando una tarjeta deja de estar activa.
+    track.querySelectorAll('.sk3d-slide-viewport').forEach(vp => {
+        __sk3dOriginalViewportHtml.set(vp, vp.innerHTML);
+    });
     sk3dRender();
     document.addEventListener('keydown', (e) => {
         if (!document.getElementById('sk3dHero')) return;
@@ -3475,4 +3654,5 @@ document.addEventListener('DOMContentLoaded', () => {
     safeInit(initArduinoLive);
     safeInit(initMonitorBubble);
     safeInit(initSk3dCarousel);
+    safeInit(initAutoMount3D);
 });

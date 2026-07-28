@@ -9,9 +9,9 @@
 .auth-wrap {
     display: grid;
     grid-template-columns: 420px 1fr 360px;
-    min-height: 100vh;
+    min-height: calc(100vh - 90px);
     align-items: center;
-    padding: 100px 150px;
+    padding: 90px 150px 30px;
     gap: 10px;
     position: relative;
     background: var(--auth-wrap-bg);
@@ -475,12 +475,12 @@
 
 /*   RESPONSIVE   */
 @media (max-width: 1100px) {
-    .auth-wrap { grid-template-columns: 1fr; padding: 60px 40px; gap: 30px; }
+    .auth-wrap { grid-template-columns: 1fr; min-height: auto; padding: 90px 40px 40px; gap: 30px; }
     .auth-hero { display: none; }
     .auth-bubble-box::after { display: none; }
 }
 @media (max-width: 600px) {
-    .auth-wrap { padding: 20px 16px; }
+    .auth-wrap { padding: 90px 16px 30px; }
     .auth-card { padding: 28px 20px; }
     .auth-bubble { display: none; }
     .auth-title { font-size: 22px; }

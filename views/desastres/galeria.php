@@ -4,82 +4,83 @@ $user = $user ?? null;
 $currentSlug = 'galeria-3d';
 $extraCss = ['css/desastres-base.css', 'css/galeria-3d.css'];
 
-// Un modelo 3D real (Sketchfab, verificado y embebible) por tipo de
-// desastre. Se cargan bajo demanda (boton "Reproducir"): abrir los 8
-// visores WebGL a la vez haria la pagina muy pesada. El carrusel solo
-// monta el iframe del modelo que esta activo en el centro.
+// Una escena 3D generada con Three.js (sin depender de Sketchfab) por tipo
+// de desastre. Se montan solas, sin necesidad de darle clic a nada: el
+// carrusel del hero monta la escena del modelo activo en cuanto se centra
+// (ver sk3dRender en assets/js/app.js), y las tarjetas de la grilla de abajo
+// se montan automaticamente en cuanto entran en pantalla al hacer scroll
+// (ver initAutoMount3D en assets/js/app.js, usa IntersectionObserver para no
+// abrir los 11 visores WebGL de golpe). window.NDA_Disaster3D vive en
+// assets/js/disaster3d.js.
+//
+// 'infoUrl' es opcional: para los desastres que ya tienen su propia pagina
+// completa (?url=<slug>, ver index.php) se omite y el enlace usa el slug.
+// Los 3 tipos agregados despues (lahares, tormentas-electricas,
+// erosion-costera) todavia no tienen una pagina propia, asi que su enlace
+// "Ver información completa" apunta a la pagina existente mas relacionada.
+//
+// Los modelos 3D reales (.glb) viven en assets/modelos3d/ y se cargan desde
+// assets/js/disaster3d.js (ver MODEL_FILES ahi) -- volcanes y deslizamientos
+// ya tienen modelo real; el resto usa la escena procedural de respaldo
+// hasta que se agregue uno. Ver el README en esa carpeta.
 $modelos = [
     [
         'slug' => 'sismos', 'accent' => '#c98a3d', 'nombre' => 'Sismos',
-        'desc' => 'Simulación de la vibración del suelo durante un terremoto.',
+        'desc' => 'Visualización 3D de edificios vibrando sobre el terreno durante un sismo.',
         'riesgo' => 'El Salvador está sobre el Cinturón de Fuego del Pacífico: es el país con más sismos por km² de Centroamérica.',
-        'uid' => 'af2cc67aacda48f4afd1abdc753a5238',
-        'thumb' => 'https://media.sketchfab.com/models/af2cc67aacda48f4afd1abdc753a5238/thumbnails/07255ae365214f43b89d96d89b3a01e6/fddf055ca6924ff5aab537ddfa10f767.jpeg',
-        'autor' => 'plankusgankus',
-        'model_url' => 'https://sketchfab.com/3d-models/earthquake-animation-af2cc67aacda48f4afd1abdc753a5238',
     ],
     [
         'slug' => 'volcanes', 'accent' => '#e0631f', 'nombre' => 'Volcanes',
-        'desc' => 'Una erupción volcánica con flujo de lava y columna de ceniza.',
+        'desc' => 'Visualización 3D de un cono volcánico con cráter incandescente y ceniza en el aire.',
         'riesgo' => '26 volcanes recorren el territorio; el Izalco y el Chaparrastique son los de mayor actividad histórica reciente.',
-        'uid' => 'be87772bc84e4fc7970dc116ead8bd84',
-        'thumb' => 'https://media.sketchfab.com/models/be87772bc84e4fc7970dc116ead8bd84/thumbnails/a0beadfba5c64e0f96ec0dd11e727c4f/da1894bfe0ae4bfdad49c355f821bf90.jpeg',
-        'autor' => 'bororhan',
-        'model_url' => 'https://sketchfab.com/3d-models/volcano-eruption-be87772bc84e4fc7970dc116ead8bd84',
     ],
     [
         'slug' => 'tsunamis', 'accent' => '#1f7aa8', 'nombre' => 'Tsunamis',
-        'desc' => 'Una ola de tsunami avanzando hacia la costa.',
+        'desc' => 'Visualización 3D de oleaje avanzando con espuma marina.',
         'riesgo' => 'Toda la costa del Pacífico salvadoreño está en zona de riesgo por sismos submarinos frente a la fosa Mesoamericana.',
-        'uid' => 'a58699fa796042db851dc8f1b29303c8',
-        'thumb' => 'https://media.sketchfab.com/models/a58699fa796042db851dc8f1b29303c8/thumbnails/4fe3a18b9a5f4832a219488bee826513/e1dd6dca57ed4cff84fa07fd324da581.jpeg',
-        'autor' => 'Matheus kobi',
-        'model_url' => 'https://sketchfab.com/3d-models/tsunami-a58699fa796042db851dc8f1b29303c8',
     ],
     [
         'slug' => 'inundaciones', 'accent' => '#2e7da6', 'nombre' => 'Inundaciones',
-        'desc' => 'Una escena de inundación con agua animada y escombros.',
+        'desc' => 'Visualización 3D de una zona urbana con el nivel del agua subiendo entre las viviendas.',
         'riesgo' => 'La Cuenca Baja del Río Lempa y el Bajo Lempa son las zonas más golpeadas en cada temporada lluviosa.',
-        'uid' => '43f78cc8060b42909b47398a954e5371',
-        'thumb' => 'https://media.sketchfab.com/models/43f78cc8060b42909b47398a954e5371/thumbnails/95e13dabbdd942f792d0ca0c60d65766/a0dfade1e002407ca3795dc3608818bd.jpeg',
-        'autor' => 'asern_afri',
-        'model_url' => 'https://sketchfab.com/3d-models/flood-43f78cc8060b42909b47398a954e5371',
     ],
     [
         'slug' => 'deslizamientos', 'accent' => '#7a6a4a', 'nombre' => 'Deslizamientos',
-        'desc' => 'Diorama de un deslizamiento de tierra sobre una ladera.',
+        'desc' => 'Visualización 3D de una ladera con rocas y sedimento deslizándose pendiente abajo.',
         'riesgo' => 'Las laderas del volcán de San Salvador y la Cordillera del Bálsamo concentran el mayor historial de deslaves.',
-        'uid' => '7e166ad368154712b14fcc7cdecfe2f4',
-        'thumb' => 'https://media.sketchfab.com/models/7e166ad368154712b14fcc7cdecfe2f4/thumbnails/93e3b4c8dfa34161b27dc34dbe6ce6ae/83de5e7ea93748a78f61ad766be1bef2.jpeg',
-        'autor' => 'ilhamsbi',
-        'model_url' => 'https://sketchfab.com/3d-models/landslide-disaster-diorama-7e166ad368154712b14fcc7cdecfe2f4',
     ],
     [
         'slug' => 'incendios-forestales', 'accent' => '#d9481f', 'nombre' => 'Incendios forestales',
-        'desc' => 'Animación de fuego en tiempo real.',
+        'desc' => 'Visualización 3D de un bosque con brasas y humo ascendiendo entre los árboles.',
         'riesgo' => 'La estación seca (nov.–abr.) dispara los incendios por quemas agrícolas mal manejadas cerca de áreas protegidas.',
-        'uid' => 'ebb16a3df22247dd990a04585de64741',
-        'thumb' => 'https://media.sketchfab.com/models/ebb16a3df22247dd990a04585de64741/thumbnails/69a2e501e3ab4589bcc709b6f71905a0/0f3f7817d4954e1aaf773ae3fd2fa8ae.jpeg',
-        'autor' => 'Yannick Deharo',
-        'model_url' => 'https://sketchfab.com/3d-models/animated-fire-ebb16a3df22247dd990a04585de64741',
     ],
     [
         'slug' => 'tormentas-tropicales', 'accent' => '#4a6fa5', 'nombre' => 'Tormentas tropicales',
-        'desc' => 'Modelo de un huracán / ciclón tropical.',
+        'desc' => 'Visualización 3D de la espiral de nubes de un ciclón tropical vista desde arriba.',
         'riesgo' => 'Tormentas como Ida (2009), Ágatha (2010) e Iota-Eta (2020) dejaron algunas de las peores inundaciones recientes.',
-        'uid' => '4b3c66b3c2a04ebd91a12acc96345131',
-        'thumb' => 'https://media.sketchfab.com/models/4b3c66b3c2a04ebd91a12acc96345131/thumbnails/19e92d531e654389a421c03cfc9d51cf/48cac2e09d8b42a89831ecaf15a65b31.jpeg',
-        'autor' => 'REFODIGE',
-        'model_url' => 'https://sketchfab.com/3d-models/huracan-3d-4b3c66b3c2a04ebd91a12acc96345131',
     ],
     [
         'slug' => 'sequias', 'accent' => '#b8862e', 'nombre' => 'Sequías',
-        'desc' => 'Escaneo fotogramétrico real de suelo agrietado por sequía.',
+        'desc' => 'Visualización 3D de suelo agrietado con vegetación seca y calor en el ambiente.',
         'riesgo' => 'El Corredor Seco (La Unión, Morazán, San Miguel) sufre pérdidas de cosecha casi cada año por déficit de lluvia.',
-        'uid' => 'acf20f6eb25046658548b547c93038d8',
-        'thumb' => 'https://media.sketchfab.com/models/acf20f6eb25046658548b547c93038d8/thumbnails/72b565d885aa49729450c41f0214643f/3fe0ed9e224940e9a05a62accd0fb8f4.jpeg',
-        'autor' => 'matousekfoto',
-        'model_url' => 'https://sketchfab.com/3d-models/drought-dry-soil-desert-cracks-ground-acf20f6eb25046658548b547c93038d8',
+    ],
+    [
+        'slug' => 'lahares', 'accent' => '#b5722c', 'nombre' => 'Lahares',
+        'desc' => 'Visualización 3D de un flujo de lodo volcánico bajando por la ladera de un volcán.',
+        'riesgo' => 'El volcán San Vicente (Chinchontepec) tiene historial de lahares mortales cuando la lluvia intensa arrastra ceniza y sedimento suelto.',
+        'infoUrl' => 'volcanes',
+    ],
+    [
+        'slug' => 'tormentas-electricas', 'accent' => '#7fb8e0', 'nombre' => 'Tormentas eléctricas',
+        'desc' => 'Visualización 3D de lluvia intensa con relámpagos aleatorios durante una tormenta eléctrica.',
+        'riesgo' => 'Centroamérica registra una de las mayores densidades de actividad eléctrica del planeta, con riesgo real de rayos durante la época lluviosa.',
+        'infoUrl' => 'tormentas-tropicales',
+    ],
+    [
+        'slug' => 'erosion-costera', 'accent' => '#c9a86a', 'nombre' => 'Erosión costera',
+        'desc' => 'Visualización 3D de oleaje desgastando gradualmente la línea de costa.',
+        'riesgo' => 'Playas de La Libertad y Bahía de Jiquilisco pierden terreno cada año por el oleaje y la subida del nivel del mar.',
+        'infoUrl' => 'tsunamis',
     ],
 ];
 
@@ -87,9 +88,9 @@ ob_start();
 ?>
 
 <div class="dis-page">
-<!-- HERO 3D: info a un lado, carrusel "coverflow" con modelo Sketchfab real al otro -->
+<!-- HERO 3D: info a un lado, carrusel "coverflow" con escena Three.js al otro -->
 <section class="sk3d-hero" id="sk3dHero">
-  <div class="sk3d-hero-bg" id="sk3dHeroBg" aria-hidden="true" style="background-image:url(<?= e($modelos[0]['thumb']) ?>)"></div>
+  <div class="sk3d-hero-bg" id="sk3dHeroBg" aria-hidden="true" style="--sk-accent:<?= e($modelos[0]['accent']) ?>"></div>
 
   <div class="wrap sk3d-hero-inner">
     <div class="sk3d-index-rail" aria-hidden="true">
@@ -114,13 +115,9 @@ ob_start();
           <p class="sk3d-panel-desc"><?= e($m['desc']) ?></p>
           <p class="sk3d-panel-riesgo"><strong>En El Salvador:</strong> <?= e($m['riesgo']) ?></p>
           <div class="sk3d-panel-actions">
-            <button type="button" class="sk3d-play-btn" onclick="sk3dPlayActive()">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-              Cargar modelo 3D
-            </button>
-            <a class="sk3d-link" href="?url=<?= e($m['slug']) ?>">Ver información completa →</a>
+            <a class="sk3d-link" href="?url=<?= e($m['infoUrl'] ?? $m['slug']) ?>">Ver información completa →</a>
           </div>
-          <span class="sk3d-credit">Modelo 3D: <a href="<?= e($m['model_url']) ?>" target="_blank" rel="noopener"><?= e($m['autor']) ?></a> vía Sketchfab</span>
+          <span class="sk3d-credit">Visualización 3D generada con Three.js</span>
         </div>
         <?php endforeach; ?>
       </div>
@@ -135,12 +132,14 @@ ob_start();
         <div class="sk3d-track-viewport" id="sk3dTrackViewport">
           <div class="sk3d-track" id="sk3dTrack">
             <?php foreach ($modelos as $i => $m): ?>
-            <div class="sk3d-slide<?= $i === 0 ? ' active' : '' ?>" data-index="<?= $i ?>" data-uid="<?= e($m['uid']) ?>" data-thumb="<?= e($m['thumb']) ?>" data-nombre="<?= e($m['nombre']) ?>" style="--sk-accent:<?= e($m['accent']) ?>" onclick="sk3dGoTo(<?= $i ?>)">
+            <div class="sk3d-slide<?= $i === 0 ? ' active' : '' ?>" data-index="<?= $i ?>" data-slug="<?= e($m['slug']) ?>" data-nombre="<?= e($m['nombre']) ?>" style="--sk-accent:<?= e($m['accent']) ?>" onclick="sk3dGoTo(<?= $i ?>)">
               <div class="sk3d-slide-caption">
                 <span class="sk3d-slide-name"><?= e($m['nombre']) ?></span>
               </div>
               <div class="sk3d-slide-viewport">
-                <img src="<?= e($m['thumb']) ?>" alt="<?= e($m['nombre']) ?>" loading="lazy">
+                <div class="sk3d-placeholder">
+                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                </div>
               </div>
             </div>
             <?php endforeach; ?>
@@ -179,20 +178,16 @@ ob_start();
     <div class="sk3d-grid">
       <?php foreach ($modelos as $m): ?>
       <div class="sk3d-card" style="--sk-accent:<?= e($m['accent']) ?>">
-        <div class="sk3d-viewport" data-uid="<?= e($m['uid']) ?>">
-          <img src="<?= e($m['thumb']) ?>" alt="<?= e($m['nombre']) ?>" loading="lazy">
-          <button type="button" class="sk3d-play" onclick="loadSketchfabModel(this)" aria-label="Reproducir modelo 3D de <?= e($m['nombre']) ?>">
-            <span class="sk3d-play-ico">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            </span>
-            <span class="sk3d-play-lbl">Clic para cargar el modelo 3D</span>
-          </button>
+        <div class="sk3d-viewport nda-auto3d" data-slug="<?= e($m['slug']) ?>">
+          <div class="sk3d-placeholder">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          </div>
         </div>
         <div class="sk3d-body">
           <h3><?= e($m['nombre']) ?></h3>
           <p><?= e($m['desc']) ?></p>
-          <span class="sk3d-credit">Modelo 3D: <a href="<?= e($m['model_url']) ?>" target="_blank" rel="noopener"><?= e($m['autor']) ?></a> vía Sketchfab</span>
-          <a class="sk3d-link" href="?url=<?= e($m['slug']) ?>">Ver información completa →</a>
+          <span class="sk3d-credit">Visualización 3D generada con Three.js</span>
+          <a class="sk3d-link" href="?url=<?= e($m['infoUrl'] ?? $m['slug']) ?>">Ver información completa →</a>
         </div>
       </div>
       <?php endforeach; ?>
@@ -201,6 +196,8 @@ ob_start();
 </section>
 
 </div>
+
+<script type="module" src="<?= asset('js/disaster3d.js') ?>"></script>
 
 <?php
 $content = ob_get_clean();

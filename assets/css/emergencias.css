@@ -1,0 +1,171 @@
+/* ============================================================
+   PUNTOS DE INTERES ANTE EMERGENCIAS — hospitales, albergues,
+   policía y bomberos. Usa la paleta ya predeterminada del sitio
+   (definida en :root / [data-theme="light"] de style.css), sin
+   colores nuevos, para verse consistente en modo claro y oscuro.
+   ============================================================ */
+
+.emg-page { color: var(--text); padding-bottom: 60px; }
+
+.emg-topnav { margin-bottom: 18px; }
+.emg-back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--fn); font-size: .82rem; font-weight: 600;
+    color: var(--text2); text-decoration: none; transition: color var(--tr) var(--ez);
+}
+.emg-back-link:hover { color: var(--acc3); }
+
+.emg-header { margin-bottom: 22px; }
+.emg-eyebrow {
+    font-family: var(--fn); font-size: .72rem; font-weight: 700; letter-spacing: .09em;
+    text-transform: uppercase; color: var(--acc3); margin-bottom: 8px;
+}
+.emg-title {
+    font-family: var(--fd); font-size: clamp(1.5rem, 3vw, 2.1rem); font-weight: 800;
+    letter-spacing: -.02em; margin-bottom: 8px;
+}
+.emg-title .emg-acc { color: var(--red); }
+.emg-sub { font-family: var(--fn); font-size: .9rem; color: var(--text2); line-height: 1.6; max-width: 640px; }
+
+/* ---------- MAPA + PANEL ---------- */
+.poi-layout {
+    display: grid;
+    grid-template-columns: 1.35fr 0.95fr;
+    gap: 20px;
+    align-items: stretch;
+}
+
+.poi-map-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    box-shadow: var(--sh);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+.poi-map-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-left: auto;
+}
+.poi-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--text3);
+}
+#poiMap {
+    flex: 1;
+    min-height: 460px;
+    background: var(--bg2);
+}
+
+.poi-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 0;
+}
+.poi-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.poi-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--fn);
+    font-size: 0.74rem;
+    font-weight: 600;
+    padding: 7px 12px;
+    border-radius: 100px;
+    border: 1px solid var(--border2);
+    background: var(--card);
+    color: var(--text2);
+    cursor: pointer;
+    transition: all var(--tr) var(--ez);
+}
+.poi-filter-btn:hover { border-color: var(--border3); color: var(--text); }
+.poi-filter-btn.active { color: #fff; border-color: transparent; }
+.poi-filter-btn[data-cat="hospital"].active { background: var(--red); }
+.poi-filter-btn[data-cat="albergue"].active { background: var(--purple); }
+.poi-filter-btn[data-cat="policia"].active { background: var(--blue); }
+.poi-filter-btn[data-cat="bomberos"].active { background: var(--acc3); }
+
+.poi-list {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-right: 2px;
+    scrollbar-width: thin;
+}
+.poi-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--border2);
+    border-radius: var(--r);
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all var(--tr) var(--ez);
+}
+.poi-item:hover { border-color: var(--border3); transform: translateX(2px); }
+.poi-item.cat-hospital { border-left-color: var(--red); }
+.poi-item.cat-albergue { border-left-color: var(--purple); }
+.poi-item.cat-policia { border-left-color: var(--blue); }
+.poi-item.cat-bomberos { border-left-color: var(--acc3); }
+.poi-item-icon {
+    width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 0.85rem;
+}
+.poi-item.cat-hospital .poi-item-icon { background: rgba(184, 67, 63, .14); color: var(--red); }
+.poi-item.cat-albergue .poi-item-icon { background: rgba(107, 115, 160, .16); color: var(--purple); }
+.poi-item.cat-policia .poi-item-icon { background: var(--gB); color: var(--blue); }
+.poi-item.cat-bomberos .poi-item-icon { background: var(--gA); color: var(--acc3); }
+.poi-item-body { min-width: 0; flex: 1; }
+.poi-item-name { font-family: var(--fn); font-size: 0.84rem; font-weight: 700; color: var(--text); }
+.poi-item-cat { font-family: var(--fn); font-size: 0.64rem; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px; }
+.poi-item-addr { font-family: var(--fn); font-size: 0.76rem; color: var(--text2); margin-top: 4px; line-height: 1.4; }
+.poi-item-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+.poi-item-dist { font-family: var(--fn); font-size: 0.72rem; font-weight: 700; color: var(--teal); }
+.poi-item-phone { font-family: var(--fn); font-size: 0.72rem; color: var(--text3); }
+.poi-item-go { font-family: var(--fn); font-size: 0.72rem; font-weight: 600; color: var(--acc3); text-decoration: none; }
+.poi-item-go:hover { text-decoration: underline; }
+.poi-empty, .poi-error { padding: 28px 14px; text-align: center; font-family: var(--fn); font-size: 0.82rem; color: var(--text3); }
+
+.poi-marker {
+    width: 30px; height: 30px; border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg); display: flex; align-items: center; justify-content: center;
+    border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0, 0, 0, .35);
+}
+.poi-marker i { transform: rotate(45deg); color: #fff; font-size: 13px; }
+.poi-marker.user-loc {
+    border-radius: 50%; background: var(--blue); width: 18px; height: 18px;
+    transform: none; box-shadow: 0 0 0 6px rgba(61, 111, 143, .25);
+}
+
+/* ---------- AVISO DE DATOS ---------- */
+.poi-disclaimer {
+    display: flex; align-items: flex-start; gap: 10px; margin-top: 16px;
+    background: var(--card2); border: 1px solid var(--border); border-radius: var(--r);
+    padding: 12px 16px; font-family: var(--fn); font-size: .78rem; color: var(--text2); line-height: 1.55;
+}
+.poi-disclaimer svg { color: var(--acc3); flex-shrink: 0; margin-top: 2px; }
+.poi-disclaimer strong { color: var(--text); }
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 900px) {
+    .poi-layout { grid-template-columns: 1fr; }
+    #poiMap { min-height: 320px; }
+    .poi-list { max-height: 360px; }
+}

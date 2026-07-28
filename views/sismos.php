@@ -113,13 +113,13 @@ ob_start();
     <div class="sec-hd">
       <div class="sec-eyebrow">Mapa de Riesgo · El Salvador</div>
       <h2 class="sec-title">Zona <span class="acc">Sísmica</span></h2>
-      <p class="sec-sub">Zonas de mayor actividad sísmica, volcanes y riesgos asociados — datos de MARN, USGS e IOC-UNESCO</p>
+      <p class="sec-sub">Zonas de mayor actividad sísmica, volcanes y riesgos asociados — datos de MARN, USGS, EMSC e IOC-UNESCO</p>
     </div>
     <div class="map-container">
       <div class="map-ctrl-bar">
         <button class="mc-btn on" data-layer="seismic">Zonas sísmicas</button>
         <button class="mc-btn" data-layer="volcanic">Volcanes</button>
-        <button class="mc-btn" data-layer="quakes">Sismos recientes (USGS)</button>
+        <button class="mc-btn" data-layer="quakes">Sismos recientes (USGS+EMSC)</button>
         <button class="mc-btn" data-layer="flood">Riesgo de tsunami</button>
         <button class="mc-btn" data-layer="slides">Deslizamientos</button>
         <button class="mc-btn" data-layer="safe">Zonas seguras</button>
@@ -144,13 +144,13 @@ ob_start();
     <div class="rt-monitor-hero">
       <div class="rtm-top-bar">
         <div class="rtm-badge active"><span class="live-dot"></span>Sistema Activo</div>
-        <span style="font-size:.7rem;color:var(--text3);margin-left:4px">Red Sísmica Nacional · MARN El Salvador · USGS</span>
+        <span style="font-size:.7rem;color:var(--text3);margin-left:4px">Red Sísmica Nacional · MARN El Salvador · USGS + EMSC</span>
         <span style="margin-left:auto;font-size:.7rem;color:var(--text3)" id="rtmClock">—</span>
       </div>
       <div class="rtm-title-area">
         <div class="rtm-eyebrow"> Sección 01</div>
         <div class="rtm-h2">Monitor Sísmico <span class="rtm-accent">en<br>Tiempo Real</span></div>
-        <div class="rtm-sub">Datos en vivo del USGS — Región de Centroamérica y El Salvador</div>
+        <div class="rtm-sub">Datos en vivo del USGS + EMSC — Región de Centroamérica y El Salvador</div>
       </div>
       <div class="rtm-stats-row">
         <div class="rtm-stat"><div class="rtm-stat-val acc" id="rtm-today">—</div><div class="rtm-stat-lbl">Sismos Hoy</div></div>
@@ -192,7 +192,7 @@ ob_start();
             <div style="font-size:.72rem;color:var(--text3);background:var(--bg3);padding:4px 10px;border-radius:100px;margin-left:8px;flex-shrink:0;white-space:nowrap" id="sgFreqLabel">Frecuencia media</div>
           </div>
           <div class="sg-wave-area">
-            <div class="sg-depth-badge">PROFUNDIDAD: <strong id="sgDepth">36 KM</strong></div>
+            <div class="sg-depth-badge">PROFUNDIDAD: <strong id="sgDepth">— KM</strong></div>
             <canvas id="mainSg"></canvas>
           </div>
           <div class="sg-controls">
@@ -207,6 +207,7 @@ ob_start();
               <span class="sg-mag-val" id="sgMagDisp">3</span>
             </div>
           </div>
+          <p style="font-size:.7rem;color:var(--text3);padding:0 14px 12px;margin:0;">Los controles de magnitud solo simulan cómo se vería la onda de un sismo de esa magnitud. La <strong>profundidad</strong> y las estadísticas de abajo son datos reales combinados del USGS y del EMSC (European-Mediterranean Seismological Centre) para la región de El Salvador — no se pueden editar, y se actualizan solas cada 30 segundos (o al instante si detectan un sismo nuevo).</p>
           <div class="sg-stats-bar">
             <div class="sgstat"><div class="sgstat-lbl">último Evento</div><div class="sgstat-val acc" id="sg-last-mag">M—</div><div class="sgstat-sub" id="sg-last-loc">—</div></div>
             <div class="sgstat"><div class="sgstat-lbl">Profundidad</div><div class="sgstat-val" id="sg-depth-v">— km</div><div class="sgstat-sub" id="sg-depth-l">—</div></div>
@@ -215,8 +216,8 @@ ob_start();
           </div>
         </div>
         <div style="margin-top:14px;background:var(--card);border:1px solid var(--border2);border-radius:var(--r);overflow:hidden" id="quakeFeed-wrap">
-          <div class="phdr"><span class="ldot"></span>Sismos Recientes — USGS API <button class="sg-reset" id="refreshQ" style="margin-left:auto;padding:4px 11px"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></button></div>
-          <div id="quakeFeed"><div class="loading-s"><div class="spin"></div>Cargando datos USGS…</div></div>
+          <div class="phdr"><span class="ldot"></span>Sismos Recientes — USGS + EMSC <span id="quakeUpdatedAt" style="margin-left:auto;font-size:.68rem;color:var(--text3)">cargando…</span><button class="sg-reset" id="refreshQ" style="margin-left:8px;padding:4px 11px"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></button></div>
+          <div id="quakeFeed"><div class="loading-s"><div class="spin"></div>Cargando datos USGS + EMSC…</div></div>
         </div>
       </div>
       <div class="side-mini">

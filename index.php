@@ -90,11 +90,12 @@ function currentUser() {
             'institucion_id'       => $_SESSION['institucion_id'] ?? null,
             'institucion_nombre'   => $_SESSION['institucion_nombre'] ?? null,
             'estado_institucional' => $_SESSION['estado_institucional'] ?? 'ninguno',
+            'foto_perfil'          => $_SESSION['foto_perfil'] ?? null,
         ];
         try {
             $db = getDB();
             $stmt = $db->prepare("
-                SELECT u.role, u.institucion_id, u.estado_institucional, i.nombre AS institucion_nombre
+                SELECT u.role, u.institucion_id, u.estado_institucional, u.foto_perfil, i.nombre AS institucion_nombre
                 FROM usuarios u
                 LEFT JOIN instituciones i ON i.instituciones_id = u.institucion_id
                 WHERE u.usuarios_id = ?
@@ -107,6 +108,7 @@ function currentUser() {
                 $_SESSION['institucion_id'] = $row['institucion_id'];
                 $_SESSION['institucion_nombre'] = $row['institucion_nombre'];
                 $_SESSION['estado_institucional'] = $row['estado_institucional'];
+                $_SESSION['foto_perfil'] = $row['foto_perfil'];
             } else {
                 // Usuario ya no existe en la BD: cerramos sesion para evitar errores.
                 $_SESSION = [];
@@ -129,6 +131,7 @@ function currentUser() {
         'institucion_id'        => $fresh['institucion_id'],
         'institucion_nombre'    => $fresh['institucion_nombre'],
         'estado_institucional'  => $fresh['estado_institucional'],
+        'foto_perfil'           => $fresh['foto_perfil'] ?? null,
     ];
 }
 
@@ -212,6 +215,7 @@ $routeMap = [
     'monitoreo'   => ['MainController', 'monitoreo'],
     'clima'       => ['MainController', 'clima'],
     'luna'        => ['MainController', 'luna'],
+    'emergencias' => ['MainController', 'emergencias'],
     'arduino'     => ['MainController', 'arduino'],
     'resources'   => ['MainController', 'recursos'],
     'quehacer'    => ['MainController', 'quehacer'],

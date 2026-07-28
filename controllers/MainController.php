@@ -78,6 +78,14 @@ class MainController {
         view('monitoreo/luna', $data);
     }
 
+    public function emergencias() {
+        $data = [
+            'title' => 'Puntos de Emergencia - NDA',
+            'user' => currentUser()
+        ];
+        view('monitoreo/emergencias', $data);
+    }
+
     public function arduino() {
         $data = [
             'title' => 'Sismógrafo Arduino - NDA',

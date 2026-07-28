@@ -70,7 +70,7 @@
     padding: 10px 24px 26px; margin-bottom: 20px;
 }
 .luna-hero-glow {
-    position: absolute; top: 10%; left: 50%; width: 280px; height: 280px;
+    position: absolute; top: 10%; left: 50%; width: 340px; height: 340px;
     transform: translateX(-50%); border-radius: 50%;
     background: radial-gradient(circle, var(--gT), transparent 70%);
     pointer-events: none; z-index: 0;
@@ -80,11 +80,11 @@
     display: flex; align-items: center; justify-content: center; gap: 30px;
 }
 .luna-hero-center {
-    flex: 0 1 420px; min-width: 0;
+    flex: 0 1 480px; min-width: 0;
     display: flex; flex-direction: column; align-items: center; text-align: center;
 }
 .luna-moon3d {
-    width: 260px; height: 260px; max-width: 70vw; max-height: 70vw;
+    width: 320px; height: 320px; max-width: 75vw; max-height: 75vw;
     position: relative; cursor: grab; overflow: visible;
 }
 .luna-moon3d canvas { display: block; width: 100%; height: 100%; }
@@ -234,6 +234,6 @@
     .lps-btn { width: calc(50% - 3px); }
     .luna-next-cards { grid-template-columns: repeat(2, 1fr); }
     .luna-loc-line { font-size: 1.2rem; }
-    .luna-moon3d { width: 200px; height: 200px; }
+    .luna-moon3d { width: 240px; height: 240px; }
     .luna-phase-name { font-size: 1.35rem; }
 }

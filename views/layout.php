@@ -57,6 +57,19 @@ function ensureThreeLoaded() {
     return __ndaThreeLoading;
 }
 </script>
+<!-- Import map para el modulo ES de la Galeria 3D (assets/js/disaster3d.js),
+     que usa "import ... from 'three'" + GLTFLoader en vez del build UMD de
+     arriba (ensureThreeLoaded/window.THREE), porque GLTFLoader solo existe
+     como modulo ES en three.js moderno. Debe declararse antes de cualquier
+     <script type="module"> que lo use (por eso vive en el <head>). -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
@@ -148,6 +161,7 @@ $navDisplayName = $isLoggedIn
         <a class="ndd-item" href="?url=clima">Clima</a>
         <a class="ndd-item" href="?url=luna">Luna</a>
         <a class="ndd-item" href="?url=monitoreo#zonas-riesgo">Riesgo y Tsunamis</a>
+        <a class="ndd-item" href="?url=emergencias">Puntos de Emergencia</a>
       </div>
     </div>
     <a href="?url=blog">Blog</a>
@@ -203,7 +217,11 @@ $navDisplayName = $isLoggedIn
       <div class="nav-user-menu" id="navUserMenu" style="display:flex">
         <div class="nav-user" id="navUserBadge" style="cursor:pointer" onclick="toggleUserDD()">
           <div class="nav-avatar" id="navAvatar">
-            <?= strtoupper(substr($_SESSION['user_name'], 0, 1)) ?>
+            <?php if (!empty($__navUser['foto_perfil'])): ?>
+              <img src="<?= e($__navUser['foto_perfil']) ?>" alt="">
+            <?php else: ?>
+              <?= strtoupper(substr($_SESSION['user_name'], 0, 1)) ?>
+            <?php endif; ?>
           </div>
           <span id="navUserName"><?= htmlspecialchars($navDisplayName) ?></span>
           <span style="font-size:.6rem;color:var(--text3)">▾</span>
@@ -291,7 +309,7 @@ $navDisplayName = $isLoggedIn
         <p>Natural Disaster Alert — Plataforma educativa para la comunidad escolar de El Salvador. Datos en tiempo real y simulaciones interactivas.</p>
       </div>
       <div class="ftc"><h5>Secciones</h5><a href="?url=sismos">Monitor Sísmico</a><a href="?url=home#placas">Placas Tectónicas</a><a href="?url=home#timeline">Historia</a><a href="?url=luna">Fases Lunares</a><a href="?url=home#zona-sismica">Mapa de Peligros</a><a href="?url=quehacer">¿Qué hacer AHORA?</a></div>
-      <div class="ftc"><h5>Fuentes</h5><a href="https://earthquake.usgs.gov" target="_blank">USGS Earthquakes</a><a href="https://www.marn.gob.sv" target="_blank">MARN El Salvador</a><a href="https://api.open-meteo.com" target="_blank">Open-Meteo API</a><a href="https://api.sunrise-sunset.org" target="_blank">Sunrise-Sunset API</a></div>
+      <div class="ftc"><h5>Fuentes</h5><a href="https://earthquake.usgs.gov" target="_blank">USGS Earthquakes</a><a href="https://www.emsc-csem.org" target="_blank">EMSC</a><a href="https://www.marn.gob.sv" target="_blank">MARN El Salvador</a><a href="https://api.open-meteo.com" target="_blank">Open-Meteo API</a><a href="https://api.sunrise-sunset.org" target="_blank">Sunrise-Sunset API</a></div>
     </div>
     <div class="ft-btm"><p>© 2026 svNDA — Natural Disaster Alert · Proyecto educativo El Salvador · Proyecto con fines educativos</p></div>
   </div>

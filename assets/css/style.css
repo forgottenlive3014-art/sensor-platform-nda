@@ -303,6 +303,13 @@ canvas {
     font-size: 0.7rem;
     color: #fff;
     font-weight: 700;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.nav-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .theme-btn {
@@ -1263,6 +1270,39 @@ canvas {
     font-size: 0.68rem;
     color: var(--text3);
     white-space: nowrap;
+}
+
+/* Sismo nuevo detectado en el ultimo sondeo (loadQuakes en app.js) */
+.qfi-new {
+    border-color: var(--acc);
+    animation: qfiNewPulse 2.4s ease-out 1;
+}
+@keyframes qfiNewPulse {
+    0% { box-shadow: 0 0 0 0 var(--gA); }
+    100% { box-shadow: 0 0 0 14px rgba(255, 85, 0, 0); }
+}
+.qfi-new-tag {
+    display: inline-block;
+    background: var(--acc);
+    color: #fff;
+    font-size: 0.58rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    padding: 1px 6px;
+    border-radius: 100px;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+
+/* Resalta brevemente un stat cuando el USGS reporta un sismo nuevo desde el
+   ultimo sondeo (ver loadQuakes/setInterval en app.js) -- confirma
+   visualmente que el dato acaba de refrescarse solo, sin intervencion. */
+.nda-flash {
+    animation: ndaFlash 1.6s ease-out 1;
+}
+@keyframes ndaFlash {
+    0% { color: var(--acc); text-shadow: 0 0 18px var(--gA); }
+    100% { color: inherit; text-shadow: none; }
 }
 
 /* ---------- PLATES ---------- */
@@ -3219,24 +3259,25 @@ canvas {
 }
 .ftb p {
     color: var(--text3);
-    font-size: 0.82rem;
-    margin-top: 9px;
+    font-size: 0.85rem;
+    margin-top: 10px;
     max-width: 250px;
-    line-height: 1.65;
+    line-height: 1.7;
 }
 .ftc h5 {
-    font-size: 0.7rem;
+    font-family: var(--fd);
+    font-size: 0.82rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--text2);
-    margin-bottom: 13px;
+    letter-spacing: 0.08em;
+    color: var(--text);
+    margin-bottom: 15px;
 }
 .ftc a {
     display: block;
     color: var(--text3);
-    font-size: 0.82rem;
-    margin-bottom: 7px;
+    font-size: 0.84rem;
+    margin-bottom: 9px;
     transition: color var(--tr);
 }
 .ftc a:hover {
@@ -3244,8 +3285,9 @@ canvas {
 }
 .ft-btm {
     text-align: center;
-    font-size: 0.72rem;
+    font-size: 0.75rem;
     color: var(--text4);
+    letter-spacing: 0.02em;
 }
 
 /* ---------- SCROLL TOP ---------- */

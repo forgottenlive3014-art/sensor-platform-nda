@@ -27,7 +27,13 @@ $roleLabel = $roleLabels[$profileUser['role']] ?? $profileUser['role'];
     <?php endif; ?>
 
     <div class="profile-head">
-        <div class="profile-avatar"><?= strtoupper(substr($profileUser['nombre'], 0, 1)) ?></div>
+        <div class="profile-avatar">
+            <?php if (!empty($profileUser['foto_perfil'])): ?>
+                <img src="<?= e($profileUser['foto_perfil']) ?>" alt="">
+            <?php else: ?>
+                <?= strtoupper(substr($profileUser['nombre'], 0, 1)) ?>
+            <?php endif; ?>
+        </div>
         <div>
             <h1><?= e($profileUser['nombre']) ?></h1>
             <p><?= e($profileUser['email']) ?></p>
@@ -42,8 +48,26 @@ $roleLabel = $roleLabels[$profileUser['role']] ?? $profileUser['role'];
 
     <div class="profile-card">
         <h2>Datos personales</h2>
-        <form method="POST" action="?url=profile/update" class="profile-form">
+        <form method="POST" action="?url=profile/update" class="profile-form" enctype="multipart/form-data">
             <?= csrfField() ?>
+            <div class="profile-field">
+                <label>Foto de perfil</label>
+                <div class="profile-photo-row">
+                    <div class="profile-photo-preview" id="profilePhotoPreview">
+                        <?php if (!empty($profileUser['foto_perfil'])): ?>
+                            <img src="<?= e($profileUser['foto_perfil']) ?>" alt="" id="profilePhotoImg">
+                        <?php else: ?>
+                            <span id="profilePhotoInitial"><?= strtoupper(substr($profileUser['nombre'], 0, 1)) ?></span>
+                            <img src="" alt="" id="profilePhotoImg" style="display:none">
+                        <?php endif; ?>
+                    </div>
+                    <div>
+                        <label for="profilePhotoInput" class="profile-btn profile-btn-out" style="cursor:pointer;display:inline-block;">Cambiar foto</label>
+                        <input type="file" name="foto" id="profilePhotoInput" accept="image/png,image/jpeg,image/webp" style="display:none">
+                        <p class="profile-hint" style="margin:6px 0 0;">JPG, PNG o WEBP, máx. 5MB.</p>
+                    </div>
+                </div>
+            </div>
             <div class="profile-field">
                 <label>Nombre completo</label>
                 <input type="text" name="name" value="<?= e($profileUser['nombre']) ?>" required>
@@ -189,7 +213,11 @@ $roleLabel = $roleLabels[$profileUser['role']] ?? $profileUser['role'];
 .profile-alert.error { background: rgba(255,59,63,.12); border:1px solid rgba(255,59,63,.3); color: var(--red); }
 .profile-alert.success { background: rgba(107,161,90,.12); border:1px solid rgba(107,161,90,.3); color: var(--green); }
 .profile-head { display:flex; align-items:center; gap:18px; margin-bottom:28px; }
-.profile-avatar { width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg,var(--acc),var(--acc3)); color:#fff; display:flex; align-items:center; justify-content:center; font-family:var(--fd); font-size:1.6rem; font-weight:700; flex-shrink:0; }
+.profile-avatar { width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg,var(--acc),var(--acc3)); color:#fff; display:flex; align-items:center; justify-content:center; font-family:var(--fd); font-size:1.6rem; font-weight:700; flex-shrink:0; overflow:hidden; }
+.profile-avatar img { width:100%; height:100%; object-fit:cover; }
+.profile-photo-row { display:flex; align-items:center; gap:16px; }
+.profile-photo-preview { width:72px; height:72px; border-radius:50%; background:linear-gradient(135deg,var(--acc),var(--acc3)); color:#fff; display:flex; align-items:center; justify-content:center; font-family:var(--fd); font-size:1.7rem; font-weight:700; flex-shrink:0; overflow:hidden; border:2px solid var(--border2); }
+.profile-photo-preview img { width:100%; height:100%; object-fit:cover; }
 .profile-head h1 { font-family:var(--fd); font-size:1.3rem; color:var(--text); margin-bottom:2px; }
 .profile-head p { color:var(--text2); font-size:.85rem; margin-bottom:8px; }
 .profile-role-badge { display:inline-flex; align-items:center; gap:5px; background:var(--card2); border:1px solid var(--border2); color:var(--text2); font-size:.72rem; font-weight:600; padding:4px 10px; border-radius:100px; margin-right:6px; }
@@ -230,6 +258,23 @@ $roleLabel = $roleLabels[$profileUser['role']] ?? $profileUser['role'];
 
 <script>
 (function(){
+    var photoInput = document.getElementById('profilePhotoInput');
+    if (photoInput) {
+        photoInput.addEventListener('change', function(){
+            var file = photoInput.files && photoInput.files[0];
+            if (!file) return;
+            var reader = new FileReader();
+            reader.onload = function(e){
+                var img = document.getElementById('profilePhotoImg');
+                var initial = document.getElementById('profilePhotoInitial');
+                img.src = e.target.result;
+                img.style.display = 'block';
+                if (initial) initial.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
     var search = document.getElementById('joinInstSearch');
     var list = document.getElementById('joinInstList');
     var hidden = document.getElementById('joinInstId');

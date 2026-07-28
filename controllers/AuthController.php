@@ -785,6 +785,25 @@ class AuthController {
         ]);
     }
 
+    // Guarda una foto de perfil subida en assets/media/uploads/perfiles/ y
+    // devuelve la ruta relativa (o false si el archivo no es una imagen valida).
+    // Disponible para cualquier rol (a diferencia de DocenteController::storeUploadedPhoto,
+    // que solo aplica al flujo especifico de docentes en el modulo escolar).
+    private function storeUploadedPhoto($file) {
+        $allowed = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+        $mime = mime_content_type($file['tmp_name']);
+        if (!isset($allowed[$mime])) return false;
+        if ($file['size'] > 5 * 1024 * 1024) return false;
+
+        $dir = __DIR__ . '/../assets/media/uploads/perfiles';
+        if (!is_dir($dir)) mkdir($dir, 0755, true);
+
+        $name = uniqid('perfil_', true) . '.' . $allowed[$mime];
+        move_uploaded_file($file['tmp_name'], $dir . '/' . $name);
+
+        return 'assets/media/uploads/perfiles/' . $name;
+    }
+
     public function updateProfile() {
         if (!isLoggedIn()) { redirect('login'); return; }
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') { redirect('profile'); return; }
@@ -810,9 +829,25 @@ class AuthController {
             return;
         }
 
+        $fotoPath = null;
+        if (!empty($_FILES['foto']['name']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+            $fotoPath = $this->storeUploadedPhoto($_FILES['foto']);
+            if ($fotoPath === false) {
+                $_SESSION['error'] = 'La imagen no es válida (usa JPG, PNG o WEBP, máx. 5MB).';
+                redirect('profile');
+                return;
+            }
+        }
+
         $db = getDB();
-        $stmt = $db->prepare("UPDATE usuarios SET nombre = ?, username = ?, telefono = ? WHERE usuarios_id = ?");
-        $stmt->execute([$name, $username, $telefono ?: null, $_SESSION['user_id']]);
+        if ($fotoPath !== null) {
+            $stmt = $db->prepare("UPDATE usuarios SET nombre = ?, username = ?, telefono = ?, foto_perfil = ? WHERE usuarios_id = ?");
+            $stmt->execute([$name, $username, $telefono ?: null, $fotoPath, $_SESSION['user_id']]);
+            $_SESSION['foto_perfil'] = $fotoPath;
+        } else {
+            $stmt = $db->prepare("UPDATE usuarios SET nombre = ?, username = ?, telefono = ? WHERE usuarios_id = ?");
+            $stmt->execute([$name, $username, $telefono ?: null, $_SESSION['user_id']]);
+        }
 
         $_SESSION['user_name'] = $name;
         $_SESSION['username'] = $username;

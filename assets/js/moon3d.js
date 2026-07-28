@@ -35,7 +35,7 @@
         const camera = new THREE.PerspectiveCamera(32, width / height, 0.1, 100);
 
         // Camara orbital manual (azimut/elevacion), sin dependencias externas.
-        let az = 0, el_ = 0.15, dist = 3.4;
+        let az = 0, el_ = 0.15, dist = 4.3;
         function updateCamera() {
             camera.position.set(
                 dist * Math.cos(el_) * Math.sin(az),
