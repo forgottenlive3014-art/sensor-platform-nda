@@ -348,6 +348,7 @@ document.addEventListener('DOMContentLoaded', function () {
 <script src="<?= asset('js/moon3d.js') ?>"></script>
 <script src="<?= asset('js/auth.js') ?>"></script>
 <script src="<?= asset('js/chatbot.js') ?>"></script>
+<script src="<?= asset('js/fact-bubble.js') ?>"></script>
 <script src="<?= asset('js/notifications.js') ?>"></script>
 <script src="<?= asset('js/translate.js') ?>"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>

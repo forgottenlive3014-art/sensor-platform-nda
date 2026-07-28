@@ -6229,6 +6229,40 @@ body { top: 0 !important; }
     .ndabot-panel { width: calc(100vw - 20px); right: 10px; bottom: 88px; }
 }
 
+/* ---------- BURBUJA "DATO CURIOSO" (fuera del panel de chat) ---------- */
+.nda-fact-bubble {
+    position: fixed; right: 24px; bottom: 104px; z-index: 9350;
+    width: 250px; max-width: calc(100vw - 32px);
+    background: var(--card); border: 1px solid var(--border2); border-radius: 16px;
+    box-shadow: var(--shl);
+    padding: 10px 30px 12px 14px;
+    opacity: 0; pointer-events: none;
+    transform: translateY(10px) scale(0.95);
+    transform-origin: bottom right;
+    transition: opacity 0.25s var(--ez), transform 0.25s var(--ez);
+}
+.nda-fact-bubble.show { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
+.nda-fact-bubble::after {
+    content: ''; position: absolute; bottom: -7px; right: 28px;
+    width: 14px; height: 14px; background: var(--card);
+    border-right: 1px solid var(--border2); border-bottom: 1px solid var(--border2);
+    transform: rotate(45deg);
+}
+.nda-fact-bubble-label {
+    display: inline-block; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.04em;
+    text-transform: uppercase; color: var(--acc); margin-bottom: 4px;
+}
+.nda-fact-bubble p { margin: 0; font-size: 0.78rem; line-height: 1.45; color: var(--text2); }
+.nda-fact-bubble-close {
+    position: absolute; top: 6px; right: 8px; background: none; border: none; cursor: pointer;
+    color: var(--text3); font-size: 1rem; line-height: 1; padding: 4px;
+}
+.nda-fact-bubble-close:hover { color: var(--text); }
+
+@media (max-width: 480px) {
+    .nda-fact-bubble { right: 12px; bottom: 84px; }
+}
+
 /* ============================================================
    HERO 3D — Globo sismico con scroll (Three.js / globe.gl)
    ============================================================ */

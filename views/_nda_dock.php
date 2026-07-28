@@ -40,6 +40,14 @@ $__dockPanelActive = ($__dockUrl === 'school/panel');
   </button>
 </div>
 
+<!-- Burbuja de "dato curioso": vive fuera del panel de chat, aparece junto
+     al dock cada cierto tiempo (variable) mostrando un dato distinto. -->
+<div class="nda-fact-bubble" id="ndaFactBubble" role="status" aria-live="polite">
+  <button type="button" class="nda-fact-bubble-close" id="ndaFactBubbleClose" aria-label="Cerrar dato curioso">&times;</button>
+  <span class="nda-fact-bubble-label">Dato curioso</span>
+  <p id="ndaFactBubbleText"></p>
+</div>
+
 <!-- Panel del chatbot: se abre flotando justo encima del dock -->
 <div class="ndabot-panel" id="ndabotPanel">
   <div class="ndabot-head">
