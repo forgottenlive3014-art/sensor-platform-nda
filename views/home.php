@@ -173,7 +173,8 @@ ob_start();
     <div class="tl-wrap"><div class="tl-line"></div><div class="tl-track" id="tlTrack"></div></div>
     <div class="tl-detail" id="tlDetail"></div>
     <div class="data-source-note">
-      <strong>Fuentes y respaldo de datos:</strong> Servicio Nacional de Estudios Territoriales (SNET/MARN), Universidad Centroamericana "José Simeón Cañas" (UCA), Ministerio de Educación de El Salvador y hemerotecas nacionales (La Prensa Gráfica, El Diario de Hoy). Cifras de víctimas y daños son aproximadas, recopiladas de registros históricos públicos — con fines educativos.
+      <strong>Fuentes y respaldo de datos:</strong> Servicio Nacional de Estudios Territoriales (SNET/MARN), Universidad Centroamericana "José Simeón Cañas" (UCA), 
+      Ministerio de Educación de El Salvador y hemerotecas nacionales (La Prensa Gráfica, El Diario de Hoy). 
     </div>
   </div>
 </section>
@@ -183,45 +184,53 @@ ob_start();
   <div class="wrap">
     <div class="sec-hd">
       <div class="sec-eyebrow">Explora NDA</div>
-      <h2 class="sec-title">Qué <span class="acc">encontrarás</span> en la página</h2>
+      <h2 class="sec-title">¿Qué <span class="acc">encontrarás</span> en la página?</h2>
       <p class="sec-sub">Un recorrido rápido por todo lo que la plataforma tiene para ti</p>
     </div>
     <div class="find-cards-grid">
       <a href="?url=clima" class="find-card">
-        <div class="find-card-visual" style="background:linear-gradient(135deg,#2d8fff,#3d6f8f)"><svg width="1.8em" height="1.8em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 0 0 0-9 6 6 0 0 0-11.3-1.5A5 5 0 0 0 6 19z"/><path d="M12 2v2M4.2 4.2l1.4 1.4"/></svg></div>
-        <div class="find-card-body"><h3>Clima en Tiempo Real</h3><p>Temperatura, pronóstico y mapa de lluvia en vivo, según tu ubicación real.</p><span class="fc-cta">Ver clima →</span></div>
+        <div class="find-card-visual"><video autoplay muted loop playsinline><source src="assets/media/video/clima.mp4" type="video/mp4"></video></div>
+        <div class="find-card-body"><h3>Clima en Tiempo Real</h3><p>Consulta la temperatura, el pronóstico y las condiciones meteorológicas en tiempo real para tu ubicación.</p><span class="fc-cta">Ver clima →</span></div>
       </a>
+
       <a href="?url=luna" class="find-card">
-        <div class="find-card-visual" style="background:linear-gradient(135deg,#4b3f72,#26314f)"><svg width="1.8em" height="1.8em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>
-        <div class="find-card-body"><h3>Fases de la Luna en 3D</h3><p>Modelo lunar en tiempo real, calendario de fases y datos astronómicos actualizados.</p><span class="fc-cta">Ver luna 3D →</span></div>
+        <div class="find-card-visual"><video autoplay muted loop playsinline><source src="assets/media/video/fasesdelaLuna.mp4" type="video/mp4"></video></div>
+        <div class="find-card-body"><h3>Fases de la Luna en 3D</h3><p>Explora el modelo lunar interactivo, las fases actuales y datos astronómicos actualizados diariamente.</p><span class="fc-cta">Ver luna 3D →</span></div>
       </a>
+
       <a href="?url=sismos" class="find-card">
-        <div class="find-card-visual" style="background:linear-gradient(135deg,#c98a3d,#b8433f)"><svg width="1.8em" height="1.8em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 12 7 12 9 18 13 4 16 16 18 12 22 12"/></svg></div>
-        <div class="find-card-body"><h3>Sismos: Cómo se Miden</h3><p>Magnitud vs. intensidad, escala de Richter y Mercalli, y el sismógrafo interactivo.</p><span class="fc-cta">Aprender más →</span></div>
+        <div class="find-card-visual"><video autoplay muted loop playsinline><source src="assets/media/video/sismo.mp4" type="video/mp4"></video></div>
+        <div class="find-card-body"><h3>Sismos: ¿Cómo se Miden?</h3><p>Aprende sobre magnitud, intensidad, escalas sísmicas y el funcionamiento de un sismógrafo interactivo.</p><span class="fc-cta">Aprender más →</span></div>
       </a>
+
       <a href="?url=sismos#zona-sismica" class="find-card">
-        <div class="find-card-visual" style="background:linear-gradient(135deg,#a85736,#5c3a24)"><svg width="1.8em" height="1.8em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21l4-13 4 13"/><circle cx="12" cy="6" r="1.4" fill="currentColor"/><path d="M12 6l-1.5 3M12 6l1.5 3"/></svg></div>
-        <div class="find-card-body"><h3>Volcanes de El Salvador</h3><p>Los 26 volcanes del país en el mapa, cuáles están activos y sus implicaciones regionales.</p><span class="fc-cta">Ver mapa →</span></div>
+        <div class="find-card-visual"><video autoplay muted loop playsinline><source src="assets/media/video/volcanerupcion.mp4" type="video/mp4"></video></div>
+        <div class="find-card-body"><h3>Volcanes de El Salvador</h3><p>Conoce los volcanes del país, su ubicación, actividad reciente y características más importantes.</p><span class="fc-cta">Ver mapa →</span></div>
       </a>
+
       <a href="?url=quehacer" class="find-card">
-        <div class="find-card-visual" style="background:linear-gradient(135deg,#d91a2a,#8a1420)"><svg width="1.8em" height="1.8em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
-        <div class="find-card-body"><h3>¿Qué hacer AHORA?</h3><p>Guías claras de qué hacer antes, durante y después de un sismo u otro desastre.</p><span class="fc-cta">Ver guía →</span></div>
+        <div class="find-card-visual"><video autoplay muted loop playsinline><source src="assets/media/video/quehacer.mp4" type="video/mp4"></video></div>
+        <div class="find-card-body"><h3>¿Qué hacer AHORA?</h3><p>Descubre las acciones recomendadas antes, durante y después de un sismo u otra emergencia.</p><span class="fc-cta">Ver guía →</span></div>
       </a>
+
       <a href="?url=sismos#quakeFeed" class="find-card">
-        <div class="find-card-visual" style="background:linear-gradient(135deg,#3d7d73,#22513f)"><svg width="1.8em" height="1.8em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="8" y2="18"/><line x1="12" y1="14" x2="12" y2="18"/><line x1="16" y1="14" x2="16" y2="18"/></svg></div>
-        <div class="find-card-body"><h3>Historial de Sismos Recientes</h3><p>Datos reales del USGS, actualizados y guardados en el sitio — no solo texto, con detalle de cada evento.</p><span class="fc-cta">Ver historial →</span></div>
+        <div class="find-card-visual"><video autoplay muted loop playsinline><source src="assets/media/video/historiasismo.mp4" type="video/mp4"></video></div>
+        <div class="find-card-body"><h3>Historial de Sismos Recientes</h3><p>Consulta los eventos sísmicos más recientes con información detallada y registros actualizados.</p><span class="fc-cta">Ver historial →</span></div>
       </a>
+
       <a href="?url=juegos" class="find-card">
-        <div class="find-card-visual" style="background:linear-gradient(135deg,#597d4f,#33502b)"><svg width="1.8em" height="1.8em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="6"/><line x1="7" y1="12" x2="11" y2="12"/><line x1="9" y1="10" x2="9" y2="14"/><circle cx="16" cy="10.5" r="1"/><circle cx="18.5" cy="13" r="1"/></svg></div>
-        <div class="find-card-body"><h3>Juegos y Trivias</h3><p>Pon a prueba lo aprendido con trivias y minijuegos sobre sismos, volcanes y prevención.</p><span class="fc-cta">Jugar →</span></div>
+        <div class="find-card-visual"><video autoplay muted loop playsinline><source src="assets/media/video/juegos.mp4" type="video/mp4"></video></div>
+        <div class="find-card-body"><h3>Juegos y Trivias</h3><p>Refuerza tus conocimientos mediante juegos interactivos y desafíos sobre prevención de desastres.</p><span class="fc-cta">Jugar →</span></div>
       </a>
+
       <a href="?url=arduino" class="find-card">
-        <div class="find-card-visual" style="background:linear-gradient(135deg,#335c67,#1c343b)"><svg width="1.8em" height="1.8em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><line x1="9" y1="2" x2="9" y2="6"/><line x1="15" y1="2" x2="15" y2="6"/><line x1="9" y1="18" x2="9" y2="22"/><line x1="15" y1="18" x2="15" y2="22"/><line x1="2" y1="9" x2="6" y2="9"/><line x1="2" y1="15" x2="6" y2="15"/><line x1="18" y1="9" x2="22" y2="9"/><line x1="18" y1="15" x2="22" y2="15"/></svg></div>
-        <div class="find-card-body"><h3>Sismógrafo de Arduino</h3><p>Cómo funciona nuestra maqueta de sensor de vibración (MPU-6050) y su lectura en tiempo real.</p><span class="fc-cta">Ver demo →</span></div>
+        <div class="find-card-visual"><video autoplay muted loop playsinline><source src="assets/media/video/sensor.mp4" type="video/mp4"></video></div>
+        <div class="find-card-body"><h3>Sismógrafo de Arduino</h3><p>Observa cómo funciona el sensor MPU-6050 y la detección de vibraciones en tiempo real.</p><span class="fc-cta">Ver demo →</span></div>
       </a>
     </div>
   </div>
 </section>
+
 
 <!-- GESTION ESCOLAR (teaser) -->
 <section class="sec sec-dark" id="gestion-escolar-teaser">

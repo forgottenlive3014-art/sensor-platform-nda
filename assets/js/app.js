@@ -993,40 +993,123 @@ if (document.getElementById('refreshQ')) document.getElementById('refreshQ').onc
   
 
 const tlData = [
-    { year: '1854', title: 'Gran Terremoto de San Salvador', mag: '~6.5', deaths: '~100', region: 'San Salvador, Cuscatlán',
-        desc: 'Destruyó gran parte de la capital colonial. Los edificios de adobe y bahareque colapsaron masivamente, obligando a la reconstrucción del centro histórico.',
-        tags: [{ t: 'Histórico', c: '' }, { t: 'Adobe', c: 'o' }, { t: 'San Salvador', c: 'r' }],
-        stats: [{ v: '~6.5', l: 'Magnitud' }, { v: '~100', l: 'Fallecidos' }, { v: '1854', l: 'Año' }],
+    {
+        year: '1854',
+        title: 'Gran Terremoto de San Salvador',
+        mag: '~6.5',
+        deaths: '~100',
+        region: 'San Salvador, Cuscatlán',
+        desc: 'Un fuerte terremoto destruyó gran parte de la capital colonial, provocando el colapso de numerosas construcciones de adobe y bahareque. Los daños obligaron a reconstruir gran parte del centro histórico y marcaron uno de los primeros desastres sísmicos registrados en el país.',
+        tags: [
+            { t: 'Histórico', c: '' },
+            { t: 'Adobe', c: 'o' },
+            { t: 'San Salvador', c: 'r' }
+        ],
+        stats: [
+            { v: '~6.5', l: 'Magnitud' },
+            { v: '~100', l: 'Fallecidos' },
+            { v: '1854', l: 'Año' }
+        ],
         img: 'assets/media/img/1854.jpg'
     },
-    { year: '1917', title: 'Sismo y Erupción del Santa Ana', mag: '~6.7', deaths: '~150', region: 'Occidente, Sonsonate',
-        desc: 'Terremoto acompañado de erupción volcánica en el Santa Ana. Causó incendios y destrucción masiva en el occidente. Los daños se extendieron por múltiples departamentos.',
-        tags: [{ t: 'Volcánico', c: 'o' }, { t: 'Occidente', c: '' }, { t: 'M6.7', c: 'r' }],
-        stats: [{ v: '~6.7', l: 'Magnitud' }, { v: '~150', l: 'Fallecidos' }, { v: '1917', l: 'Año' }],
+
+    {
+        year: '1917',
+        title: 'Sismo y Erupción del Santa Ana',
+        mag: '~6.7',
+        deaths: '~150',
+        region: 'Occidente, Sonsonate',
+        desc: 'El terremoto coincidió con una intensa actividad volcánica del volcán Santa Ana, causando incendios, derrumbes y graves daños en varias ciudades del occidente del país. El desastre dejó importantes pérdidas materiales y humanas.',
+        tags: [
+            { t: 'Volcánico', c: 'o' },
+            { t: 'Occidente', c: '' },
+            { t: 'M6.7', c: 'r' }
+        ],
+        stats: [
+            { v: '~6.7', l: 'Magnitud' },
+            { v: '~150', l: 'Fallecidos' },
+            { v: '1917', l: 'Año' }
+        ],
         img: 'assets/media/img/1917.jpg'
     },
-    { year: '1965', title: 'Terremoto de San Salvador', mag: '6.2', deaths: '125', region: 'San Salvador, La Libertad',
-        desc: 'Sismo que causó daños significativos en la capital con 125 muertos y miles de damnificados. Evidenció la vulnerabilidad urbana y llevó a nuevas normativas de construcción.',
-        tags: [{ t: 'M 6.2', c: 'o' }, { t: 'Capital', c: '' }, { t: 'Normativa', c: 't' }],
-        stats: [{ v: '6.2', l: 'Magnitud' }, { v: '125', l: 'Fallecidos' }, { v: '1965', l: 'Año' }],
+
+    {
+        year: '1965',
+        title: 'Terremoto de San Salvador',
+        mag: '6.2',
+        deaths: '125',
+        region: 'San Salvador, La Libertad',
+        desc: 'Este sismo ocasionó daños estructurales en edificios públicos, viviendas y carreteras de la capital. La tragedia dejó cientos de víctimas y motivó la implementación de normas de construcción más resistentes a los terremotos.',
+        tags: [
+            { t: 'M 6.2', c: 'o' },
+            { t: 'Capital', c: '' },
+            { t: 'Normativa', c: 't' }
+        ],
+        stats: [
+            { v: '6.2', l: 'Magnitud' },
+            { v: '125', l: 'Fallecidos' },
+            { v: '1965', l: 'Año' }
+        ],
         img: 'assets/media/img/1965.jpg'
     },
-    { year: '1986', title: '10 de Octubre: El Gran Sismo', mag: '5.7', deaths: '1,500', region: 'San Salvador, AMSS',
-        desc: 'A las 11:49am un sismo de 5.7 destruyó colonias enteras. 1,500 muertos, 10,000 heridos, 100,000 sin hogar. La poca profundidad y el epicentro bajo la capital lo hicieron catastrófico.',
-        tags: [{ t: 'Catastrófico', c: 'r' }, { t: '10-Oct-1986', c: 'o' }, { t: 'Capital', c: '' }],
-        stats: [{ v: '5.7', l: 'Magnitud' }, { v: '1,500', l: 'Fallecidos' }, { v: '100k', l: 'Sin hogar' }],
+
+    {
+        year: '1986',
+        title: '10 de Octubre: El Gran Sismo',
+        mag: '5.7',
+        deaths: '1,500',
+        region: 'San Salvador, AMSS',
+        desc: 'Ocurrido a las 11:49 a. m., el terremoto tuvo un epicentro muy cercano a la capital y una profundidad reducida, lo que provocó el colapso de edificios, miles de heridos y más de cien mil personas sin hogar.',
+        tags: [
+            { t: 'Catastrófico', c: 'r' },
+            { t: '10-Oct-1986', c: 'o' },
+            { t: 'Capital', c: '' }
+        ],
+        stats: [
+            { v: '5.7', l: 'Magnitud' },
+            { v: '1,500', l: 'Fallecidos' },
+            { v: '100k', l: 'Sin hogar' }
+        ],
         img: 'assets/media/img/1986.jpeg'
     },
-    { year: '2001', title: 'La Doble Tragedia Nacional', mag: '7.7 / 6.6', deaths: '1,259', region: 'Todo El Salvador',
-        desc: '13 enero: M 7.7 — el más devastador del siglo. 1,200+ muertos, 8,000 heridos, 1.5 millones damnificados. Las Colinas fue sepultada. 13 febrero: M 6.6 golpeó cuando el país aún se recuperaba.',
-        tags: [{ t: 'M 7.7', c: 'r' }, { t: 'M 6.6', c: 'r' }, { t: 'Doble sismo', c: 'o' }],
-        stats: [{ v: '7.7', l: 'Magnitud' }, { v: '1,259', l: 'Fallecidos' }, { v: '1.5M', l: 'Damnificados' }],
+
+    {
+        year: '2001',
+        title: 'La Doble Tragedia Nacional',
+        mag: '7.7 / 6.6',
+        deaths: '1,259',
+        region: 'Todo El Salvador',
+        desc: 'Los terremotos del 13 de enero y 13 de febrero de 2001 afectaron todo el territorio nacional. Dejaron miles de fallecidos, enormes pérdidas económicas y millones de personas afectadas, convirtiéndose en uno de los mayores desastres de la historia salvadoreña.',
+        tags: [
+            { t: 'M 7.7', c: 'r' },
+            { t: 'M 6.6', c: 'r' },
+            { t: 'Doble sismo', c: 'o' }
+        ],
+        stats: [
+            { v: '7.7', l: 'Magnitud' },
+            { v: '1,259', l: 'Fallecidos' },
+            { v: '1.5M', l: 'Damnificados' }
+        ],
         img: 'assets/media/img/2001.jpg'
     },
-    { year: '2019', title: 'Enjambre Ilopango', mag: '4.9', deaths: '0', region: 'San Salvador, AMSS',
-        desc: 'Más de 1,200 sismos en una semana. El M 4.9 principal generó pánico en el AMSS. Autoridades evacuaron edificios preventivamente. Demuestra la importancia de la preparación continua.',
-        tags: [{ t: 'Enjambre', c: 'o' }, { t: 'AMSS', c: '' }, { t: '+1,200', c: 't' }],
-        stats: [{ v: '4.9', l: 'Magnitud' }, { v: '1,200+', l: 'Sismos/sem' }, { v: '2019', l: 'Año' }],
+
+    {
+        year: '2019',
+        title: 'Enjambre Sísmico de Ilopango',
+        mag: '4.9',
+        deaths: '0',
+        region: 'San Salvador, AMSS',
+        desc: 'Durante varios días se registraron más de 1,200 movimientos sísmicos en la zona de Ilopango. Aunque no hubo víctimas mortales, las autoridades realizaron evacuaciones preventivas y reforzaron el monitoreo de la actividad sísmica.',
+        tags: [
+            { t: 'Enjambre', c: 'o' },
+            { t: 'AMSS', c: '' },
+            { t: '+1,200', c: 't' }
+        ],
+        stats: [
+            { v: '4.9', l: 'Magnitud' },
+            { v: '1,200+', l: 'Sismos/sem' },
+            { v: '2019', l: 'Año' }
+        ],
         img: 'assets/media/img/2019.jpg'
     }
 ];
@@ -1059,11 +1142,14 @@ function renderTL() {
                 <h3>${e.title}</h3>
                 <p>${e.desc}</p>
                 <div class="tld-tags">${e.tags.map(t => `<span class="tlt ${t.c}">${t.t}</span>`).join('')}</div>
-                <div style="font-size:.76rem;color:var(--text3);margin-bottom:12px">📍 ${e.region}</div>
+                <div style="display:flex;align-items:center;gap:.45rem;font-size:.76rem;color:var(--text3);margin-bottom:12px"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em"> <path d="M21 10c0 6.5-9 13-9 13S3 16.5 3 10a9 9 0 1 1 18 0z"/> <circle cx="12" cy="10" r="3"/> </svg>
+    <span>${e.region}</span>
+</div>
                 <div class="tld-stats">${e.stats.map(s => `<div class="tlds"><div class="tlds-v">${s.v}</div><div class="tlds-l">${s.l}</div></div>`).join('')}</div>
                 <div class="tld-nav">
-                    ${tlActive > 0 ? `<button class="tldn-btn" onclick="setTL(${tlActive - 1})"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Anterior</button>` : ''}
-                    ${tlActive < tlData.length - 1 ? `<button class="tldn-btn" onclick="setTL(${tlActive + 1})">Siguiente ➡️</button>` : ''}
+                    ${tlActive > 0 ? `<button class="tldn-btn" onclick="setTL(${tlActive - 1})"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Anterior</button>` : ''}
+
+                    ${tlActive < tlData.length - 1 ? `<button class="tldn-btn" onclick="setTL(${tlActive + 1})">Siguiente <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>` : ''}
                 </div>
             </div>
         </div>

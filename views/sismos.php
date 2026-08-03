@@ -5,110 +5,548 @@ $extraCss = ['css/desastres-base.css'];
 ob_start();
 ?>
 
-<!-- BIG BANNER -->
-<section class="dis-bigbanner" style="--dis-accent:#c98a3d; background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/ElSalvadorslide.jpg')">
+<!-- ============================================================
+     BIG BANNER
+     ============================================================ -->
+<section class="dis-bigbanner" style="--dis-accent:#c98a3d; background-image:url('assets/media/img/SISMOS.png')">
   <div class="dis-bigbanner-overlay"></div>
   <div class="wrap dis-bigbanner-inner">
+    <div class="dis-bigbanner-badge">El Salvador · Cinturón de Fuego</div>
     <h2 class="dis-bigbanner-word">Sismos</h2>
     <div class="dis-bigbanner-sub">
       <span class="dis-bigbanner-rule"></span>
       <div>
-        <h3>¿Cómo se produce un sismo?</h3>
         <p>La subducción de la Placa de Cocos bajo la Placa del Caribe libera energía acumulada en forma de ondas sísmicas que hacen vibrar el suelo.</p>
-        <a href="#zona-sismica" class="dis-bigbanner-btn">Aprender más</a>
+        <a href="#que-es-un-sismo" class="dis-bigbanner-btn">Explorar</a>
       </div>
     </div>
   </div>
-  <a href="#zona-sismica" class="scroll-hint"><span>Scroll</span><div class="sh-arr"></div></a>
+  <a href="#que-es-un-sismo" class="scroll-hint"><span>Scroll</span><div class="sh-arr"></div></a>
 </section>
 
-<div class="wrap" style="padding-top: 100px;">
-  <div class="sec-hd">
-    <div class="sec-eyebrow">Sismología · El Salvador</div>
-    <h1 class="sec-title">¿Qué son los <span class="acc">sismos</span> y cómo se miden?</h1>
-    <p class="sec-sub">Todo lo que necesitas saber sobre la actividad sísmica salvadoreña, explicado de forma sencilla</p>
-  </div>
-</div>
-
-<!-- QUE SON LOS SISMOS / COMO SE MIDEN -->
-<section class="sec">
+<!-- ============================================================
+     SECCIÓN 1: ¿QUÉ ES UN SISMO? - CON IMAGEN
+     ============================================================ -->
+<section class="sec" id="que-es-un-sismo">
   <div class="wrap">
-    <div class="sismo-card-grid">
-      <div class="sismo-card" style="--accent:#c98a3d;">
-        <div class="sismo-thumb">
-          <div class="sismo-img" style="background:linear-gradient(135deg,#c98a3d,#8a5a24);">
-            <svg width="2.6em" height="2.6em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-          </div>
-          <span class="sismo-tag">Fundamentos</span>
+    <div class="sec-hd">
+      <div class="sec-eyebrow">Sismología</div>
+      <h2 class="sec-title">¿Qué es un <span class="acc">sismo</span>?</h2>
+      <p class="sec-sub">Etimología, definición y conceptos fundamentales</p>
+    </div>
+
+    <div class="sismo-hero-grid">
+      <div class="sismo-hero-text">
+        <div class="sismo-etymology">
+          <span class="etym-greek">σεισμός <small>· seísmos · "sacudida"</small></span>
+          <p class="etym-def">
+            Un <strong>sismo</strong> es un movimiento brusco de la Tierra causado por la liberación repentina de energía acumulada durante un largo tiempo en el interior del planeta. Esta energía viaja en forma de <strong>ondas sísmicas</strong> que hacen vibrar el suelo.
+          </p>
         </div>
-        <div class="sismo-body">
-          <h3>¿Qué es un sismo?</h3>
-          <p>Un sismo (o terremoto) es una liberación repentina de energía acumulada en la corteza terrestre, generalmente por el roce o choque entre placas tectónicas. Esa energía viaja en forma de ondas sísmicas que hacen vibrar el suelo. En El Salvador la mayoría ocurren por la <strong>subducción de la Placa de Cocos bajo la Placa del Caribe</strong>, aunque también existen fallas superficiales locales (como la Falla Metrópolis).</p>
-          <div class="sismo-meta">
-            <span class="mi">Causa principal: subducción Cocos–Caribe</span>
+        <div class="term-grid">
+          <div class="term-card">
+            <span class="term-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 6L12 12"/>
+                <path d="M12 12L16 16"/>
+              </svg>
+            </span>
+            <h4>Sismo</h4>
+            <p>Término general y técnico para cualquier vibración de la Tierra.</p>
+            <span class="term-tag">Técnico</span>
+          </div>
+          <div class="term-card">
+            <span class="term-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2L12 22"/>
+                <path d="M4 8L20 8"/>
+                <path d="M4 16L20 16"/>
+                <circle cx="12" cy="8" r="2"/>
+                <circle cx="12" cy="16" r="2"/>
+              </svg>
+            </span>
+            <h4>Temblor</h4>
+            <p>Movimiento sentido sin daños graves. Uso común en El Salvador.</p>
+            <span class="term-tag">Común</span>
+          </div>
+          <div class="term-card">
+            <span class="term-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12,2 15,9 22,9.5 16.5,14 18,21 12,17.5 6,21 7.5,14 2,9.5 9,9"/>
+              </svg>
+            </span>
+            <h4>Terremoto</h4>
+            <p>Sismo de gran magnitud con daños extensos y víctimas.</p>
+            <span class="term-tag">Destructivo</span>
           </div>
         </div>
       </div>
-      <div class="sismo-card" style="--accent:#b8433f;">
-        <div class="sismo-thumb">
-          <div class="sismo-img" style="background:linear-gradient(135deg,#b8433f,#7a2b28);">
-            <svg width="2.6em" height="2.6em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21l4-13 4 13"/><circle cx="12" cy="6" r="1.4" fill="currentColor"/></svg>
-          </div>
-          <span class="sismo-tag">Escalas</span>
-        </div>
-        <div class="sismo-body">
-          <h3>Magnitud vs. Intensidad</h3>
-          <p><strong>Magnitud (Richter / Momento):</strong> mide la energía liberada en el epicentro, un solo número por sismo. <strong>Intensidad (Mercalli):</strong> mide qué tanto se siente y el daño en un lugar específico — varía según distancia, profundidad y tipo de suelo.</p>
-          <div class="sismo-meta">
-            <span class="mi">Richter = energía · Mercalli = daño local</span>
+      <div class="sismo-hero-image">
+        <div class="sismo-image-card">
+          <div class="sismo-image-placeholder">
+            <img src="assets/media/img/ondasismica.jpg" alt="Representación de un sismo" loading="lazy">
+            <div class="sismo-image-overlay">
+              <span class="sismo-image-label">Liberación de energía sísmica</span>
+            </div>
           </div>
         </div>
       </div>
-      <div class="sismo-card" style="--accent:#3d7d73;">
-        <div class="sismo-thumb">
-          <div class="sismo-img" style="background:linear-gradient(135deg,#3d7d73,#22513f);">
-            <svg width="2.6em" height="2.6em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECCIÓN 2: ¿CÓMO SE PRODUCEN? - ESTILO EDITORIAL
+     ============================================================ -->
+<section class="sec sec-dark" id="como-se-producen">
+  <div class="wrap">
+    <div class="sec-hd center">
+      <div class="sec-eyebrow">Geodinámica</div>
+      <h2 class="sec-title">¿Cómo se producen los <span class="acc">sismos</span>?</h2>
+      <p class="sec-sub" style="margin:0 auto;">El proceso de acumulación y liberación de energía en la corteza terrestre</p>
+    </div>
+
+    <p class="sismo-intro-text">
+      La <strong>litosfera</strong> está fragmentada en piezas llamadas <strong>placas tectónicas</strong> que se mueven entre sí a velocidades de pocos centímetros al año. Estos movimientos acumulan energía que, al liberarse repentinamente, genera un sismo.
+    </p>
+
+    <div class="sismo-steps">
+      <!-- Paso 01 -->
+      <div class="sismo-step">
+        <div class="sismo-step-inner">
+          <div class="step-image">
+            <img src="assets/media/img/acumulaciontension.png" alt="Acumulación de tensión" loading="lazy">
           </div>
-          <span class="sismo-tag">Instrumentos</span>
+          <div class="step-content">
+            <div class="step-number">#01</div>
+            <h4>Acumulación de tensión</h4>
+            <p>Las placas tectónicas se mueven y rozan entre sí, acumulando energía en las zonas de contacto como deformación elástica en las rocas.</p>
+          </div>
         </div>
-        <div class="sismo-body">
-          <h3>¿Cómo se miden?</h3>
-          <p><strong>Sismógrafos y acelerómetros</strong> registran el movimiento del suelo en 3 ejes. Las ondas P (primarias) llegan primero; las ondas S (secundarias) llegan después y suelen causar más daño. La Red Sísmica de MARN opera más de 30 estaciones — esta plataforma incluye una maqueta con sensor Arduino, ver <a href="?url=arduino" style="color:var(--acc)">Sismógrafo Arduino</a>.</p>
-          <div class="sismo-meta">
-            <span class="mi">30+ estaciones · Red MARN</span>
+      </div>
+
+      <!-- Paso 02 -->
+      <div class="sismo-step">
+        <div class="sismo-step-inner">
+          <div class="step-image">
+            <img src="assets/media/img/TeoriaReboteElasticoReid.png" alt="Superación del límite elástico" loading="lazy">
+          </div>
+          <div class="step-content">
+            <div class="step-number">#02</div>
+            <h4>Superación del límite elástico</h4>
+            <p>Cuando la tensión supera la resistencia de las rocas, estas se fracturan o deslizan bruscamente, liberando toda la energía almacenada.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paso 03 -->
+      <div class="sismo-step">
+        <div class="sismo-step-inner">
+          <div class="step-image">
+            <img src="assets/media/img/liberacionenergia.png" alt="Liberación de energía" loading="lazy">
+          </div>
+          <div class="step-content">
+            <div class="step-number">#03</div>
+            <h4>Liberación de energía</h4>
+            <p>La energía liberada se propaga en forma de <strong>ondas sísmicas</strong> que viajan a través de la Tierra, causando el movimiento que percibimos.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paso 04 -->
+      <div class="sismo-step">
+        <div class="sismo-step-inner">
+          <div class="step-image">
+            <img src="assets/media/img/replicas.png" alt="Reacomodo y réplicas" loading="lazy">
+          </div>
+          <div class="step-content">
+            <div class="step-number">#04</div>
+            <h4>Reacomodo y réplicas</h4>
+            <p>Tras el sismo principal, las rocas se reacomodan generando <strong>réplicas</strong> de menor magnitud durante días o semanas.</p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Diagrama de ondas P y S -->
-    <div class="wave-diagram-card">
-      <div class="phdr"><span class="wdot"></span>Ondas P y S — cómo viajan desde el hipocentro</div>
-      <div class="wave-diagram-body">
-        <svg viewBox="0 0 700 220" preserveAspectRatio="xMidYMid meet" class="wave-diagram-svg">
-          <line x1="40" y1="180" x2="660" y2="180" stroke="var(--border2)" stroke-width="1.5"/>
-          <circle cx="60" cy="180" r="7" fill="var(--acc2)"/>
-          <text x="60" y="205" text-anchor="middle" fill="var(--text3)" font-size="11" font-family="Space Grotesk,sans-serif">Hipocentro</text>
-          <circle cx="330" cy="60" r="6" fill="var(--acc)"/>
-          <text x="330" y="42" text-anchor="middle" fill="var(--text3)" font-size="11" font-family="Space Grotesk,sans-serif">Estación sísmica</text>
-          <line x1="60" y1="180" x2="330" y2="60" stroke="var(--acc2)" stroke-width="2.5" stroke-dasharray="6,5">
-            <animate attributeName="stroke-dashoffset" from="0" to="-22" dur="0.6s" repeatCount="indefinite"/>
-          </line>
-          <text x="175" y="145" fill="var(--acc2)" font-size="12" font-weight="700" font-family="Space Grotesk,sans-serif">Onda P · ~6 km/s (llega primero)</text>
-          <path d="M60,180 C120,80 160,220 330,60" stroke="var(--teal)" stroke-width="2.5" fill="none" stroke-dasharray="8,6">
-            <animate attributeName="stroke-dashoffset" from="0" to="-28" dur="1s" repeatCount="indefinite"/>
-          </path>
-          <text x="150" y="228" fill="var(--teal)" font-size="12" font-weight="700" font-family="Space Grotesk,sans-serif">Onda S · ~3.5 km/s (llega después, más daño)</text>
-          <circle cx="660" cy="180" r="6" fill="var(--acc3)"/>
-          <text x="640" y="205" text-anchor="end" fill="var(--text3)" font-size="11" font-family="Space Grotesk,sans-serif">Superficie</text>
+    <div class="sismo-sv-note">
+      <div class="sv-note-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
         </svg>
       </div>
+      <p><strong>En El Salvador:</strong> la subducción de la Placa de Cocos bajo la Placa del Caribe es la principal causa de la actividad sísmica, con un movimiento de aproximadamente <strong>8 cm por año</strong>.</p>
     </div>
   </div>
 </section>
 
+<!-- ============================================================
+     SECCIÓN 3: FOCO Y EPICENTRO - CON DIAGRAMA + IMAGEN
+     ============================================================ -->
+<section class="sec" id="foco-epicentro">
+  <div class="wrap">
+    <div class="sec-hd">
+      <div class="sec-eyebrow">Localización</div>
+      <h2 class="sec-title">Foco y <span class="acc">Epicentro</span></h2>
+      <p class="sec-sub">Dónde se origina un sismo y dónde se siente con mayor intensidad</p>
+    </div>
+
+    <div class="foco-grid">
+      <div class="foco-epicentro-wrap">
+        <div class="phdr">
+          <span class="wdot"></span> Diagrama: Hipocentro vs Epicentro
+          <span style="margin-left:auto;font-size:0.7rem;color:var(--text3);">El Salvador</span>
+        </div>
+        <div class="foco-canvas">
+          <canvas id="focoEpicentroCv"></canvas>
+          <div class="foco-legend">
+            <div class="foco-legend-item">
+              <span class="foco-dot" style="background:var(--acc);"></span>
+              <div>
+                <strong>Hipocentro (Foco)</strong>
+                <p>Punto interior donde se origina el sismo. Profundidad de 0 a 700 km.</p>
+              </div>
+            </div>
+            <div class="foco-legend-item">
+              <span class="foco-dot" style="background:var(--acc3);"></span>
+              <div>
+                <strong>Epicentro</strong>
+                <p>Proyección en superficie. Donde el sismo se siente con mayor intensidad.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="foco-image-card">
+        <img src="assets/media/img/focoepicentro.jpg" alt="Foco y epicentro de un sismo" loading="lazy">
+        <div class="foco-image-overlay">
+          <span class="foco-image-label">Representación del foco y epicentro</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="depth-grid">
+      <div class="depth-card" style="border-top-color:var(--green);">
+        <span class="depth-label">Superficial</span>
+        <span class="depth-value">&lt; 70 km</span>
+        <p>Los más destructivos. Mayor impacto en la superficie.</p>
+      </div>
+      <div class="depth-card" style="border-top-color:var(--acc3);">
+        <span class="depth-label">Intermedio</span>
+        <span class="depth-value">70 - 300 km</span>
+        <p>Daños moderados dependiendo de la magnitud.</p>
+      </div>
+      <div class="depth-card" style="border-top-color:var(--blue);">
+        <span class="depth-label">Profundo</span>
+        <span class="depth-value">&gt; 300 km</span>
+        <p>Generalmente imperceptibles en la superficie.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECCIÓN 4: TIPOS DE SISMOS - GALERÍA CON IMÁGENES
+     ============================================================ -->
+<section class="sec sec-dark" id="tipos-sismos">
+  <div class="wrap">
+    <div class="sec-hd center">
+      <div class="sec-eyebrow">Clasificación</div>
+      <h2 class="sec-title">Tipos de <span class="acc">Sismos</span></h2>
+      <p class="sec-sub" style="margin:0 auto;">Según su origen y causas</p>
+    </div>
+
+    <div class="types-grid">
+      <div class="type-card" style="--type-color:var(--dis-accent);">
+        <div class="type-card-image">
+          <img src="assets/media/img/sismotectonico.jpeg" alt="Sismo tectónico" loading="lazy">
+        </div>
+        <div class="type-card-body">
+          <h4>Tectónicos</h4>
+          <p>Los más comunes y destructivos. Ocurren por el movimiento de placas tectónicas.</p>
+          <span class="type-tag">Tectónico</span>
+        </div>
+      </div>
+      <div class="type-card" style="--type-color:var(--acc2);">
+        <div class="type-card-image">
+          <img src="assets/media/img/sismovolcanico.jpg" alt="Sismo volcánico" loading="lazy">
+        </div>
+        <div class="type-card-body">
+          <h4>Volcánicos</h4>
+          <p>Asociados a actividad volcánica. Se generan por el movimiento de magma.</p>
+          <span class="type-tag">Volcánico</span>
+        </div>
+      </div>
+      <div class="type-card" style="--type-color:var(--teal);">
+        <div class="type-card-image">
+          <img src="assets/media/img/sismocolapso.png" alt="Sismo por colapso" loading="lazy">
+        </div>
+        <div class="type-card-body">
+          <h4>Por Colapso</h4>
+          <p>Ocurren cuando una caverna, mina o túnel colapsa. Eventos locales.</p>
+          <span class="type-tag">Colapso</span>
+        </div>
+      </div>
+      <div class="type-card" style="--type-color:var(--blue);">
+        <div class="type-card-image">
+          <img src="assets/media/img/sismoinducido.png" alt="Sismo inducido" loading="lazy">
+        </div>
+        <div class="type-card-body">
+          <h4>Inducidos</h4>
+          <p>Generados por actividades humanas: extracción de petróleo, fracking o represas.</p>
+          <span class="type-tag">Inducido</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sv-banner">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <p><strong>El Salvador está en el Cinturón de Fuego del Pacífico,</strong> donde convergen las placas de Cocos, Caribe y Norteamérica. Es uno de los países con <strong>mayor actividad sísmica del mundo</strong>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECCIÓN 5: ONDAS SÍSMICAS - CON IMÁGENES
+     ============================================================ -->
+<section class="sec" id="ondas-sismicas">
+  <div class="wrap">
+    <div class="sec-hd center">
+      <div class="sec-eyebrow">Propagación</div>
+      <h2 class="sec-title">Ondas <span class="acc">Sísmicas</span></h2>
+      <p class="sec-sub" style="margin:0 auto;">Cómo viaja la energía desde el hipocentro hasta la superficie</p>
+    </div>
+
+    <div class="waves-grid">
+      <div class="wave-card p-wave">
+        <div class="wave-card-image">
+          <img src="assets/media/img/onda-p.jpg" alt="Onda P" loading="lazy">
+        </div>
+        <div class="wave-card-info">
+          <span class="wave-tag">Primaria</span>
+          <h4>Onda P</h4>
+          <span class="wave-speed">~6-8 km/s</span>
+          <p>Viaja comprimiendo y estirando las rocas. <strong>Llega primero</strong> al sismógrafo. Atraviesa sólidos y líquidos.</p>
+        </div>
+      </div>
+      <div class="wave-card s-wave">
+        <div class="wave-card-image">
+          <img src="assets/media/img/onda-s.jpg" alt="Onda S" loading="lazy">
+        </div>
+        <div class="wave-card-info">
+          <span class="wave-tag">Secundaria</span>
+          <h4>Onda S</h4>
+          <span class="wave-speed">~3.5-4.5 km/s</span>
+          <p>Vibra perpendicular a la dirección de propagación. <strong>Llega después</strong> y causa más daño. Solo viaja por sólidos.</p>
+        </div>
+      </div>
+      <div class="wave-card surf-wave">
+        <div class="wave-card-image">
+          <img src="assets/media/img/onda-superficial.jpg" alt="Onda superficial" loading="lazy">
+        </div>
+        <div class="wave-card-info">
+          <span class="wave-tag">Superficial</span>
+          <h4>Rayleigh + Love</h4>
+          <span class="wave-speed">&lt;4 km/s</span>
+          <p>Viajan por la superficie terrestre. Son las <strong>más destructivas</strong>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECCIÓN 6: ¿CÓMO SE MIDEN? - CON IMÁGENES
+     ============================================================ -->
+<section class="sec sec-dark" id="como-se-miden">
+  <div class="wrap">
+    <div class="sec-hd center">
+      <div class="sec-eyebrow">Medición</div>
+      <h2 class="sec-title">¿Cómo se miden los <span class="acc">sismos</span>?</h2>
+      <p class="sec-sub" style="margin:0 auto;">Magnitud vs Intensidad · Escalas de Richter y Mercalli</p>
+    </div>
+
+    <div class="measure-grid">
+      <div class="measure-card" style="border-top-color:var(--acc);">
+        <div class="measure-image">
+          <img src="assets/media/img/magnitud.jpg" alt="Magnitud sísmica" loading="lazy">
+        </div>
+        <div class="measure-body">
+          <h4>Magnitud</h4>
+          <p>Cuantifica la <strong>energía liberada</strong> en el foco del sismo. Se calcula con sismógrafos. Un aumento de 1 punto representa <strong>32 veces más energía</strong>.</p>
+          <span class="measure-example">Ejemplo: M7 libera 32× más energía que M6</span>
+        </div>
+      </div>
+      <div class="measure-card" style="border-top-color:var(--acc2);">
+        <div class="measure-image">
+          <img src="assets/media/img/intensidad.jpg" alt="Intensidad sísmica" loading="lazy">
+        </div>
+        <div class="measure-body">
+          <h4>Intensidad</h4>
+          <p>Mide los <strong>efectos y daños</strong> en un lugar específico. Depende de la distancia al epicentro y tipo de suelo. Se expresa con <strong>números romanos</strong> del I al XII.</p>
+          <span class="measure-example">Ejemplo: Intensidad VIII = daños graves en edificios</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="scale-table-wrap">
+      <div class="phdr">
+        <span class="wdot"></span> Comparativa: Magnitud vs Intensidad
+        <span style="margin-left:auto;font-size:0.7rem;color:var(--text3);">Escala de medición</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Magnitud (Richter)</th>
+            <th>Intensidad (Mercalli)</th>
+            <th>Efectos</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>&lt; 2.0</td><td>I</td><td>Imperceptible. Solo detectado por sismógrafos.</td></tr>
+          <tr><td>2.0 - 3.4</td><td>II - III</td><td>Sentido por pocas personas en reposo.</td></tr>
+          <tr><td>3.5 - 4.2</td><td>III - IV</td><td>Vibración ligera. Objetos se balancean.</td></tr>
+          <tr><td>4.3 - 4.8</td><td>IV - V</td><td>Sentido por casi todos. Caída de objetos pequeños.</td></tr>
+          <tr><td>4.9 - 5.4</td><td>V - VI</td><td>Daños en edificios mal construidos.</td></tr>
+          <tr class="highlight-row"><td><strong>5.5 - 6.0</strong></td><td><strong>VI - VII</strong></td><td><strong>Daños considerables. Común en El Salvador.</strong></td></tr>
+          <tr><td>6.1 - 6.9</td><td>VIII - IX</td><td>Daños severos. Colapso de estructuras.</td></tr>
+          <tr><td>7.0 - 7.9</td><td>X - XI</td><td>Destrucción generalizada. Grandes deslizamientos.</td></tr>
+          <tr><td>≥ 8.0</td><td>XII</td><td>Catástrofe total. Cambios en el terreno.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECCIÓN 7: SISMOLOGÍA EN EL SALVADOR - CON IMAGEN
+     ============================================================ -->
+<section class="sec" id="sismologia-sv">
+  <div class="wrap">
+    <div class="sec-hd center">
+      <div class="sec-eyebrow">Monitoreo Nacional</div>
+      <h2 class="sec-title">Sismología en <span class="acc">El Salvador</span></h2>
+      <p class="sec-sub" style="margin:0 auto;">La Red Sísmica Nacional y el monitoreo constante</p>
+    </div>
+
+    <div class="sv-sismologia">
+      <div class="sv-grid">
+        <div class="sv-text">
+          <p class="sv-description">
+            La <strong>Sismología</strong> estudia los terremotos y la propagación de ondas sísmicas. En El Salvador, el <strong>Ministerio de Medio Ambiente (MARN)</strong> opera la <strong>Red Sísmica Nacional</strong> con más de 30 estaciones en todo el territorio.
+          </p>
+          <p class="sv-footnote">
+            La información recopilada permite determinar ubicación, magnitud y profundidad de cada sismo, ayudando a la <strong>prevención</strong> y <strong>gestión de riesgos</strong>.
+          </p>
+        </div>
+        <div class="sv-image">
+          <img src="assets/media/img/sismologia-sv.jpg" alt="Monitoreo sísmico en El Salvador" loading="lazy">
+        </div>
+      </div>
+
+      <div class="sv-stats">
+        <div class="sv-stat">
+          <div class="sv-num">30+</div>
+          <div class="sv-lbl">Estaciones sísmicas</div>
+        </div>
+        <div class="sv-stat">
+          <div class="sv-num">100</div>
+          <div class="sv-lbl">Sismos perceptibles/año</div>
+        </div>
+        <div class="sv-stat">
+          <div class="sv-num">8 cm</div>
+          <div class="sv-lbl">Subducción anual Cocos</div>
+        </div>
+        <div class="sv-stat">
+          <div class="sv-num">24/7</div>
+          <div class="sv-lbl">Monitoreo continuo</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- HISTORIA: linea de tiempo de los mayores desastres -->
+<section class="sec sec-dark" id="timeline">
+  <div class="wrap">
+    <div class="sec-hd"><div class="sec-eyebrow">Historia Sísmica · El Salvador</div><h2 class="sec-title">Línea del <span class="acc">Tiempo</span></h2><p class="sec-sub">Los terremotos más significativos en la historia del país</p></div>
+    <div class="tl-wrap"><div class="tl-line"></div><div class="tl-track" id="tlTrack"></div></div>
+    <div class="tl-detail" id="tlDetail"></div>
+    <div class="data-source-note">
+      <strong>Fuentes y respaldo de datos:</strong> Servicio Nacional de Estudios Territoriales (SNET/MARN), Universidad Centroamericana "José Simeón Cañas" (UCA), 
+      Ministerio de Educación de El Salvador y hemerotecas nacionales (La Prensa Gráfica, El Diario de Hoy). 
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECCIÓN 9: GUÍA PRÁCTICA - CON IMÁGENES
+     ============================================================ -->
+<section class="sec" id="guia-practica">
+  <div class="wrap">
+    <div class="sec-hd center">
+      <div class="sec-eyebrow">Preparación</div>
+      <h2 class="sec-title">¿Qué hacer <span class="acc">antes, durante y después</span>?</h2>
+      <p class="sec-sub" style="margin:0 auto;">Recomendaciones para estar preparado</p>
+    </div>
+
+    <div class="guide-grid">
+      <div class="guide-card before">
+        <div class="guide-image">
+          <img src="assets/media/img/guia-antes.jpg" alt="Preparación antes de un sismo" loading="lazy">
+        </div>
+        <div class="guide-body">
+          <h4>Antes</h4>
+          <ul>
+            <li>Prepara un plan familiar de emergencia</li>
+            <li>Identifica zonas seguras en tu hogar</li>
+            <li>Ten una mochila con suministros básicos</li>
+            <li>Conoce las rutas de evacuación</li>
+          </ul>
+        </div>
+      </div>
+      <div class="guide-card during">
+        <div class="guide-image">
+          <img src="assets/media/img/guia-durante.jpg" alt="Qué hacer durante un sismo" loading="lazy">
+        </div>
+        <div class="guide-body">
+          <h4>Durante</h4>
+          <ul>
+            <li>Mantén la calma y no corras</li>
+            <li>Agáchate, cúbrete y agárrate</li>
+            <li>Aléjate de ventanas y objetos que caigan</li>
+            <li>No uses elevadores</li>
+          </ul>
+        </div>
+      </div>
+      <div class="guide-card after">
+        <div class="guide-image">
+          <img src="assets/media/img/guia-despues.jpg" alt="Qué hacer después de un sismo" loading="lazy">
+        </div>
+        <div class="guide-body">
+          <h4>Después</h4>
+          <ul>
+            <li>Revisa si hay heridos y brinda ayuda</li>
+            <li>Alejate de edificios dañados</li>
+            <li>Escucha las indicaciones de las autoridades</li>
+            <li>Prepárate para posibles réplicas</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
 <!-- ZONA SISMICA -->
-<section class="sec sec-dark" id="zona-sismica">
+<section class="sec sec-dark">
   <div class="wrap">
     <div class="sec-hd">
       <div class="sec-eyebrow">Mapa de Riesgo · El Salvador</div>
@@ -282,39 +720,6 @@ ob_start();
   </div>
 </section>
 
-<!-- PLACAS TECTONICAS -->
-<section class="sec" id="placas">
-  <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Geodinámica · Centroamérica</div>
-      <h2 class="sec-title">Placas <span class="acc">Tectónicas</span></h2>
-      <p class="sec-sub">Por qué El Salvador es uno de los países más sísmicos del continente</p>
-    </div>
-    <div class="plates-grid">
-      <div class="plate-card">
-        <div class="pc-visual"><canvas id="plateCv" width="280" height="170"></canvas></div>
-        <div class="pc-body"><h4>Subducción</h4><p>La <strong>Placa de Cocos</strong> se hunde bajo la Placa del Caribe en la zona de subducción frente a la costa salvadoreña. Esta colisión genera enormes presiones.</p></div>
-      </div>
-      <div class="plate-card">
-        <div class="pc-visual"><div class="wave-rings"><div class="wr"></div><div class="wr"></div><div class="wr"></div><div class="wr"></div><div class="wc-star"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><polygon points="12,2 15,9 22,9.5 16.5,14 18,21 12,17.5 6,21 7.5,14 2,9.5 9,9" fill="currentColor"/></svg></div></div></div>
-        <div class="pc-body"><h4>Ondas Sísmicas</h4><p>Cuando la tensión acumulada se libera, genera <strong>ondas sísmicas P</strong> (primarias) y <strong>ondas S</strong> (secundarias) que viajan a través de la corteza terrestre.</p></div>
-      </div>
-      <div class="plate-card">
-        <div class="pc-visual"><div class="richter-vis"><div class="rv-bar" style="width:25%">1–2</div><div class="rv-bar" style="width:38%">3–4</div><div class="rv-bar" style="width:52%">5</div><div class="rv-bar" style="width:65%">6</div><div class="rv-bar" style="width:80%">7</div><div class="rv-bar hl" style="width:100%">8+</div></div></div>
-        <div class="pc-body"><h4>Escala de Richter</h4><p>La magnitud mide la energía liberada. Cada número representa <strong>10 veces más amplitud</strong> y ~32 veces más energía que el anterior.</p></div>
-      </div>
-    </div>
-    <div class="plate-bar">
-      <div class="pb-badge pb-cocos">Placa de Cocos</div>
-      <div class="pb-arr"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg> subduce <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
-      <div class="pb-badge pb-carib">Placa del Caribe</div>
-      <div class="pb-res">= Terremotos + Volcanes en El Salvador</div>
-    </div>
-    <p style="text-align:center;margin-top:20px">
-      <a href="?url=home#zona-sismica" class="btn-out">← Volver al Inicio</a>
-    </p>
-  </div>
-</section>
 
 <?php
 $content = ob_get_clean();

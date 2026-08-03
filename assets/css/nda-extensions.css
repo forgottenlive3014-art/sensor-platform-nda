@@ -318,14 +318,21 @@
     box-shadow: 0 14px 34px rgba(0,0,0,.28);
     border-color: rgba(255,119,0,.35);
 }
-.find-card-visual {
-    height: 108px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-size: 2.1rem;
+
+.find-card-visual{
+    height: 135px;      
+    overflow: hidden;
+    border-radius: 16px 16px 0 0;
+    position: relative;
 }
+
+.find-card-visual video{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;  
+    display: block;
+}
+
 .find-card-body {
     padding: 16px 18px 20px;
     display: flex;
@@ -481,8 +488,8 @@
    Nota de fuentes (linea de tiempo / datos historicos)
    --------------------------------------------------------------- */
 .data-source-note {
-    max-width: 680px;
-    margin: 24px auto 0;
+    max-width: 800px;
+    margin: 25px auto 0;
     text-align: center;
     font-size: .76rem;
     line-height: 1.6;

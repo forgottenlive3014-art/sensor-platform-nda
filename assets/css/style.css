@@ -1614,11 +1614,11 @@ canvas {
 /* ---------- TIMELINE ---------- */
 .tl-wrap {
     position: relative;
-    padding: 40px 0 30px;
+    padding: 20px 0 15px;
 }
 .tl-line {
     position: absolute;
-    top: 90px;
+    top: 70px;
     left: 0;
     right: 0;
     height: 2px;
@@ -1715,7 +1715,7 @@ canvas {
 .tld-img {
     border-radius: var(--r);
     overflow: hidden;
-    aspect-ratio: 4/3;
+    height:400px;
     background: var(--card2);
     position: relative;
 }
@@ -1761,6 +1761,7 @@ canvas {
     border: 1px solid rgba(255, 77, 26, 0.28);
     margin-bottom: 10px;
 }
+
 .tld-info h3 {
     font-family: var(--fd);
     font-size: 1.3rem;

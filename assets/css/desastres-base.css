@@ -1,13 +1,6 @@
-/* ================================================================
+/* ============================================================
    NDA — Plantilla compartida para las paginas de "Desastres"
-   (Volcanes, Tsunamis, Inundaciones, Deslizamientos, Incendios
-   forestales, Tormentas tropicales, Sequias). Sismos.php no usa
-   este archivo: ya tiene su propio diseño en style.css.
-
-   Cada pagina de desastre define su propio --dis-accent (y opcional
-   --dis-accent2) en el wrapper .dis-page, mas un css propio en esta
-   misma carpeta para acentos/decoracion unica del tema.
-   ================================================================ */
+   ============================================================ */
 
 .dis-page { --dis-accent: #c98a3d; --dis-accent2: #8a5a24; }
 
@@ -17,7 +10,8 @@
     position: relative;
     overflow: hidden;
 }
-/* ---------- PARTICULAS TEMATICAS (JS: ndaInitDisParticles() en app.js) ---------- */
+
+/* ---------- PARTICULAS TEMATICAS ---------- */
 .dis-particles {
     position: absolute;
     inset: 0;
@@ -178,7 +172,7 @@
     color: #fff;
 }
 
-/* ---------- SUBTITULOS DE BLOQUE (Informacion general / de El Salvador) ---------- */
+/* ---------- SUBTITULOS DE BLOQUE ---------- */
 .dis-subhead {
     font-family: var(--fd);
     font-size: .78rem;
@@ -200,7 +194,7 @@
     display: inline-block;
 }
 
-/* ---------- GRID DE INFO (que es / como se produce / por que en SV) ---------- */
+/* ---------- GRID DE INFO ---------- */
 .dis-info-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -347,11 +341,7 @@
     flex-shrink: 0;
 }
 
-/* Nota: la linea de tiempo historica reutiliza tl-wrap/tl-track/tl-detail
-   de style.css (el mismo componente interactivo del home), en vez de un
-   componente propio — ver ndaRenderTimeline() en app.js. */
-
-/* ---------- BIG BANNER ESTILO REVISTA (foto real + wordmark grande) ---------- */
+/* ---------- BIG BANNER ESTILO REVISTA ---------- */
 .dis-bigbanner {
     position: relative;
     min-height: 100vh;
@@ -372,13 +362,26 @@
     z-index: 1;
     width: 100%;
 }
+.dis-bigbanner-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--dis-accent);
+    background: rgba(201, 138, 61, 0.15);
+    border: 1px solid rgba(201, 138, 61, 0.3);
+    padding: 6px 16px;
+    border-radius: 100px;
+    margin-bottom: 16px;
+}
 .dis-bigbanner-word {
     font-family: var(--fd);
     font-weight: 900;
-    font-size: clamp(2.4rem, 6vw, 4.8rem);
+    font-size: clamp(3rem, 8vw, 6.5rem);
     color: #fff;
     line-height: .9;
-    letter-spacing: -.02em;
+    letter-spacing: -.03em;
     margin: 0 0 22px;
     text-shadow: 0 8px 40px rgba(0, 0, 0, .35);
 }
@@ -386,7 +389,7 @@
     display: flex;
     align-items: flex-start;
     gap: 18px;
-    max-width: 480px;
+    max-width: 500px;
 }
 .dis-bigbanner-rule {
     width: 40px;
@@ -395,16 +398,10 @@
     margin-top: 11px;
     flex-shrink: 0;
 }
-.dis-bigbanner-sub h3 {
-    font-family: var(--fd);
-    color: #fff;
-    font-size: 1.15rem;
-    margin-bottom: 8px;
-}
 .dis-bigbanner-sub p {
     color: rgba(255, 255, 255, .82);
-    font-size: .85rem;
-    line-height: 1.6;
+    font-size: .95rem;
+    line-height: 1.7;
     margin-bottom: 16px;
 }
 .dis-bigbanner-btn {
@@ -414,12 +411,13 @@
     -webkit-backdrop-filter: blur(6px);
     border: 1px solid rgba(255, 255, 255, .35);
     color: #fff;
-    padding: 10px 24px;
+    padding: 12px 32px;
     border-radius: 7px;
-    font-size: .84rem;
+    font-size: .85rem;
     font-weight: 600;
     text-decoration: none;
     transition: all var(--tr);
+    letter-spacing: 0.02em;
 }
 .dis-bigbanner-btn:hover {
     background: var(--dis-accent);
@@ -436,11 +434,7 @@
     border-color: #fff;
 }
 
-/* ---------- TRANSICIONES SUAVES ENTRE SECCIONES ----------
-   .sec / .sec-dark alternan de color en cada apartado, y con tantas
-   secciones seguidas el corte plano entre bloques se veia tosco. Estos
-   degradados difuminan el borde superior/inferior de cada .sec-dark
-   para que la transicion de color se sienta mas suave. */
+/* ---------- TRANSICIONES SUAVES ENTRE SECCIONES ---------- */
 .dis-page .sec { position: relative; }
 .dis-page .sec-dark {
     position: relative;
@@ -494,7 +488,7 @@
     color: var(--text);
 }
 
-/* ---------- ESCALA OFICIAL DE ALERTAS (Proteccion Civil / MIGOBDT) ---------- */
+/* ---------- ESCALA OFICIAL DE ALERTAS ---------- */
 .dis-alert-scale {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -595,9 +589,6 @@
     color: var(--text3);
     opacity: .7;
 }
-/* Item con foto real (ver _gallery.php): quita el borde punteado y el
-   contenido queda como una imagen con leyenda superpuesta en degradado,
-   mismo lenguaje visual que la imagen de la linea de tiempo (tld-img-ov). */
 .dis-gallery-item.filled {
     border-style: solid;
     padding: 0;
@@ -641,4 +632,1010 @@
 }
 @media (max-width: 520px) {
     .dis-alert-scale { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   NUEVAS SECCIONES PARA SISMOS.PHP - CON IMÁGENES
+   ============================================================ */
+
+/* ---------- SISMO HERO GRID ---------- */
+.sismo-hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+}
+
+.sismo-hero-text {
+    flex: 1;
+}
+
+/* ---------- SISMO ETYMOLOGY ---------- */
+.sismo-etymology {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: var(--r);
+    padding: 28px 32px;
+    border-left: 5px solid var(--dis-accent);
+    margin-bottom: 24px;
+}
+.sismo-etymology .etym-greek {
+    font-family: var(--fd);
+    font-size: 1.4rem;
+    color: var(--dis-accent);
+    font-weight: 700;
+    display: block;
+    margin-bottom: 8px;
+}
+.sismo-etymology .etym-greek small {
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: var(--text3);
+    font-family: var(--fn);
+}
+.sismo-etymology .etym-def {
+    font-size: 0.98rem;
+    color: var(--text2);
+    line-height: 1.8;
+}
+.sismo-etymology .etym-def strong {
+    color: var(--dis-accent);
+}
+
+/* ---------- TERMINOS GRID ---------- */
+.term-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+}
+.term-card {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: var(--r);
+    padding: 20px 22px;
+    transition: all var(--tr) var(--ez);
+}
+.term-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--dis-accent);
+    box-shadow: var(--sh);
+}
+.term-card .term-icon {
+    display: inline-flex;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: var(--gA);
+    color: var(--dis-accent);
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+.term-card .term-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+}
+.term-card h4 {
+    font-family: var(--fd);
+    font-size: 1.1rem;
+    color: var(--text);
+    margin-bottom: 4px;
+}
+.term-card p {
+    font-size: 0.8rem;
+    color: var(--text2);
+    line-height: 1.6;
+}
+.term-card .term-tag {
+    display: inline-block;
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 2px 10px;
+    border-radius: 100px;
+    background: var(--gA);
+    color: var(--dis-accent);
+    margin-top: 8px;
+    border: 1px solid rgba(201, 138, 61, 0.2);
+}
+
+/* ---------- SISMO HERO IMAGE ---------- */
+.sismo-hero-image {
+    display: flex;
+    justify-content: flex-end;
+}
+.sismo-image-card {
+    width: 100%;
+    max-width: 820px;
+    border-radius: var(--r);
+    overflow: hidden;
+    border: 1px solid var(--border2);
+    position: relative;
+}
+.sismo-image-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    aspect-ratio: 4/3;
+}
+.sismo-image-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 16px 20px;
+    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+}
+.sismo-image-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.04em;
+}
+
+/* ---------- INTRO TEXT ---------- */
+.sismo-intro-text {
+    max-width: 720px;
+    margin: 0 auto 40px;
+    text-align: center;
+    font-size: 1.05rem;
+    color: var(--text2);
+    line-height: 1.8;
+}
+.sismo-intro-text strong {
+    color: var(--text);
+}
+
+/* SECCIÓN: ¿CÓMO SE PRODUCEN? - PASOS CON IMÁGENES */
+
+.sismo-steps {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 28px;
+}
+
+.sismo-step {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: var(--r);
+    overflow: hidden;
+    transition: all var(--tr) var(--ez);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.sismo-step:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shl);
+    border-color: var(--dis-accent);
+}
+
+/* Contenedor horizontal */
+.sismo-step-inner {
+    display: flex;
+    flex: 1;
+}
+
+/* Imagen - 40% */
+.sismo-step .step-image {
+    width: 40%;
+    min-height: 200px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.sismo-step .step-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sismo-step:hover .step-image img {
+    transform: scale(1.06);
+}
+
+/* Contenido - 60% */
+.sismo-step .step-content {
+    width: 60%;
+    padding: 22px 24px 22px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Número grande estilo editorial (#01) - SOLO AQUÍ */
+.sismo-step .step-number {
+    font-family: var(--fd);
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: var(--dis-accent);
+    line-height: 1;
+    opacity: 0.15;
+    letter-spacing: -0.03em;
+    user-select: none;
+}
+
+.sismo-step .step-content h4 {
+    font-family: var(--fd);
+    font-size: 1.05rem;
+    color: var(--text);
+    margin: -6px 0 6px 0;
+}
+
+.sismo-step .step-content p {
+    font-size: 0.84rem;
+    color: var(--text2);
+    line-height: 1.7;
+    margin: 0;
+}
+
+.sismo-step .step-content p strong {
+    color: var(--text);
+}
+
+/* Línea decorativa inferior al hover */
+.sismo-step::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--dis-accent), var(--acc2));
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.sismo-step:hover::after {
+    opacity: 1;
+}
+
+/* ---------- INTRO TEXT ---------- */
+.sismo-intro-text {
+    max-width: 720px;
+    margin: 0 auto 40px;
+    text-align: center;
+    font-size: 1.05rem;
+    color: var(--text2);
+    line-height: 1.8;
+}
+
+.sismo-intro-text strong {
+    color: var(--text);
+}
+
+/* ---------- SV NOTE ---------- */
+.sismo-sv-note {
+    background: linear-gradient(135deg, var(--card), var(--bg3));
+    border: 1px solid var(--border2);
+    border-left: 4px solid var(--dis-accent);
+    border-radius: var(--r);
+    padding: 16px 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.sismo-sv-note .sv-note-icon {
+    flex-shrink: 0;
+    color: var(--dis-accent);
+    margin-top: 2px;
+}
+
+.sismo-sv-note .sv-note-icon svg {
+    width: 22px;
+    height: 22px;
+    stroke: currentColor;
+}
+
+.sismo-sv-note p {
+    font-size: 0.88rem;
+    color: var(--text2);
+    line-height: 1.7;
+    margin: 0;
+}
+
+.sismo-sv-note p strong {
+    color: var(--text);
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 900px) {
+    .sismo-steps {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .sismo-step-inner {
+        flex-direction: column;
+    }
+
+    .sismo-step .step-image {
+        width: 100%;
+        height: 160px;
+        min-height: auto;
+    }
+
+    .sismo-step .step-content {
+        width: 100%;
+        padding: 18px 20px 20px 20px;
+    }
+
+    .sismo-step .step-number {
+        font-size: 2.4rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .sismo-step .step-image {
+        height: 130px;
+    }
+
+    .sismo-step .step-content {
+        padding: 14px 16px 18px 16px;
+    }
+
+    .sismo-step .step-number {
+        font-size: 2rem;
+    }
+
+    .sismo-step .step-content h4 {
+        font-size: 0.95rem;
+        margin: -4px 0 4px 0;
+    }
+
+    .sismo-step .step-content p {
+        font-size: 0.8rem;
+    }
+
+    .sismo-intro-text {
+        font-size: 0.95rem;
+        margin-bottom: 30px;
+    }
+
+    .sismo-sv-note {
+        padding: 14px 18px;
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+
+/* ---------- FOCO EPICENTRO GRID ---------- */
+.foco-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.foco-epicentro-wrap {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: var(--r);
+    overflow: hidden;
+}
+.foco-epicentro-wrap .phdr {
+    background: linear-gradient(135deg, var(--card2), var(--bg3));
+    border-bottom: 1px solid var(--border);
+}
+.foco-canvas {
+    padding: 20px;
+    background: var(--bg3);
+}
+#focoEpicentroCv {
+    width: 100%;
+    height: 220px;
+    background: var(--bg3);
+    border-radius: var(--rs);
+}
+.foco-legend {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 14px;
+}
+.foco-legend-item {
+    display: flex;
+    gap: 12px;
+    background: var(--card);
+    padding: 12px 16px;
+    border-radius: var(--rs);
+    border: 1px solid var(--border);
+}
+.foco-legend-item .foco-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 3px;
+}
+.foco-legend-item strong {
+    display: block;
+    font-size: 0.82rem;
+    color: var(--text);
+}
+.foco-legend-item p {
+    font-size: 0.74rem;
+    color: var(--text2);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.foco-image-card {
+    border-radius: var(--r);
+    overflow: hidden;
+    border: 1px solid var(--border2);
+    position: relative;
+}
+.foco-image-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    aspect-ratio: 4/3;
+}
+.foco-image-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 16px 20px;
+    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+}
+.foco-image-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.04em;
+}
+
+/* ---------- DEPTH GRID ---------- */
+.depth-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+.depth-card {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: var(--r);
+    padding: 20px 24px;
+    text-align: center;
+    border-top: 4px solid var(--dis-accent);
+    transition: all var(--tr);
+}
+.depth-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--sh);
+}
+.depth-card .depth-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text3);
+    display: block;
+}
+.depth-card .depth-value {
+    font-family: var(--fd);
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text);
+    display: block;
+    margin: 4px 0 6px;
+}
+.depth-card p {
+    font-size: 0.8rem;
+    color: var(--text2);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* ---------- TYPES GRID ---------- */
+.types-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+}
+.type-card {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: var(--r);
+    overflow: hidden;
+    transition: all var(--tr) var(--ez);
+}
+.type-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shl);
+    border-color: var(--type-color, var(--dis-accent));
+}
+.type-card .type-card-image {
+    width: 100%;
+    height: 160px;
+    overflow: hidden;
+}
+.type-card .type-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+.type-card:hover .type-card-image img {
+    transform: scale(1.08);
+}
+.type-card .type-card-body {
+    padding: 18px 20px 22px;
+}
+.type-card .type-card-body h4 {
+    font-family: var(--fd);
+    font-size: 1rem;
+    color: var(--text);
+    margin-bottom: 6px;
+}
+.type-card .type-card-body p {
+    font-size: 0.8rem;
+    color: var(--text2);
+    line-height: 1.65;
+    margin: 0 0 10px 0;
+}
+.type-card .type-card-body p strong {
+    color: var(--text);
+}
+.type-card .type-tag {
+    display: inline-block;
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 3px 14px;
+    border-radius: 100px;
+    background: var(--gA);
+    color: var(--type-color, var(--dis-accent));
+    border: 1px solid rgba(201, 138, 61, 0.2);
+}
+
+/* ---------- SV BANNER ---------- */
+.sv-banner {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: linear-gradient(135deg, var(--card), var(--bg3));
+    border: 1px solid var(--border2);
+    border-radius: var(--r);
+    padding: 16px 24px;
+    margin-top: 24px;
+    border-left: 4px solid var(--dis-accent);
+}
+.sv-banner svg {
+    width: 28px;
+    height: 28px;
+    stroke: var(--dis-accent);
+    flex-shrink: 0;
+}
+.sv-banner p {
+    font-size: 0.88rem;
+    color: var(--text2);
+    line-height: 1.7;
+    margin: 0;
+}
+.sv-banner p strong {
+    color: var(--text);
+}
+
+/* ---------- WAVES GRID ---------- */
+.waves-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+.wave-card {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: var(--r);
+    overflow: hidden;
+    transition: all var(--tr) var(--ez);
+}
+.wave-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shl);
+}
+.wave-card .wave-card-image {
+    width: 100%;
+    height: 140px;
+    overflow: hidden;
+}
+.wave-card .wave-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.wave-card .wave-card-info {
+    padding: 16px 20px 20px;
+}
+.wave-card .wave-card-info .wave-tag {
+    display: inline-block;
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 2px 10px;
+    border-radius: 100px;
+    margin-bottom: 6px;
+}
+.wave-card .wave-card-info h4 {
+    font-family: var(--fd);
+    font-size: 1.05rem;
+    color: var(--text);
+    margin-bottom: 2px;
+}
+.wave-card .wave-card-info .wave-speed {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text3);
+    margin-bottom: 8px;
+}
+.wave-card .wave-card-info p {
+    font-size: 0.8rem;
+    color: var(--text2);
+    line-height: 1.65;
+    margin: 0;
+}
+.wave-card .wave-card-info p strong {
+    color: var(--text);
+}
+.wave-card.p-wave .wave-tag { background: rgba(168, 87, 54, 0.15); color: var(--acc3); }
+.wave-card.p-wave { border-top: 4px solid var(--acc3); }
+.wave-card.s-wave .wave-tag { background: rgba(61, 125, 115, 0.15); color: var(--teal); }
+.wave-card.s-wave { border-top: 4px solid var(--teal); }
+.wave-card.surf-wave .wave-tag { background: rgba(184, 67, 63, 0.15); color: var(--acc2); }
+.wave-card.surf-wave { border-top: 4px solid var(--acc2); }
+
+/* ---------- MEASURE GRID ---------- */
+.measure-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 28px;
+}
+.measure-card {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: var(--r);
+    overflow: hidden;
+    border-top: 5px solid var(--dis-accent);
+    transition: all var(--tr) var(--ez);
+}
+.measure-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shl);
+}
+.measure-card .measure-image {
+    width: 100%;
+    height: 160px;
+    overflow: hidden;
+}
+.measure-card .measure-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.measure-card .measure-body {
+    padding: 20px 24px 24px;
+}
+.measure-card .measure-body h4 {
+    font-family: var(--fd);
+    font-size: 1.1rem;
+    color: var(--text);
+    margin-bottom: 8px;
+}
+.measure-card .measure-body p {
+    font-size: 0.88rem;
+    color: var(--text2);
+    line-height: 1.7;
+    margin: 0 0 10px 0;
+}
+.measure-card .measure-body p strong {
+    color: var(--text);
+}
+.measure-card .measure-example {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-style: italic;
+    color: var(--text3);
+    background: var(--bg3);
+    padding: 6px 14px;
+    border-radius: var(--rs);
+}
+
+/* ---------- SCALE TABLE ---------- */
+.scale-table-wrap {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: var(--r);
+    overflow: hidden;
+}
+.scale-table-wrap .phdr {
+    background: linear-gradient(135deg, var(--card2), var(--bg3));
+    border-bottom: 1px solid var(--border);
+}
+.scale-table-wrap table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.scale-table-wrap th {
+    background: var(--bg3);
+    padding: 14px 18px;
+    text-align: left;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text);
+    border-bottom: 2px solid var(--border);
+}
+.scale-table-wrap td {
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.82rem;
+    color: var(--text2);
+    transition: all var(--tr);
+}
+.scale-table-wrap tr:last-child td {
+    border-bottom: none;
+}
+.scale-table-wrap tr:hover td {
+    background: var(--card2);
+    color: var(--text);
+}
+.scale-table-wrap .highlight-row td {
+    background: rgba(201, 138, 61, 0.08);
+    border-left: 4px solid var(--dis-accent);
+    font-weight: 600;
+    color: var(--text);
+}
+.scale-table-wrap .highlight-row td:first-child {
+    color: var(--dis-accent);
+}
+
+/* ---------- SV SISMOLOGIA ---------- */
+.sv-sismologia {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: var(--r);
+    padding: 32px;
+    box-shadow: var(--sh);
+}
+.sv-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-bottom: 24px;
+    align-items: center;
+}
+.sv-text .sv-description {
+    font-size: 0.95rem;
+    color: var(--text2);
+    line-height: 1.8;
+    margin: 0 0 12px 0;
+}
+.sv-text .sv-description strong {
+    color: var(--text);
+}
+.sv-text .sv-footnote {
+    font-size: 0.82rem;
+    color: var(--text3);
+    margin: 0;
+}
+.sv-text .sv-footnote strong {
+    color: var(--text);
+}
+.sv-image {
+    border-radius: var(--r);
+    overflow: hidden;
+}
+.sv-image img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+}
+
+.sv-sismologia .sv-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+.sv-sismologia .sv-stat {
+    text-align: center;
+    padding: 18px 14px;
+    background: var(--bg3);
+    border-radius: var(--rs);
+    border: 1px solid var(--border);
+    transition: all var(--tr);
+}
+.sv-sismologia .sv-stat:hover {
+    border-color: var(--dis-accent);
+    transform: translateY(-2px);
+    box-shadow: var(--sh);
+}
+.sv-sismologia .sv-stat .sv-num {
+    font-family: var(--fd);
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--dis-accent);
+    line-height: 1;
+}
+.sv-sismologia .sv-stat .sv-lbl {
+    font-size: 0.7rem;
+    color: var(--text3);
+    font-weight: 600;
+    margin-top: 4px;
+}
+
+/* ---------- HISTORIC GRID ---------- */
+.historic-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+.historic-card {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: var(--r);
+    overflow: hidden;
+    transition: all var(--tr) var(--ez);
+}
+.historic-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shl);
+}
+.historic-card .historic-image {
+    width: 100%;
+    height: 140px;
+    overflow: hidden;
+}
+.historic-card .historic-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+.historic-card:hover .historic-image img {
+    transform: scale(1.06);
+}
+.historic-card .historic-body {
+    padding: 16px 20px 20px;
+    text-align: center;
+}
+.historic-card .h-year {
+    font-family: var(--fd);
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--dis-accent);
+    line-height: 1;
+}
+.historic-card .h-mag {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 14px;
+    border-radius: 100px;
+    background: rgba(184, 67, 63, 0.12);
+    color: var(--acc2);
+    margin-top: 4px;
+}
+.historic-card .h-desc {
+    font-size: 0.82rem;
+    color: var(--text2);
+    line-height: 1.5;
+    margin-top: 8px;
+}
+.historic-card .h-loc {
+    font-size: 0.7rem;
+    color: var(--text3);
+    margin-top: 4px;
+}
+
+/* ---------- GUIDE GRID ---------- */
+.guide-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+.guide-card {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: var(--r);
+    overflow: hidden;
+    transition: all var(--tr) var(--ez);
+}
+.guide-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shl);
+}
+.guide-card .guide-image {
+    width: 100%;
+    height: 160px;
+    overflow: hidden;
+}
+.guide-card .guide-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.guide-card .guide-body {
+    padding: 18px 22px 22px;
+}
+.guide-card .guide-body h4 {
+    font-family: var(--fd);
+    font-size: 1.05rem;
+    margin-bottom: 10px;
+}
+.guide-card .guide-body ul {
+    list-style: none;
+    padding: 0;
+}
+.guide-card .guide-body ul li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.82rem;
+    color: var(--text2);
+    line-height: 1.6;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border);
+}
+.guide-card .guide-body ul li:last-child {
+    border-bottom: none;
+}
+.guide-card .guide-body ul li::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--dis-accent);
+    margin-top: 9px;
+    flex-shrink: 0;
+}
+.guide-card.before { border-top: 4px solid var(--blue); }
+.guide-card.during { border-top: 4px solid var(--acc3); }
+.guide-card.after { border-top: 4px solid var(--teal); }
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 1100px) {
+    .sismo-hero-grid { grid-template-columns: 1fr; }
+    .sismo-hero-image { justify-content: center; }
+    .sismo-image-card { max-width: 100%; }
+    .foco-grid { grid-template-columns: 1fr; }
+    .sv-grid { grid-template-columns: 1fr; }
+    .sv-image img { height: 180px; }
+}
+
+@media (max-width: 900px) {
+    .term-grid { grid-template-columns: 1fr; }
+    .sismo-steps { grid-template-columns: 1fr; }
+    .types-grid { grid-template-columns: 1fr 1fr; }
+    .waves-grid { grid-template-columns: 1fr; }
+    .measure-grid { grid-template-columns: 1fr; }
+    .historic-grid { grid-template-columns: 1fr 1fr; }
+    .guide-grid { grid-template-columns: 1fr; }
+    .depth-grid { grid-template-columns: 1fr; }
+    .foco-legend { grid-template-columns: 1fr; }
+    .sv-sismologia .sv-stats { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 600px) {
+    .types-grid { grid-template-columns: 1fr; }
+    .historic-grid { grid-template-columns: 1fr; }
+    .scale-table-wrap { overflow-x: auto; }
+    .scale-table-wrap table { min-width: 480px; }
+    .sv-sismologia .sv-stats { grid-template-columns: 1fr 1fr; }
+    .sv-sismologia { padding: 20px; }
+    .sismo-etymology { padding: 20px; }
 }
