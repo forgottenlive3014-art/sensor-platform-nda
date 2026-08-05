@@ -362,19 +362,7 @@
     z-index: 1;
     width: 100%;
 }
-.dis-bigbanner-badge {
-    display: inline-block;
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: var(--dis-accent);
-    background: rgba(201, 138, 61, 0.15);
-    border: 1px solid rgba(201, 138, 61, 0.3);
-    padding: 6px 16px;
-    border-radius: 100px;
-    margin-bottom: 16px;
-}
+
 .dis-bigbanner-word {
     font-family: var(--fd);
     font-weight: 900;
@@ -790,7 +778,6 @@
 }
 
 /* SECCIÓN: ¿CÓMO SE PRODUCEN? - PASOS CON IMÁGENES */
-
 .sismo-steps {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -849,7 +836,7 @@
     justify-content: center;
 }
 
-/* Número grande estilo editorial (#01) - SOLO AQUÍ */
+/* Número grande estilo editorial (#01) */
 .sismo-step .step-number {
     font-family: var(--fd);
     font-size: 2.8rem;
@@ -896,20 +883,6 @@
     opacity: 1;
 }
 
-/* ---------- INTRO TEXT ---------- */
-.sismo-intro-text {
-    max-width: 720px;
-    margin: 0 auto 40px;
-    text-align: center;
-    font-size: 1.05rem;
-    color: var(--text2);
-    line-height: 1.8;
-}
-
-.sismo-intro-text strong {
-    color: var(--text);
-}
-
 /* ---------- SV NOTE ---------- */
 .sismo-sv-note {
     background: linear-gradient(135deg, var(--card), var(--bg3));
@@ -945,7 +918,7 @@
     color: var(--text);
 }
 
-/* ---------- RESPONSIVE ---------- */
+/* ---------- RESPONSIVE SISMO STEPS ---------- */
 @media (max-width: 900px) {
     .sismo-steps {
         grid-template-columns: 1fr;
@@ -1303,6 +1276,7 @@
     gap: 24px;
     margin-bottom: 28px;
 }
+
 .measure-card {
     background: var(--card);
     border: 1px solid var(--border2);
@@ -1311,38 +1285,62 @@
     border-top: 5px solid var(--dis-accent);
     transition: all var(--tr) var(--ez);
 }
+
 .measure-card:hover {
     transform: translateY(-4px);
     box-shadow: var(--shl);
 }
-.measure-card .measure-image {
-    width: 100%;
-    height: 160px;
-    overflow: hidden;
+
+.measure-inner {
+    display: flex;
+    flex-direction: row-reverse;
+    flex: 1;
 }
+
+.measure-card .measure-image {
+    width: 40%;
+    min-height: 200px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
 .measure-card .measure-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+.measure-card:hover .measure-image img {
+    transform: scale(1.06);
+}
+
 .measure-card .measure-body {
-    padding: 20px 24px 24px;
+    width: 60%;
+    padding: 24px 28px 24px 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
+
 .measure-card .measure-body h4 {
     font-family: var(--fd);
     font-size: 1.1rem;
     color: var(--text);
     margin-bottom: 8px;
 }
+
 .measure-card .measure-body p {
     font-size: 0.88rem;
     color: var(--text2);
     line-height: 1.7;
     margin: 0 0 10px 0;
 }
+
 .measure-card .measure-body p strong {
     color: var(--text);
 }
+
 .measure-card .measure-example {
     display: inline-block;
     font-size: 0.75rem;
@@ -1403,6 +1401,7 @@
     color: var(--dis-accent);
 }
 
+
 /* ---------- SV SISMOLOGIA ---------- */
 .sv-sismologia {
     background: var(--card);
@@ -1411,71 +1410,152 @@
     padding: 32px;
     box-shadow: var(--sh);
 }
+
 .sv-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 32px;
-    margin-bottom: 24px;
-    align-items: center;
+    gap: 40px;
+    align-items: stretch;
 }
+
+/* Columna izquierda */
+.sv-left {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+}
+
 .sv-text .sv-description {
     font-size: 0.95rem;
     color: var(--text2);
     line-height: 1.8;
     margin: 0 0 12px 0;
 }
+
 .sv-text .sv-description strong {
     color: var(--text);
 }
+
 .sv-text .sv-footnote {
-    font-size: 0.82rem;
+    font-size: 0.85rem;
     color: var(--text3);
     margin: 0;
 }
+
 .sv-text .sv-footnote strong {
     color: var(--text);
 }
-.sv-image {
-    border-radius: var(--r);
-    overflow: hidden;
-}
-.sv-image img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    display: block;
+
+/* Estadísticas: 2 filas de 2 columnas - números arriba, texto abajo, centrado */
+.sv-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
 }
 
-.sv-sismologia .sv-stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-}
-.sv-sismologia .sv-stat {
+.sv-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    padding: 18px 14px;
+    padding: 16px 12px;
     background: var(--bg3);
     border-radius: var(--rs);
     border: 1px solid var(--border);
     transition: all var(--tr);
+    min-height: 80px;
 }
-.sv-sismologia .sv-stat:hover {
+
+.sv-stat:hover {
     border-color: var(--dis-accent);
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     box-shadow: var(--sh);
 }
-.sv-sismologia .sv-stat .sv-num {
+
+.sv-stat .sv-num {
     font-family: var(--fd);
-    font-size: 2rem;
-    font-weight: 900;
+    font-size: 1.4rem;
+    font-weight: 800;
     color: var(--dis-accent);
-    line-height: 1;
+    line-height: 1.2;
 }
-.sv-sismologia .sv-stat .sv-lbl {
-    font-size: 0.7rem;
+
+.sv-stat .sv-lbl {
+    font-size: 0.72rem;
     color: var(--text3);
-    font-weight: 600;
+    font-weight: 500;
     margin-top: 4px;
+}
+
+/* Columna derecha: imagen */
+.sv-image {
+    border-radius: var(--r);
+    overflow: hidden;
+    min-height: 320px;
+}
+
+.sv-image img {
+    width: 100%;
+    height: 100%;
+    min-height: 320px;
+    object-fit: cover;
+    display: block;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 900px) {
+    .sv-grid {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+
+    .sv-image {
+        min-height: 220px;
+    }
+
+    .sv-image img {
+        min-height: 220px;
+        height: 220px;
+    }
+
+    .sv-stats {
+        gap: 12px;
+    }
+}
+
+@media (max-width: 600px) {
+    .sv-sismologia {
+        padding: 20px;
+    }
+
+    .sv-stats {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .sv-stat {
+        padding: 12px 10px;
+        min-height: 70px;
+    }
+
+    .sv-stat .sv-num {
+        font-size: 1.2rem;
+    }
+
+    .sv-stat .sv-lbl {
+        font-size: 0.65rem;
+    }
+
+    .sv-image {
+        min-height: 160px;
+    }
+
+    .sv-image img {
+        min-height: 160px;
+        height: 160px;
+    }
 }
 
 /* ---------- HISTORIC GRID ---------- */
@@ -1619,7 +1699,6 @@
 
 @media (max-width: 900px) {
     .term-grid { grid-template-columns: 1fr; }
-    .sismo-steps { grid-template-columns: 1fr; }
     .types-grid { grid-template-columns: 1fr 1fr; }
     .waves-grid { grid-template-columns: 1fr; }
     .measure-grid { grid-template-columns: 1fr; }
@@ -1627,7 +1706,25 @@
     .guide-grid { grid-template-columns: 1fr; }
     .depth-grid { grid-template-columns: 1fr; }
     .foco-legend { grid-template-columns: 1fr; }
-    .sv-sismologia .sv-stats { grid-template-columns: repeat(2, 1fr); }
+
+    .measure-inner {
+        flex-direction: column !important;
+    }
+
+    .measure-card .measure-image {
+        width: 100%;
+        height: 160px;
+        min-height: auto;
+    }
+
+    .measure-card .measure-body {
+        width: 100%;
+        padding: 18px 20px 22px 20px;
+    }
+
+    .sv-sismologia .sv-stats {
+        grid-template-columns: 1fr 1fr;
+    }
 }
 
 @media (max-width: 600px) {
@@ -1635,7 +1732,23 @@
     .historic-grid { grid-template-columns: 1fr; }
     .scale-table-wrap { overflow-x: auto; }
     .scale-table-wrap table { min-width: 480px; }
-    .sv-sismologia .sv-stats { grid-template-columns: 1fr 1fr; }
     .sv-sismologia { padding: 20px; }
     .sismo-etymology { padding: 20px; }
+
+    .sv-sismologia .sv-stats {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .sv-sismologia .sv-stat {
+        padding: 14px 12px;
+    }
+
+    .sv-sismologia .sv-stat .sv-num {
+        font-size: 1.8rem;
+    }
+
+    .sv-image img {
+        height: 150px;
+    }
 }

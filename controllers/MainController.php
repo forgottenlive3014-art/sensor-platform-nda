@@ -94,16 +94,20 @@ class MainController {
         view('arduino', $data);
     }
 
+    public function volcanes() {
+    $data = [
+        'title' => 'Volcanes - NDA',
+        'user' => currentUser()
+    ];
+    view('volcanes', $data);
+}
+
     // ---------------------------------------------------------------
     // "Desastres" (dropdown del navbar): Sismos vive aparte (sismos()),
     // estos 7 comparten la misma plantilla en views/desastres/.
     // ---------------------------------------------------------------
     public function desastresGaleria() {
         view('desastres/galeria', ['title' => 'Desastres - NDA', 'user' => currentUser()]);
-    }
-
-    public function volcanes() {
-        view('desastres/volcanes', ['title' => 'Volcanes - NDA', 'user' => currentUser()]);
     }
 
     public function tsunamis() {

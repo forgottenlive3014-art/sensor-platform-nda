@@ -11,7 +11,6 @@ ob_start();
 <section class="dis-bigbanner" style="--dis-accent:#c98a3d; background-image:url('assets/media/img/SISMOS.png')">
   <div class="dis-bigbanner-overlay"></div>
   <div class="wrap dis-bigbanner-inner">
-    <div class="dis-bigbanner-badge">El Salvador · Cinturón de Fuego</div>
     <h2 class="dis-bigbanner-word">Sismos</h2>
     <div class="dis-bigbanner-sub">
       <span class="dis-bigbanner-rule"></span>
@@ -84,11 +83,9 @@ ob_start();
       </div>
       <div class="sismo-hero-image">
         <div class="sismo-image-card">
-          <div class="sismo-image-placeholder">
-            <img src="assets/media/img/ondasismica.jpg" alt="Representación de un sismo" loading="lazy">
-            <div class="sismo-image-overlay">
-              <span class="sismo-image-label">Liberación de energía sísmica</span>
-            </div>
+          <img src="assets/media/img/ondasismica.jpg" alt="Representación de un sismo" loading="lazy">
+          <div class="sismo-image-overlay">
+            <span class="sismo-image-label">Liberación de energía sísmica</span>
           </div>
         </div>
       </div>
@@ -302,7 +299,7 @@ ob_start();
     </div>
 
     <div class="sv-banner">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#c98a3d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="10"/>
         <line x1="12" y1="8" x2="12" y2="12"/>
         <line x1="12" y1="16" x2="12.01" y2="16"/>
@@ -326,7 +323,7 @@ ob_start();
     <div class="waves-grid">
       <div class="wave-card p-wave">
         <div class="wave-card-image">
-          <img src="assets/media/img/onda-p.jpg" alt="Onda P" loading="lazy">
+          <img src="assets/media/img/ondasP.png" alt="Onda P" loading="lazy">
         </div>
         <div class="wave-card-info">
           <span class="wave-tag">Primaria</span>
@@ -337,7 +334,7 @@ ob_start();
       </div>
       <div class="wave-card s-wave">
         <div class="wave-card-image">
-          <img src="assets/media/img/onda-s.jpg" alt="Onda S" loading="lazy">
+          <img src="assets/media/img/ondasS.png" alt="Onda S" loading="lazy">
         </div>
         <div class="wave-card-info">
           <span class="wave-tag">Secundaria</span>
@@ -348,7 +345,7 @@ ob_start();
       </div>
       <div class="wave-card surf-wave">
         <div class="wave-card-image">
-          <img src="assets/media/img/onda-superficial.jpg" alt="Onda superficial" loading="lazy">
+          <img src="assets/media/img/ondasRL.png" alt="Onda superficial" loading="lazy">
         </div>
         <div class="wave-card-info">
           <span class="wave-tag">Superficial</span>
@@ -374,23 +371,28 @@ ob_start();
 
     <div class="measure-grid">
       <div class="measure-card" style="border-top-color:var(--acc);">
-        <div class="measure-image">
-          <img src="assets/media/img/magnitud.jpg" alt="Magnitud sísmica" loading="lazy">
-        </div>
-        <div class="measure-body">
-          <h4>Magnitud</h4>
-          <p>Cuantifica la <strong>energía liberada</strong> en el foco del sismo. Se calcula con sismógrafos. Un aumento de 1 punto representa <strong>32 veces más energía</strong>.</p>
-          <span class="measure-example">Ejemplo: M7 libera 32× más energía que M6</span>
+        <div class="measure-inner">
+          <div class="measure-image">
+            <img src="assets/media/img/magnitudS.png" alt="Magnitud sísmica" loading="lazy">
+          </div>
+          <div class="measure-body">
+            <h4>Magnitud</h4>
+            <p>Cuantifica la <strong>energía liberada</strong> en el foco del sismo. Se calcula con sismógrafos. Un aumento de 1 punto representa <strong>32 veces más energía</strong>.</p>
+            <span class="measure-example">Ejemplo: M7 libera 32× más energía que M6</span>
+          </div>
         </div>
       </div>
+
       <div class="measure-card" style="border-top-color:var(--acc2);">
-        <div class="measure-image">
-          <img src="assets/media/img/intensidad.jpg" alt="Intensidad sísmica" loading="lazy">
-        </div>
-        <div class="measure-body">
-          <h4>Intensidad</h4>
-          <p>Mide los <strong>efectos y daños</strong> en un lugar específico. Depende de la distancia al epicentro y tipo de suelo. Se expresa con <strong>números romanos</strong> del I al XII.</p>
-          <span class="measure-example">Ejemplo: Intensidad VIII = daños graves en edificios</span>
+        <div class="measure-inner">
+          <div class="measure-image">
+            <img src="assets/media/img/intensidadS.png" alt="Intensidad sísmica" loading="lazy">
+          </div>
+          <div class="measure-body">
+            <h4>Intensidad</h4>
+            <p>Mide los <strong>efectos y daños</strong> en un lugar específico. Depende de la distancia al epicentro y tipo de suelo. Se expresa con <strong>números romanos</strong> del I al XII.</p>
+            <span class="measure-example">Ejemplo: Intensidad VIII = daños graves en edificios</span>
+          </div>
         </div>
       </div>
     </div>
@@ -425,7 +427,7 @@ ob_start();
 </section>
 
 <!-- ============================================================
-     SECCIÓN 7: SISMOLOGÍA EN EL SALVADOR - CON IMAGEN
+     SECCIÓN 7: SISMOLOGÍA EN EL SALVADOR
      ============================================================ -->
 <section class="sec" id="sismologia-sv">
   <div class="wrap">
@@ -436,52 +438,66 @@ ob_start();
     </div>
 
     <div class="sv-sismologia">
+      <!-- Grid: texto a la izquierda, imagen a la derecha -->
       <div class="sv-grid">
-        <div class="sv-text">
-          <p class="sv-description">
-            La <strong>Sismología</strong> estudia los terremotos y la propagación de ondas sísmicas. En El Salvador, el <strong>Ministerio de Medio Ambiente (MARN)</strong> opera la <strong>Red Sísmica Nacional</strong> con más de 30 estaciones en todo el territorio.
-          </p>
-          <p class="sv-footnote">
-            La información recopilada permite determinar ubicación, magnitud y profundidad de cada sismo, ayudando a la <strong>prevención</strong> y <strong>gestión de riesgos</strong>.
-          </p>
-        </div>
-        <div class="sv-image">
-          <img src="assets/media/img/sismologia-sv.jpg" alt="Monitoreo sísmico en El Salvador" loading="lazy">
-        </div>
-      </div>
+        <!-- Columna izquierda: texto + estadísticas -->
+        <div class="sv-left">
+          <div class="sv-text">
+            <p class="sv-description">
+              La <strong>Sismología</strong> estudia los terremotos y la propagación de ondas sísmicas. En El Salvador, el <strong>Ministerio de Medio Ambiente (MARN)</strong> opera la <strong>Red Sísmica Nacional</strong> con más de 30 estaciones en todo el territorio.
+            </p>
+            <p class="sv-footnote">
+              La información recopilada permite determinar ubicación, magnitud y profundidad de cada sismo, ayudando a la <strong>prevención</strong> y <strong>gestión de riesgos</strong>.
+            </p>
+          </div>
 
-      <div class="sv-stats">
-        <div class="sv-stat">
-          <div class="sv-num">30+</div>
-          <div class="sv-lbl">Estaciones sísmicas</div>
+          <!-- Estadísticas: 2 filas de 2 columnas con números arriba y texto abajo centrado -->
+          <div class="sv-stats">
+            <div class="sv-stat">
+              <span class="sv-num">30+</span>
+              <span class="sv-lbl">Estaciones sísmicas</span>
+            </div>
+            <div class="sv-stat">
+              <span class="sv-num">100</span>
+              <span class="sv-lbl">Sismos perceptibles/año</span>
+            </div>
+            <div class="sv-stat">
+              <span class="sv-num">8 cm</span>
+              <span class="sv-lbl">Subducción anual Cocos</span>
+            </div>
+            <div class="sv-stat">
+              <span class="sv-num">24/7</span>
+              <span class="sv-lbl">Monitoreo continuo</span>
+            </div>
+          </div>
         </div>
-        <div class="sv-stat">
-          <div class="sv-num">100</div>
-          <div class="sv-lbl">Sismos perceptibles/año</div>
-        </div>
-        <div class="sv-stat">
-          <div class="sv-num">8 cm</div>
-          <div class="sv-lbl">Subducción anual Cocos</div>
-        </div>
-        <div class="sv-stat">
-          <div class="sv-num">24/7</div>
-          <div class="sv-lbl">Monitoreo continuo</div>
+
+        <!-- Columna derecha: imagen -->
+        <div class="sv-image">
+          <img src="assets/media/img/sismologia.png" alt="Monitoreo sísmico en El Salvador" loading="lazy">
         </div>
       </div>
     </div>
   </div>
 </section>
 
-
-<!-- HISTORIA: linea de tiempo de los mayores desastres -->
+<!-- ============================================================
+     SECCIÓN 8: HISTORIA - LÍNEA DE TIEMPO
+     ============================================================ -->
 <section class="sec sec-dark" id="timeline">
   <div class="wrap">
-    <div class="sec-hd"><div class="sec-eyebrow">Historia Sísmica · El Salvador</div><h2 class="sec-title">Línea del <span class="acc">Tiempo</span></h2><p class="sec-sub">Los terremotos más significativos en la historia del país</p></div>
-    <div class="tl-wrap"><div class="tl-line"></div><div class="tl-track" id="tlTrack"></div></div>
+    <div class="sec-hd">
+      <div class="sec-eyebrow">Historia Sísmica · El Salvador</div>
+      <h2 class="sec-title">Línea del <span class="acc">Tiempo</span></h2>
+      <p class="sec-sub">Los terremotos más significativos en la historia del país</p>
+    </div>
+    <div class="tl-wrap">
+      <div class="tl-line"></div>
+      <div class="tl-track" id="tlTrack"></div>
+    </div>
     <div class="tl-detail" id="tlDetail"></div>
     <div class="data-source-note">
-      <strong>Fuentes y respaldo de datos:</strong> Servicio Nacional de Estudios Territoriales (SNET/MARN), Universidad Centroamericana "José Simeón Cañas" (UCA), 
-      Ministerio de Educación de El Salvador y hemerotecas nacionales (La Prensa Gráfica, El Diario de Hoy). 
+      <strong>Fuentes y respaldo de datos:</strong> Servicio Nacional de Estudios Territoriales (SNET/MARN), Universidad Centroamericana "José Simeón Cañas" (UCA), Ministerio de Educación de El Salvador y hemerotecas nacionales (La Prensa Gráfica, El Diario de Hoy).
     </div>
   </div>
 </section>
@@ -500,7 +516,7 @@ ob_start();
     <div class="guide-grid">
       <div class="guide-card before">
         <div class="guide-image">
-          <img src="assets/media/img/guia-antes.jpg" alt="Preparación antes de un sismo" loading="lazy">
+          <img src="assets/media/img/antesS.png" alt="Preparación antes de un sismo" loading="lazy">
         </div>
         <div class="guide-body">
           <h4>Antes</h4>
@@ -514,7 +530,7 @@ ob_start();
       </div>
       <div class="guide-card during">
         <div class="guide-image">
-          <img src="assets/media/img/guia-durante.jpg" alt="Qué hacer durante un sismo" loading="lazy">
+          <img src="assets/media/img/duranteS.png" alt="Qué hacer durante un sismo" loading="lazy">
         </div>
         <div class="guide-body">
           <h4>Durante</h4>
@@ -528,7 +544,7 @@ ob_start();
       </div>
       <div class="guide-card after">
         <div class="guide-image">
-          <img src="assets/media/img/guia-despues.jpg" alt="Qué hacer después de un sismo" loading="lazy">
+          <img src="assets/media/img/despuesS.png" alt="Qué hacer después de un sismo" loading="lazy">
         </div>
         <div class="guide-body">
           <h4>Después</h4>
@@ -544,8 +560,9 @@ ob_start();
   </div>
 </section>
 
-
-<!-- ZONA SISMICA -->
+<!-- ============================================================
+     SECCIÓN 10: ZONA SÍSMICA - MAPA
+     ============================================================ -->
 <section class="sec sec-dark">
   <div class="wrap">
     <div class="sec-hd">
@@ -576,52 +593,30 @@ ob_start();
   </div>
 </section>
 
-<!-- MONITOR SISMICO EN TIEMPO REAL -->
+<!-- ============================================================
+     SECCIÓN 11: MONITOR SÍSMICO EN TIEMPO REAL
+     ============================================================ -->
 <section class="sec" id="monitor-tiempo-real">
   <div class="wrap">
-    <div class="rt-monitor-hero">
-      <div class="rtm-top-bar">
-        <div class="rtm-badge active"><span class="live-dot"></span>Sistema Activo</div>
-        <span style="font-size:.7rem;color:var(--text3);margin-left:4px">Red Sísmica Nacional · MARN El Salvador · USGS + EMSC</span>
-        <span style="margin-left:auto;font-size:.7rem;color:var(--text3)" id="rtmClock">—</span>
-      </div>
-      <div class="rtm-title-area">
-        <div class="rtm-eyebrow"> Sección 01</div>
-        <div class="rtm-h2">Monitor Sísmico <span class="rtm-accent">en<br>Tiempo Real</span></div>
-        <div class="rtm-sub">Datos en vivo del USGS + EMSC — Región de Centroamérica y El Salvador</div>
-      </div>
-      <div class="rtm-stats-row">
-        <div class="rtm-stat"><div class="rtm-stat-val acc" id="rtm-today">—</div><div class="rtm-stat-lbl">Sismos Hoy</div></div>
-        <div class="rtm-stat"><div class="rtm-stat-val teal" id="rtm-mag">—</div><div class="rtm-stat-lbl">última Magnitud</div></div>
-        <div class="rtm-stat"><div class="rtm-stat-val blue" id="rtm-depth">—</div><div class="rtm-stat-lbl">Profundidad</div></div>
-        <div class="rtm-stat"><div class="rtm-stat-val green">~100</div><div class="rtm-stat-lbl">Sismos/Año El SV</div></div>
-      </div>
-      <div class="intensity-row">
-        <span class="int-label">Intensidad:</span>
-        <button class="int-btn leve active" onclick="setIntensity('leve',this)"><span class="int-dot g"></span>Leve</button>
-        <button class="int-btn mod" onclick="setIntensity('moderado',this)"><span class="int-dot y"></span>Moderado</button>
-        <button class="int-btn fuerte" onclick="setIntensity('fuerte',this)"><span class="int-dot r"></span>Fuerte</button>
-        <span class="int-mag-range" id="intMagRange">M 1.0 — 3.4</span>
-      </div>
-      <div class="shake-viz">
-        <div class="shake-status" id="shakeStatus"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><polyline points="20 6 9 17 4 12"/></svg> SACUDIDA LEVE</div>
-        <div class="buildings-row" id="buildingsRow"></div>
-      </div>
-    </div>
-
     <div class="sec-hd" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px">
       <div>
         <div class="page-eyebrow">Actividad Sísmica · El Salvador</div>
         <div class="page-title">Sismógrafo <span class="acc">Interactivo</span></div>
       </div>
-      <button class="btn-acc" id="simBtn" style="font-size:.82rem;padding:9px 18px"> Simular sismo</button>
+      <button class="btn-acc" id="simBtn" style="font-size:.82rem;padding:9px 18px">Simular sismo</button>
     </div>
     <div class="pt-rule"></div>
     <div class="seismo-layout">
       <div>
         <div class="sg-main-card">
           <div class="phdr">
-            <div style="width:32px;height:32px;background:rgba(255,77,26,.15);border-radius:var(--rs);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M8 21l4-13 4 13"/><circle cx="12" cy="6" r="1.4"/><path d="M12 6l-1.5 3M12 6l1.5 3"/></svg></div>
+            <div style="width:32px;height:32px;background:rgba(255,77,26,.15);border-radius:var(--rs);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0">
+              <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em">
+                <path d="M8 21l4-13 4 13"/>
+                <circle cx="12" cy="6" r="1.4"/>
+                <path d="M12 6l-1.5 3M12 6l1.5 3"/>
+              </svg>
+            </div>
             <div style="min-width:0;overflow:hidden">
               <div style="font-weight:700;color:var(--text);font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Sismógrafo Interactivo — El Salvador</div>
               <div style="font-size:.7rem;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="sgSubtitle">Estación SSN · San Salvador · 13.692°N, 89.218°W · EN VIVO</div>
@@ -638,7 +633,12 @@ ob_start();
             <button class="sg-preset m6" data-mag="6" data-cls="m6">M6 <span style="font-size:.65rem;opacity:.7">moderado</span></button>
             <button class="sg-preset m7" data-mag="7" data-cls="m7">M7 <span style="font-size:.65rem;opacity:.7">fuerte</span></button>
             <button class="sg-preset m85" data-mag="8.5" data-cls="m85">M8.5 <span style="font-size:.65rem;opacity:.7">gran terremoto</span></button>
-            <button class="sg-reset" id="sgReset"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> Reiniciar</button>
+            <button class="sg-reset" id="sgReset">
+              <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em">
+                <polyline points="1 4 1 10 7 10"/>
+                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+              </svg> Reiniciar
+            </button>
             <div class="sg-mag-slider">
               <label>Magnitud:</label>
               <input type="range" class="sg-slider" id="sgMagSlider" min="1" max="9" step=".1" value="3"/>
@@ -654,7 +654,16 @@ ob_start();
           </div>
         </div>
         <div style="margin-top:14px;background:var(--card);border:1px solid var(--border2);border-radius:var(--r);overflow:hidden" id="quakeFeed-wrap">
-          <div class="phdr"><span class="ldot"></span>Sismos Recientes — USGS + EMSC <span id="quakeUpdatedAt" style="margin-left:auto;font-size:.68rem;color:var(--text3)">cargando…</span><button class="sg-reset" id="refreshQ" style="margin-left:8px;padding:4px 11px"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></button></div>
+          <div class="phdr">
+            <span class="ldot"></span>Sismos Recientes — USGS + EMSC
+            <span id="quakeUpdatedAt" style="margin-left:auto;font-size:.68rem;color:var(--text3)">cargando…</span>
+            <button class="sg-reset" id="refreshQ" style="margin-left:8px;padding:4px 11px">
+              <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em">
+                <polyline points="1 4 1 10 7 10"/>
+                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+              </svg>
+            </button>
+          </div>
           <div id="quakeFeed"><div class="loading-s"><div class="spin"></div>Cargando datos USGS + EMSC…</div></div>
         </div>
       </div>
@@ -694,8 +703,10 @@ ob_start();
   </div>
 </section>
 
-<!-- SIMULADOR -->
-<section class="sec sec-dark" id="sim-section">
+<!-- ============================================================
+     SECCIÓN 12: SIMULADOR
+     ============================================================ -->
+<section class="sec" id="sim-section">
   <div class="wrap">
     <div class="sec-hd">
       <div class="sec-eyebrow">Simulación Interactiva</div>
@@ -720,7 +731,15 @@ ob_start();
   </div>
 </section>
 
+<!-- ============================================================
+     GSAP ANIMATIONS - ARCHIVO UNIFICADO
+     ============================================================ -->
+<!-- Cargar GSAP desde jsdelivr (no necesitas Cloudflare) -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 
+<!-- Tu archivo de animaciones (con los nuevos selectores para sismos) -->
+<script src="assets/js/gsap-animations.js"></script>
 <?php
 $content = ob_get_clean();
 require_once 'layout.php';

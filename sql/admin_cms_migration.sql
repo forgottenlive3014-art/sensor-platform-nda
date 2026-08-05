@@ -52,3 +52,14 @@ CREATE TABLE contenido_paginas (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY uq_pagina_campo (pagina, campo)
 ) ENGINE=MyISAM;
+
+-- INSERTAR LOS 7 RECURSOS 
+
+INSERT INTO recursos (titulo, descripcion, categoria, tags, archivo, tamano_bytes, orden) VALUES
+('Magnitud e Intensidad', 'Explicación sobre la diferencia entre magnitud e intensidad de los sismos', 'sismo', 'magnitud,intensidad', 'assets/media/guias/Magnitudinensi-dad.jpg', 0, 16),
+('Folleto Sismos - PNUD', 'Folleto informativo sobre sismos elaborado por PNUD', 'sismo', 'folleto,PNUD', 'assets/media/guias/Folleto_SISMOS_PNUD_V4.pdf', 0, 17),
+('Questissimo', 'Documento sobre sismicidad en El Salvador', 'sismo', 'sismicidad', 'assets/media/guias/Questissimo.jpg', 0, 18),
+('Unanimada 636', 'Documento técnico sobre sismos', 'sismo', 'técnico', 'assets/media/guias/Unanimada_636.pdf', 0, 19),
+('Hoja Informativa - Sismos', 'Hoja informativa sobre sismos del Servicio Geológico', 'sismo', 'hoja,informativa', 'assets/media/guias/Hoja-informativa-Sismos-SGC.pdf', 0, 20),
+('¿Qué son los Sismos?', 'Guía básica sobre qué son los sismos y cómo se producen', 'sismo', 'básico,introducción', 'assets/media/guias/QueSonSismos.pdf', 0, 21),
+('Sismo Ciencia y Comunidad', 'Ciencia y gestión de riesgos en comunidades', 'sismo', 'comunidad,gestión', 'assets/media/guias/CARE_CENAIIS_Cuba_SismoCiencia_ycomunidad_gestiondelosrie...pdf', 0, 22);
