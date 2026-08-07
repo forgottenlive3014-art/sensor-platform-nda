@@ -320,3 +320,96 @@
     });
 
 })();
+
+// ============================================================
+// CARRUSEL CON STEP PROGRESS INDICATOR
+// ============================================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('formacionCarousel');
+    if (!container) return;
+
+    const slides = container.querySelectorAll('.v-carousel-slide');
+    const dots = document.querySelectorAll('.v-carousel-dots .dot');
+    const stepDots = document.querySelectorAll('.v-step-dot');
+    const prevBtn = document.getElementById('carouselPrev');
+    const nextBtn = document.getElementById('carouselNext');
+    const totalSlides = slides.length;
+    let currentSlide = 0;
+    let isAnimating = false;
+
+    // Crear dots
+    const dotsContainer = document.getElementById('carouselDots');
+    dotsContainer.innerHTML = '';
+    for (let i = 0; i < totalSlides; i++) {
+        const dot = document.createElement('span');
+        dot.className = 'dot' + (i === 0 ? ' active' : '');
+        dot.dataset.index = i;
+        dot.addEventListener('click', () => goToSlide(i));
+        dotsContainer.appendChild(dot);
+    }
+
+    function goToSlide(index) {
+        if (isAnimating || index === currentSlide) return;
+        isAnimating = true;
+
+        const current = slides[currentSlide];
+        const next = slides[index];
+
+        // Animación de salida
+        current.classList.add('exit');
+        current.classList.remove('active');
+
+        setTimeout(() => {
+            current.classList.remove('exit');
+            next.classList.add('active');
+            
+            // Actualizar dots horizontales
+            document.querySelectorAll('.v-carousel-dots .dot').forEach((d, i) => {
+                d.classList.toggle('active', i === index);
+            });
+
+            // Actualizar step dots
+            stepDots.forEach((dot, i) => {
+                dot.classList.remove('active', 'completed');
+                if (i === index) {
+                    dot.classList.add('active');
+                } else if (i < index) {
+                    dot.classList.add('completed');
+                }
+            });
+
+            currentSlide = index;
+            isAnimating = false;
+        }, 400);
+    }
+
+    function nextSlide() {
+        goToSlide((currentSlide + 1) % totalSlides);
+    }
+
+    function prevSlide() {
+        goToSlide((currentSlide - 1 + totalSlides) % totalSlides);
+    }
+
+    // Eventos de botones
+    if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+    if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+
+    // Eventos de step dots (clicables)
+    stepDots.forEach((dot, index) => {
+        dot.addEventListener('click', () => goToSlide(index));
+    });
+
+    // Autoplay
+    let autoplay = setInterval(nextSlide, 6000);
+    const wrapper = document.querySelector('.v-carousel-wrapper');
+    if (wrapper) {
+        wrapper.addEventListener('mouseenter', () => clearInterval(autoplay));
+        wrapper.addEventListener('mouseleave', () => {
+            autoplay = setInterval(nextSlide, 6000);
+        });
+    }
+});
+
+ 

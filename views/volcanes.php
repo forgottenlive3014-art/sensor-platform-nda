@@ -35,51 +35,65 @@ ob_start();
       <p class="v-sub">Definición, importancia y contexto de El Salvador</p>
     </div>
 
-    <div class="v-grid-2">
-      <div class="v-text">
-        <p>Un <strong>volcán</strong> es una abertura en la superficie terrestre por donde el magma, gases y ceniza del interior de la Tierra salen hacia el exterior. Cuando este material se escapa, provoca una <strong>erupción volcánica</strong>.</p>
-        <p>Los volcanes son fundamentales para la formación de la corteza terrestre, la creación de nuevas tierras y la regulación del clima.</p>
-        <div class="v-why">
-          <h3>¿Por qué El Salvador es un país volcánico?</h3>
-          <p>El país forma parte de la <strong>Cadena Volcánica Centroamericana</strong>, producto de la subducción de la <strong>Placa de Cocos</strong> bajo la <strong>Placa del Caribe</strong>.</p>
-        </div>
+    <div class="v-intro-wrapper">
+      <!-- Imagen principal (izquierda) -->
+      <div class="v-intro-image">
+        <img src="assets/media/img/volcanBanner.jpg" alt="Estructura de un volcán" loading="lazy">
+        <span class="v-intro-image-label">Corte transversal de un volcán</span>
       </div>
-      <div class="v-gallery">
-        <div class="v-gallery-grid">
-          <div class="v-gallery-item main">
-            <img src="assets/media/img/volcan-estructura.jpg" alt="Estructura" loading="lazy">
-            <span class="v-gallery-label">Corte transversal de un volcán</span>
+
+      <!-- Columna derecha: definición + fundamentos -->
+      <div class="v-intro-content">
+        <!-- Definición -->
+        <div class="v-intro-definition">
+          <p>
+            Un <strong>volcán</strong> es una abertura en la superficie terrestre por donde el <strong>magma</strong>, <strong>gases</strong> y <strong>ceniza</strong> del interior de la Tierra salen hacia el exterior. Cuando este material se escapa, provoca una <strong>erupción volcánica</strong>.
+          </p>
+        </div>
+
+        <!-- Fundamentos en recuadros -->
+        <div class="v-fundamentos">
+          <h3 class="v-fundamentos-title">Los volcanes son fundamentales para:</h3>
+          <div class="v-fundamentos-grid">
+            <div class="v-fundamento">
+              <span class="v-fundamento-num">01</span>
+              <div class="v-fundamento-content">
+                <h4>Formación de la corteza terrestre</h4>
+                <p>Contribuyen a la construcción de la litosfera, añadiendo nuevas capas de roca.</p>
+              </div>
+            </div>
+            <div class="v-fundamento">
+              <span class="v-fundamento-num">02</span>
+              <div class="v-fundamento-content">
+                <h4>Creación de nuevas tierras</h4>
+                <p>Islas como Hawái o Islandia deben su existencia a erupciones volcánicas.</p>
+              </div>
+            </div>
+            <div class="v-fundamento">
+              <span class="v-fundamento-num">03</span>
+              <div class="v-fundamento-content">
+                <h4>Regulación del clima</h4>
+                <p>Las erupciones liberan gases que influyen en la temperatura global.</p>
+              </div>
+            </div>
           </div>
-          <div class="v-gallery-item"><img src="assets/media/img/volcan-erupcion-1.jpg" alt="Erupción" loading="lazy"></div>
-          <div class="v-gallery-item"><img src="assets/media/img/volcan-lava.jpg" alt="Lava" loading="lazy"></div>
-          <div class="v-gallery-item"><img src="assets/media/img/volcan-ceniza.jpg" alt="Ceniza" loading="lazy"></div>
         </div>
       </div>
     </div>
 
-    <div class="v-stats">
-      <div class="v-stat" data-count="242">
-        <span class="v-stat-num">0</span>
-        <span class="v-stat-label">Formaciones volcánicas</span>
-      </div>
-      <div class="v-stat" data-count="36">
-        <span class="v-stat-num">0</span>
-        <span class="v-stat-label">Volcanes activos</span>
-      </div>
-      <div class="v-stat" data-count="10">
-        <span class="v-stat-num">0</span>
-        <span class="v-stat-label">Bajo vigilancia</span>
-      </div>
-      <div class="v-stat" data-count="2005">
-        <span class="v-stat-num">0</span>
-        <span class="v-stat-label">Última erupción importante</span>
-      </div>
+    <!-- Dato clave de El Salvador (abajo, ancho completo) -->
+    <div class="v-intro-footer">
+      <span class="v-intro-footer-line"></span>
+      <p>
+        <strong>El Salvador</strong> forma parte de la <strong>Cadena Volcánica Centroamericana</strong>, producto de la subducción de la <strong>Placa de Cocos</strong> bajo la <strong>Placa del Caribe</strong>.
+      </p>
+      <span class="v-intro-footer-line"></span>
     </div>
   </div>
 </section>
 
 <!-- ============================================================
-     SECCIÓN 2: FORMACIÓN - CARRUSEL MODERNO
+     SECCIÓN 2: FORMACIÓN DE LOS VOLCANES
      ============================================================ -->
 <section class="v-section v-section-dark" id="formacion">
   <div class="wrap">
@@ -89,68 +103,178 @@ ob_start();
       <p class="v-sub">El proceso geológico que da origen a los volcanes</p>
     </div>
 
-    <div class="v-carousel-moderno">
-      <div class="v-carousel-slides" id="carouselSlides">
-        <div class="v-carousel-slide active">
-          <div class="v-carousel-content">
-            <span class="v-carousel-num">01</span>
-            <h3>Formación de la Tierra</h3>
-            <p>La Tierra se formó hace aproximadamente 4,500 millones de años. Su interior mantiene altas temperaturas que generan el calor necesario para la fusión de rocas.</p>
-          </div>
-          <div class="v-carousel-image">
-            <img src="assets/media/img/volcan-formacion-1.jpg" alt="Formación de la Tierra" loading="lazy">
-          </div>
-        </div>
-        <div class="v-carousel-slide">
-          <div class="v-carousel-content">
-            <span class="v-carousel-num">02</span>
-            <h3>Tectónica de placas</h3>
-            <p>La litosfera está fragmentada en placas tectónicas que se mueven. En las zonas de subducción, una placa se hunde bajo otra.</p>
-          </div>
-          <div class="v-carousel-image">
-            <img src="assets/media/img/volcan-formacion-2.jpg" alt="Tectónica de placas" loading="lazy">
-          </div>
-        </div>
-        <div class="v-carousel-slide">
-          <div class="v-carousel-content">
-            <span class="v-carousel-num">03</span>
-            <h3>Cinturón de Fuego</h3>
-            <p>El Salvador forma parte del Cinturón de Fuego del Pacífico, que concentra el 80% de los volcanes activos del mundo.</p>
-          </div>
-          <div class="v-carousel-image">
-            <img src="assets/media/img/volcan-formacion-3.jpg" alt="Cinturón de Fuego" loading="lazy">
-          </div>
-        </div>
-        <div class="v-carousel-slide">
-          <div class="v-carousel-content">
-            <span class="v-carousel-num">04</span>
-            <h3>Formación del edificio</h3>
-            <p>La sucesiva acumulación de lava, ceniza y piroclastos alrededor de la boca eruptiva forma el cono volcánico.</p>
-          </div>
-          <div class="v-carousel-image">
-            <img src="assets/media/img/volcan-formacion-4.jpg" alt="Edificio volcánico" loading="lazy">
-          </div>
-        </div>
-      </div>
-      <div class="v-carousel-controls">
-        <button class="v-carousel-btn prev" id="carouselPrev">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-        </button>
-        <div class="v-carousel-dots" id="carouselDots"></div>
-        <button class="v-carousel-btn next" id="carouselNext">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </button>
+    <!-- Cinturón de Fuego -->
+    <div class="v-fire-belt">
+      <svg class="v-fire-belt-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2C8 6 6 9 6 13c0 3.3 2.7 6 6 6s6-2.7 6-6c0-4-2-7-6-11z"/>
+        <path d="M12 19v3"/>
+        <path d="M8 22h8"/>
+      </svg>
+      <div class="v-fire-belt-content">
+        <h3>Cinturón de Fuego del Pacífico</h3>
+        <p>El Salvador forma parte del <strong>Cinturón de Fuego del Pacífico</strong>, que concentra el <strong>80%</strong> de los volcanes activos del mundo.</p>
       </div>
     </div>
 
-    <div class="v-note">
-      <p><strong>En El Salvador:</strong> más del 90% del subsuelo está formado por rocas de origen magmático.</p>
+    <!-- CARRUSEL CON STEP PROGRESS INDICATOR -->
+    <div class="v-carousel-wrapper">
+      <div class="v-carousel-container">
+        
+        <!-- Step Indicator -->
+        <div class="v-step-indicator">
+          <div class="v-step-line"></div>
+          <div class="v-step-dots">
+            <div class="v-step-dot active" data-slide="0">
+              <span class="v-step-num">01</span>
+            </div>
+            <div class="v-step-dot" data-slide="1">
+              <span class="v-step-num">02</span>
+            </div>
+            <div class="v-step-dot" data-slide="2">
+              <span class="v-step-num">03</span>
+            </div>
+            <div class="v-step-dot" data-slide="3">
+              <span class="v-step-num">04</span>
+            </div>
+            <div class="v-step-dot" data-slide="4">
+              <span class="v-step-num">05</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slides -->
+        <div class="v-carousel-slides-wrapper">
+          <div class="v-carousel-slides-container" id="formacionCarousel">
+            
+            <!-- Slide 1 -->
+            <div class="v-carousel-slide active" data-slide="0">
+              <div class="v-carousel-inner">
+                <div class="v-carousel-image">
+                  <img src="assets/media/img/formacionTierra.png" alt="Formación de la Tierra" loading="lazy">
+                  <span class="v-carousel-image-label">Corte transversal de la Tierra</span>
+                </div>
+                <div class="v-carousel-content">
+                  <span class="v-carousel-num">01</span>
+                  <h3>Formación de la Tierra</h3>
+                  <p>La Tierra se formó hace aproximadamente <strong>4,540 millones de años</strong>. El calor interno generado permitió que los materiales más densos se concentraran en el núcleo y los más ligeros formaran la corteza. Ese calor aún se conserva y es responsable de la actividad volcánica.</p>
+                  <div class="v-carousel-tags">
+                    <span>4,540 millones de años</span>
+                    <span>Corteza, manto y núcleo</span>
+                    <span>Calor interno activo</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="v-carousel-slide" data-slide="1">
+              <div class="v-carousel-inner">
+                <div class="v-carousel-image">
+                  <img src="assets/media/img/placasVolcan.png" alt="Tectónica de placas" loading="lazy">
+                  <span class="v-carousel-image-label">Subducción de placas tectónicas</span>
+                </div>
+                <div class="v-carousel-content">
+                  <span class="v-carousel-num">02</span>
+                  <h3>Tectónica de placas</h3>
+                  <p>La superficie terrestre está dividida en grandes bloques llamados <strong>placas tectónicas</strong> que se desplazan lentamente. Cuando chocan, una puede hundirse bajo la otra en un proceso llamado <strong>subducción</strong>, generando las condiciones ideales para la formación de magma y volcanes.</p>
+                  <div class="v-carousel-tags">
+                    <span>Movimiento constante</span>
+                    <span>Límites convergentes</span>
+                    <span>Subducción</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 3 -->
+            <div class="v-carousel-slide" data-slide="2">
+              <div class="v-carousel-inner">
+                <div class="v-carousel-image">
+                  <img src="assets/media/img/formacionMagma.png" alt="Formación del magma" loading="lazy">
+                  <span class="v-carousel-image-label">Formación y ascenso del magma</span>
+                </div>
+                <div class="v-carousel-content">
+                  <span class="v-carousel-num">03</span>
+                  <h3>Formación del magma</h3>
+                  <p>En las zonas de subducción, las altas temperaturas y la presión provocan la <strong>fusión parcial</strong> de las rocas del manto, formando el <strong>magma</strong>. Este material asciende por su menor densidad y se acumula en una <strong>cámara magmática</strong>.</p>
+                  <div class="v-carousel-tags">
+                    <span>Fusión parcial</span>
+                    <span>Ascenso del magma</span>
+                    <span>Cámara magmática</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 4 -->
+            <div class="v-carousel-slide" data-slide="3">
+              <div class="v-carousel-inner">
+                <div class="v-carousel-image">
+                  <img src="assets/media/img/formacionVolcanica.png" alt="Edificio volcánico" loading="lazy">
+                  <span class="v-carousel-image-label">Crecimiento del edificio volcánico</span>
+                </div>
+                <div class="v-carousel-content">
+                  <span class="v-carousel-num">04</span>
+                  <h3>Formación del edificio volcánico</h3>
+                  <p>Cuando la presión dentro de la cámara magmática aumenta, el magma asciende por la <strong>chimenea</strong> y emerge en la superficie durante una <strong>erupción</strong>. La acumulación de lava, ceniza y piroclastos forma gradualmente el <strong>cono volcánico</strong>.</p>
+                  <div class="v-carousel-tags">
+                    <span>Ascenso del magma</span>
+                    <span>Erupción volcánica</span>
+                    <span>Cono volcánico</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slide 5 -->
+            <div class="v-carousel-slide" data-slide="4">
+              <div class="v-carousel-inner">
+                <div class="v-carousel-image">
+                  <img src="assets/media/img/CadenaVolcanica.png" alt="Volcanes de El Salvador" loading="lazy">
+                  <span class="v-carousel-image-label">Cadena Volcánica de El Salvador</span>
+                </div>
+                <div class="v-carousel-content">
+                  <span class="v-carousel-num">05</span>
+                  <h3>El Salvador y los volcanes</h3>
+                  <p><strong>El Salvador</strong> forma parte de la <strong>Cadena Volcánica Centroamericana</strong>, con más de <strong>20 volcanes</strong> en su territorio. La subducción de la <strong>Placa de Cocos</strong> bajo la <strong>Placa del Caribe</strong> es la responsable de esta intensa actividad volcánica.</p>
+                  <div class="v-carousel-tags">
+                    <span>20+ volcanes activos</span>
+                    <span>Cadena Volcánica Centroamericana</span>
+                    <span>Placa de Cocos</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Controles -->
+          <div class="v-carousel-controls">
+            <button class="v-carousel-btn prev" id="carouselPrev">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <div class="v-carousel-dots" id="carouselDots"></div>
+            <button class="v-carousel-btn next" id="carouselNext">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="v-formacion-footer">
+      <span class="v-formacion-footer-line"></span>
+      <p><strong>En El Salvador:</strong> más del <strong>90%</strong> del subsuelo está formado por rocas de origen magmático.</p>
+      <span class="v-formacion-footer-line"></span>
     </div>
   </div>
 </section>
 
+
 <!-- ============================================================
-     SECCIÓN 3: ANATOMÍA - DIAGRAMA INTERACTIVO
+     SECCIÓN 3: ANATOMÍA DEL VOLCÁN (con diagrama interactivo)
      ============================================================ -->
 <section class="v-section" id="anatomia">
   <div class="wrap">
@@ -162,74 +286,233 @@ ob_start();
 
     <div class="v-diagram-wrap">
       <div class="v-diagram-image">
-        <img src="assets/media/img/volcan-anatomia-diagrama.jpg" alt="Anatomía del volcán" loading="lazy">
-        
-        <div class="v-diagram-pin" style="top:10%; left:50%;" data-part="Cámara Magmática">
+        <img src="assets/media/img/anatomiaVolcan.png" alt="Anatomía del volcán" loading="lazy">
+
+        <!-- ==========================================================
+             ESTRUCTURA EXTERNA (puntos en la imagen)
+             ========================================================== -->
+
+        <!-- 1. Columna Eruptiva -->
+        <div class="v-diagram-pin tooltip-bottom" style="top:11%; left:54%;">
           <span class="v-pin-dot"></span>
           <div class="v-pin-tooltip">
+            <span class="v-pin-category">Estructura externa</span>
+            <strong>Columna Eruptiva</strong>
+            <p>Nube vertical de gases, cenizas y fragmentos sólidos expulsados durante la erupción.</p>
+          </div>
+        </div>
+
+        <!-- 2. Cráter -->
+        <div class="v-diagram-pin tooltip-bottom" style="top:17%; left:46%;">
+          <span class="v-pin-dot"></span>
+          <div class="v-pin-tooltip">
+            <span class="v-pin-category">Estructura externa</span>
+            <strong>Cráter</strong>
+            <p>Abertura en la cima del volcán por donde salen magma, gases y ceniza.</p>
+          </div>
+        </div>
+
+        <!-- 3. Fumarolas -->
+        <div class="v-diagram-pin tooltip-bottom" style="top:20%; left:58%;">
+          <span class="v-pin-dot"></span>
+          <div class="v-pin-tooltip">
+            <span class="v-pin-category">Estructura externa</span>
+            <strong>Fumarolas</strong>
+            <p>Aberturas secundarias por donde se emiten gases volcánicos y vapor de agua.</p>
+          </div>
+        </div>
+
+        <!-- 4. Colada de Lava -->
+        <div class="v-diagram-pin tooltip-bottom" style="top:27%; left:40%;">
+          <span class="v-pin-dot"></span>
+          <div class="v-pin-tooltip">
+            <span class="v-pin-category">Estructura externa</span>
+            <strong>Colada de Lava</strong>
+            <p>Flujo de lava que desciende por las laderas del volcán después de una erupción.</p>
+          </div>
+        </div>
+
+        <!-- 5. Cono Volcánico -->
+        <div class="v-diagram-pin" style="top:34%; left:35%;">
+          <span class="v-pin-dot"></span>
+          <div class="v-pin-tooltip">
+            <span class="v-pin-category">Estructura externa</span>
+            <strong>Cono Volcánico</strong>
+            <p>Montaña formada por la acumulación de lava, ceniza y piroclastos.</p>
+          </div>
+        </div>
+
+        <!-- 6. Capas de Lava y Ceniza -->
+        <div class="v-diagram-pin" style="top:39%; left:34%;">
+          <span class="v-pin-dot"></span>
+          <div class="v-pin-tooltip">
+            <span class="v-pin-category">Estructura externa</span>
+            <strong>Capas de Lava y Ceniza</strong>
+            <p>Estratos formados por la acumulación de materiales expulsados en diferentes erupciones.</p>
+          </div>
+        </div>
+
+        <!-- 7. Cono Secundario -->
+        <div class="v-diagram-pin" style="top:31.5%; left:58%;">
+          <span class="v-pin-dot"></span>
+          <div class="v-pin-tooltip">
+            <span class="v-pin-category">Estructura externa</span>
+            <strong>Cono Secundario</strong>
+            <p>Pequeño cono formado por erupciones a través de una chimenea secundaria.</p>
+          </div>
+        </div>
+
+        <!-- ==========================================================
+             ESTRUCTURA INTERNA (puntos en la imagen)
+             ========================================================== -->
+
+        <!-- 8. Chimenea Secundaria -->
+        <div class="v-diagram-pin" style="top:43%; left:57%;">
+          <span class="v-pin-dot"></span>
+          <div class="v-pin-tooltip">
+            <span class="v-pin-category">Estructura interna</span>
+            <strong>Chimenea Secundaria</strong>
+            <p>Conducto alterno que permite la salida del magma por los flancos del volcán.</p>
+          </div>
+        </div>
+
+        <!-- 9. Chimenea Principal -->
+        <div class="v-diagram-pin" style="top:49.5%; left:48%;">
+          <span class="v-pin-dot"></span>
+          <div class="v-pin-tooltip">
+            <span class="v-pin-category">Estructura interna</span>
+            <strong>Chimenea Principal</strong>
+            <p>Conducto principal que comunica la cámara magmática con el cráter.</p>
+          </div>
+        </div>
+
+        <!-- 10. Dique -->
+        <div class="v-diagram-pin" style="top:73%; left:51.5%;">
+          <span class="v-pin-dot"></span>
+          <div class="v-pin-tooltip">
+            <span class="v-pin-category">Estructura interna</span>
+            <strong>Dique</strong>
+            <p>Intrusión vertical de magma que atraviesa las rocas y puede alimentar nuevas chimeneas.</p>
+          </div>
+        </div>
+
+        <!-- 11. Sill (Filón Capa) -->
+        <div class="v-diagram-pin" style="top:66.5%; left:32%;">
+          <span class="v-pin-dot"></span>
+          <div class="v-pin-tooltip">
+            <span class="v-pin-category">Estructura interna</span>
+            <strong>Sill (Filón Capa)</strong>
+            <p>Intrusión horizontal de magma entre los estratos de roca.</p>
+          </div>
+        </div>
+
+        <!-- 12. Cámara Magmática -->
+        <div class="v-diagram-pin" style="top:89%; left:47%;">
+          <span class="v-pin-dot"></span>
+          <div class="v-pin-tooltip">
+            <span class="v-pin-category">Estructura interna</span>
             <strong>Cámara Magmática</strong>
             <p>Reservorio de magma fundido a varios kilómetros de profundidad.</p>
           </div>
         </div>
-        <div class="v-diagram-pin" style="top:28%; left:50%;" data-part="Chimenea">
+
+        <!-- ==========================================================
+             CAPAS DE LA TIERRA (puntos en la imagen)
+             ========================================================== -->
+
+        <!-- 13. Corteza Terrestre -->
+        <div class="v-diagram-pin" style="top:69%; left:77%;">
           <span class="v-pin-dot"></span>
           <div class="v-pin-tooltip">
-            <strong>Chimenea</strong>
-            <p>Conducto principal que comunica la cámara magmática con el cráter.</p>
+            <span class="v-pin-category">Capa de la Tierra</span>
+            <strong>Corteza Terrestre</strong>
+            <p>Capa superficial sólida de la Tierra donde se forman los volcanes.</p>
           </div>
         </div>
-        <div class="v-diagram-pin" style="top:55%; left:50%;" data-part="Conducto">
+
+        <!-- 14. Manto -->
+        <div class="v-diagram-pin" style="top:83%; left:78%;">
           <span class="v-pin-dot"></span>
           <div class="v-pin-tooltip">
-            <strong>Conducto</strong>
-            <p>Fisura por la que el magma asciende hacia la superficie.</p>
+            <span class="v-pin-category">Capa de la Tierra</span>
+            <strong>Manto</strong>
+            <p>Capa intermedia donde se origina el magma por fusión parcial de las rocas.</p>
           </div>
         </div>
-        <div class="v-diagram-pin" style="top:80%; left:50%;" data-part="Cráter">
-          <span class="v-pin-dot"></span>
-          <div class="v-pin-tooltip">
-            <strong>Cráter</strong>
-            <p>Abertura en la cima por donde salen magma, gases y ceniza.</p>
-          </div>
-        </div>
-        <div class="v-diagram-pin" style="top:68%; left:72%;" data-part="Conos Parásitos">
-          <span class="v-pin-dot"></span>
-          <div class="v-pin-tooltip">
-            <strong>Conos Parásitos</strong>
-            <p>Formaciones secundarias en las laderas del volcán.</p>
-          </div>
-        </div>
-        <div class="v-diagram-pin" style="top:85%; left:28%;" data-part="Fumarolas">
-          <span class="v-pin-dot"></span>
-          <div class="v-pin-tooltip">
-            <strong>Fumarolas</strong>
-            <p>Aberturas secundarias por donde se emiten gases volcánicos.</p>
-          </div>
-        </div>
-        <div class="v-diagram-pin" style="top:18%; left:75%;" data-part="Caldera">
-          <span class="v-pin-dot"></span>
-          <div class="v-pin-tooltip">
-            <strong>Caldera</strong>
-            <p>Gran depresión circular por colapso del volcán.</p>
-          </div>
-        </div>
-        <div class="v-diagram-pin" style="top:88%; left:72%;" data-part="Columna Eruptiva">
-          <span class="v-pin-dot"></span>
-          <div class="v-pin-tooltip">
-            <strong>Columna Eruptiva</strong>
-            <p>Nube vertical de gases, cenizas y fragmentos sólidos.</p>
-          </div>
-        </div>
+
       </div>
       <div class="v-diagram-legend">
-        <span class="v-legend-dot"></span> Pasa el cursor sobre los puntos
+        <span class="v-legend-dot"></span> Pasa el cursor sobre los puntos para conocer cada parte
       </div>
+    </div>
+
+    <!-- Lista de partes del volcán -->
+    <div class="v-anatomia-lista">
+      <div class="v-anatomia-lista-col">
+        <h4>
+          <svg class="v-anatomia-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+            <circle cx="12" cy="12" r="4"/>
+          </svg>
+          Estructura interna
+        </h4>
+        <ul>
+          <li><strong>01.</strong> Cámara magmática</li>
+          <li><strong>02.</strong> Chimenea principal</li>
+          <li><strong>03.</strong> Chimeneas secundarias</li>
+          <li><strong>04.</strong> Dique</li>
+          <li><strong>05.</strong> Sill o filón capa</li>
+        </ul>
+      </div>
+      <div class="v-anatomia-lista-col">
+        <h4>
+          <svg class="v-anatomia-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5"/>
+            <path d="M2 12l10 5 10-5"/>
+            <path d="M2 7l10 5 10-5"/>
+          </svg>
+          Estructura externa
+        </h4>
+        <ul>
+          <li><strong>01.</strong> Cráter</li>
+          <li><strong>02.</strong> Cono volcánico</li>
+          <li><strong>03.</strong> Cono secundario</li>
+          <li><strong>04.</strong> Colada de lava</li>
+          <li><strong>05.</strong> Fumarolas</li>
+          <li><strong>06.</strong> Capas de lava y ceniza</li>
+          <li><strong>07.</strong> Columna eruptiva</li>
+        </ul>
+      </div>
+      <div class="v-anatomia-lista-col full">
+        <h4>
+          <svg class="v-anatomia-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="2" y1="12" x2="22" y2="12"/>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+          Capas de la Tierra (relacionadas)
+        </h4>
+        <ul>
+          <li><strong>01.</strong> Manto (origen del magma)</li>
+          <li><strong>02.</strong> Corteza terrestre (capa donde se encuentra el volcán)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="v-intro-footer">
+      <span class="v-intro-footer-line"></span>
+      <p>
+        <strong>En El Salvador:</strong> los volcanes presentan cráteres bien definidos y sistemas de fumarolas activas, monitoreados constantemente por el <strong>MARN</strong>.
+      </p>
+      <span class="v-intro-footer-line"></span>
     </div>
   </div>
 </section>
 
 <!-- ============================================================
-     SECCIÓN 4: MAGMA Y MATERIALES - TARJETAS
+     SECCIÓN 4: MAGMA Y MATERIALES - CARRUSEL 3D (CON IMÁGENES)
      ============================================================ -->
 <section class="v-section v-section-dark" id="magma">
   <div class="wrap">
@@ -239,52 +522,237 @@ ob_start();
       <p class="v-sub">Composición y productos de la actividad volcánica</p>
     </div>
 
-    <div class="v-grid-3">
-      <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/volcan-magma.jpg" alt="Magma" loading="lazy"></div>
-        <div class="v-card-body">
-          <h4>Magma</h4>
-          <p>Roca fundida bajo la superficie terrestre. Compuesto por roca fundida, cristales y gases disueltos.</p>
+    <div class="v-magma-carousel-wrapper">
+      <div class="v-magma-carousel-track" id="magmaCarouselTrack">
+        
+        <!-- Tarjeta 1: Magma -->
+        <div class="v-magma-card">
+          <div class="v-magma-card-image">
+            <img src="assets/media/img/margmaV.png" alt="Magma" loading="lazy">
+          </div>
+          <div class="v-magma-card-body">
+            <span class="v-magma-card-num">01</span>
+            <h4>Magma</h4>
+            <p>Roca fundida que permanece bajo la superficie terrestre. Contiene minerales fundidos, cristales y gases disueltos.</p>
+            <a href="#" class="v-magma-card-btn">Explorar</a>
+          </div>
         </div>
-      </div>
-      <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/volcan-lava-flujo.jpg" alt="Lava" loading="lazy"></div>
-        <div class="v-card-body">
-          <h4>Lava</h4>
-          <p>Magma que alcanza la superficie. Temperaturas entre 700 y 1,300 °C.</p>
+
+        <!-- Tarjeta 2: Lava -->
+        <div class="v-magma-card">
+          <div class="v-magma-card-image">
+            <img src="assets/media/img/lavaV.png" alt="Lava" loading="lazy">
+          </div>
+          <div class="v-magma-card-body">
+            <span class="v-magma-card-num">02</span>
+            <h4>Lava</h4>
+            <p>Cuando el magma alcanza la superficie recibe el nombre de lava. Dependiendo de su composición puede ser más fluida o viscosa.</p>
+            <a href="#" class="v-magma-card-btn">Explorar</a>
+          </div>
         </div>
-      </div>
-      <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/volcan-ceniza-caida.jpg" alt="Ceniza" loading="lazy"></div>
-        <div class="v-card-body">
-          <h4>Ceniza</h4>
-          <p>Partículas de tefra del grosor de un cabello, transportadas por el viento a grandes distancias.</p>
+
+        <!-- Tarjeta 3: Ceniza volcánica -->
+        <div class="v-magma-card">
+          <div class="v-magma-card-image">
+            <img src="assets/media/img/cenizaV.png" alt="Ceniza volcánica" loading="lazy">
+          </div>
+          <div class="v-magma-card-body">
+            <span class="v-magma-card-num">03</span>
+            <h4>Ceniza volcánica</h4>
+            <p>Diminutas partículas de roca y vidrio volcánico transportadas por el viento a grandes distancias.</p>
+            <a href="#" class="v-magma-card-btn">Explorar</a>
+          </div>
         </div>
-      </div>
-      <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/volcan-piroclastos.jpg" alt="Piroclastos" loading="lazy"></div>
-        <div class="v-card-body">
-          <h4>Piroclastos</h4>
-          <p>Fragmentos sólidos expulsados: ceniza, lapilli, bombas y bloques.</p>
+
+        <!-- Tarjeta 4: Piroclastos -->
+        <div class="v-magma-card">
+          <div class="v-magma-card-image">
+            <img src="assets/media/img/piroclastosV.png" alt="Piroclastos" loading="lazy">
+          </div>
+          <div class="v-magma-card-body">
+            <span class="v-magma-card-num">04</span>
+            <h4>Piroclastos</h4>
+            <p>Fragmentos sólidos expulsados durante una erupción: ceniza, lapilli, bombas y bloques volcánicos.</p>
+            <a href="#" class="v-magma-card-btn">Explorar</a>
+          </div>
         </div>
-      </div>
-      <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/volcan-gases.jpg" alt="Gases" loading="lazy"></div>
-        <div class="v-card-body">
-          <h4>Gases</h4>
-          <p>Vapor de agua (H₂O), CO₂, SO₂, H₂S y haluros de hidrógeno.</p>
+
+        <!-- Tarjeta 5: Gases volcánicos -->
+        <div class="v-magma-card">
+          <div class="v-magma-card-image">
+            <img src="assets/media/img/gasV.jpg" alt="Gases volcánicos" loading="lazy">
+          </div>
+          <div class="v-magma-card-body">
+            <span class="v-magma-card-num">05</span>
+            <h4>Gases volcánicos</h4>
+            <p>Vapor de agua, dióxido de carbono, dióxido de azufre y otros gases liberados durante la actividad volcánica.</p>
+            <a href="#" class="v-magma-card-btn">Explorar</a>
+          </div>
         </div>
-      </div>
-      <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/volcan-bomba.jpg" alt="Bombas" loading="lazy"></div>
-        <div class="v-card-body">
-          <h4>Bombas</h4>
-          <p>Fragmentos de lava solidificada de gran tamaño (>64 mm).</p>
+
+        <!-- Tarjeta 6: Bombas volcánicas -->
+        <div class="v-magma-card">
+          <div class="v-magma-card-image">
+            <img src="assets/media/img/bombasV.jpg" alt="Bombas volcánicas" loading="lazy">
+          </div>
+          <div class="v-magma-card-body">
+            <span class="v-magma-card-num">06</span>
+            <h4>Bombas volcánicas</h4>
+            <p>Grandes fragmentos de lava expulsados aún calientes que se solidifican mientras viajan por el aire.</p>
+            <a href="#" class="v-magma-card-btn">Explorar</a>
+          </div>
         </div>
+
+        <!-- Tarjeta 7: Flujos piroclásticos -->
+        <div class="v-magma-card">
+          <div class="v-magma-card-image">
+            <img src="assets/media/img/flujosV.jpg" alt="Flujos piroclásticos" loading="lazy">
+          </div>
+          <div class="v-magma-card-body">
+            <span class="v-magma-card-num">07</span>
+            <h4>Flujos piroclásticos</h4>
+            <p>Mezcla de gases extremadamente calientes, ceniza y fragmentos de roca que descienden a gran velocidad.</p>
+            <a href="#" class="v-magma-card-btn">Explorar</a>
+          </div>
+        </div>
+
       </div>
+
+      <!-- Controles -->
+      <button class="v-magma-carousel-btn prev" id="magmaPrev">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button class="v-magma-carousel-btn next" id="magmaNext">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
     </div>
   </div>
 </section>
+
+<!-- ============================================================
+     SCRIPT INLINE - CARRUSEL CON LOOP INFINITO
+     ============================================================ -->
+<script>
+(function() {
+    'use strict';
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initCarousel);
+    } else {
+        initCarousel();
+    }
+
+    function initCarousel() {
+        var track = document.getElementById('magmaCarouselTrack');
+        var prevBtn = document.getElementById('magmaPrev');
+        var nextBtn = document.getElementById('magmaNext');
+
+        if (!track) return;
+
+        var cards = track.querySelectorAll('.v-magma-card');
+        var totalCards = cards.length;
+        if (totalCards === 0) return;
+
+        var currentIndex = 0;
+        var visibleCards = 3;
+        var isAnimating = false;
+
+        function getVisibleCards() {
+            if (window.innerWidth <= 700) return 1;
+            if (window.innerWidth <= 1024) return 2;
+            return 3;
+        }
+
+        function getCardWidth() {
+            return cards[0].offsetWidth + 30;
+        }
+
+        function updateCarousel() {
+            visibleCards = getVisibleCards();
+            var maxIndex = Math.max(0, totalCards - visibleCards);
+            
+            if (currentIndex > maxIndex) {
+                currentIndex = 0;
+            }
+            if (currentIndex < 0) {
+                currentIndex = maxIndex;
+            }
+            
+            var offset = currentIndex * getCardWidth();
+            track.style.transform = 'translateX(-' + offset + 'px)';
+            updateCenterCard();
+        }
+
+        function updateCenterCard() {
+            cards.forEach(function(card, i) {
+                card.classList.remove('center');
+                var centerIndex = currentIndex + Math.floor(visibleCards / 2);
+                if (i === centerIndex && i < totalCards) {
+                    card.classList.add('center');
+                }
+            });
+        }
+
+        function goTo(index) {
+            if (isAnimating) return;
+            
+            var maxIndex = Math.max(0, totalCards - visibleCards);
+            
+            if (index > maxIndex) {
+                index = 0;
+            }
+            if (index < 0) {
+                index = maxIndex;
+            }
+            
+            isAnimating = true;
+            currentIndex = index;
+            updateCarousel();
+            setTimeout(function() {
+                isAnimating = false;
+            }, 600);
+        }
+
+        function nextSlide() {
+            var maxIndex = Math.max(0, totalCards - visibleCards);
+            if (currentIndex < maxIndex) {
+                goTo(currentIndex + 1);
+            } else {
+                goTo(0);
+            }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) {
+                goTo(currentIndex - 1);
+            } else {
+                var maxIndex = Math.max(0, totalCards - visibleCards);
+                goTo(maxIndex);
+            }
+        }
+
+        if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+        if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+
+        var resizeTimeout;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function() {
+                visibleCards = getVisibleCards();
+                var maxIndex = Math.max(0, totalCards - visibleCards);
+                if (currentIndex > maxIndex) currentIndex = maxIndex;
+                updateCarousel();
+            }, 200);
+        });
+
+        setTimeout(updateCarousel, 300);
+        window.addEventListener('load', function() {
+            setTimeout(updateCarousel, 100);
+        });
+    }
+
+})();
+</script>
 
 <!-- ============================================================
      SECCIÓN 5: CLASIFICACIÓN - TABS INTERACTIVOS
@@ -304,115 +772,228 @@ ob_start();
         <button class="v-tab-btn" data-tab="erupcion">Por Erupción</button>
       </div>
       <div class="v-tabs-content">
-        <!-- Actividad -->
+        
+        <!-- ============================================================
+             TAB 1: POR ACTIVIDAD
+             ============================================================ -->
         <div class="v-tab-panel active" id="tab-actividad">
+          <p class="v-tab-intro">Los volcanes se clasifican según su <strong>frecuencia eruptiva</strong> y el estado actual de su actividad magmática. Esta clasificación permite evaluar el riesgo volcánico y planificar medidas de monitoreo y prevención.</p>
           <div class="v-tab-grid">
             <div class="v-tab-item">
-              <img src="assets/media/img/volcan-activo.jpg" alt="Activo" loading="lazy">
+              <div class="v-tab-img">
+                <img src="assets/media/img/ActivoV.jpg" alt="Activo" loading="lazy">
+              </div>
               <span class="v-tab-badge active">Activo</span>
               <h4>Volcán Activo</h4>
-              <p>Ha tenido erupciones en los últimos 11,700 años o muestra signos de actividad.</p>
+              <p>Ha registrado erupciones durante los últimos <strong>11,700 años</strong> o presenta señales actuales de actividad, como emisiones de gases, sismos o deformación del terreno.</p>
             </div>
             <div class="v-tab-item">
-              <img src="assets/media/img/volcan-dormido.jpg" alt="Dormido" loading="lazy">
+              <div class="v-tab-img">
+                <img src="assets/media/img/DormidoV.png" alt="Dormido" loading="lazy">
+              </div>
               <span class="v-tab-badge dormant">Durmiente</span>
               <h4>Volcán Durmiente</h4>
-              <p>Mantiene signos de actividad como aguas termales, pero no ha erupcionado en mucho tiempo.</p>
+              <p>No ha erupcionado en mucho tiempo, pero aún conserva la <strong>capacidad de reactivarse</strong> y volver a entrar en erupción.</p>
             </div>
             <div class="v-tab-item">
-              <img src="assets/media/img/volcan-extinto.jpg" alt="Extinto" loading="lazy">
+              <div class="v-tab-img">
+                <img src="assets/media/img/ExtintoV.jpg" alt="Extinto" loading="lazy">
+              </div>
               <span class="v-tab-badge extinct">Extinto</span>
               <h4>Volcán Extinto</h4>
-              <p>No muestra indicios de reactivación y su estructura está muy erosionada.</p>
+              <p>Se considera que ya no posee una <strong>fuente de magma activa</strong> y no se espera que vuelva a presentar erupciones.</p>
             </div>
           </div>
         </div>
-        <!-- Morfología -->
+
+        <!-- ============================================================
+             TAB 2: POR MORFOLOGÍA
+             ============================================================ -->
         <div class="v-tab-panel" id="tab-morfologia">
-          <div class="v-tab-grid">
+          <p class="v-tab-intro">La morfología de un volcán está determinada por la <strong>composición química del magma</strong>, su <strong>viscosidad</strong> y el <strong>tipo de erupción</strong> que le da origen. Estas características definen la forma final del edificio volcánico.</p>
+          <div class="v-tab-grid v-tab-grid-4">
             <div class="v-tab-item">
-              <img src="assets/media/img/volcan-estratovolcan.jpg" alt="Estratovolcán" loading="lazy">
+              <div class="v-tab-img">
+                <img src="assets/media/img/estratovolcan.jpg" alt="Estratovolcán" loading="lazy">
+              </div>
               <span class="v-tab-badge">Estratovolcán</span>
               <h4>Estratovolcán</h4>
-              <p>Grande y cónico, formado por capas alternadas de lava y ceniza.</p>
+              <p>Volcán alto y de forma cónica, formado por <strong>capas alternadas</strong> de lava, ceniza y otros materiales volcánicos. Es el tipo más común en El Salvador.</p>
             </div>
             <div class="v-tab-item">
-              <img src="assets/media/img/volcan-escudo.jpg" alt="Escudo" loading="lazy">
+              <div class="v-tab-img">
+                <img src="assets/media/img/escudoV.jpg" alt="Escudo" loading="lazy">
+              </div>
               <span class="v-tab-badge">Escudo</span>
               <h4>Volcán en Escudo</h4>
-              <p>Amplia base y pendientes suaves. Formado por lava fluida.</p>
+              <p>Presenta una base muy amplia y <strong>pendientes suaves</strong> debido a la acumulación de lava muy fluida que recorre grandes distancias.</p>
             </div>
             <div class="v-tab-item">
-              <img src="assets/media/img/volcan-cono-ceniza.jpg" alt="Cono de ceniza" loading="lazy">
+              <div class="v-tab-img">
+                <img src="assets/media/img/conocenizaV.jpg" alt="Cono de ceniza" loading="lazy">
+              </div>
               <span class="v-tab-badge">Cono de ceniza</span>
               <h4>Cono de Ceniza</h4>
-              <p>Pequeño y con pendientes pronunciadas. Formado por acumulación de ceniza.</p>
+              <p>Volcán pequeño y de <strong>laderas empinadas</strong>, formado por la acumulación de ceniza, escoria y otros fragmentos expulsados.</p>
             </div>
             <div class="v-tab-item">
-              <img src="assets/media/img/volcan-maar.jpg" alt="Maar" loading="lazy">
+              <div class="v-tab-img">
+                <img src="assets/media/img/domolavV.jpeg" alt="Domo de lava" loading="lazy">
+              </div>
+              <span class="v-tab-badge">Domo de lava</span>
+              <h4>Domo de Lava</h4>
+              <p>Se forma cuando la lava es muy <strong>viscosa</strong> y se acumula sobre el cráter, creando una estructura redondeada de crecimiento lento.</p>
+            </div>
+            <div class="v-tab-item">
+              <div class="v-tab-img">
+                <img src="assets/media/img/maarV.jpg" alt="Maar" loading="lazy">
+              </div>
               <span class="v-tab-badge">Maar</span>
               <h4>Maar</h4>
-              <p>Cráter amplio de origen explosivo por interacción magma-agua.</p>
+              <p>Gran cráter de origen <strong>explosivo</strong>, formado cuando el magma entra en contacto con agua subterránea.</p>
             </div>
             <div class="v-tab-item">
-              <img src="assets/media/img/volcan-fisural.jpg" alt="Fisural" loading="lazy">
-              <span class="v-tab-badge">Fisural</span>
-              <h4>Volcán Fisural</h4>
-              <p>Lava emerge desde fisuras alargadas, sin formar un cono claro.</p>
-            </div>
-            <div class="v-tab-item">
-              <img src="assets/media/img/volcan-caldera.jpg" alt="Caldera" loading="lazy">
+              <div class="v-tab-img">
+                <img src="assets/media/img/calderaV.jpg" alt="Caldera" loading="lazy">
+              </div>
               <span class="v-tab-badge">Caldera</span>
               <h4>Caldera</h4>
-              <p>Gran depresión circular por colapso del edificio.</p>
+              <p>Amplia depresión circular que se forma cuando la cámara magmática se <strong>vacía</strong> y el terreno colapsa tras una gran erupción.</p>
+            </div>
+            <div class="v-tab-item">
+              <div class="v-tab-img">
+                <img src="assets/media/img/fisuralV.jpg" alt="Fisural" loading="lazy">
+              </div>
+              <span class="v-tab-badge">Fisural</span>
+              <h4>Volcán Fisural</h4>
+              <p>La lava emerge a través de <strong>largas grietas o fisuras</strong> de la corteza terrestre, formando extensos campos de lava.</p>
             </div>
           </div>
         </div>
-        <!-- Erupción -->
+
+        <!-- ============================================================
+             TAB 3: POR ERUPCIÓN
+             ============================================================ -->
         <div class="v-tab-panel" id="tab-erupcion">
+          <p class="v-tab-intro">La clasificación por tipo de erupción se basa en la <strong>violencia del fenómeno eruptivo</strong>, determinada por la composición del magma, su contenido de gases y su viscosidad. Se ordenan de <strong>menor a mayor explosividad</strong>.</p>
           <div class="v-tab-grid">
             <div class="v-tab-item">
-              <img src="assets/media/img/erupcion-hawaiana.jpg" alt="Hawaiana" loading="lazy">
+              <div class="v-tab-img">
+                <img src="assets/media/img/Hawaianae.png" alt="Hawaiana" loading="lazy">
+              </div>
               <span class="v-tab-badge">Hawaiana</span>
+              <div class="v-explosivity-bar low">
+                <span class="v-explosivity-label">Baja</span>
+                <div class="v-explosivity-track"><div class="v-explosivity-fill" style="width:20%;"></div></div>
+              </div>
               <h4>Hawaiana</h4>
-              <p>Lava muy fluida. Pocos gases y cenizas. Erupciones tranquilas.</p>
+              <p>Erupciones tranquilas con lava muy <strong>fluida</strong> que forma largos ríos de lava y genera poca ceniza.</p>
             </div>
             <div class="v-tab-item">
-              <img src="assets/media/img/erupcion-estromboliana.jpg" alt="Estromboliana" loading="lazy">
-              <span class="v-tab-badge">Estromboliana</span>
-              <h4>Estromboliana</h4>
-              <p>Erupciones moderadas con explosiones esporádicas.</p>
-            </div>
-            <div class="v-tab-item">
-              <img src="assets/media/img/erupcion-vulcaniana.jpg" alt="Vulcaniana" loading="lazy">
-              <span class="v-tab-badge">Vulcaniana</span>
-              <h4>Vulcaniana</h4>
-              <p>Erupciones de mediana explosividad. Magma viscoso.</p>
-            </div>
-            <div class="v-tab-item">
-              <img src="assets/media/img/erupcion-peleana.jpg" alt="Peleana" loading="lazy">
-              <span class="v-tab-badge">Peleana</span>
-              <h4>Peleana</h4>
-              <p>Muy explosivas con nubes de gas y ceniza. Altamente destructivas.</p>
-            </div>
-            <div class="v-tab-item">
-              <img src="assets/media/img/erupcion-pliniana.jpg" alt="Pliniana" loading="lazy">
-              <span class="v-tab-badge">Pliniana</span>
-              <h4>Pliniana</h4>
-              <p>Extremadamente explosivas. Grandes cantidades de ceniza y gases.</p>
-            </div>
-            <div class="v-tab-item">
-              <img src="assets/media/img/erupcion-islandesa.jpg" alt="Islandesa" loading="lazy">
+              <div class="v-tab-img">
+                <img src="assets/media/img/islandesaE.png" alt="Islandesa" loading="lazy">
+              </div>
               <span class="v-tab-badge">Islandesa</span>
+              <div class="v-explosivity-bar low">
+                <span class="v-explosivity-label">Baja</span>
+                <div class="v-explosivity-track"><div class="v-explosivity-fill" style="width:20%;"></div></div>
+              </div>
               <h4>Islandesa</h4>
-              <p>Erupciones fisurales con lava muy fluida que cubre grandes extensiones.</p>
+              <p>La lava brota por <strong>largas fisuras</strong> de la corteza terrestre y cubre grandes extensiones con flujos poco explosivos.</p>
+            </div>
+            <div class="v-tab-item">
+              <div class="v-tab-img">
+                <img src="assets/media/img/estrombolianaE.png" alt="Estromboliana" loading="lazy">
+              </div>
+              <span class="v-tab-badge">Estromboliana</span>
+              <div class="v-explosivity-bar moderate">
+                <span class="v-explosivity-label">Moderada</span>
+                <div class="v-explosivity-track"><div class="v-explosivity-fill" style="width:45%;"></div></div>
+              </div>
+              <h4>Estromboliana</h4>
+              <p>Presenta explosiones <strong>moderadas e intermitentes</strong> que expulsan lava, ceniza y fragmentos volcánicos.</p>
+            </div>
+            <div class="v-tab-item">
+              <div class="v-tab-img">
+                <img src="assets/media/img/vulcanianaE.png" alt="Vulcaniana" loading="lazy">
+              </div>
+              <span class="v-tab-badge">Vulcaniana</span>
+              <div class="v-explosivity-bar high">
+                <span class="v-explosivity-label">Alta</span>
+                <div class="v-explosivity-track"><div class="v-explosivity-fill" style="width:70%;"></div></div>
+              </div>
+              <h4>Vulcaniana</h4>
+              <p>Erupciones de <strong>intensidad media</strong> con magma viscoso, columnas de ceniza y explosiones de corta duración.</p>
+            </div>
+            <div class="v-tab-item">
+              <div class="v-tab-img">
+                <img src="assets/media/img/peleanaE.png" alt="Peleana" loading="lazy">
+              </div>
+              <span class="v-tab-badge">Peleana</span>
+              <div class="v-explosivity-bar very-high">
+                <span class="v-explosivity-label">Muy alta</span>
+                <div class="v-explosivity-track"><div class="v-explosivity-fill" style="width:90%;"></div></div>
+              </div>
+              <h4>Peleana</h4>
+              <p>Erupciones <strong>muy explosivas</strong> caracterizadas por el colapso de domos de lava y la formación de peligrosos <strong>flujos piroclásticos</strong>.</p>
+            </div>
+            <div class="v-tab-item">
+              <div class="v-tab-img">
+                <img src="assets/media/img/plinianaE.png" alt="Pliniana" loading="lazy">
+              </div>
+              <span class="v-tab-badge">Pliniana</span>
+              <div class="v-explosivity-bar extreme">
+                <span class="v-explosivity-label">Extrema</span>
+                <div class="v-explosivity-track"><div class="v-explosivity-fill" style="width:100%;"></div></div>
+              </div>
+              <h4>Pliniana</h4>
+              <p>Las erupciones <strong>más violentas</strong>. Expulsan enormes columnas de ceniza, gases y roca que pueden alcanzar decenas de kilómetros de altura.</p>
             </div>
           </div>
         </div>
+
       </div>
     </div>
   </div>
 </section>
+
+<script>
+  // ============================================================
+// TABS - CLASIFICACIÓN DE VOLCANES
+// ============================================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    const tabBtns = document.querySelectorAll('.v-tab-btn');
+    const tabPanels = document.querySelectorAll('.v-tab-panel');
+
+    if (tabBtns.length === 0) return;
+
+    tabBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            // Remover active de todos los botones
+            tabBtns.forEach(function(b) {
+                b.classList.remove('active');
+            });
+            // Activar el botón clickeado
+            this.classList.add('active');
+
+            // Obtener el tab destino
+            var tab = this.dataset.tab;
+
+            // Ocultar todos los paneles
+            tabPanels.forEach(function(panel) {
+                panel.classList.remove('active');
+            });
+
+            // Mostrar el panel correspondiente
+            var targetPanel = document.getElementById('tab-' + tab);
+            if (targetPanel) {
+                targetPanel.classList.add('active');
+            }
+        });
+    });
+});
+</script>
 
 <!-- ============================================================
      SECCIÓN 6: ERUPCIONES
@@ -429,7 +1010,9 @@ ob_start();
 
     <div class="v-grid-3">
       <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/erupcion-proceso-1.jpg" alt="Presión" loading="lazy"></div>
+        <div class="v-card-img">
+          <img src="assets/media/img/acumulacionPresion.jpg" alt="Presión" loading="lazy">
+        </div>
         <div class="v-card-body">
           <span class="v-card-num">01</span>
           <h4>Acumulación de presión</h4>
@@ -437,7 +1020,9 @@ ob_start();
         </div>
       </div>
       <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/erupcion-proceso-2.jpg" alt="Gases" loading="lazy"></div>
+        <div class="v-card-img">
+          <img src="assets/media/img/liberaciongases.jpg" alt="Gases" loading="lazy">
+        </div>
         <div class="v-card-body">
           <span class="v-card-num">02</span>
           <h4>Liberación de gases</h4>
@@ -445,7 +1030,9 @@ ob_start();
         </div>
       </div>
       <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/erupcion-proceso-3.jpg" alt="Expulsión" loading="lazy"></div>
+        <div class="v-card-img">
+          <img src="assets/media/img/expulsionV.jpeg" alt="Expulsión" loading="lazy">
+        </div>
         <div class="v-card-body">
           <span class="v-card-num">03</span>
           <h4>Expulsión de materiales</h4>
@@ -469,60 +1056,1048 @@ ob_start();
 </section>
 
 <!-- ============================================================
-     SECCIÓN 7: VOLCANES DE EL SALVADOR
+     SECCIÓN 7: VOLCANES DE EL SALVADOR - MAPA INTERACTIVO
      ============================================================ -->
 <section class="v-section" id="volcanes-sv">
   <div class="wrap">
     <div class="v-header center">
       <span class="v-tag">El Salvador</span>
       <h2 class="v-title">Volcanes de <span>El Salvador</span></h2>
-      <p class="v-sub">La cadena volcánica salvadoreña</p>
+      <p class="v-sub">Explora la distribución de los principales centros volcánicos y conoce su actividad.</p>
     </div>
 
-    <p class="v-intro">La cadena volcánica salvadoreña se extiende paralela a la costa pacífica, formando parte del <strong>Cinturón de Fuego Circumpacífico</strong>.</p>
+    <p class="v-intro">El Salvador forma parte de la <strong>cadena volcánica centroamericana</strong> y posee numerosos centros volcánicos distribuidos a lo largo del territorio. Explora el mapa para conocer su ubicación, características y estado.</p>
 
-    <div class="v-grid-2">
-      <div class="v-card">
-        <div class="v-card-body">
-          <h4>Volcanes Terciarios</h4>
-          <p>Más de 2 millones de años. Ubicados en el borde norte del graben Central Salvadoreño. Son considerados <strong>extintos</strong>.</p>
-          <span class="v-badge">Extintos</span>
+    <!-- Controles del mapa -->
+    <div class="volcanes-controls">
+      <div class="volcanes-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="volcanesSearch" placeholder="Buscar volcán..." autocomplete="off">
+      </div>
+      <div class="volcanes-filters">
+        <button class="volcanes-filter-btn active" data-filter="all">Todos</button>
+        <button class="volcanes-filter-btn" data-filter="activo"><span class="volcanes-filter-dot active"></span> Activos</button>
+        <button class="volcanes-filter-btn" data-filter="dormido"><span class="volcanes-filter-dot dormant"></span> Dormidos</button>
+        <button class="volcanes-filter-btn" data-filter="inactivo"><span class="volcanes-filter-dot inactive"></span> Inactivos</button>
+      </div>
+      <div class="volcanes-type-filters">
+        <button class="volcanes-type-btn active" data-type="all">Todos</button>
+        <button class="volcanes-type-btn" data-type="estratovolcan">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          Estratovolcán
+        </button>
+        <button class="volcanes-type-btn" data-type="caldera">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+          Caldera
+        </button>
+        <button class="volcanes-type-btn" data-type="maar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+          Maar
+        </button>
+      </div>
+    </div>
+
+    <!-- Layout mapa + panel -->
+    <div class="volcanes-layout">
+      <!-- Mapa -->
+      <div class="volcanes-map-card">
+        <div class="phdr">
+          <span class="rdot"></span> 
+          <span id="volcanesCount">10</span> estructuras mostradas
+          <div class="volcanes-map-legend">
+            <span class="volcanes-legend-item"><span class="volcanes-legend-dot active"></span> Activo</span>
+            <span class="volcanes-legend-item"><span class="volcanes-legend-dot dormant"></span> Dormido</span>
+            <span class="volcanes-legend-item"><span class="volcanes-legend-dot inactive"></span> Inactivo</span>
+          </div>
+        </div>
+        <div id="volcanesMap"></div>
+        <div class="volcanes-map-footer">
+          <div class="volcanes-legend-full">
+            <div class="volcanes-legend-group">
+              <span class="volcanes-legend-title">Estado volcánico</span>
+              <span class="volcanes-legend-item"><span class="volcanes-legend-dot active"></span> Activo</span>
+              <span class="volcanes-legend-item"><span class="volcanes-legend-dot dormant"></span> Dormido</span>
+              <span class="volcanes-legend-item"><span class="volcanes-legend-dot inactive"></span> Inactivo</span>
+            </div>
+            <div class="volcanes-legend-group">
+              <span class="volcanes-legend-title">Tipo</span>
+              <span class="volcanes-legend-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                Estratovolcán
+              </span>
+              <span class="volcanes-legend-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+                Caldera
+              </span>
+              <span class="volcanes-legend-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+                Maar
+              </span>
+            </div>
+            <div class="volcanes-legend-group">
+              <span class="volcanes-legend-title">Monitoreo</span>
+              <span class="volcanes-legend-item"><span class="volcanes-legend-dot monitored"></span> Monitoreado por MARN</span>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="v-card">
-        <div class="v-card-body">
-          <h4>Volcanes Cuaternarios</h4>
-          <p>Menos de 2 millones de años. Son geológicamente jóvenes. Incluyen estratovolcanes, calderas y conos.</p>
-          <span class="v-badge active">Activos</span>
+
+      <!-- Panel lateral -->
+      <div class="volcanes-panel">
+        <div class="volcanes-panel-header">
+          <h4>Lista de volcanes</h4>
+          <span id="volcanesCountPanel">10</span>
+        </div>
+        <div class="volcanes-list" id="volcanesList">
+          <div class="loading-s"><div class="spin"></div>Cargando volcanes…</div>
         </div>
       </div>
     </div>
 
-    <div class="v-stats">
-      <div class="v-stat" data-count="242">
-        <span class="v-stat-num">0</span>
-        <span class="v-stat-label">Estructuras volcánicas</span>
-      </div>
-      <div class="v-stat" data-count="36">
-        <span class="v-stat-num">0</span>
-        <span class="v-stat-label">Volcanes activos</span>
-      </div>
-      <div class="v-stat" data-count="10">
-        <span class="v-stat-num">0</span>
-        <span class="v-stat-label">Bajo vigilancia</span>
-      </div>
-      <div class="v-stat" data-count="2">
-        <span class="v-stat-num">0</span>
-        <span class="v-stat-label">Calderas: Ilopango y Coatepeque</span>
-      </div>
-    </div>
-
-    <div class="v-mapa">
-      <img src="assets/media/img/volcan-mapa.jpg" alt="Mapa volcanes El Salvador" loading="lazy">
-      <span class="v-mapa-label">Distribución de los volcanes en El Salvador</span>
+    <div class="volcanes-disclaimer">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      <span>Los volcanes clasificados como <strong>Activos</strong> corresponden a una clasificación geológica basada en actividad durante el Holoceno, lo que no significa necesariamente que estén en erupción actualmente. Información basada en registros del <strong>MARN</strong> y estudios geológicos.</span>
     </div>
   </div>
 </section>
+
+<script>
+// ============================================================
+// VOLCANES DE EL SALVADOR - MAPA INTERACTIVO (36 VOLCANES)
+// ============================================================
+
+(function() {
+    'use strict';
+
+    // ============================================================
+    // 36 VOLCANES Y CENTROS VOLCÁNICOS DE EL SALVADOR
+    // ============================================================
+
+    const VOLCANES = [
+        // ==========================================================
+        // ESTRATOVOLCANES (16)
+        // ==========================================================
+        {
+            id: 1,
+            nombre: 'Volcán de Santa Ana',
+            nombreAlt: 'Ilamatepec',
+            estado: 'activo',
+            altura: '2,381 msnm',
+            departamento: 'Santa Ana',
+            tipo: 'estratovolcan',
+            ultimaErupcion: '2005',
+            descripcion: 'El volcán más alto de El Salvador. Presenta un cráter con una laguna ácida.',
+            imagen: 'assets/media/img/volcan-santa-ana.jpg',
+            lat: 13.8533,
+            lon: -89.6300,
+            monitored: true
+        },
+        {
+            id: 2,
+            nombre: 'Volcán de Izalco',
+            nombreAlt: null,
+            estado: 'inactivo',
+            altura: '1,950 msnm',
+            departamento: 'Sonsonate',
+            tipo: 'estratovolcan',
+            ultimaErupcion: '1966',
+            descripcion: 'Conocido como "El Faro del Pacífico" por su actividad constante durante el siglo XIX.',
+            imagen: 'assets/media/img/volcan-izalco.jpg',
+            lat: 13.8133,
+            lon: -89.6333,
+            monitored: true
+        },
+        {
+            id: 3,
+            nombre: 'Volcán de San Salvador',
+            nombreAlt: 'Boquerón',
+            estado: 'activo',
+            altura: '1,850 msnm',
+            departamento: 'San Salvador',
+            tipo: 'estratovolcan',
+            ultimaErupcion: '1917',
+            descripcion: 'Complejo volcánico conocido principalmente por su cráter El Boquerón, ubicado al norte de la capital.',
+            imagen: 'assets/media/img/volcan-san-salvador.jpg',
+            lat: 13.7333,
+            lon: -89.2833,
+            monitored: true
+        },
+        {
+            id: 4,
+            nombre: 'Volcán de San Miguel',
+            nombreAlt: 'Chaparrastique',
+            estado: 'activo',
+            altura: '2,130 msnm',
+            departamento: 'San Miguel',
+            tipo: 'estratovolcan',
+            ultimaErupcion: '2020',
+            descripcion: 'Uno de los volcanes más activos de El Salvador. Su actividad ha sido registrada desde la época colonial.',
+            imagen: 'assets/media/img/volcan-san-miguel.jpg',
+            lat: 13.4333,
+            lon: -88.2667,
+            monitored: true
+        },
+        {
+            id: 5,
+            nombre: 'Volcán de San Vicente',
+            nombreAlt: 'Chichontepec',
+            estado: 'dormido',
+            altura: '2,173 msnm',
+            departamento: 'San Vicente',
+            tipo: 'estratovolcan',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Segundo volcán más alto de El Salvador. Su nombre en náhuat significa "Cerro de los dos picos".',
+            imagen: 'assets/media/img/volcan-san-vicente.jpg',
+            lat: 13.6000,
+            lon: -88.8333,
+            monitored: true
+        },
+        {
+            id: 6,
+            nombre: 'Volcán de Tecapa',
+            nombreAlt: null,
+            estado: 'activo',
+            altura: '1,592 msnm',
+            departamento: 'Usulután',
+            tipo: 'estratovolcan',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Presenta actividad fumarólica y microsismicidad constante. Su cráter alberga la Laguna de Alegría.',
+            imagen: 'assets/media/img/volcan-tecapa.jpg',
+            lat: 13.4900,
+            lon: -88.5000,
+            monitored: true
+        },
+        {
+            id: 7,
+            nombre: 'Volcán de Conchagua',
+            nombreAlt: null,
+            estado: 'activo',
+            altura: '1,250 msnm',
+            departamento: 'La Unión',
+            tipo: 'estratovolcan',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Ubicado en el extremo oriental de El Salvador, cerca del Golfo de Fonseca.',
+            imagen: 'assets/media/img/volcan-conchagua.jpg',
+            lat: 13.2667,
+            lon: -87.8333,
+            monitored: false
+        },
+        {
+            id: 8,
+            nombre: 'Volcán de Conchagüita',
+            nombreAlt: null,
+            estado: 'activo',
+            altura: '550 msnm',
+            departamento: 'La Unión',
+            tipo: 'estratovolcan',
+            ultimaErupcion: '1892',
+            descripcion: 'Volcán ubicado en una isla del Golfo de Fonseca, de gran importancia ecológica.',
+            imagen: 'assets/media/img/volcan-conchaguita.jpg',
+            lat: 13.2167,
+            lon: -87.6667,
+            monitored: true
+        },
+        {
+            id: 9,
+            nombre: 'Volcán de Usulután',
+            nombreAlt: null,
+            estado: 'dormido',
+            altura: '1,449 msnm',
+            departamento: 'Usulután',
+            tipo: 'estratovolcan',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Ubicado al norte de la ciudad de Usulután, forma parte del arco volcánico centroamericano.',
+            imagen: 'assets/media/img/volcan-usulutan.jpg',
+            lat: 13.4167,
+            lon: -88.5833,
+            monitored: false
+        },
+        {
+            id: 10,
+            nombre: 'Volcán de Chinameca',
+            nombreAlt: 'Pacayal',
+            estado: 'dormido',
+            altura: '1,300 msnm',
+            departamento: 'San Miguel',
+            tipo: 'estratovolcan',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Presenta un cráter bien conservado y fumarolas en sus laderas.',
+            imagen: 'assets/media/img/volcan-chinameca.jpg',
+            lat: 13.4833,
+            lon: -88.3667,
+            monitored: false
+        },
+        {
+            id: 11,
+            nombre: 'Volcán de Sesori',
+            nombreAlt: null,
+            estado: 'dormido',
+            altura: '860 msnm',
+            departamento: 'San Miguel',
+            tipo: 'estratovolcan',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Pequeño estratovolcán ubicado en el departamento de San Miguel.',
+            imagen: 'assets/media/img/volcan-sesori.jpg',
+            lat: 13.7167,
+            lon: -88.3333,
+            monitored: false
+        },
+        {
+            id: 12,
+            nombre: 'Volcán de Apaneca',
+            nombreAlt: null,
+            estado: 'activo',
+            altura: '1,800 msnm',
+            departamento: 'Ahuachapán',
+            tipo: 'estratovolcan',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Parte del complejo volcánico de Apaneca-Ilamatepec, con múltiples cráteres.',
+            imagen: 'assets/media/img/volcan-apaneca.jpg',
+            lat: 13.8700,
+            lon: -89.8000,
+            monitored: false
+        },
+        {
+            id: 13,
+            nombre: 'Volcán de El Taburete',
+            nombreAlt: null,
+            estado: 'activo',
+            altura: '1,230 msnm',
+            departamento: 'San Vicente',
+            tipo: 'estratovolcan',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Ubicado al sur de San Vicente, cerca de la costa del Pacífico.',
+            imagen: 'assets/media/img/volcan-taburete.jpg',
+            lat: 13.4667,
+            lon: -88.8000,
+            monitored: false
+        },
+        {
+            id: 14,
+            nombre: 'Volcán de San Diego',
+            nombreAlt: null,
+            estado: 'activo',
+            altura: '1,100 msnm',
+            departamento: 'San Miguel',
+            tipo: 'estratovolcan',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Forma parte del complejo volcánico de San Miguel.',
+            imagen: 'assets/media/img/volcan-san-diego.jpg',
+            lat: 13.4000,
+            lon: -88.1500,
+            monitored: false
+        },
+        {
+            id: 15,
+            nombre: 'Volcán de Palacios',
+            nombreAlt: null,
+            estado: 'activo',
+            altura: '1,200 msnm',
+            departamento: 'Morazán',
+            tipo: 'estratovolcan',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Ubicado en el departamento de Morazán, cerca de la frontera con Honduras.',
+            imagen: 'assets/media/img/volcan-palacios.jpg',
+            lat: 13.7500,
+            lon: -88.1500,
+            monitored: false
+        },
+        {
+            id: 16,
+            nombre: 'Cerro El Águila',
+            nombreAlt: null,
+            estado: 'inactivo',
+            altura: '800 msnm',
+            departamento: 'Ahuachapán',
+            tipo: 'estratovolcan',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Pequeño edificio volcánico en el departamento de Ahuachapán.',
+            imagen: 'assets/media/img/cerro-el-aguila.jpg',
+            lat: 13.9200,
+            lon: -89.8500,
+            monitored: false
+        },
+
+        // ==========================================================
+        // CALDERAS (5)
+        // ==========================================================
+        {
+            id: 17,
+            nombre: 'Caldera de Ilopango',
+            nombreAlt: null,
+            estado: 'activo',
+            altura: '440 msnm',
+            departamento: 'San Salvador',
+            tipo: 'caldera',
+            ultimaErupcion: '1880',
+            descripcion: 'Caldera volcánica de aproximadamente 88,000 metros de diámetro. Su lago es uno de los más grandes de El Salvador.',
+            imagen: 'assets/media/img/volcan-ilopango.jpg',
+            lat: 13.6667,
+            lon: -89.0500,
+            monitored: true
+        },
+        {
+            id: 18,
+            nombre: 'Caldera de Coatepeque',
+            nombreAlt: 'Lago de Coatepeque',
+            estado: 'dormido',
+            altura: '450 msnm',
+            departamento: 'Santa Ana',
+            tipo: 'caldera',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Una de las calderas más grandes de El Salvador. Su lago es conocido por su color turquesa.',
+            imagen: 'assets/media/img/caldera-coatepeque.jpg',
+            lat: 13.8667,
+            lon: -89.5500,
+            monitored: false
+        },
+        {
+            id: 19,
+            nombre: 'Caldera de Alegría',
+            nombreAlt: 'Laguna de Alegría',
+            estado: 'activo',
+            altura: '1,592 msnm',
+            departamento: 'Usulután',
+            tipo: 'caldera',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Cráter volcánico con una laguna de color verde esmeralda, muy visitada por turistas.',
+            imagen: 'assets/media/img/caldera-alegria.jpg',
+            lat: 13.4800,
+            lon: -88.5000,
+            monitored: false
+        },
+        {
+            id: 20,
+            nombre: 'Caldera de Apastepeque',
+            nombreAlt: 'Laguna de Apastepeque',
+            estado: 'dormido',
+            altura: '400 msnm',
+            departamento: 'San Vicente',
+            tipo: 'caldera',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Conjunto de lagunas y humedales de origen volcánico.',
+            imagen: 'assets/media/img/caldera-apastepeque.jpg',
+            lat: 13.7167,
+            lon: -88.7833,
+            monitored: false
+        },
+        {
+            id: 21,
+            nombre: 'Caldera de Chalchuapa',
+            nombreAlt: 'Laguna de Chalchuapa',
+            estado: 'dormido',
+            altura: '350 msnm',
+            departamento: 'Santa Ana',
+            tipo: 'caldera',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Complejo volcánico asociado a sitios arqueológicos de importancia.',
+            imagen: 'assets/media/img/caldera-chalchuapa.jpg',
+            lat: 13.9833,
+            lon: -89.6667,
+            monitored: false
+        },
+
+        // ==========================================================
+        // MAARES (5)
+        // ==========================================================
+        {
+            id: 22,
+            nombre: 'El Hoyón',
+            nombreAlt: 'Cerro Pelón',
+            estado: 'activo',
+            altura: '800 msnm',
+            departamento: 'Santa Ana',
+            tipo: 'maar',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Cráter de explosión producido por interacción entre magma y agua. Presenta actividad fumarólica.',
+            imagen: 'assets/media/img/volcan-hoyon.jpg',
+            lat: 13.8000,
+            lon: -89.6000,
+            monitored: true
+        },
+        {
+            id: 23,
+            nombre: 'Maar de El Tigre',
+            nombreAlt: null,
+            estado: 'dormido',
+            altura: '450 msnm',
+            departamento: 'La Unión',
+            tipo: 'maar',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Cráter de origen explosivo ubicado en el departamento de La Unión.',
+            imagen: 'assets/media/img/maar-el-tigre.jpg',
+            lat: 13.4667,
+            lon: -88.2000,
+            monitored: false
+        },
+        {
+            id: 24,
+            nombre: 'Maar de Aramuaca',
+            nombreAlt: null,
+            estado: 'dormido',
+            altura: '400 msnm',
+            departamento: 'La Unión',
+            tipo: 'maar',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Cráter explosivo con una laguna en el departamento de La Unión.',
+            imagen: 'assets/media/img/maar-aramuaca.jpg',
+            lat: 13.3833,
+            lon: -88.1000,
+            monitored: false
+        },
+        {
+            id: 25,
+            nombre: 'Maar de Las Ninfas',
+            nombreAlt: null,
+            estado: 'dormido',
+            altura: '350 msnm',
+            departamento: 'Santa Ana',
+            tipo: 'maar',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Pequeño maar ubicado en el departamento de Santa Ana.',
+            imagen: 'assets/media/img/maar-las-ninfas.jpg',
+            lat: 13.8200,
+            lon: -89.6000,
+            monitored: false
+        },
+        {
+            id: 26,
+            nombre: 'Maar de Los Naranjos',
+            nombreAlt: null,
+            estado: 'dormido',
+            altura: '300 msnm',
+            departamento: 'San Salvador',
+            tipo: 'maar',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Crater de origen explosivo ubicado en el departamento de San Salvador.',
+            imagen: 'assets/media/img/maar-los-naranjos.jpg',
+            lat: 13.7000,
+            lon: -89.1500,
+            monitored: false
+        },
+
+        // ==========================================================
+        // CONOS (5)
+        // ==========================================================
+        {
+            id: 27,
+            nombre: 'Cono de El Playón',
+            nombreAlt: null,
+            estado: 'dormido',
+            altura: '600 msnm',
+            departamento: 'Santa Ana',
+            tipo: 'cono',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Cono volcánico asociado al complejo de San Salvador.',
+            imagen: 'assets/media/img/cono-el-playon.jpg',
+            lat: 13.8333,
+            lon: -89.5667,
+            monitored: false
+        },
+        {
+            id: 28,
+            nombre: 'Cerro de La Joya',
+            nombreAlt: null,
+            estado: 'dormido',
+            altura: '550 msnm',
+            departamento: 'San Vicente',
+            tipo: 'cono',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Pequeño cono volcánico en el departamento de San Vicente.',
+            imagen: 'assets/media/img/cerro-la-joya.jpg',
+            lat: 13.5500,
+            lon: -88.7000,
+            monitored: false
+        },
+        {
+            id: 29,
+            nombre: 'Cerro Santiago',
+            nombreAlt: null,
+            estado: 'dormido',
+            altura: '620 msnm',
+            departamento: 'Usulután',
+            tipo: 'cono',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Cono volcánico ubicado en el departamento de Usulután.',
+            imagen: 'assets/media/img/cerro-santiago.jpg',
+            lat: 13.6333,
+            lon: -88.4667,
+            monitored: false
+        },
+        {
+            id: 30,
+            nombre: 'Cerro El Tigre',
+            nombreAlt: null,
+            estado: 'dormido',
+            altura: '480 msnm',
+            departamento: 'La Unión',
+            tipo: 'cono',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Cono volcánico en el departamento de La Unión.',
+            imagen: 'assets/media/img/cerro-el-tigre.jpg',
+            lat: 13.4167,
+            lon: -87.9333,
+            monitored: false
+        },
+        {
+            id: 31,
+            nombre: 'Cerro Las Víboras',
+            nombreAlt: null,
+            estado: 'dormido',
+            altura: '500 msnm',
+            departamento: 'San Miguel',
+            tipo: 'cono',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Cono volcánico ubicado en el departamento de San Miguel.',
+            imagen: 'assets/media/img/cerro-las-viboras.jpg',
+            lat: 13.5333,
+            lon: -88.3000,
+            monitored: false
+        },
+
+        // ==========================================================
+        // CAMPOS VOLCÁNICOS (5)
+        // ==========================================================
+        {
+            id: 32,
+            nombre: 'Campo Volcánico de San Vicente',
+            nombreAlt: null,
+            estado: 'dormido',
+            altura: '0 msnm',
+            departamento: 'San Vicente',
+            tipo: 'campo',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Campo volcánico con múltiples estructuras menores en el departamento de San Vicente.',
+            imagen: 'assets/media/img/campo-san-vicente.jpg',
+            lat: 13.6000,
+            lon: -88.8000,
+            monitored: false
+        },
+        {
+            id: 33,
+            nombre: 'Campo Volcánico de Usulután',
+            nombreAlt: null,
+            estado: 'dormido',
+            altura: '0 msnm',
+            departamento: 'Usulután',
+            tipo: 'campo',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Campo volcánico con conos y maares en el departamento de Usulután.',
+            imagen: 'assets/media/img/campo-usulutan.jpg',
+            lat: 13.4000,
+            lon: -88.5000,
+            monitored: false
+        },
+        {
+            id: 34,
+            nombre: 'Campo Volcánico de Apaneca',
+            nombreAlt: null,
+            estado: 'activo',
+            altura: '0 msnm',
+            departamento: 'Ahuachapán',
+            tipo: 'campo',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Campo volcánico con múltiples cráteres y lagunas en la cordillera de Apaneca.',
+            imagen: 'assets/media/img/campo-apaneca.jpg',
+            lat: 13.8700,
+            lon: -89.8000,
+            monitored: false
+        },
+        {
+            id: 35,
+            nombre: 'Campo Volcánico de Cinotepeque',
+            nombreAlt: null,
+            estado: 'dormido',
+            altura: '0 msnm',
+            departamento: 'Santa Ana',
+            tipo: 'campo',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Campo volcánico ubicado en el departamento de Santa Ana.',
+            imagen: 'assets/media/img/campo-cinotepeque.jpg',
+            lat: 13.9167,
+            lon: -89.5833,
+            monitored: false
+        },
+        {
+            id: 36,
+            nombre: 'Campo Volcánico de Tizhuital',
+            nombreAlt: null,
+            estado: 'dormido',
+            altura: '0 msnm',
+            departamento: 'La Libertad',
+            tipo: 'campo',
+            ultimaErupcion: 'Desconocida',
+            descripcion: 'Campo volcánico en el departamento de La Libertad.',
+            imagen: 'assets/media/img/campo-tizhuital.jpg',
+            lat: 13.6667,
+            lon: -89.3167,
+            monitored: false
+        }
+    ];
+
+    // ============================================================
+    // CONFIGURACIÓN DE ESTADOS Y COLORES
+    // ============================================================
+
+    const ESTADO_LABELS = {
+        activo: 'Activo',
+        dormido: 'Dormido',
+        inactivo: 'Inactivo'
+    };
+
+    const ESTADO_COLORS = {
+        activo: '#e0631f',
+        dormido: '#4fc3f7',
+        inactivo: '#90a4ae'
+    };
+
+    // ============================================================
+    // ICONOS SVG
+    // ============================================================
+
+    const VOLCANO_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>';
+
+    const TYPE_SVGS = {
+        estratovolcan: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>',
+        caldera: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>',
+        maar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>',
+        cono: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 22 22 2 22 12 2"/></svg>',
+        campo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l16 16M20 4L4 20"/><circle cx="12" cy="12" r="4"/></svg>'
+    };
+
+    // ============================================================
+    // ESTADO DE LA APLICACIÓN
+    // ============================================================
+
+    var map = null;
+    var markersLayer = null;
+    var allItems = [];
+    var currentFilter = 'all';
+    var currentType = 'all';
+    var searchTerm = '';
+
+    // ============================================================
+    // FUNCIONES DEL MAPA
+    // ============================================================
+
+    function waitForLeaflet() {
+        return new Promise(function(resolve) {
+            if (window.L) { resolve(); return; }
+            var iv = setInterval(function() {
+                if (window.L) { clearInterval(iv); resolve(); }
+            }, 50);
+        });
+    }
+
+    function markerIcon(volcan) {
+        var isMonitored = volcan.monitored;
+        var color = ESTADO_COLORS[volcan.estado] || '#90a4ae';
+        var size = isMonitored ? 36 : 30;
+        var html = '<div class="volcan-marker ' + (isMonitored ? 'monitored' : '') + '" style="background:' + color + '; width:' + size + 'px; height:' + size + 'px;">' + VOLCANO_SVG + '</div>';
+        return L.divIcon({
+            className: '',
+            html: html,
+            iconSize: [size, size],
+            iconAnchor: [size/2, size/2]
+        });
+    }
+
+    function createPopupContent(volcan) {
+        var statusLabel = ESTADO_LABELS[volcan.estado] || volcan.estado;
+        var typeSvg = TYPE_SVGS[volcan.tipo] || '';
+        var monitoredBadge = volcan.monitored ? '<span class="popup-monitored-badge">Monitoreado por MARN</span>' : '';
+        var altName = volcan.nombreAlt ? '<span class="popup-alt-name">(' + volcan.nombreAlt + ')</span>' : '';
+        var lastEruption = (volcan.ultimaErupcion && volcan.ultimaErupcion !== 'Desconocida') ?
+            '<div class="popup-detail"><span class="popup-detail-label">Última erupción:</span> ' + volcan.ultimaErupcion + '</div>' : '';
+
+        var heightDisplay = (volcan.altura && volcan.altura !== '0 msnm') ?
+            '<div class="popup-detail"><span class="popup-detail-label">Altura:</span> ' + volcan.altura + '</div>' : '';
+
+        // Enlaces a Google Maps en formato correcto
+        var mapsUrl = 'https://www.google.com/maps?q=' + volcan.lat + ',' + volcan.lon + '&hl=es';
+        var directionsUrl = 'https://www.google.com/maps/dir/?api=1&destination=' + volcan.lat + ',' + volcan.lon + '&travelmode=driving&hl=es';
+
+        // Iconos SVG
+        var locationSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
+        var arrowSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+
+        return '<div class="volcan-popup">' +
+            (volcan.imagen ? '<div class="volcan-popup-image"><img src="' + volcan.imagen + '" alt="' + volcan.nombre + '" loading="lazy"></div>' : '') +
+            '<div class="popup-name">' + volcan.nombre + ' ' + altName + '</div>' +
+            '<div class="popup-depto">' + locationSvg + ' ' + volcan.departamento + '</div>' +
+            '<div class="popup-status-row">' +
+            '<span class="popup-status ' + volcan.estado + '">' + statusLabel + '</span>' +
+            monitoredBadge +
+            '</div>' +
+            '<div class="popup-detail"><span class="popup-detail-label">Tipo:</span> ' + typeSvg + ' ' + volcan.tipo + '</div>' +
+            heightDisplay +
+            lastEruption +
+            '<div class="popup-desc">' + volcan.descripcion + '</div>' +
+            '<div class="popup-actions">' +
+            '<a href="' + mapsUrl + '" target="_blank" rel="noopener" class="popup-btn">' + locationSvg + ' Ubicación</a>' +
+            '<a href="' + directionsUrl + '" target="_blank" rel="noopener" class="popup-btn popup-btn-secondary">' + arrowSvg + ' Cómo llegar</a>' +
+            '</div>' +
+            '</div>';
+    }
+
+    function getChainPoints() {
+        return [
+            [13.87, -89.80], // Apaneca
+            [13.85, -89.63], // Santa Ana
+            [13.81, -89.63], // Izalco
+            [13.80, -89.60], // El Hoyón
+            [13.73, -89.28], // San Salvador
+            [13.67, -89.05], // Ilopango
+            [13.60, -88.83], // San Vicente
+            [13.49, -88.50], // Tecapa
+            [13.43, -88.27], // San Miguel
+            [13.27, -87.83], // Conchagua
+            [13.22, -87.67]  // Conchagüita
+        ];
+    }
+
+    async function initMap() {
+        var el = document.getElementById('volcanesMap');
+        if (!el) return;
+        await waitForLeaflet();
+
+        var isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+        var tileUrl = isDark
+            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+            : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+
+        map = L.map(el, {
+            zoomControl: false,
+            attributionControl: false,
+            center: [13.7, -88.8],
+            zoom: 8
+        });
+
+        L.control.zoom({ position: 'topright' }).addTo(map);
+
+        L.tileLayer(tileUrl, {
+            subdomains: 'abcd',
+            maxZoom: 18,
+            attribution: '© CARTO · © OpenStreetMap'
+        }).addTo(map);
+
+        // Línea de la cadena volcánica
+        var chainPoints = getChainPoints();
+        L.polyline(chainPoints, {
+            color: 'rgba(224, 99, 31, 0.25)',
+            weight: 2,
+            dashArray: '6, 8',
+            opacity: 0.5
+        }).addTo(map);
+
+        markersLayer = L.layerGroup().addTo(map);
+    }
+
+    // ============================================================
+    // FUNCIONES DE RENDERIZADO
+    // ============================================================
+
+    function getFilteredItems() {
+        var items = allItems.slice();
+
+        // Filtro por estado
+        if (currentFilter !== 'all') {
+            items = items.filter(function(it) { return it.estado === currentFilter; });
+        }
+
+        // Filtro por tipo
+        if (currentType !== 'all') {
+            items = items.filter(function(it) { return it.tipo === currentType; });
+        }
+
+        // Búsqueda por nombre (incluye nombre completo y alternativo)
+        if (searchTerm.trim()) {
+            var term = searchTerm.toLowerCase().trim();
+            items = items.filter(function(it) {
+                var nombreCompleto = it.nombre.toLowerCase();
+                var nombreAlt = it.nombreAlt ? it.nombreAlt.toLowerCase() : '';
+                var departamento = it.departamento.toLowerCase();
+                // Buscar en nombre completo, nombre alternativo y departamento
+                return nombreCompleto.indexOf(term) !== -1 ||
+                    nombreAlt.indexOf(term) !== -1 ||
+                    departamento.indexOf(term) !== -1;
+            });
+        }
+
+        return items;
+    }
+
+    function renderMarkers() {
+        if (!markersLayer) return;
+        markersLayer.clearLayers();
+
+        var items = getFilteredItems();
+
+        items.forEach(function(volcan) {
+            var m = L.marker([volcan.lat, volcan.lon], {
+                icon: markerIcon(volcan),
+                title: volcan.nombre
+            });
+            m.bindPopup(createPopupContent(volcan), {
+                className: 'volcan-popup-container',
+                maxWidth: 280,
+                minWidth: 220
+            });
+            m.addTo(markersLayer);
+        });
+
+        updateCounts();
+    }
+
+    function renderList() {
+        var list = document.getElementById('volcanesList');
+        if (!list) return;
+
+        var items = getFilteredItems();
+
+        if (!items.length) {
+            list.innerHTML = '<div class="volcanes-empty">No hay volcanes con estos filtros.</div>';
+            return;
+        }
+
+        var html = '';
+        items.forEach(function(it) {
+            var statusLabel = ESTADO_LABELS[it.estado] || it.estado;
+            var monitoredBadge = it.monitored ? '<span class="volcanes-item-monitored">MARN</span>' : '';
+            var iconColor = it.estado;
+
+            html += '<div class="volcanes-item" data-lat="' + it.lat + '" data-lon="' + it.lon + '" data-id="' + it.id + '">' +
+                '<div class="volcanes-item-icon ' + iconColor + '">' + VOLCANO_SVG + '</div>' +
+                '<div class="volcanes-item-body">' +
+                '<div class="volcanes-item-name">' + it.nombre + ' ' + monitoredBadge + '</div>' +
+                '<div class="volcanes-item-meta">' +
+                '<span class="volcanes-item-altura">' + it.altura + ' · ' + it.departamento + '</span>' +
+                '<span class="volcanes-item-status ' + it.estado + '">' + statusLabel + '</span>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
+        });
+
+        list.innerHTML = html;
+
+        list.querySelectorAll('.volcanes-item').forEach(function(node) {
+            node.addEventListener('click', function(e) {
+                var lat = parseFloat(this.dataset.lat);
+                var lon = parseFloat(this.dataset.lon);
+                if (map) {
+                    map.setView([lat, lon], 12);
+                    markersLayer.eachLayer(function(layer) {
+                        if (layer.getLatLng && layer.getLatLng().lat === lat && layer.getLatLng().lng === lon) {
+                            layer.openPopup();
+                        }
+                    });
+                }
+            });
+        });
+    }
+
+    function updateCounts() {
+        var items = getFilteredItems();
+        var countEl = document.getElementById('volcanesCount');
+        var countPanelEl = document.getElementById('volcanesCountPanel');
+        if (countEl) countEl.textContent = items.length;
+        if (countPanelEl) countPanelEl.textContent = items.length;
+    }
+
+    // ============================================================
+    // FILTROS Y BÚSQUEDA
+    // ============================================================
+
+    function wireFilters() {
+        // Filtros de estado
+        document.querySelectorAll('.volcanes-filter-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var filter = this.dataset.filter;
+                document.querySelectorAll('.volcanes-filter-btn').forEach(function(b) {
+                    b.classList.remove('active');
+                });
+                this.classList.add('active');
+                currentFilter = filter;
+                renderMarkers();
+                renderList();
+            });
+        });
+
+        // Filtros de tipo
+        document.querySelectorAll('.volcanes-type-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var type = this.dataset.type;
+                document.querySelectorAll('.volcanes-type-btn').forEach(function(b) {
+                    b.classList.remove('active');
+                });
+                this.classList.add('active');
+                currentType = type;
+                renderMarkers();
+                renderList();
+            });
+        });
+
+        // Búsqueda - CORREGIDA
+        var searchInput = document.getElementById('volcanesSearch');
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                searchTerm = this.value;
+                renderMarkers();
+                renderList();
+
+                // Debug: mostrar cuántos resultados hay
+                var filtered = getFilteredItems();
+                console.log('🔍 Búsqueda: "' + searchTerm + '" → ' + filtered.length + ' resultados');
+            });
+
+            // Buscar también al presionar Enter
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchTerm = this.value;
+                    renderMarkers();
+                    renderList();
+                    var filtered = getFilteredItems();
+                    console.log('🔍 Búsqueda Enter: "' + searchTerm + '" → ' + filtered.length + ' resultados');
+                }
+            });
+        }
+    }
+
+    // ============================================================
+    // INICIALIZACIÓN
+    // ============================================================
+
+    function boot() {
+        var listEl = document.getElementById('volcanesList');
+        if (!document.getElementById('volcanesMap')) return;
+
+        initMap().then(function() {
+            allItems = VOLCANES;
+            renderMarkers();
+            renderList();
+            wireFilters();
+
+            // Mostrar número total en consola
+            console.log('✅ Volcanes de El Salvador cargados: ' + allItems.length + ' estructuras');
+            console.log('📊 Activos: ' + allItems.filter(function(v) { return v.estado === 'activo'; }).length);
+            console.log('📊 Dormidos: ' + allItems.filter(function(v) { return v.estado === 'dormido'; }).length);
+            console.log('📊 Inactivos: ' + allItems.filter(function(v) { return v.estado === 'inactivo'; }).length);
+            console.log('📊 Monitoreados por MARN: ' + allItems.filter(function(v) { return v.monitored; }).length);
+
+        }).catch(function(e) {
+            console.error('Error al cargar el mapa:', e);
+            if (listEl) listEl.innerHTML = '<div class="volcanes-error">No se pudo cargar el mapa de volcanes.</div>';
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot);
+    } else {
+        boot();
+    }
+
+})();
+</script>
 
 <!-- ============================================================
      SECCIÓN 8: VOLCANES ACTIVOS - GALERÍA
@@ -537,9 +2112,9 @@ ob_start();
 
     <div class="v-grid-2">
       <!-- Santa Ana -->
-      <div class="v-card v-card-horizontal">
+      <div class="v-card-horizontal">
         <div class="v-card-img">
-          <img src="assets/media/img/volcan-santa-ana.jpg" alt="Santa Ana" loading="lazy">
+          <img src="assets/media/img/Volcán Santa Ana (Ilamatepec).jpg" alt="Santa Ana" loading="lazy">
           <span class="v-card-status active">Activo</span>
         </div>
         <div class="v-card-body">
@@ -554,9 +2129,9 @@ ob_start();
       </div>
 
       <!-- Izalco -->
-      <div class="v-card v-card-horizontal">
+      <div class="v-card-horizontal">
         <div class="v-card-img">
-          <img src="assets/media/img/volcan-izalco.jpg" alt="Izalco" loading="lazy">
+          <img src="assets/media/img/Volcán Izalco.jpg" alt="Izalco" loading="lazy">
           <span class="v-card-status inactive">Inactivo</span>
         </div>
         <div class="v-card-body">
@@ -571,9 +2146,9 @@ ob_start();
       </div>
 
       <!-- San Salvador -->
-      <div class="v-card v-card-horizontal">
+      <div class="v-card-horizontal">
         <div class="v-card-img">
-          <img src="assets/media/img/volcan-san-salvador.jpg" alt="San Salvador" loading="lazy">
+          <img src="assets/media/img/Volcán San Salvador (Boquerón).jpg" alt="San Salvador" loading="lazy">
           <span class="v-card-status active">Activo</span>
         </div>
         <div class="v-card-body">
@@ -588,9 +2163,9 @@ ob_start();
       </div>
 
       <!-- San Miguel -->
-      <div class="v-card v-card-horizontal">
+      <div class="v-card-horizontal">
         <div class="v-card-img">
-          <img src="assets/media/img/volcan-san-miguel.jpg" alt="San Miguel" loading="lazy">
+          <img src="assets/media/img/Volcán San Miguel (Chaparrastique).jpg" alt="San Miguel" loading="lazy">
           <span class="v-card-status active">Activo</span>
         </div>
         <div class="v-card-body">
@@ -605,9 +2180,9 @@ ob_start();
       </div>
 
       <!-- Ilopango -->
-      <div class="v-card v-card-horizontal">
+      <div class="v-card-horizontal">
         <div class="v-card-img">
-          <img src="assets/media/img/volcan-ilopango.jpg" alt="Ilopango" loading="lazy">
+          <img src="assets/media/img/ilopangoV.jpg" alt="Ilopango" loading="lazy">
           <span class="v-card-status active">Activo</span>
         </div>
         <div class="v-card-body">
@@ -622,9 +2197,9 @@ ob_start();
       </div>
 
       <!-- San Vicente -->
-      <div class="v-card v-card-horizontal">
+      <div class="v-card-horizontal">
         <div class="v-card-img">
-          <img src="assets/media/img/volcan-san-vicente.jpg" alt="San Vicente" loading="lazy">
+          <img src="assets/media/img/Volcán San Vicente (Chinchontepec).jpg" alt="San Vicente" loading="lazy">
           <span class="v-card-status dormant">Dormido</span>
         </div>
         <div class="v-card-body">
@@ -639,9 +2214,9 @@ ob_start();
       </div>
 
       <!-- Tecapa -->
-      <div class="v-card v-card-horizontal">
+      <div class="v-card-horizontal">
         <div class="v-card-img">
-          <img src="assets/media/img/volcan-tecapa.jpg" alt="Tecapa" loading="lazy">
+          <img src="assets/media/img/Volcán Tecapa.jpg" alt="Tecapa" loading="lazy">
           <span class="v-card-status active">Activo</span>
         </div>
         <div class="v-card-body">
@@ -656,9 +2231,9 @@ ob_start();
       </div>
 
       <!-- Conchagua -->
-      <div class="v-card v-card-horizontal">
+      <div class="v-card-horizontal">
         <div class="v-card-img">
-          <img src="assets/media/img/volcan-conchagua.jpg" alt="Conchagua" loading="lazy">
+          <img src="assets/media/img/Volcán Conchagua.jpg" alt="Conchagua" loading="lazy">
           <span class="v-card-status active">Activo</span>
         </div>
         <div class="v-card-body">
@@ -673,9 +2248,9 @@ ob_start();
       </div>
 
       <!-- Conchagüita -->
-      <div class="v-card v-card-horizontal">
+      <div class="v-card-horizontal">
         <div class="v-card-img">
-          <img src="assets/media/img/volcan-conchaguita.jpg" alt="Conchagüita" loading="lazy">
+          <img src="assets/media/img/conchaguitaV.jpg" alt="Conchagüita" loading="lazy">
           <span class="v-card-status active">Activo</span>
         </div>
         <div class="v-card-body">
@@ -690,9 +2265,9 @@ ob_start();
       </div>
 
       <!-- El Hoyón -->
-      <div class="v-card v-card-horizontal">
+      <div class="v-card-horizontal">
         <div class="v-card-img">
-          <img src="assets/media/img/volcan-hoyon.jpg" alt="El Hoyón" loading="lazy">
+          <img src="assets/media/img/hoyonV.jpg" alt="El Hoyón" loading="lazy">
           <span class="v-card-status active">Activo</span>
         </div>
         <div class="v-card-body">
@@ -1043,28 +2618,28 @@ ob_start();
     <p class="v-intro">El <strong>Parque Nacional Complejo Los Volcanes</strong>, a unos 60 km de San Salvador, alberga los 3 volcanes más famosos del país.</p>
 
     <div class="v-grid-2">
-      <div class="v-card v-card-horizontal">
+      <div class="v-card-horizontal">
         <div class="v-card-img"><img src="assets/media/img/turismo-santa-ana.jpg" alt="Santa Ana" loading="lazy"></div>
         <div class="v-card-body">
           <h4>Santa Ana</h4>
           <p>El volcán más alto del país (2,381 msnm). Sendero de 1.5 horas hasta la cima.</p>
         </div>
       </div>
-      <div class="v-card v-card-horizontal">
+      <div class="v-card-horizontal">
         <div class="v-card-img"><img src="assets/media/img/turismo-izalco.jpg" alt="Izalco" loading="lazy"></div>
         <div class="v-card-body">
           <h4>Izalco</h4>
           <p>"El Faro del Pacífico". Ascenso de 3-4 horas. Uno de los destinos más icónicos.</p>
         </div>
       </div>
-      <div class="v-card v-card-horizontal">
+      <div class="v-card-horizontal">
         <div class="v-card-img"><img src="assets/media/img/turismo-cerro-verde.jpg" alt="Cerro Verde" loading="lazy"></div>
         <div class="v-card-body">
           <h4>Cerro Verde</h4>
           <p>Parque recreativo con senderos de "Flores Misteriosas".</p>
         </div>
       </div>
-      <div class="v-card v-card-horizontal">
+      <div class="v-card-horizontal">
         <div class="v-card-img"><img src="assets/media/img/turismo-coatepeque.jpg" alt="Coatepeque" loading="lazy"></div>
         <div class="v-card-body">
           <h4>Lago de Coatepeque</h4>
@@ -1080,304 +2655,19 @@ ob_start();
   </div>
 </section>
 
-<!-- ============================================================
-     SECCIÓN 15: VOLCANES DEL MUNDO
-     ============================================================ -->
-<section class="v-section" id="volcanes-mundo">
-  <div class="wrap">
-    <div class="v-header center">
-      <span class="v-tag">Global</span>
-      <h2 class="v-title">Volcanes del <span>Mundo</span></h2>
-      <p class="v-sub">Los más activos, más altos y más famosos del planeta</p>
-    </div>
 
-    <div class="v-grid-3">
-      <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/mundo-activos.jpg" alt="Activos" loading="lazy"></div>
-        <div class="v-card-body">
-          <h4>Los más activos</h4>
-          <ul>
-            <li><strong>Kilauea</strong> (Hawái) - Actividad casi continua desde 1983</li>
-            <li><strong>Etna</strong> (Italia) - Erupciones casi todos los años</li>
-            <li><strong>Stromboli</strong> (Italia) - Erupciones continuas desde hace siglos</li>
-            <li><strong>Volcán de Fuego</strong> (Guatemala) - Erupciones frecuentes</li>
-          </ul>
-        </div>
-      </div>
-      <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/mundo-altos.jpg" alt="Altos" loading="lazy"></div>
-        <div class="v-card-body">
-          <h4>Los más altos</h4>
-          <ul>
-            <li><strong>Ojos del Salado</strong> - 6,893 msnm</li>
-            <li><strong>Monte Pissis</strong> - 6,793 msnm</li>
-            <li><strong>Nevado Tres Cruces</strong> - 6,748 msnm</li>
-            <li><strong>Llullaillaco</strong> - 6,739 msnm</li>
-          </ul>
-        </div>
-      </div>
-      <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/mundo-famosos.jpg" alt="Famosos" loading="lazy"></div>
-        <div class="v-card-body">
-          <h4>Volcanes famosos</h4>
-          <ul>
-            <li><strong>Vesubio</strong> (Italia) - Sepultó Pompeya en el 79 DC</li>
-            <li><strong>Krakatoa</strong> (Indonesia) - Erupción de 1883</li>
-            <li><strong>Monte Santa Helena</strong> (EE.UU.) - Erupción de 1980</li>
-            <li><strong>Fuji</strong> (Japón) - Símbolo de Japón</li>
-          </ul>
-        </div>
-      </div>
-    </div>
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-    <div class="v-solar">
-      <h4>Volcanes en el Sistema Solar</h4>
-      <p>¡Sí! Hay volcanes en otros planetas. Venus y Marte están cubiertos de volcanes extintos. Algunas lunas de Júpiter, Saturno y Neptuno tienen erupciones activas.</p>
-    </div>
-  </div>
-</section>
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<!-- ============================================================
-     SECCIÓN 16: CURIOSIDADES
-     ============================================================ -->
-<section class="v-section v-section-dark" id="curiosidades">
-  <div class="wrap">
-    <div class="v-header center">
-      <span class="v-tag">Datos curiosos</span>
-      <h2 class="v-title">Curiosidades <span>Volcánicas</span></h2>
-      <p class="v-sub">Datos interesantes, récords y mitos</p>
-    </div>
+<!-- GSAP -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 
-    <div class="v-grid-3">
-      <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/curiosidad-faro.jpg" alt="Faro del Pacífico" loading="lazy"></div>
-        <div class="v-card-body">
-          <h4>El Faro del Pacífico</h4>
-          <p>El volcán Izalco fue visible desde el océano durante 196 años de actividad continua, sirviendo como referencia de navegación.</p>
-        </div>
-      </div>
-      <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/curiosidad-datos.jpg" alt="Datos" loading="lazy"></div>
-        <div class="v-card-body">
-          <h4>Datos interesantes</h4>
-          <p>El Salvador tiene la mayor densidad de volcanes por kilómetro cuadrado en Centroamérica. El volcán más joven es Izalco (1770).</p>
-        </div>
-      </div>
-      <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/curiosidad-records.jpg" alt="Récords" loading="lazy"></div>
-        <div class="v-card-body">
-          <h4>Récords</h4>
-          <p>El volcán más alto del mundo es el Ojos del Salado (6,893 m). El más activo es el Kilauea en Hawái.</p>
-        </div>
-      </div>
-      <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/curiosidad-mitos.jpg" alt="Mitos" loading="lazy"></div>
-        <div class="v-card-body">
-          <h4>Mitos y realidades</h4>
-          <p>Mito: "Un volcán extinto no volverá a erupcionar". Realidad: Un volcán inactivo puede reactivarse.</p>
-        </div>
-      </div>
-      <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/curiosidad-coatepeque.jpg" alt="Coatepeque" loading="lazy"></div>
-        <div class="v-card-body">
-          <h4>El lago que cambia de color</h4>
-          <p>El lago de Coatepeque cambia a un llamativo tono turquesa de forma cíclica.</p>
-        </div>
-      </div>
-      <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/curiosidad-submarino.jpg" alt="Submarinos" loading="lazy"></div>
-        <div class="v-card-body">
-          <h4>Volcanes submarinos</h4>
-          <p>Se estima que hay más de 1 millón de volcanes submarinos en los océanos.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============================================================
-     GSAP SCRIPTS
-     ============================================================ -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    gsap.registerPlugin(ScrollTrigger);
-
-    // ==========================================================
-    // CARRUSEL MODERNO
-    // ==========================================================
-    let currentSlide = 0;
-    const slides = document.querySelectorAll('.v-carousel-slide');
-    const totalSlides = slides.length;
-    const dotsContainer = document.getElementById('carouselDots');
-
-    // Crear dots
-    for (let i = 0; i < totalSlides; i++) {
-        const dot = document.createElement('span');
-        dot.className = i === 0 ? 'active' : '';
-        dot.dataset.index = i;
-        dot.addEventListener('click', () => goToSlide(i));
-        dotsContainer.appendChild(dot);
-    }
-
-    function goToSlide(index) {
-        currentSlide = index;
-        slides.forEach((slide, i) => {
-            slide.classList.toggle('active', i === index);
-        });
-        document.querySelectorAll('#carouselDots .dot').forEach((dot, i) => {
-            dot.classList.toggle('active', i === index);
-        });
-    }
-
-    function nextSlide() {
-        goToSlide((currentSlide + 1) % totalSlides);
-    }
-
-    function prevSlide() {
-        goToSlide((currentSlide - 1 + totalSlides) % totalSlides);
-    }
-
-    document.getElementById('carouselNext').addEventListener('click', nextSlide);
-    document.getElementById('carouselPrev').addEventListener('click', prevSlide);
-
-    // Autoplay
-    let autoplay = setInterval(nextSlide, 5000);
-    const carouselWrap = document.querySelector('.v-carousel-moderno');
-    carouselWrap.addEventListener('mouseenter', () => clearInterval(autoplay));
-    carouselWrap.addEventListener('mouseleave', () => {
-        autoplay = setInterval(nextSlide, 5000);
-    });
-
-    // ==========================================================
-    // TABS
-    // ==========================================================
-    const tabBtns = document.querySelectorAll('.v-tab-btn');
-    const tabPanels = document.querySelectorAll('.v-tab-panel');
-
-    tabBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const tab = this.dataset.tab;
-            tabBtns.forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            tabPanels.forEach(p => p.classList.remove('active'));
-            document.getElementById('tab-' + tab).classList.add('active');
-        });
-    });
-
-    // ==========================================================
-    // ANIMACIONES
-    // ==========================================================
-
-    // Hero
-    gsap.from('.v-hero-title', {
-        opacity: 0,
-        y: 40,
-        duration: 1,
-        delay: 0.3
-    });
-    gsap.from('.v-hero-desc', {
-        opacity: 0,
-        y: 30,
-        duration: 0.8,
-        delay: 0.5
-    });
-    gsap.from('.v-hero-btn', {
-        opacity: 0,
-        y: 20,
-        duration: 0.6,
-        delay: 0.7
-    });
-    gsap.from('.v-hero-badge', {
-        opacity: 0,
-        x: -20,
-        duration: 0.6,
-        delay: 0.8
-    });
-
-    // Secciones
-    document.querySelectorAll('.v-section').forEach(section => {
-        gsap.from(section.querySelector('.v-header'), {
-            opacity: 0,
-            y: 30,
-            duration: 0.6,
-            scrollTrigger: {
-                trigger: section,
-                start: 'top 88%',
-                toggleActions: 'play none none none'
-            }
-        });
-    });
-
-    // Tarjetas
-    document.querySelectorAll('.v-card, .v-stat, .v-timeline-item, .v-alerta, .v-tab-item').forEach((el, i) => {
-        gsap.from(el, {
-            opacity: 0,
-            y: 20,
-            duration: 0.5,
-            delay: i * 0.04,
-            scrollTrigger: {
-                trigger: el,
-                start: 'top 92%',
-                toggleActions: 'play none none none'
-            }
-        });
-    });
-
-    // Contadores
-    document.querySelectorAll('.v-stat[data-count]').forEach(el => {
-        const target = parseInt(el.dataset.count);
-        const numEl = el.querySelector('.v-stat-num');
-        const obj = { val: 0 };
-        ScrollTrigger.create({
-            trigger: el,
-            start: 'top 90%',
-            once: true,
-            onEnter: () => {
-                gsap.to(obj, {
-                    val: target,
-                    duration: 1.8,
-                    ease: 'power1.out',
-                    onUpdate: () => {
-                        numEl.textContent = Math.round(obj.val);
-                    }
-                });
-            }
-        });
-    });
-
-    // Timeline
-    gsap.from('.v-timeline-item', {
-        opacity: 0,
-        x: -20,
-        duration: 0.5,
-        stagger: 0.15,
-        scrollTrigger: {
-            trigger: '.v-timeline-items',
-            start: 'top 88%',
-            toggleActions: 'play none none none'
-        }
-    });
-
-    // Diagram pins
-    document.querySelectorAll('.v-diagram-pin').forEach(pin => {
-        gsap.from(pin, {
-            opacity: 0,
-            scale: 0.5,
-            duration: 0.4,
-            delay: 0.1,
-            scrollTrigger: {
-                trigger: pin,
-                start: 'top 85%',
-                toggleActions: 'play none none none'
-            }
-        });
-    });
-
-    console.log('Volcanes GSAP initialized');
-});
-</script>
+<!-- Tu archivo JS -->
+<script src="assets/js/volcanes.js"></script>
 
 <?php
 $content = ob_get_clean();

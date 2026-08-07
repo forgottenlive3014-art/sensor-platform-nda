@@ -8,9 +8,10 @@ ob_start();
 <!-- ============================================================
      BIG BANNER
      ============================================================ -->
-<section class="dis-bigbanner" style="--dis-accent:#c98a3d; background-image:url('assets/media/img/SISMOS.png')">
+<section class="dis-bigbanner" style="--dis-accent:#c98a3d; background-image:url('assets/media/img/Sismo.png')">
   <div class="dis-bigbanner-overlay"></div>
   <div class="wrap dis-bigbanner-inner">
+    <div class="dis-bigbanner-badge">El Salvador · Cinturón de Fuego</div>
     <h2 class="dis-bigbanner-word">Sismos</h2>
     <div class="dis-bigbanner-sub">
       <span class="dis-bigbanner-rule"></span>
@@ -706,7 +707,7 @@ ob_start();
 <!-- ============================================================
      SECCIÓN 12: SIMULADOR
      ============================================================ -->
-<section class="sec" id="sim-section">
+<section class="sec sec-dark" id="sim-section">
   <div class="wrap">
     <div class="sec-hd">
       <div class="sec-eyebrow">Simulación Interactiva</div>
@@ -740,6 +741,7 @@ ob_start();
 
 <!-- Tu archivo de animaciones (con los nuevos selectores para sismos) -->
 <script src="assets/js/gsap-animations.js"></script>
+
 <?php
 $content = ob_get_clean();
 require_once 'layout.php';
