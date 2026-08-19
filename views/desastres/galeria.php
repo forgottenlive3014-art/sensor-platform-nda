@@ -157,34 +157,6 @@ ob_start();
   </div>
 </section>
 
-<!-- VISUALIZACIONES 3D: acceso directo a los 8 visores, uno por amenaza -->
-<section class="sec">
-  <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Todos los modelos</div>
-      <h2 class="sec-title">Explorá cada <span class="acc">amenaza</span> por separado</h2>
-      <p class="sec-sub">La misma colección de arriba, en formato de tarjetas para abrir directamente el modelo que te interese.</p>
-    </div>
-    <div class="sk3d-grid">
-      <?php foreach ($modelos as $m): ?>
-      <div class="sk3d-card" style="--sk-accent:<?= e($m['accent']) ?>">
-        <div class="sk3d-viewport nda-auto3d" data-slug="<?= e($m['slug']) ?>"<?= !empty($m['bg']) ? ' style="--sk-bg-img:url(\'' . e($m['bg']) . '\')"' : '' ?>>
-          <div class="sk3d-placeholder">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-          </div>
-        </div>
-        <div class="sk3d-body">
-          <h3><?= e($m['nombre']) ?></h3>
-          <p><?= e($m['desc']) ?></p>
-          <span class="sk3d-credit">Visualización 3D generada con Three.js</span>
-          <a class="sk3d-link" href="?url=<?= e($m['infoUrl'] ?? $m['slug']) ?>">Ver información completa →</a>
-        </div>
-      </div>
-      <?php endforeach; ?>
-    </div>
-  </div>
-</section>
-
 </div>
 
 <script type="module" src="<?= asset('js/disaster3d.js') ?>"></script>

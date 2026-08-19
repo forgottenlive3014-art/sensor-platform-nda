@@ -19,6 +19,18 @@
         if (el) el.textContent = val;
     }
 
+    // Misma clasificacion texto -> clase de color que usa centrosismico.js
+    // (leyenda .ml/.mm/.mh/.mx): asi la alerta de pantalla completa se ve
+    // verde en LEVE, naranja en MODERADO, roja en FUERTE y morada en TERREMOTO.
+    function nivelClass(nivel) {
+        switch ((nivel || '').toUpperCase()) {
+            case 'MODERADO': return 'mm';
+            case 'FUERTE': return 'mh';
+            case 'TERREMOTO': return 'mx';
+            default: return 'ml'; // LEVE / MICRO SISMO / desconocido
+        }
+    }
+
     function getUltimaAlertaId() {
         try { return localStorage.getItem(STORAGE_KEY); } catch (e) { return null; }
     }
@@ -31,6 +43,8 @@
     function mostrarAlerta(sismo) {
         setText('csiAlertMag', (parseFloat(sismo.magnitud) || 0).toFixed(2));
         setText('csiAlertNivel', sismo.nivel || '');
+        overlay.classList.remove('ml', 'mm', 'mh', 'mx');
+        overlay.classList.add(nivelClass(sismo.nivel));
         overlay.classList.add('show');
         overlay.setAttribute('aria-hidden', 'false');
         clearTimeout(alertaTimeout);

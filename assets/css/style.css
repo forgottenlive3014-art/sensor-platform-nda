@@ -1176,7 +1176,9 @@ canvas {
 .csi-nivel-dot.mh { background: var(--acc2); }
 .csi-nivel-dot.mx { background: #b03bff; }
 
-/* ---------- CSI ALERTA: overlay de pagina completa (nivel FUERTE / TERREMOTO) ---------- */
+/* ---------- CSI ALERTA: overlay de pagina completa (LEVE / MODERADO / FUERTE / TERREMOTO) ----------
+   El color cambia segun el nivel del sismo (misma paleta que .ml/.mm/.mh/.mx
+   en la leyenda del sismografo), via la clase que le agrega centrosismico-alerta.js. */
 .csi-alert-overlay {
     position: fixed;
     inset: 0;
@@ -1185,19 +1187,24 @@ canvas {
     align-items: center;
     justify-content: center;
     padding: 24px;
-    background: rgba(184, 67, 63, 0.68);
+    --csi-alert-rgb: 184, 67, 63; /* FUERTE por defecto, por si no se agrega clase de nivel */
+    background: rgba(var(--csi-alert-rgb), 0.68);
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.25s var(--ez);
+    transition: opacity 0.25s var(--ez), background-color 0.3s var(--ez);
     animation: csiAlertPulse 3.6s ease-in-out infinite;
 }
+.csi-alert-overlay.ml { --csi-alert-rgb: 92, 122, 84; }   /* LEVE / MICRO SISMO: verde */
+.csi-alert-overlay.mm { --csi-alert-rgb: 168, 87, 54; }   /* MODERADO: naranja */
+.csi-alert-overlay.mh { --csi-alert-rgb: 184, 67, 63; }   /* FUERTE: rojo */
+.csi-alert-overlay.mx { --csi-alert-rgb: 217, 26, 42; }   /* TERREMOTO: rojo fuerte (mas intenso que FUERTE) */
 .csi-alert-overlay.show {
     opacity: 1;
     pointer-events: auto;
 }
 @keyframes csiAlertPulse {
-    0%, 100% { background: rgba(184, 67, 63, 0.68); }
-    50% { background: rgba(201, 74, 70, 0.74); }
+    0%, 100% { background: rgba(var(--csi-alert-rgb), 0.68); }
+    50% { background: rgba(var(--csi-alert-rgb), 0.78); }
 }
 .csi-alert-box {
     max-width: 460px;
@@ -1236,7 +1243,7 @@ canvas {
 }
 .csi-alert-close {
     background: #fff;
-    color: var(--red);
+    color: rgb(var(--csi-alert-rgb));
     border: none;
     border-radius: 100px;
     padding: 11px 28px;

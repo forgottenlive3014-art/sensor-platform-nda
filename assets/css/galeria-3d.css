@@ -42,7 +42,7 @@
     position: relative;
     z-index: 2;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: .82fr 1.18fr;
     gap: 40px;
     align-items: center;
     width: 100%;
@@ -140,7 +140,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    height: 460px;
+    height: 540px;
 }
 .sk3d-track-viewport {
     flex: 1;
@@ -158,8 +158,8 @@
 }
 .sk3d-slide {
     position: relative;
-    flex: 0 0 270px;
-    height: 400px;
+    flex: 0 0 340px;
+    height: 480px;
     display: flex;
     flex-direction: column;
     gap: 10px;

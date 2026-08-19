@@ -27,7 +27,7 @@ ob_start();
                 <div id="quizStart" class="quiz-screen">
                     <div class="big-emoji"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M9 3a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 5 3 3 0 0 0 3 3h1V3H9zM15 3a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-2 5 3 3 0 0 1-3 3h-1V3h1z"/></svg></div>
                     <h2>¿Qué tan preparado estás?</h2>
-                    <p>5 preguntas. Descubre tu nivel de preparación ante desastres.</p>
+                    <p><span id="quizTotalQ">10</span> preguntas. Descubre tu nivel de preparación ante desastres.</p>
                     <button class="play-btn" id="quizStartBtn">Comenzar quiz</button>
                 </div>
 
@@ -39,6 +39,8 @@ ob_start();
                     <div class="quiz-bar"><div class="quiz-bar-fill" id="quizBar"></div></div>
                     <h3 id="quizQuestion" class="quiz-q"></h3>
                     <div id="quizOptions" class="quiz-options"></div>
+                    <div id="quizExplain" class="quiz-explain"></div>
+                    <button class="play-btn quiz-next" id="quizNext" style="display:none;">Siguiente pregunta →</button>
                 </div>
 
                 <div id="quizEnd" class="quiz-screen" style="display:none;">
@@ -161,6 +163,15 @@ ob_start();
 .quiz-opt.wrong{ background:rgba(217, 26, 42,.16); border-color:#d91a2a; }
 .quiz-opt:disabled{ cursor:default; }
 .quiz-final-score{ font-size:2.4rem; font-weight:900; background:linear-gradient(135deg,#f29f05,#2e8b7f); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin:10px 0 18px; }
+.quiz-explain{ display:none; text-align:left; background:var(--card2); border:1px solid var(--border); border-radius:14px; padding:16px 18px; margin:16px 0 0; animation:fadeUp .35s ease; }
+.quiz-explain-verdict{ display:flex; align-items:center; gap:8px; font-weight:800; margin:0 0 8px; font-size:.98rem; }
+.quiz-explain-verdict svg{ flex-shrink:0; }
+.quiz-explain-verdict.correct{ color:#2e8b7f; }
+.quiz-explain-verdict.wrong{ color:#d91a2a; }
+.quiz-explain-text{ color:var(--text2); font-size:.88rem; line-height:1.55; margin:0 0 12px; }
+.quiz-explain-link{ display:inline-flex; align-items:center; gap:6px; color:#f29f05; font-weight:700; font-size:.86rem; text-decoration:none; }
+.quiz-explain-link:hover{ text-decoration:underline; }
+.quiz-next{ width:100%; }
 
 /* ===== MEMORIA ===== */
 .mem-stats{ display:flex; gap:16px; align-items:center; font-size:.85rem; color:var(--text2); }
@@ -231,20 +242,56 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    // Cada pregunta esta basada en datos reales que ya existen en otras
+    // partes del sitio (ver ChatController::faqKnowledge/systemPrompt,
+    // quehacer.php, y las paginas propias de cada amenaza), asi el quiz no
+    // inventa cifras que despues contradigan al resto de NDA.
     const QUESTIONS = [
         { q: 'Durante un sismo fuerte dentro de un edificio, lo más seguro es:',
-          o: ['Correr a la salida de inmediato', 'Agacharte, cubrirte y agarrarte', 'Pararte bajo el marco de una puerta', 'Usar el ascensor'], a:1 },
-        { q: '¿Cuántos litros de agua por persona se recomiendan por día en una emergencia?',
-          o: ['Medio litro', '1 litro', 'Al menos 4 litros', 'No hace falta guardar agua'], a:2 },
+          o: ['Correr a la salida de inmediato', 'Agacharte, cubrirte y agarrarte', 'Pararte bajo el marco de una puerta', 'Usar el ascensor'], a:1,
+          explain: 'Agáchate, cúbrete bajo un mueble resistente y agárrate hasta que termine el movimiento. No corras ni uses el ascensor.',
+          url: 'quehacer', urlLabel: '¿Qué hacer AHORA?' },
+        { q: '¿Cuántos litros de agua por persona, por día, debe llevar tu mochila de emergencia?',
+          o: ['Medio litro', '1 litro', '3 litros', 'No hace falta guardar agua'], a:2,
+          explain: 'Se recomiendan 3 litros de agua por persona por día, para al menos 3 días.',
+          url: 'resources', urlLabel: 'Guías y Recursos' },
         { q: 'Tu mochila de emergencia debe alcanzarte para sobrevivir al menos:',
-          o: ['2 horas', '12 horas', '72 horas', 'Una semana exacta'], a:2 },
+          o: ['2 horas', '12 horas', '72 horas', 'Una semana exacta'], a:2,
+          explain: 'La mochila de emergencia se arma para cubrir un mínimo de 72 horas (3 días) de autosuficiencia.',
+          url: 'resources', urlLabel: 'Guías y Recursos' },
         { q: 'Ante lluvias intensas, NUNCA debes:',
-          o: ['Cruzar quebradas o calles inundadas', 'Tener una radio a pilas', 'Conocer tu ruta de evacuación', 'Cargar tu celular'], a:0 },
+          o: ['Cruzar quebradas o calles inundadas', 'Tener una radio a pilas', 'Conocer tu ruta de evacuación', 'Cargar tu celular'], a:0,
+          explain: 'Con apenas 15 cm de corriente ya puedes perder el equilibrio, y una crecida puede subir en segundos.',
+          url: 'inundaciones', urlLabel: 'Inundaciones' },
         { q: 'El punto de reunión familiar sirve para:',
-          o: ['Decorar el plan', 'Reencontrarse si se separan en la emergencia', 'Guardar la mochila', 'Llamar a los bomberos'], a:1 },
+          o: ['Decorar el plan', 'Reencontrarse si se separan en la emergencia', 'Guardar la mochila', 'Llamar a los bomberos'], a:1,
+          explain: 'Acuerda con tu familia un punto de reunión cercano y otro más lejano por si el primero no es seguro.',
+          url: 'quehacer', urlLabel: '¿Qué hacer AHORA?' },
+        { q: '¿Cuántos volcanes hay en El Salvador?',
+          o: ['8', '12', '26', '40'], a:2,
+          explain: 'El Salvador tiene 26 volcanes a lo largo de su cordillera; el Izalco y el San Miguel (Chaparrastique) son de los más activos.',
+          url: 'volcanes', urlLabel: 'Volcanes' },
+        { q: 'Si sientes un sismo fuerte estando en la costa, ¿qué debes hacer?',
+          o: ['Esperar la alerta oficial', 'Subir a tierra alta de inmediato', 'Meterte al mar a revisar', 'Llamar primero a la familia'], a:1,
+          explain: 'El sismo ES la alerta: sube a terreno alto (mínimo 30 metros sobre el nivel del mar) sin esperar aviso oficial.',
+          url: 'tsunamis', urlLabel: 'Tsunamis' },
+        { q: '¿Cuál de estas es una señal de alerta de un deslizamiento?',
+          o: ['Grietas nuevas en el suelo o paredes', 'Que llueva un poco', 'Que haga calor', 'Ver pasar un carro'], a:0,
+          explain: 'Grietas nuevas, árboles o postes inclinados y sonidos de tronido en una ladera son señales de que puede ocurrir un deslizamiento.',
+          url: 'deslizamientos', urlLabel: 'Deslizamientos' },
+        { q: '¿Cuándo ocurrió el terremoto más devastador reciente de El Salvador?',
+          o: ['13 de enero de 2001', '10 de octubre de 1986', '1917', '1854'], a:0,
+          explain: 'El terremoto del 13 de enero de 2001 (M7.7) fue el más devastador del siglo, e incluyó el deslizamiento de Las Colinas.',
+          url: 'sismos', urlLabel: 'Monitor Sísmico' },
+        { q: '¿Cuál es el número de Bomberos en El Salvador?',
+          o: ['911', '913', '2222-5155', '2231-4000'], a:1,
+          explain: '911 es la PNC (Emergencias), 913 Bomberos, 2222-5155 Cruz Roja y 2231-4000 el COEN (Operaciones).',
+          url: 'quehacer', urlLabel: '¿Qué hacer AHORA?' },
     ];
+    document.getElementById('quizTotalQ').textContent = QUESTIONS.length;
     let qi = 0, qscore = 0;
     const elStart = document.getElementById('quizStart'), elPlay = document.getElementById('quizPlay'), elEnd = document.getElementById('quizEnd');
+    const elExplain = document.getElementById('quizExplain'), elNext = document.getElementById('quizNext');
 
     function showQuestion() {
         const cur = QUESTIONS[qi];
@@ -252,6 +299,8 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('quizScore').innerHTML = `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><polygon points="12,2 15,9 22,9.5 16.5,14 18,21 12,17.5 6,21 7.5,14 2,9.5 9,9"/></svg> ${qscore}`;
         document.getElementById('quizBar').style.width = `${(qi/QUESTIONS.length)*100}%`;
         document.getElementById('quizQuestion').textContent = cur.q;
+        elExplain.style.display = 'none'; elExplain.innerHTML = '';
+        elNext.style.display = 'none';
         const box = document.getElementById('quizOptions'); box.innerHTML = '';
         cur.o.forEach((opt, i) => {
             const b = document.createElement('button');
@@ -267,17 +316,33 @@ document.addEventListener('DOMContentLoaded', function () {
             if (idx === cur.a) b.classList.add('correct');
             else if (idx === i) b.classList.add('wrong');
         });
-        if (i === cur.a) qscore++;
+        const isCorrect = i === cur.a;
+        if (isCorrect) qscore++;
         document.getElementById('quizScore').innerHTML = `<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><polygon points="12,2 15,9 22,9.5 16.5,14 18,21 12,17.5 6,21 7.5,14 2,9.5 9,9"/></svg> ${qscore}`;
-        setTimeout(() => { qi++; (qi < QUESTIONS.length) ? showQuestion() : endQuiz(); }, 950);
+
+        let html = '';
+        if (isCorrect) {
+            html += `<p class="quiz-explain-verdict correct"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg> ¡Correcto!</p>`;
+        } else {
+            html += `<p class="quiz-explain-verdict wrong"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> La respuesta correcta era: "${cur.o[cur.a]}"</p>`;
+        }
+        html += `<p class="quiz-explain-text">${cur.explain}</p>`;
+        if (cur.url) {
+            html += `<a class="quiz-explain-link" href="?url=${cur.url}" target="_blank" rel="noopener">Aprende más en ${cur.urlLabel} <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>`;
+        }
+        elExplain.innerHTML = html;
+        elExplain.style.display = 'block';
+        elNext.textContent = (qi + 1 < QUESTIONS.length) ? 'Siguiente pregunta →' : 'Ver resultado →';
+        elNext.style.display = 'inline-block';
     }
+    elNext.onclick = () => { qi++; (qi < QUESTIONS.length) ? showQuestion() : endQuiz(); };
     function endQuiz() {
         elPlay.style.display = 'none'; elEnd.style.display = 'block';
         document.getElementById('quizBar').style.width = '100%';
         document.getElementById('quizFinalScore').textContent = `${qscore} / ${QUESTIONS.length}`;
         let emo, title, text;
-        if (qscore <= 2) { emo='<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M3 9v6c0 1.5 4 3 9 3s9-1.5 9-3V9"/></svg>'; title='Vas comenzando'; text='Repasa nuestras guías y vuelve a intentarlo. ¡Cada dato cuenta!'; }
-        else if (qscore <= 4) { emo='<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M6 4v6a3 3 0 0 0 3 3h1v7h6v-9l3-3V4h-4l-3 3-3-3z"/></svg>'; title='¡Bien preparado!'; text='Sabes lo importante. Afina los últimos detalles y serás un experto.'; }
+        if (qscore <= Math.ceil(QUESTIONS.length * 0.4)) { emo='<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M3 9v6c0 1.5 4 3 9 3s9-1.5 9-3V9"/></svg>'; title='Vas comenzando'; text='Repasa nuestras guías y vuelve a intentarlo. ¡Cada dato cuenta!'; }
+        else if (qscore <= Math.ceil(QUESTIONS.length * 0.8)) { emo='<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M6 4v6a3 3 0 0 0 3 3h1v7h6v-9l3-3V4h-4l-3 3-3-3z"/></svg>'; title='¡Bien preparado!'; text='Sabes lo importante. Afina los últimos detalles y serás un experto.'; }
         else { emo='<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M17 5h3a2 2 0 0 1-2 4M7 5H4a2 2 0 0 0 2 4"/></svg>'; title='¡Experto en emergencias!'; text='Impecable. Comparte lo que sabes con tu familia y comunidad.'; }
         document.getElementById('quizResultEmoji').innerHTML = emo;
         document.getElementById('quizResultTitle').textContent = title;

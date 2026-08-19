@@ -47,7 +47,10 @@ class Viewer {
         const { container, cfg } = this;
         const w = container.clientWidth || 300, h = container.clientHeight || 300;
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        // premultipliedAlpha:false evita un problema conocido de Three.js/WebGL
+        // donde un canvas "transparente" termina componiendose como negro
+        // opaco sobre el fondo de la pagina en vez de dejarlo ver.
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, premultipliedAlpha: false });
         // alpha:true en el constructor solo habilita el canal alfa del canvas;
         // el color de "clear" por defecto sigue siendo negro 100% opaco hasta
         // que se pone en 0 aqui. Sin esto, cada frame se limpiaba a negro
@@ -146,7 +149,10 @@ class Viewer {
             box.getSize(size);
             // 2.9 en vez de 2.6: modelo mas grande dentro del mismo encuadre,
             // sin tocar la camara (dist/lookAt) para no romper el centrado.
-            const scale = 2.9 / Math.max(size.x, size.y, size.z, 0.001);
+            // 3.3 (antes 2.9/2.6): el pedido era agrandar el modelo en si, no
+            // el recuadro que lo contiene -- la camara (dist/lookAt) se deja
+            // intacta para no romper el centrado de nuevo.
+            const scale = 3.3 / Math.max(size.x, size.y, size.z, 0.001);
             model.scale.setScalar(scale);
             const center = new THREE.Vector3();
             box.getCenter(center);
@@ -177,13 +183,23 @@ class Viewer {
 
         this._resize = () => {
             const nw = container.clientWidth || w, nh = container.clientHeight || h;
+            if (nw === renderer.domElement.width && nh === renderer.domElement.height) return;
             renderer.setSize(nw, nh);
             camera.aspect = nw / nh;
             camera.updateProjectionMatrix();
         };
         window.addEventListener('resize', this._resize);
-        // Corrige el tamano si al montar el contenedor todavia media 0 (layout no pintado aun).
-        setTimeout(this._resize, 60);
+        // ResizeObserver en vez de un setTimeout fijo: si el contenedor media 0
+        // al montar (layout/fuentes todavia sin pintar) o cambia de tamano por
+        // el layout del carrusel, esto corrige el encuadre siempre que haga
+        // falta en vez de solo una vez a los 60ms (causa de los recuadros mal
+        // centrados/estirados que se veian antes).
+        if (window.ResizeObserver) {
+            this._ro = new ResizeObserver(this._resize);
+            this._ro.observe(container);
+        } else {
+            setTimeout(this._resize, 60);
+        }
     }
 
     buildProcedural(cfg) {
@@ -408,6 +424,7 @@ class Viewer {
         this.disposed = true;
         if (this._raf) cancelAnimationFrame(this._raf);
         if (this._resize) window.removeEventListener('resize', this._resize);
+        if (this._ro) this._ro.disconnect();
         if (this._cleanupDrag) this._cleanupDrag();
         if (this._progressEl) this._progressEl.remove();
         if (this.renderer) {
