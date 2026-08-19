@@ -23,21 +23,28 @@ $extraCss = ['css/desastres-base.css', 'css/galeria-3d.css'];
 // assets/js/disaster3d.js (ver MODEL_FILES ahi) -- volcanes y deslizamientos
 // ya tienen modelo real; el resto usa la escena procedural de respaldo
 // hasta que se agregue uno. Ver el README en esa carpeta.
+// 'bg': foto local de fondo detras de la escena 3D (el canvas ahora se monta
+// transparente, ver disaster3d.js). Solo se agrega en los tipos que ya
+// tienen una foto propia en assets/media/img/ -- el resto se queda con el
+// degradado de acento de siempre para no depender de imagenes externas.
 $modelos = [
     [
         'slug' => 'sismos', 'accent' => '#c98a3d', 'nombre' => 'Sismos',
         'desc' => 'Visualización 3D de edificios vibrando sobre el terreno durante un sismo.',
         'riesgo' => 'El Salvador está sobre el Cinturón de Fuego del Pacífico: es el país con más sismos por km² de Centroamérica.',
+        'bg' => 'assets/media/img/SISMOS2.png',
     ],
     [
         'slug' => 'volcanes', 'accent' => '#e0631f', 'nombre' => 'Volcanes',
         'desc' => 'Visualización 3D de un cono volcánico con cráter incandescente y ceniza en el aire.',
         'riesgo' => '26 volcanes recorren el territorio; el Izalco y el Chaparrastique son los de mayor actividad histórica reciente.',
+        'bg' => 'assets/media/img/volcan.jpg',
     ],
     [
         'slug' => 'tsunamis', 'accent' => '#1f7aa8', 'nombre' => 'Tsunamis',
         'desc' => 'Visualización 3D de oleaje avanzando con espuma marina.',
         'riesgo' => 'Toda la costa del Pacífico salvadoreño está en zona de riesgo por sismos submarinos frente a la fosa Mesoamericana.',
+        'bg' => 'assets/media/img/tsunamiV.webp',
     ],
     [
         'slug' => 'inundaciones', 'accent' => '#2e7da6', 'nombre' => 'Inundaciones',
@@ -48,6 +55,7 @@ $modelos = [
         'slug' => 'deslizamientos', 'accent' => '#7a6a4a', 'nombre' => 'Deslizamientos',
         'desc' => 'Visualización 3D de una ladera con rocas y sedimento deslizándose pendiente abajo.',
         'riesgo' => 'Las laderas del volcán de San Salvador y la Cordillera del Bálsamo concentran el mayor historial de deslaves.',
+        'bg' => 'assets/media/img/deslizamientoTierra.jpg',
     ],
     [
         'slug' => 'incendios-forestales', 'accent' => '#d9481f', 'nombre' => 'Incendios forestales',
@@ -63,24 +71,6 @@ $modelos = [
         'slug' => 'sequias', 'accent' => '#b8862e', 'nombre' => 'Sequías',
         'desc' => 'Visualización 3D de suelo agrietado con vegetación seca y calor en el ambiente.',
         'riesgo' => 'El Corredor Seco (La Unión, Morazán, San Miguel) sufre pérdidas de cosecha casi cada año por déficit de lluvia.',
-    ],
-    [
-        'slug' => 'lahares', 'accent' => '#b5722c', 'nombre' => 'Lahares',
-        'desc' => 'Visualización 3D de un flujo de lodo volcánico bajando por la ladera de un volcán.',
-        'riesgo' => 'El volcán San Vicente (Chinchontepec) tiene historial de lahares mortales cuando la lluvia intensa arrastra ceniza y sedimento suelto.',
-        'infoUrl' => 'volcanes',
-    ],
-    [
-        'slug' => 'tormentas-electricas', 'accent' => '#7fb8e0', 'nombre' => 'Tormentas eléctricas',
-        'desc' => 'Visualización 3D de lluvia intensa con relámpagos aleatorios durante una tormenta eléctrica.',
-        'riesgo' => 'Centroamérica registra una de las mayores densidades de actividad eléctrica del planeta, con riesgo real de rayos durante la época lluviosa.',
-        'infoUrl' => 'tormentas-tropicales',
-    ],
-    [
-        'slug' => 'erosion-costera', 'accent' => '#c9a86a', 'nombre' => 'Erosión costera',
-        'desc' => 'Visualización 3D de oleaje desgastando gradualmente la línea de costa.',
-        'riesgo' => 'Playas de La Libertad y Bahía de Jiquilisco pierden terreno cada año por el oleaje y la subida del nivel del mar.',
-        'infoUrl' => 'tsunamis',
     ],
 ];
 
@@ -136,7 +126,7 @@ ob_start();
               <div class="sk3d-slide-caption">
                 <span class="sk3d-slide-name"><?= e($m['nombre']) ?></span>
               </div>
-              <div class="sk3d-slide-viewport">
+              <div class="sk3d-slide-viewport"<?= !empty($m['bg']) ? ' style="--sk-bg-img:url(\'' . e($m['bg']) . '\')"' : '' ?>>
                 <div class="sk3d-placeholder">
                   <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
                 </div>
@@ -178,7 +168,7 @@ ob_start();
     <div class="sk3d-grid">
       <?php foreach ($modelos as $m): ?>
       <div class="sk3d-card" style="--sk-accent:<?= e($m['accent']) ?>">
-        <div class="sk3d-viewport nda-auto3d" data-slug="<?= e($m['slug']) ?>">
+        <div class="sk3d-viewport nda-auto3d" data-slug="<?= e($m['slug']) ?>"<?= !empty($m['bg']) ? ' style="--sk-bg-img:url(\'' . e($m['bg']) . '\')"' : '' ?>>
           <div class="sk3d-placeholder">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
           </div>

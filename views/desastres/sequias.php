@@ -24,19 +24,6 @@ ob_start();
   <a href="#info-general" class="scroll-hint"><span>Scroll</span><div class="sh-arr"></div></a>
 </section>
 
-<section class="dis-hero">
-  <div class="dis-particles" id="sequiasParticles" aria-hidden="true"></div>
-  <div class="wrap">
-    <div class="dis-hero-icon">S</div>
-    <div class="sec-hd" style="text-align:left;margin:0;">
-      <div class="sec-eyebrow">Corredor Seco Centroamericano</div>
-      <h1 class="sec-title">Sequías: el desastre <span class="acc">silencioso y lento</span></h1>
-      <p class="sec-sub">Sin una imagen dramática de un solo día, la sequía afecta cosechas y agua potable durante meses en el oriente de El Salvador.</p>
-    </div>
-    <?php include __DIR__ . '/_quicknav.php'; ?>
-  </div>
-</section>
-
 <!-- INFORMACION GENERAL -->
 <section class="sec" id="info-general">
   <div class="wrap">
@@ -160,7 +147,6 @@ ob_start();
 </section>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    ndaInitDisParticles('sequiasParticles', 'sequias');
     ndaInitTimeline('sequias', [
         { year: '2014', title: 'Sequía asociada a El Niño', badge: 'El Niño', region: 'Corredor Seco (oriente)',
           desc: 'Uno de los eventos de El Niño más fuertes registrados afectó severamente el Corredor Seco Centroamericano (2014–2016), con pérdidas importantes de maíz y frijol en el oriente de El Salvador.',

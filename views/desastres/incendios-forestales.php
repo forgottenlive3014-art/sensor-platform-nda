@@ -24,19 +24,6 @@ ob_start();
   <a href="#info-general" class="scroll-hint"><span>Scroll</span><div class="sh-arr"></div></a>
 </section>
 
-<section class="dis-hero">
-  <div class="dis-particles" id="incendiosParticles" aria-hidden="true"></div>
-  <div class="wrap">
-    <div class="dis-hero-icon">I</div>
-    <div class="sec-hd" style="text-align:left;margin:0;">
-      <div class="sec-eyebrow">Estación seca · El Salvador</div>
-      <h1 class="sec-title">Incendios forestales: el riesgo que <span class="acc">encendemos nosotros mismos</span></h1>
-      <p class="sec-sub">La gran mayoría de los incendios forestales en El Salvador tienen origen humano. Conocer la causa es el primer paso para prevenirlos.</p>
-    </div>
-    <?php include __DIR__ . '/_quicknav.php'; ?>
-  </div>
-</section>
-
 <!-- INFORMACION GENERAL -->
 <section class="sec" id="info-general">
   <div class="wrap">
@@ -160,7 +147,6 @@ ob_start();
 </section>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    ndaInitDisParticles('incendiosParticles', 'incendios');
     ndaInitTimeline('incendios', [
         { year: 'Nov–Abr', title: 'Temporada de incendios forestales', badge: 'Recurrente cada año', region: 'El Imposible, Los Volcanes, Montecristo',
           desc: 'El MARN y el Cuerpo de Bomberos registran cientos de conatos e incendios forestales cada estación seca, concentrados en áreas naturales protegidas. La mayoría se originan por quemas agrícolas.',

@@ -649,11 +649,29 @@ ob_start();
 
         if (!track) return;
 
-        var cards = track.querySelectorAll('.v-magma-card');
-        var totalCards = cards.length;
-        if (totalCards === 0) return;
+        var originalCards = Array.prototype.slice.call(track.querySelectorAll('.v-magma-card'));
+        var realTotal = originalCards.length;
+        if (realTotal === 0) return;
 
-        var currentIndex = 0;
+        // Loop infinito real: clonamos las ultimas EDGE tarjetas al inicio y
+        // las primeras EDGE al final. Asi "Siguiente" desde la ultima tarjeta
+        // sigue deslizando hacia adelante (entra un clon identico a la
+        // primera) en vez de saltar de golpe el track completo de regreso al
+        // indice 0, que es lo que se veia "feo" antes.
+        var EDGE = 3; // = maximo de tarjetas visibles (ver getVisibleCards)
+        var headClones = originalCards.slice(-EDGE).map(function(c) { return c.cloneNode(true); });
+        var tailClones = originalCards.slice(0, EDGE).map(function(c) { return c.cloneNode(true); });
+        headClones.forEach(function(c) {
+            c.setAttribute('aria-hidden', 'true');
+            track.insertBefore(c, track.firstChild);
+        });
+        tailClones.forEach(function(c) {
+            c.setAttribute('aria-hidden', 'true');
+            track.appendChild(c);
+        });
+
+        var cards = Array.prototype.slice.call(track.querySelectorAll('.v-magma-card'));
+        var currentIndex = EDGE; // arranca en la primera tarjeta real
         var visibleCards = 3;
         var isAnimating = false;
 
@@ -664,72 +682,58 @@ ob_start();
         }
 
         function getCardWidth() {
-            return cards[0].offsetWidth + 30;
+            var gap = parseFloat(window.getComputedStyle(track).columnGap) || 0;
+            return cards[0].getBoundingClientRect().width + gap;
+        }
+
+        function setTransform(withTransition) {
+            track.style.transition = withTransition ? '' : 'none';
+            track.style.transform = 'translateX(-' + (currentIndex * getCardWidth()) + 'px)';
+            if (!withTransition) void track.offsetWidth; // fuerza reflow antes de restaurar la transicion
         }
 
         function updateCarousel() {
             visibleCards = getVisibleCards();
-            var maxIndex = Math.max(0, totalCards - visibleCards);
-            
-            if (currentIndex > maxIndex) {
-                currentIndex = 0;
-            }
-            if (currentIndex < 0) {
-                currentIndex = maxIndex;
-            }
-            
-            var offset = currentIndex * getCardWidth();
-            track.style.transform = 'translateX(-' + offset + 'px)';
+            setTransform(true);
             updateCenterCard();
         }
 
         function updateCenterCard() {
+            var centerIndex = currentIndex + Math.floor(visibleCards / 2);
             cards.forEach(function(card, i) {
-                card.classList.remove('center');
-                var centerIndex = currentIndex + Math.floor(visibleCards / 2);
-                if (i === centerIndex && i < totalCards) {
-                    card.classList.add('center');
-                }
+                card.classList.toggle('center', i === centerIndex);
             });
+        }
+
+        // Si el indice actual quedo dentro de la zona de clones (porque el
+        // usuario siguio avanzando/retrocediendo mas alla de las tarjetas
+        // reales), lo reposicionamos sin transicion al indice real
+        // equivalente -- el clon es visualmente identico, asi que el salto
+        // es imperceptible y el loop se siente continuo.
+        function snapIfInCloneZone() {
+            if (currentIndex < EDGE) {
+                currentIndex += realTotal;
+                setTransform(false);
+            } else if (currentIndex >= EDGE + realTotal) {
+                currentIndex -= realTotal;
+                setTransform(false);
+            }
         }
 
         function goTo(index) {
             if (isAnimating) return;
-            
-            var maxIndex = Math.max(0, totalCards - visibleCards);
-            
-            if (index > maxIndex) {
-                index = 0;
-            }
-            if (index < 0) {
-                index = maxIndex;
-            }
-            
             isAnimating = true;
             currentIndex = index;
-            updateCarousel();
+            setTransform(true);
+            updateCenterCard();
             setTimeout(function() {
+                snapIfInCloneZone();
                 isAnimating = false;
             }, 600);
         }
 
-        function nextSlide() {
-            var maxIndex = Math.max(0, totalCards - visibleCards);
-            if (currentIndex < maxIndex) {
-                goTo(currentIndex + 1);
-            } else {
-                goTo(0);
-            }
-        }
-
-        function prevSlide() {
-            if (currentIndex > 0) {
-                goTo(currentIndex - 1);
-            } else {
-                var maxIndex = Math.max(0, totalCards - visibleCards);
-                goTo(maxIndex);
-            }
-        }
+        function nextSlide() { goTo(currentIndex + 1); }
+        function prevSlide() { goTo(currentIndex - 1); }
 
         if (prevBtn) prevBtn.addEventListener('click', prevSlide);
         if (nextBtn) nextBtn.addEventListener('click', nextSlide);
@@ -739,15 +743,14 @@ ob_start();
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(function() {
                 visibleCards = getVisibleCards();
-                var maxIndex = Math.max(0, totalCards - visibleCards);
-                if (currentIndex > maxIndex) currentIndex = maxIndex;
-                updateCarousel();
+                setTransform(false);
+                updateCenterCard();
             }, 200);
         });
 
-        setTimeout(updateCarousel, 300);
+        setTimeout(function() { setTransform(false); updateCenterCard(); }, 300);
         window.addEventListener('load', function() {
-            setTimeout(updateCarousel, 100);
+            setTimeout(function() { setTransform(false); updateCenterCard(); }, 100);
         });
     }
 
@@ -1163,63 +1166,66 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <script>
 // ============================================================
-// VOLCANES DE EL SALVADOR - MAPA INTERACTIVO (36 VOLCANES)
+// VOLCANES DE EL SALVADOR - MAPA INTERACTIVO (20 VOLCANES)
 // ============================================================
 
 (function() {
     'use strict';
 
     // ============================================================
-    // 36 VOLCANES Y CENTROS VOLCÁNICOS DE EL SALVADOR
+    // 20 VOLCANES Y CENTROS VOLCÁNICOS DE EL SALVADOR
     // ============================================================
 
+    // Coordenadas: GPS de alta precision verificadas por el usuario (no de
+    // Wikipedia/OSM) para los 20 volcanes principales de El Salvador.
+    // "imagen": ruta real cuando existe una foto en assets/media/img/ con ese
+    // nombre; si no hay foto especifica se usa volcanBanner.jpg como
+    // provisional -- buscar "PROVISIONAL" abajo para encontrar y reemplazar
+    // esas rutas cuando se consiga la foto real de cada una.
     const VOLCANES = [
-        // ==========================================================
-        // ESTRATOVOLCANES (16)
-        // ==========================================================
         {
             id: 1,
             nombre: 'Volcán de Santa Ana',
             nombreAlt: 'Ilamatepec',
             estado: 'activo',
-            altura: '2,381 msnm',
+            altura: '2,382 msnm',
             departamento: 'Santa Ana',
             tipo: 'estratovolcan',
             ultimaErupcion: '2005',
             descripcion: 'El volcán más alto de El Salvador. Presenta un cráter con una laguna ácida.',
-            imagen: 'assets/media/img/volcan-santa-ana.jpg',
-            lat: 13.8533,
-            lon: -89.6300,
+            imagen: 'assets/media/img/Volcán Santa Ana (Ilamatepec).jpg',
+            lat: 13.850395376810262,
+            lon: -89.62935864135811,
             monitored: true
         },
         {
             id: 2,
             nombre: 'Volcán de Izalco',
             nombreAlt: null,
-            estado: 'inactivo',
-            altura: '1,950 msnm',
+            estado: 'activo',
+            altura: '1,965 msnm',
             departamento: 'Sonsonate',
             tipo: 'estratovolcan',
             ultimaErupcion: '1966',
-            descripcion: 'Conocido como "El Faro del Pacífico" por su actividad constante durante el siglo XIX.',
-            imagen: 'assets/media/img/volcan-izalco.jpg',
-            lat: 13.8133,
-            lon: -89.6333,
+            descripcion: 'Conocido como "El Faro del Pacífico" por su actividad casi continua entre 1770 y 1958. Monitoreado por MARN junto a Santa Ana y San Salvador.',
+            imagen: 'assets/media/img/Volcán Izalco.jpg',
+            lat: 13.815116,
+            lon: -89.632853,
             monitored: true
         },
         {
             id: 3,
             nombre: 'Volcán de San Salvador',
-            nombreAlt: 'Boquerón',
+            nombreAlt: 'Boquerón / Quetzaltepec',
             estado: 'activo',
-            altura: '1,850 msnm',
+            altura: '1,850–1,867 msnm',
             departamento: 'San Salvador',
             tipo: 'estratovolcan',
             ultimaErupcion: '1917',
-            descripcion: 'Complejo volcánico conocido principalmente por su cráter El Boquerón, ubicado al norte de la capital.',
-            imagen: 'assets/media/img/volcan-san-salvador.jpg',
-            lat: 13.7333,
-            lon: -89.2833,
+            descripcion: 'Complejo volcánico conocido principalmente por su cráter El Boquerón, al norte de la capital.',
+            imagen: 'assets/media/img/Volcán San Salvador (Boquerón).jpg',
+            lat: 13.73734212519635,
+            lon: -89.28704748688723,
             monitored: true
         },
         {
@@ -1230,11 +1236,11 @@ document.addEventListener('DOMContentLoaded', function() {
             altura: '2,130 msnm',
             departamento: 'San Miguel',
             tipo: 'estratovolcan',
-            ultimaErupcion: '2020',
-            descripcion: 'Uno de los volcanes más activos de El Salvador. Su actividad ha sido registrada desde la época colonial.',
-            imagen: 'assets/media/img/volcan-san-miguel.jpg',
-            lat: 13.4333,
-            lon: -88.2667,
+            ultimaErupcion: '2022',
+            descripcion: 'Uno de los volcanes más activos de El Salvador, con erupciones registradas desde la época colonial y varias en la última década.',
+            imagen: 'assets/media/img/Volcán San Miguel (Chaparrastique).jpg',
+            lat: 13.436004263879635,
+            lon: -88.26928460811901,
             monitored: true
         },
         {
@@ -1245,492 +1251,236 @@ document.addEventListener('DOMContentLoaded', function() {
             altura: '2,173 msnm',
             departamento: 'San Vicente',
             tipo: 'estratovolcan',
-            ultimaErupcion: 'Desconocida',
-            descripcion: 'Segundo volcán más alto de El Salvador. Su nombre en náhuat significa "Cerro de los dos picos".',
-            imagen: 'assets/media/img/volcan-san-vicente.jpg',
-            lat: 13.6000,
-            lon: -88.8333,
+            ultimaErupcion: 'Sin registro histórico',
+            descripcion: 'Segundo volcán más alto de El Salvador. Su nombre en náhuat significa "Cerro de los dos picos". Actividad sísmica/fumarólica, sin erupciones registradas en tiempos históricos.',
+            imagen: 'assets/media/img/Volcán San Vicente (Chinchontepec).jpg',
+            lat: 13.592574680152275,
+            lon: -88.84862678461693,
             monitored: true
         },
         {
             id: 6,
             nombre: 'Volcán de Tecapa',
-            nombreAlt: null,
+            nombreAlt: 'Laguna de Alegría',
             estado: 'activo',
             altura: '1,592 msnm',
             departamento: 'Usulután',
             tipo: 'estratovolcan',
-            ultimaErupcion: 'Desconocida',
-            descripcion: 'Presenta actividad fumarólica y microsismicidad constante. Su cráter alberga la Laguna de Alegría.',
-            imagen: 'assets/media/img/volcan-tecapa.jpg',
-            lat: 13.4900,
-            lon: -88.5000,
+            ultimaErupcion: 'Sin registro histórico',
+            descripcion: 'Presenta actividad fumarólica y microsismicidad constante, sin erupciones registradas. Su cráter alberga la Laguna de Alegría.',
+            imagen: 'assets/media/img/Volcán Tecapa.jpg',
+            lat: 13.494625498691782,
+            lon: -88.50204298749738,
             monitored: true
         },
         {
             id: 7,
-            nombre: 'Volcán de Conchagua',
+            nombre: 'Volcán de Usulután',
             nombreAlt: null,
-            estado: 'activo',
-            altura: '1,250 msnm',
-            departamento: 'La Unión',
+            estado: 'dormido',
+            altura: '1,450 msnm',
+            departamento: 'Usulután',
             tipo: 'estratovolcan',
-            ultimaErupcion: 'Desconocida',
-            descripcion: 'Ubicado en el extremo oriental de El Salvador, cerca del Golfo de Fonseca.',
-            imagen: 'assets/media/img/volcan-conchagua.jpg',
-            lat: 13.2667,
-            lon: -87.8333,
+            ultimaErupcion: 'Sin registro histórico',
+            descripcion: 'Ubicado al norte de la ciudad de Usulután, forma parte del arco volcánico centroamericano.',
+            imagen: 'assets/media/img/Volcán Usulután.jpeg',
+            lat: 13.419591922772971,
+            lon: -88.47440272626477,
             monitored: false
         },
         {
             id: 8,
-            nombre: 'Volcán de Conchagüita',
-            nombreAlt: null,
-            estado: 'activo',
-            altura: '550 msnm',
-            departamento: 'La Unión',
-            tipo: 'estratovolcan',
-            ultimaErupcion: '1892',
-            descripcion: 'Volcán ubicado en una isla del Golfo de Fonseca, de gran importancia ecológica.',
-            imagen: 'assets/media/img/volcan-conchaguita.jpg',
-            lat: 13.2167,
-            lon: -87.6667,
-            monitored: true
-        },
-        {
-            id: 9,
-            nombre: 'Volcán de Usulután',
-            nombreAlt: null,
-            estado: 'dormido',
-            altura: '1,449 msnm',
-            departamento: 'Usulután',
-            tipo: 'estratovolcan',
-            ultimaErupcion: 'Desconocida',
-            descripcion: 'Ubicado al norte de la ciudad de Usulután, forma parte del arco volcánico centroamericano.',
-            imagen: 'assets/media/img/volcan-usulutan.jpg',
-            lat: 13.4167,
-            lon: -88.5833,
-            monitored: false
-        },
-        {
-            id: 10,
             nombre: 'Volcán de Chinameca',
             nombreAlt: 'Pacayal',
             estado: 'dormido',
             altura: '1,300 msnm',
             departamento: 'San Miguel',
             tipo: 'estratovolcan',
-            ultimaErupcion: 'Desconocida',
+            ultimaErupcion: 'Sin registro histórico',
             descripcion: 'Presenta un cráter bien conservado y fumarolas en sus laderas.',
-            imagen: 'assets/media/img/volcan-chinameca.jpg',
-            lat: 13.4833,
-            lon: -88.3667,
+            imagen: 'assets/media/img/Volcán Chinameca.jpg',
+            lat: 13.47866727416521,
+            lon: -88.3298284107852,
+            monitored: false
+        },
+        {
+            id: 9,
+            nombre: 'Volcán de Conchagua',
+            nombreAlt: null,
+            estado: 'dormido',
+            altura: '1,250 msnm',
+            departamento: 'La Unión',
+            tipo: 'estratovolcan',
+            ultimaErupcion: 'Sin registro histórico',
+            descripcion: 'Ubicado en el extremo oriental de El Salvador, domina la bahía y el puerto de La Unión. Actividad fumarólica en ambos picos, sin erupciones registradas.',
+            imagen: 'assets/media/img/Volcán Conchagua.jpg',
+            lat: 13.276862473450333,
+            lon: -87.8458965955024,
+            monitored: false
+        },
+        {
+            id: 10,
+            nombre: 'Complejo Apaneca-Ilamatepec',
+            nombreAlt: 'Cordillera de Apaneca',
+            estado: 'activo',
+            altura: '2,036 msnm',
+            departamento: 'Ahuachapán',
+            tipo: 'estratovolcan',
+            ultimaErupcion: 'Sin registro histórico',
+            descripcion: 'Cordillera volcánica con múltiples cráteres y actividad geotérmica; alimenta el campo geotérmico de Ahuachapán. Incluye picos como Cerro Verde, Las Ranas y Laguna Verde.',
+            imagen: 'assets/media/img/Volcán Cerro Verde.jpg',
+            lat: 13.917624311397633,
+            lon: -89.71683843339771,
             monitored: false
         },
         {
             id: 11,
-            nombre: 'Volcán de Sesori',
+            nombre: 'Caldera de Ilopango',
             nombreAlt: null,
-            estado: 'dormido',
-            altura: '860 msnm',
-            departamento: 'San Miguel',
-            tipo: 'estratovolcan',
-            ultimaErupcion: 'Desconocida',
-            descripcion: 'Pequeño estratovolcán ubicado en el departamento de San Miguel.',
-            imagen: 'assets/media/img/volcan-sesori.jpg',
-            lat: 13.7167,
-            lon: -88.3333,
-            monitored: false
+            estado: 'activo',
+            altura: '438 msnm',
+            departamento: 'San Salvador',
+            tipo: 'caldera',
+            ultimaErupcion: '1880',
+            descripcion: 'Caldera volcánica formada por una gran erupción prehistórica. Su lago es uno de los más grandes de El Salvador; la última erupción registrada fue en 1880.',
+            imagen: 'assets/media/img/Caldera de Ilopango.jpg',
+            lat: 13.670757340285553,
+            lon: -89.09190853324328,
+            monitored: true
         },
         {
             id: 12,
-            nombre: 'Volcán de Apaneca',
-            nombreAlt: null,
-            estado: 'activo',
-            altura: '1,800 msnm',
-            departamento: 'Ahuachapán',
-            tipo: 'estratovolcan',
-            ultimaErupcion: 'Desconocida',
-            descripcion: 'Parte del complejo volcánico de Apaneca-Ilamatepec, con múltiples cráteres.',
-            imagen: 'assets/media/img/volcan-apaneca.jpg',
-            lat: 13.8700,
-            lon: -89.8000,
+            nombre: 'Caldera de Coatepeque',
+            nombreAlt: 'Lago de Coatepeque',
+            estado: 'dormido',
+            altura: '746 msnm',
+            departamento: 'Santa Ana',
+            tipo: 'caldera',
+            ultimaErupcion: 'Sin registro histórico',
+            descripcion: 'Una de las calderas más grandes de El Salvador. Su lago es conocido por su color turquesa; sin erupciones registradas en tiempos históricos.',
+            imagen: 'assets/media/img/volcanBanner.jpg', // PROVISIONAL: no hay foto especifica de Coatepeque en assets/media/img/
+            lat: 13.83643110387805,
+            lon: -89.56647764591264,
             monitored: false
         },
         {
             id: 13,
-            nombre: 'Volcán de El Taburete',
+            nombre: 'Cerro El Tigre',
             nombreAlt: null,
-            estado: 'activo',
-            altura: '1,230 msnm',
-            departamento: 'San Vicente',
-            tipo: 'estratovolcan',
-            ultimaErupcion: 'Desconocida',
-            descripcion: 'Ubicado al sur de San Vicente, cerca de la costa del Pacífico.',
-            imagen: 'assets/media/img/volcan-taburete.jpg',
-            lat: 13.4667,
-            lon: -88.8000,
+            estado: 'dormido',
+            altura: '1,640 msnm',
+            departamento: 'San Miguel',
+            tipo: 'maar',
+            ultimaErupcion: 'Sin registro histórico',
+            descripcion: 'Cráter de origen explosivo en el departamento de San Miguel, sin erupciones registradas.',
+            imagen: 'assets/media/img/volcanBanner.jpg', // PROVISIONAL: no hay foto especifica de El Tigre en assets/media/img/
+            lat: 13.468611617186859,
+            lon: -88.42717794153612,
             monitored: false
         },
         {
             id: 14,
-            nombre: 'Volcán de San Diego',
+            nombre: 'Laguna de Aramuaca',
             nombreAlt: null,
-            estado: 'activo',
-            altura: '1,100 msnm',
+            estado: 'dormido',
+            altura: '181 msnm',
             departamento: 'San Miguel',
-            tipo: 'estratovolcan',
-            ultimaErupcion: 'Desconocida',
-            descripcion: 'Forma parte del complejo volcánico de San Miguel.',
-            imagen: 'assets/media/img/volcan-san-diego.jpg',
-            lat: 13.4000,
-            lon: -88.1500,
+            tipo: 'maar',
+            ultimaErupcion: 'Sin registro histórico',
+            descripcion: 'Maar (cráter de explosión) con una laguna, en tierras bajas del departamento de San Miguel.',
+            imagen: 'assets/media/img/volcanBanner.jpg', // PROVISIONAL: no hay foto especifica de Aramuaca en assets/media/img/
+            lat: 13.430056052983089,
+            lon: -88.10569874513598,
             monitored: false
         },
         {
             id: 15,
-            nombre: 'Volcán de Palacios',
-            nombreAlt: null,
-            estado: 'activo',
-            altura: '1,200 msnm',
-            departamento: 'Morazán',
-            tipo: 'estratovolcan',
-            ultimaErupcion: 'Desconocida',
-            descripcion: 'Ubicado en el departamento de Morazán, cerca de la frontera con Honduras.',
-            imagen: 'assets/media/img/volcan-palacios.jpg',
-            lat: 13.7500,
-            lon: -88.1500,
+            nombre: 'Caldera Volcánica de Apastepeque',
+            nombreAlt: 'Laguna de Apastepeque',
+            estado: 'dormido',
+            altura: '700 msnm',
+            departamento: 'San Vicente',
+            tipo: 'caldera',
+            ultimaErupcion: 'Sin registro histórico',
+            descripcion: 'Conjunto de lagunas y maares de origen volcánico en el departamento de San Vicente.',
+            imagen: 'assets/media/img/volcanBanner.jpg', // PROVISIONAL: no hay foto especifica de Apastepeque en assets/media/img/
+            lat: 13.717083450430055,
+            lon: -88.76666707208607,
             monitored: false
         },
         {
             id: 16,
-            nombre: 'Cerro El Águila',
+            nombre: 'Cerro Cinotepeque',
             nombreAlt: null,
-            estado: 'inactivo',
-            altura: '800 msnm',
-            departamento: 'Ahuachapán',
-            tipo: 'estratovolcan',
-            ultimaErupcion: 'Desconocida',
-            descripcion: 'Pequeño edificio volcánico en el departamento de Ahuachapán.',
-            imagen: 'assets/media/img/cerro-el-aguila.jpg',
-            lat: 13.9200,
-            lon: -89.8500,
+            estado: 'dormido',
+            altura: '665 msnm',
+            departamento: 'San Salvador',
+            tipo: 'cono',
+            ultimaErupcion: 'Sin registro histórico',
+            descripcion: 'Edificio volcánico menor cerca de El Paisnal, sin actividad registrada.',
+            imagen: 'assets/media/img/volcanBanner.jpg', // PROVISIONAL: no hay foto especifica de Cinotepeque en assets/media/img/
+            lat: 14.007249368287832,
+            lon: -89.24494420955051,
             monitored: false
         },
-
-        // ==========================================================
-        // CALDERAS (5)
-        // ==========================================================
         {
             id: 17,
-            nombre: 'Caldera de Ilopango',
+            nombre: 'Volcán Singüil',
             nombreAlt: null,
-            estado: 'activo',
-            altura: '440 msnm',
-            departamento: 'San Salvador',
-            tipo: 'caldera',
-            ultimaErupcion: '1880',
-            descripcion: 'Caldera volcánica de aproximadamente 88,000 metros de diámetro. Su lago es uno de los más grandes de El Salvador.',
-            imagen: 'assets/media/img/volcan-ilopango.jpg',
-            lat: 13.6667,
-            lon: -89.0500,
-            monitored: true
+            estado: 'dormido',
+            altura: '957 msnm',
+            departamento: 'Santa Ana',
+            tipo: 'cono',
+            ultimaErupcion: 'Sin registro histórico',
+            descripcion: 'Cono volcánico en el norte de Santa Ana, cerca de Metapán, sin actividad registrada.',
+            imagen: 'assets/media/img/volcanBanner.jpg', // PROVISIONAL: no hay foto especifica de Singüil en assets/media/img/
+            lat: 14.05387014135534,
+            lon: -89.63292472414422,
+            monitored: false
         },
         {
             id: 18,
-            nombre: 'Caldera de Coatepeque',
-            nombreAlt: 'Lago de Coatepeque',
+            nombre: 'Cerro San Diego',
+            nombreAlt: null,
             estado: 'dormido',
-            altura: '450 msnm',
+            altura: '781 msnm',
             departamento: 'Santa Ana',
-            tipo: 'caldera',
-            ultimaErupcion: 'Desconocida',
-            descripcion: 'Una de las calderas más grandes de El Salvador. Su lago es conocido por su color turquesa.',
-            imagen: 'assets/media/img/caldera-coatepeque.jpg',
-            lat: 13.8667,
-            lon: -89.5500,
+            tipo: 'campo',
+            ultimaErupcion: 'Sin registro histórico',
+            descripcion: 'Campo volcánico en el extremo norte del país, cerca de la frontera con Guatemala.',
+            imagen: 'assets/media/img/volcanBanner.jpg', // PROVISIONAL: no hay foto especifica de San Diego en assets/media/img/
+            lat: 14.274165455972623,
+            lon: -89.48064373090531,
             monitored: false
         },
         {
             id: 19,
-            nombre: 'Caldera de Alegría',
-            nombreAlt: 'Laguna de Alegría',
-            estado: 'activo',
-            altura: '1,592 msnm',
+            nombre: 'Volcán Taburete',
+            nombreAlt: null,
+            estado: 'dormido',
+            altura: '1,172 msnm',
             departamento: 'Usulután',
-            tipo: 'caldera',
-            ultimaErupcion: 'Desconocida',
-            descripcion: 'Cráter volcánico con una laguna de color verde esmeralda, muy visitada por turistas.',
-            imagen: 'assets/media/img/caldera-alegria.jpg',
-            lat: 13.4800,
-            lon: -88.5000,
+            tipo: 'cono',
+            ultimaErupcion: 'Sin registro histórico',
+            descripcion: 'Cono volcánico en el departamento de Usulután, cerca del campo geotérmico de Berlín.',
+            imagen: 'assets/media/img/volcanBanner.jpg', // PROVISIONAL: no hay foto especifica de Taburete en assets/media/img/
+            lat: 13.442418337185178,
+            lon: -88.5328379283413,
             monitored: false
         },
         {
             id: 20,
-            nombre: 'Caldera de Apastepeque',
-            nombreAlt: 'Laguna de Apastepeque',
-            estado: 'dormido',
-            altura: '400 msnm',
-            departamento: 'San Vicente',
-            tipo: 'caldera',
-            ultimaErupcion: 'Desconocida',
-            descripcion: 'Conjunto de lagunas y humedales de origen volcánico.',
-            imagen: 'assets/media/img/caldera-apastepeque.jpg',
-            lat: 13.7167,
-            lon: -88.7833,
-            monitored: false
-        },
-        {
-            id: 21,
-            nombre: 'Caldera de Chalchuapa',
-            nombreAlt: 'Laguna de Chalchuapa',
-            estado: 'dormido',
-            altura: '350 msnm',
-            departamento: 'Santa Ana',
-            tipo: 'caldera',
-            ultimaErupcion: 'Desconocida',
-            descripcion: 'Complejo volcánico asociado a sitios arqueológicos de importancia.',
-            imagen: 'assets/media/img/caldera-chalchuapa.jpg',
-            lat: 13.9833,
-            lon: -89.6667,
-            monitored: false
-        },
-
-        // ==========================================================
-        // MAARES (5)
-        // ==========================================================
-        {
-            id: 22,
-            nombre: 'El Hoyón',
-            nombreAlt: 'Cerro Pelón',
-            estado: 'activo',
-            altura: '800 msnm',
-            departamento: 'Santa Ana',
-            tipo: 'maar',
-            ultimaErupcion: 'Desconocida',
-            descripcion: 'Cráter de explosión producido por interacción entre magma y agua. Presenta actividad fumarólica.',
-            imagen: 'assets/media/img/volcan-hoyon.jpg',
-            lat: 13.8000,
-            lon: -89.6000,
-            monitored: true
-        },
-        {
-            id: 23,
-            nombre: 'Maar de El Tigre',
+            nombre: 'Volcán Guazapa',
             nombreAlt: null,
-            estado: 'dormido',
-            altura: '450 msnm',
-            departamento: 'La Unión',
-            tipo: 'maar',
-            ultimaErupcion: 'Desconocida',
-            descripcion: 'Cráter de origen explosivo ubicado en el departamento de La Unión.',
-            imagen: 'assets/media/img/maar-el-tigre.jpg',
-            lat: 13.4667,
-            lon: -88.2000,
-            monitored: false
-        },
-        {
-            id: 24,
-            nombre: 'Maar de Aramuaca',
-            nombreAlt: null,
-            estado: 'dormido',
-            altura: '400 msnm',
-            departamento: 'La Unión',
-            tipo: 'maar',
-            ultimaErupcion: 'Desconocida',
-            descripcion: 'Cráter explosivo con una laguna en el departamento de La Unión.',
-            imagen: 'assets/media/img/maar-aramuaca.jpg',
-            lat: 13.3833,
-            lon: -88.1000,
-            monitored: false
-        },
-        {
-            id: 25,
-            nombre: 'Maar de Las Ninfas',
-            nombreAlt: null,
-            estado: 'dormido',
-            altura: '350 msnm',
-            departamento: 'Santa Ana',
-            tipo: 'maar',
-            ultimaErupcion: 'Desconocida',
-            descripcion: 'Pequeño maar ubicado en el departamento de Santa Ana.',
-            imagen: 'assets/media/img/maar-las-ninfas.jpg',
-            lat: 13.8200,
-            lon: -89.6000,
-            monitored: false
-        },
-        {
-            id: 26,
-            nombre: 'Maar de Los Naranjos',
-            nombreAlt: null,
-            estado: 'dormido',
-            altura: '300 msnm',
-            departamento: 'San Salvador',
-            tipo: 'maar',
-            ultimaErupcion: 'Desconocida',
-            descripcion: 'Crater de origen explosivo ubicado en el departamento de San Salvador.',
-            imagen: 'assets/media/img/maar-los-naranjos.jpg',
-            lat: 13.7000,
-            lon: -89.1500,
-            monitored: false
-        },
-
-        // ==========================================================
-        // CONOS (5)
-        // ==========================================================
-        {
-            id: 27,
-            nombre: 'Cono de El Playón',
-            nombreAlt: null,
-            estado: 'dormido',
-            altura: '600 msnm',
-            departamento: 'Santa Ana',
+            estado: 'inactivo',
+            altura: '1,438 msnm',
+            departamento: 'Cuscatlán',
             tipo: 'cono',
-            ultimaErupcion: 'Desconocida',
-            descripcion: 'Cono volcánico asociado al complejo de San Salvador.',
-            imagen: 'assets/media/img/cono-el-playon.jpg',
-            lat: 13.8333,
-            lon: -89.5667,
-            monitored: false
-        },
-        {
-            id: 28,
-            nombre: 'Cerro de La Joya',
-            nombreAlt: null,
-            estado: 'dormido',
-            altura: '550 msnm',
-            departamento: 'San Vicente',
-            tipo: 'cono',
-            ultimaErupcion: 'Desconocida',
-            descripcion: 'Pequeño cono volcánico en el departamento de San Vicente.',
-            imagen: 'assets/media/img/cerro-la-joya.jpg',
-            lat: 13.5500,
-            lon: -88.7000,
-            monitored: false
-        },
-        {
-            id: 29,
-            nombre: 'Cerro Santiago',
-            nombreAlt: null,
-            estado: 'dormido',
-            altura: '620 msnm',
-            departamento: 'Usulután',
-            tipo: 'cono',
-            ultimaErupcion: 'Desconocida',
-            descripcion: 'Cono volcánico ubicado en el departamento de Usulután.',
-            imagen: 'assets/media/img/cerro-santiago.jpg',
-            lat: 13.6333,
-            lon: -88.4667,
-            monitored: false
-        },
-        {
-            id: 30,
-            nombre: 'Cerro El Tigre',
-            nombreAlt: null,
-            estado: 'dormido',
-            altura: '480 msnm',
-            departamento: 'La Unión',
-            tipo: 'cono',
-            ultimaErupcion: 'Desconocida',
-            descripcion: 'Cono volcánico en el departamento de La Unión.',
-            imagen: 'assets/media/img/cerro-el-tigre.jpg',
-            lat: 13.4167,
-            lon: -87.9333,
-            monitored: false
-        },
-        {
-            id: 31,
-            nombre: 'Cerro Las Víboras',
-            nombreAlt: null,
-            estado: 'dormido',
-            altura: '500 msnm',
-            departamento: 'San Miguel',
-            tipo: 'cono',
-            ultimaErupcion: 'Desconocida',
-            descripcion: 'Cono volcánico ubicado en el departamento de San Miguel.',
-            imagen: 'assets/media/img/cerro-las-viboras.jpg',
-            lat: 13.5333,
-            lon: -88.3000,
-            monitored: false
-        },
-
-        // ==========================================================
-        // CAMPOS VOLCÁNICOS (5)
-        // ==========================================================
-        {
-            id: 32,
-            nombre: 'Campo Volcánico de San Vicente',
-            nombreAlt: null,
-            estado: 'dormido',
-            altura: '0 msnm',
-            departamento: 'San Vicente',
-            tipo: 'campo',
-            ultimaErupcion: 'Desconocida',
-            descripcion: 'Campo volcánico con múltiples estructuras menores en el departamento de San Vicente.',
-            imagen: 'assets/media/img/campo-san-vicente.jpg',
-            lat: 13.6000,
-            lon: -88.8000,
-            monitored: false
-        },
-        {
-            id: 33,
-            nombre: 'Campo Volcánico de Usulután',
-            nombreAlt: null,
-            estado: 'dormido',
-            altura: '0 msnm',
-            departamento: 'Usulután',
-            tipo: 'campo',
-            ultimaErupcion: 'Desconocida',
-            descripcion: 'Campo volcánico con conos y maares en el departamento de Usulután.',
-            imagen: 'assets/media/img/campo-usulutan.jpg',
-            lat: 13.4000,
-            lon: -88.5000,
-            monitored: false
-        },
-        {
-            id: 34,
-            nombre: 'Campo Volcánico de Apaneca',
-            nombreAlt: null,
-            estado: 'activo',
-            altura: '0 msnm',
-            departamento: 'Ahuachapán',
-            tipo: 'campo',
-            ultimaErupcion: 'Desconocida',
-            descripcion: 'Campo volcánico con múltiples cráteres y lagunas en la cordillera de Apaneca.',
-            imagen: 'assets/media/img/campo-apaneca.jpg',
-            lat: 13.8700,
-            lon: -89.8000,
-            monitored: false
-        },
-        {
-            id: 35,
-            nombre: 'Campo Volcánico de Cinotepeque',
-            nombreAlt: null,
-            estado: 'dormido',
-            altura: '0 msnm',
-            departamento: 'Santa Ana',
-            tipo: 'campo',
-            ultimaErupcion: 'Desconocida',
-            descripcion: 'Campo volcánico ubicado en el departamento de Santa Ana.',
-            imagen: 'assets/media/img/campo-cinotepeque.jpg',
-            lat: 13.9167,
-            lon: -89.5833,
-            monitored: false
-        },
-        {
-            id: 36,
-            nombre: 'Campo Volcánico de Tizhuital',
-            nombreAlt: null,
-            estado: 'dormido',
-            altura: '0 msnm',
-            departamento: 'La Libertad',
-            tipo: 'campo',
-            ultimaErupcion: 'Desconocida',
-            descripcion: 'Campo volcánico en el departamento de La Libertad.',
-            imagen: 'assets/media/img/campo-tizhuital.jpg',
-            lat: 13.6667,
-            lon: -89.3167,
+            ultimaErupcion: 'Sin evidencia de actividad en el Holoceno',
+            descripcion: 'Edificio volcánico erosionado cerca de Suchitoto, sin evidencia de actividad reciente.',
+            imagen: 'assets/media/img/volcanBanner.jpg', // PROVISIONAL: no hay foto especifica de Guazapa en assets/media/img/
+            lat: 13.902555765790117,
+            lon: -89.11129247202877,
             monitored: false
         }
     ];
@@ -1821,13 +1571,26 @@ document.addEventListener('DOMContentLoaded', function() {
         var locationSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
         var arrowSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
 
+        // Sin foto real todavia (volcan.imagen === null): mostramos un
+        // marcador de posicion en vez de un <img> roto. Cuando se agregue la
+        // foto real basta con poner su ruta en el campo "imagen" de VOLCANES.
+        var imageBlock = volcan.imagen
+            ? '<div class="volcan-popup-image"><img src="' + volcan.imagen + '" alt="' + volcan.nombre + '" loading="lazy"></div>'
+            : '<div class="volcan-popup-image placeholder">' + typeSvg + '</div>';
+
+        // Imagen a la izquierda + nombre/estado a la derecha, para que el
+        // popup quede compacto en vez de apilar todo hacia abajo.
         return '<div class="volcan-popup">' +
-            (volcan.imagen ? '<div class="volcan-popup-image"><img src="' + volcan.imagen + '" alt="' + volcan.nombre + '" loading="lazy"></div>' : '') +
+            '<div class="volcan-popup-top">' +
+            imageBlock +
+            '<div class="volcan-popup-top-info">' +
             '<div class="popup-name">' + volcan.nombre + ' ' + altName + '</div>' +
             '<div class="popup-depto">' + locationSvg + ' ' + volcan.departamento + '</div>' +
             '<div class="popup-status-row">' +
             '<span class="popup-status ' + volcan.estado + '">' + statusLabel + '</span>' +
             monitoredBadge +
+            '</div>' +
+            '</div>' +
             '</div>' +
             '<div class="popup-detail"><span class="popup-detail-label">Tipo:</span> ' + typeSvg + ' ' + volcan.tipo + '</div>' +
             heightDisplay +
@@ -1842,17 +1605,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function getChainPoints() {
         return [
-            [13.87, -89.80], // Apaneca
-            [13.85, -89.63], // Santa Ana
-            [13.81, -89.63], // Izalco
-            [13.80, -89.60], // El Hoyón
-            [13.73, -89.28], // San Salvador
-            [13.67, -89.05], // Ilopango
-            [13.60, -88.83], // San Vicente
-            [13.49, -88.50], // Tecapa
-            [13.43, -88.27], // San Miguel
-            [13.27, -87.83], // Conchagua
-            [13.22, -87.67]  // Conchagüita
+            [13.917624311397633, -89.71683843339771], // Apaneca-Ilamatepec
+            [13.850395376810262, -89.62935864135811], // Santa Ana
+            [13.815116, -89.632853], // Izalco
+            [13.73734212519635, -89.28704748688723], // San Salvador
+            [13.670757340285553, -89.09190853324328], // Ilopango
+            [13.592574680152275, -88.84862678461693], // San Vicente
+            [13.494625498691782, -88.50204298749738], // Tecapa
+            [13.436004263879635, -88.26928460811901], // San Miguel
+            [13.276862473450333, -87.8458965955024]   // Conchagua
         ];
     }
 
@@ -1861,10 +1622,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!el) return;
         await waitForLeaflet();
 
-        var isDark = document.documentElement.getAttribute('data-theme') !== 'light';
-        var tileUrl = isDark
-            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-            : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+        function tileUrlForTheme() {
+            var isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+            return isDark
+                ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+                : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+        }
 
         map = L.map(el, {
             zoomControl: false,
@@ -1875,11 +1638,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
         L.control.zoom({ position: 'topright' }).addTo(map);
 
-        L.tileLayer(tileUrl, {
+        var mapTiles = L.tileLayer(tileUrlForTheme(), {
             subdomains: 'abcd',
             maxZoom: 18,
             attribution: '© CARTO · © OpenStreetMap'
         }).addTo(map);
+
+        // El boton de tema claro/oscuro cambia data-theme en <html> sin
+        // recargar la pagina, igual que en el mapa de riesgo de Sismos.
+        new MutationObserver(function() {
+            mapTiles.setUrl(tileUrlForTheme());
+        }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
         // Línea de la cadena volcánica
         var chainPoints = getChainPoints();
@@ -1940,8 +1709,8 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             m.bindPopup(createPopupContent(volcan), {
                 className: 'volcan-popup-container',
-                maxWidth: 280,
-                minWidth: 220
+                maxWidth: 310,
+                minWidth: 240
             });
             m.addTo(markersLayer);
         });
@@ -1969,7 +1738,9 @@ document.addEventListener('DOMContentLoaded', function() {
             html += '<div class="volcanes-item" data-lat="' + it.lat + '" data-lon="' + it.lon + '" data-id="' + it.id + '">' +
                 '<div class="volcanes-item-icon ' + iconColor + '">' + VOLCANO_SVG + '</div>' +
                 '<div class="volcanes-item-body">' +
-                '<div class="volcanes-item-name">' + it.nombre + ' ' + monitoredBadge + '</div>' +
+                '<div class="volcanes-item-name-row">' +
+                '<span class="volcanes-item-name ' + iconColor + '">' + it.nombre + '</span>' + monitoredBadge +
+                '</div>' +
                 '<div class="volcanes-item-meta">' +
                 '<span class="volcanes-item-altura">' + it.altura + ' · ' + it.departamento + '</span>' +
                 '<span class="volcanes-item-status ' + it.estado + '">' + statusLabel + '</span>' +
@@ -2297,21 +2068,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     <div class="v-grid-3">
       <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/volcan-historia-1.jpg" alt="Primeros estudios" loading="lazy"></div>
+        <div class="v-card-img"><img src="assets/media/img/estudiosSV.jpg" alt="Primeros estudios" loading="lazy"></div>
         <div class="v-card-body">
           <h4>Primeros estudios</h4>
           <p>Goodyear (1880), Karl Sapper (1925) y Montessus de Ballore realizaron los primeros estudios detallados.</p>
         </div>
       </div>
       <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/volcan-historia-2.jpg" alt="Geólogos" loading="lazy"></div>
+        <div class="v-card-img"><img src="assets/media/img/geologosSV.jpg" alt="Geólogos" loading="lazy"></div>
         <div class="v-card-body">
           <h4>Geólogos importantes</h4>
           <p>Helmut Meyer Abich, Howell Williams, Richard Stoiber y Mike Carr han realizado trabajos fundamentales.</p>
         </div>
       </div>
       <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/volcan-historia-3.jpg" alt="Misiones" loading="lazy"></div>
+        <div class="v-card-img"><img src="assets/media/img/misionAlemana.jpg" alt="Misiones" loading="lazy"></div>
         <div class="v-card-body">
           <h4>Misiones geológicas</h4>
           <p>Misión Geológica Alemana (1967-1971) comprobó más de 700 centros de erupción.</p>
@@ -2319,37 +2090,65 @@ document.addEventListener('DOMContentLoaded', function() {
       </div>
     </div>
 
-    <div class="v-timeline">
-      <h4>Línea del tiempo</h4>
-      <div class="v-timeline-items">
-        <div class="v-timeline-item">
-          <span class="v-timeline-year">260 DC</span>
-          <p>Ilopango - Una de las erupciones más grandes de la región</p>
-        </div>
-        <div class="v-timeline-item">
-          <span class="v-timeline-year">1658</span>
-          <p>El Playón - Formación del campo de lava</p>
-        </div>
-        <div class="v-timeline-item">
-          <span class="v-timeline-year">1770</span>
-          <p>Izalco - Nacimiento del "Faro del Pacífico"</p>
-        </div>
-        <div class="v-timeline-item">
-          <span class="v-timeline-year">1917</span>
-          <p>San Salvador - Erupción del volcán Boquerón</p>
-        </div>
-        <div class="v-timeline-item">
-          <span class="v-timeline-year">2005</span>
-          <p>Santa Ana - Columna de ceniza de 10 km</p>
-        </div>
-        <div class="v-timeline-item">
-          <span class="v-timeline-year">2013</span>
-          <p>San Miguel - Erupción explosiva del Chaparrastique</p>
-        </div>
-      </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECCIÓN 9B: HISTORIA VOLCÁNICA - LÍNEA DE TIEMPO
+     ============================================================ -->
+<section class="v-section v-section-dark" id="timeline-volcanes">
+  <div class="wrap">
+    <div class="v-header center">
+      <span class="v-tag">Historia Volcánica</span>
+      <h2 class="v-title">Línea del <span>Tiempo</span></h2>
+      <p class="v-sub">Las erupciones más significativas en la historia del país</p>
+    </div>
+    <div class="tl-wrap">
+      <div class="tl-line"></div>
+      <div class="tl-track" id="tlTrack-volcanes"></div>
+    </div>
+    <div class="tl-detail" id="tlDetail-volcanes"></div>
+    <div class="data-source-note">
+      <strong>Fuentes y respaldo de datos:</strong> Global Volcanism Program (Smithsonian Institution), Ministerio de Medio Ambiente y Recursos Naturales (MARN/SNET) y hemerotecas nacionales (La Prensa Gráfica, El Diario de Hoy).
     </div>
   </div>
 </section>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    ndaInitTimeline('volcanes', [
+        { year: '1658', title: 'Erupción de El Playón', badge: 'Sepultó Nejapa', region: 'San Salvador',
+          desc: 'Un cono lateral del volcán de San Salvador entró en erupción entre 1658 y 1671. Su flujo de lava sepultó el poblado de Nejapa, obligando a sus habitantes a reubicarse en el sitio donde hoy se encuentra la ciudad.',
+          tags: [{ t: 'Histórico', c: '' }, { t: 'Flujo de lava', c: 'o' }],
+          stats: [{ v: '1658', l: 'Inicio' }, { v: '13', l: 'Años de actividad' }, { v: '660 msnm', l: 'Altura' }],
+          img: 'assets/media/img/Volcán El Playón.webp' },
+        { year: '1880', title: 'Nacen las Islas Quemadas', badge: 'Erupción en el lago', region: 'Lago de Ilopango, San Salvador',
+          desc: 'Una erupción dentro del lago de Ilopango, entre 1879 y 1880, formó un domo de lava que emergió en el centro del lago: las Islas Quemadas, visibles hasta hoy.',
+          tags: [{ t: '1879-1880', c: '' }, { t: 'Domo de lava', c: 'o' }],
+          stats: [{ v: '1880', l: 'Año' }, { v: '450 msnm', l: 'Altura del domo' }, { v: '438 msnm', l: 'Caldera' }],
+          img: 'assets/media/img/Caldera de Ilopango.jpg' },
+        { year: '1917', title: 'Terremoto y erupción del Boquerón', badge: '~1,050 fallecidos', region: 'San Salvador',
+          desc: 'La noche del 7 de junio de 1917, tres fuertes sismos (hasta M6.7) sacudieron la capital y desencadenaron una erupción del volcán de San Salvador. La laguna del cráter hirvió y se evaporó, dejando el cono conocido como "El Boqueroncito".',
+          tags: [{ t: 'M 6.7', c: 'r' }, { t: '~1,050 muertos', c: 'r' }],
+          stats: [{ v: '6.7', l: 'Magnitud máx.' }, { v: '~1,050', l: 'Fallecidos' }, { v: '1917', l: 'Año' }],
+          img: 'assets/media/img/Erupción del volcán de San Salvador (1917).jpg' },
+        { year: '1926', title: 'Izalco sepulta El Matazano', badge: '56 fallecidos', region: 'Sonsonate',
+          desc: 'El 8 de noviembre de 1926, un flujo de lava del Izalco sepultó el cantón El Matazano. Varios trabajadores fueron sorprendidos en sus cafetales sin tiempo para escapar.',
+          tags: [{ t: '56 muertos', c: 'r' }, { t: 'Flujo de lava', c: 'o' }],
+          stats: [{ v: '56', l: 'Fallecidos' }, { v: '1926', l: 'Año' }, { v: 'El Matazano', l: 'Cantón sepultado' }],
+          img: 'assets/media/img/Volcán Izalco.jpg' },
+        { year: '1966', title: 'Última erupción del Izalco', badge: 'Fin del Faro del Pacífico', region: 'Sonsonate',
+          desc: 'Tras casi dos siglos de actividad casi continua desde su nacimiento (1770), el Izalco tuvo su última erupción registrada en 1966, apagando el "Faro del Pacífico".',
+          tags: [{ t: '1966', c: '' }, { t: 'Fin de ciclo', c: 't' }],
+          stats: [{ v: '1966', l: 'Última erupción' }, { v: '~196', l: 'Años activo' }, { v: '1,965 msnm', l: 'Altura' }],
+          img: 'assets/media/img/Volcán Izalco2.jpg' },
+        { year: '2005', title: 'Erupción del volcán de Santa Ana', badge: '2 fallecidos', region: 'Santa Ana',
+          desc: 'El 1 de octubre de 2005 a las 8:20 a.m., el Santa Ana tuvo una explosión freática que generó una columna de ceniza de 10 km. Un lahar caliente causó 2 muertes y se evacuó a más de 7,500 personas.',
+          tags: [{ t: '2005', c: 'r' }, { t: '2 fallecidos', c: 'r' }],
+          stats: [{ v: '2005', l: 'Año' }, { v: '2', l: 'Fallecidos' }, { v: '7,500+', l: 'Evacuados' }],
+          img: 'assets/media/img/Volcán Santa Ana (Ilamatepec).jpg' }
+    ]);
+});
+</script>
 
 <!-- ============================================================
      SECCIÓN 10: MONITOREO
@@ -2364,30 +2163,30 @@ document.addEventListener('DOMContentLoaded', function() {
 
     <p class="v-intro">La vigilancia está a cargo de la <strong>Dirección General del Observatorio de Amenazas</strong> del MARN. Desde 2011 opera el <strong>Centro Integrado de Monitoreo de Amenazas Naturales</strong>.</p>
 
-    <div class="v-grid-2">
+    <div class="v-grid-4">
       <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/monitoreo-sismografo.jpg" alt="Sismógrafo" loading="lazy"></div>
+        <div class="v-card-img"><img src="assets/media/img/vigilancia.jpg" alt="Sismógrafo" loading="lazy"></div>
         <div class="v-card-body">
           <h4>Vigilancia sísmica</h4>
           <p>15 estaciones telemétricas detectan sismos volcánicos y microsismicidad.</p>
         </div>
       </div>
       <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/monitoreo-gps.jpg" alt="GPS" loading="lazy"></div>
+        <div class="v-card-img"><img src="assets/media/img/gpsV.jpg" alt="GPS" loading="lazy"></div>
         <div class="v-card-body">
           <h4>GPS</h4>
           <p>Mide deformaciones del terreno que indican movimiento de magma.</p>
         </div>
       </div>
       <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/monitoreo-camara.jpg" alt="Cámara" loading="lazy"></div>
+        <div class="v-card-img"><img src="assets/media/img/camaraV.jpg" alt="Cámara" loading="lazy"></div>
         <div class="v-card-body">
           <h4>Cámaras</h4>
           <p>Monitorean visualmente la actividad del cráter y las fumarolas.</p>
         </div>
       </div>
       <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/monitoreo-satelite.jpg" alt="Satélite" loading="lazy"></div>
+        <div class="v-card-img"><img src="assets/media/img/vigilanciaV.png" alt="Satélite" loading="lazy"></div>
         <div class="v-card-body">
           <h4>Satélites</h4>
           <p>Detectan cambios térmicos y emisiones de gases desde el espacio.</p>
@@ -2422,8 +2221,7 @@ document.addEventListener('DOMContentLoaded', function() {
       <div class="v-tags">
         <span>Santa Ana</span><span>Izalco</span><span>San Salvador</span>
         <span>Ilopango</span><span>San Vicente</span><span>San Miguel</span>
-        <span>Tecapa</span><span>Conchagua</span><span>Conchagüita</span>
-        <span>El Hoyón</span>
+        <span>Tecapa</span>
       </div>
     </div>
   </div>
@@ -2442,42 +2240,42 @@ document.addEventListener('DOMContentLoaded', function() {
 
     <div class="v-grid-3">
       <div class="v-card v-card-danger">
-        <div class="v-card-img"><img src="assets/media/img/peligro-ceniza.jpg" alt="Ceniza" loading="lazy"></div>
+        <div class="v-card-img"><img src="assets/media/img/cenizaV.png" alt="Ceniza" loading="lazy"></div>
         <div class="v-card-body">
           <h4>Caída de Ceniza</h4>
           <p>Afecta cultivos, techos, vías respiratorias y visibilidad a kilómetros del cráter.</p>
         </div>
       </div>
       <div class="v-card v-card-danger">
-        <div class="v-card-img"><img src="assets/media/img/peligro-gases.jpg" alt="Gases" loading="lazy"></div>
+        <div class="v-card-img"><img src="assets/media/img/gasV.jpg" alt="Gases" loading="lazy"></div>
         <div class="v-card-body">
           <h4>Gases Volcánicos</h4>
           <p>SO₂ irrita ojos y pulmones. CO₂ es incoloro e inodoro. H₂S es tóxico.</p>
         </div>
       </div>
       <div class="v-card v-card-danger">
-        <div class="v-card-img"><img src="assets/media/img/peligro-piroclastico.jpg" alt="Piroclásticos" loading="lazy"></div>
+        <div class="v-card-img"><img src="assets/media/img/piroclastosV.png" alt="Piroclásticos" loading="lazy"></div>
         <div class="v-card-body">
           <h4>Flujos Piroclásticos</h4>
           <p>Nubes de gas y roca a alta temperatura que descienden rápido por las laderas.</p>
         </div>
       </div>
       <div class="v-card v-card-danger">
-        <div class="v-card-img"><img src="assets/media/img/peligro-lahar.jpg" alt="Lahares" loading="lazy"></div>
+        <div class="v-card-img"><img src="assets/media/img/lavaV.png" alt="Lahares" loading="lazy"></div>
         <div class="v-card-body">
           <h4>Lahares</h4>
           <p>Coladas de lodo volcánico que bajan por quebradas. Mortíferos por su velocidad.</p>
         </div>
       </div>
       <div class="v-card v-card-danger">
-        <div class="v-card-img"><img src="assets/media/img/peligro-deslizamiento.jpg" alt="Deslizamientos" loading="lazy"></div>
+        <div class="v-card-img"><img src="assets/media/img/deslizamientoV.jpeg" alt="Deslizamientos" loading="lazy"></div>
         <div class="v-card-body">
           <h4>Deslizamientos</h4>
           <p>Fragmentos del volcán se derrumban por caída de rocas o deslizamientos.</p>
         </div>
       </div>
       <div class="v-card v-card-danger">
-        <div class="v-card-img"><img src="assets/media/img/peligro-tsunami.jpg" alt="Tsunamis" loading="lazy"></div>
+        <div class="v-card-img"><img src="assets/media/img/tsunamiV.webp" alt="Tsunamis" loading="lazy"></div>
         <div class="v-card-body">
           <h4>Tsunamis</h4>
           <p>Olas gigantes generadas por sismos submarinos o deslizamientos en el fondo oceánico.</p>
@@ -2505,7 +2303,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     <div class="v-grid-3">
       <div class="v-card v-card-prevencion antes">
-        <div class="v-card-img"><img src="assets/media/img/prevencion-antes.jpg" alt="Antes" loading="lazy"></div>
+        <div class="v-card-img"><img src="assets/media/img/antesV.png" alt="Antes" loading="lazy"></div>
         <div class="v-card-body">
           <h4>Antes</h4>
           <ul>
@@ -2517,7 +2315,7 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
       </div>
       <div class="v-card v-card-prevencion durante">
-        <div class="v-card-img"><img src="assets/media/img/prevencion-durante.jpg" alt="Durante" loading="lazy"></div>
+        <div class="v-card-img"><img src="assets/media/img/duranteV.png" alt="Durante" loading="lazy"></div>
         <div class="v-card-body">
           <h4>Durante</h4>
           <ul>
@@ -2529,7 +2327,7 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
       </div>
       <div class="v-card v-card-prevencion despues">
-        <div class="v-card-img"><img src="assets/media/img/prevencion-despues.jpg" alt="Después" loading="lazy"></div>
+        <div class="v-card-img"><img src="assets/media/img/despuesV.png" alt="Después" loading="lazy"></div>
         <div class="v-card-body">
           <h4>Después</h4>
           <ul>
@@ -2566,35 +2364,35 @@ document.addEventListener('DOMContentLoaded', function() {
 
     <div class="v-grid-5">
       <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/beneficio-agricultura.jpg" alt="Agricultura" loading="lazy"></div>
+        <div class="v-card-img"><img src="assets/media/img/agriculturaV.jpg" alt="Agricultura" loading="lazy"></div>
         <div class="v-card-body">
           <h4>Agricultura</h4>
           <p>Suelos volcánicos fértiles por su alto contenido de minerales.</p>
         </div>
       </div>
       <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/beneficio-geotermia.jpg" alt="Geotermia" loading="lazy"></div>
+        <div class="v-card-img"><img src="assets/media/img/geotermiaV.webp" alt="Geotermia" loading="lazy"></div>
         <div class="v-card-body">
           <h4>Geotermia</h4>
           <p>Calor del interior para generar energía limpia y renovable.</p>
         </div>
       </div>
       <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/beneficio-minerales.jpg" alt="Minerales" loading="lazy"></div>
+        <div class="v-card-img"><img src="assets/media/img/mineralesV.webp" alt="Minerales" loading="lazy"></div>
         <div class="v-card-body">
           <h4>Minerales</h4>
           <p>Fuente de oro, plata, cobre y materiales de construcción.</p>
         </div>
       </div>
       <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/beneficio-biodiversidad.jpg" alt="Biodiversidad" loading="lazy"></div>
+        <div class="v-card-img"><img src="assets/media/img/biodiversidadV.jpg" alt="Biodiversidad" loading="lazy"></div>
         <div class="v-card-body">
           <h4>Biodiversidad</h4>
           <p>Ecosistemas volcánicos con especies únicas de flora y fauna.</p>
         </div>
       </div>
       <div class="v-card">
-        <div class="v-card-img"><img src="assets/media/img/beneficio-turismo.jpg" alt="Turismo" loading="lazy"></div>
+        <div class="v-card-img"><img src="assets/media/img/turismoV.jpg" alt="Turismo" loading="lazy"></div>
         <div class="v-card-body">
           <h4>Turismo</h4>
           <p>Atraen a miles de turistas nacionales e internacionales.</p>
@@ -2615,42 +2413,46 @@ document.addEventListener('DOMContentLoaded', function() {
       <p class="v-sub">La Ruta de los Volcanes y sus principales atractivos</p>
     </div>
 
-    <p class="v-intro">El <strong>Parque Nacional Complejo Los Volcanes</strong>, a unos 60 km de San Salvador, alberga los 3 volcanes más famosos del país.</p>
+    <p class="v-intro">El <strong>Parque Nacional Complejo Los Volcanes</strong>, a unos 60 km de San Salvador, reúne los 3 volcanes más visitados del país en un mismo macizo: Santa Ana, Izalco y Cerro Verde. Junto al cercano lago de Coatepeque, forman el destino de aventura volcánica más popular de El Salvador.</p>
 
     <div class="v-grid-2">
       <div class="v-card-horizontal">
-        <div class="v-card-img"><img src="assets/media/img/turismo-santa-ana.jpg" alt="Santa Ana" loading="lazy"></div>
+        <div class="v-card-img"><img src="assets/media/img/Volcán Santa Ana (Ilamatepec).jpg" alt="Santa Ana" loading="lazy"></div>
         <div class="v-card-body">
+          <span class="v-card-chip">2,381 msnm · 1.5 h</span>
           <h4>Santa Ana</h4>
-          <p>El volcán más alto del país (2,381 msnm). Sendero de 1.5 horas hasta la cima.</p>
+          <p>El volcán más alto del país. Su cráter guarda una <strong>laguna turquesa</strong> teñida por el alto contenido de azufre, uno de los cráteres más fotografiados de Centroamérica. El sendero llega hasta el borde, con vistas al lago de Coatepeque y, en días despejados, hasta Guatemala.</p>
         </div>
       </div>
       <div class="v-card-horizontal">
-        <div class="v-card-img"><img src="assets/media/img/turismo-izalco.jpg" alt="Izalco" loading="lazy"></div>
+        <div class="v-card-img"><img src="assets/media/img/Volcán Izalco.jpg" alt="Izalco" loading="lazy"></div>
         <div class="v-card-body">
+          <span class="v-card-chip">1,965 msnm · 3-4 h</span>
           <h4>Izalco</h4>
-          <p>"El Faro del Pacífico". Ascenso de 3-4 horas. Uno de los destinos más icónicos.</p>
+          <p><strong>"El Faro del Pacífico"</strong>: entre 1770 y 1966 estuvo casi siempre activo, guiando de noche a los barcos que navegaban frente a la costa. Hoy se asciende por su cono de ceniza casi perfecto, uno de los paisajes más icónicos del país.</p>
         </div>
       </div>
       <div class="v-card-horizontal">
-        <div class="v-card-img"><img src="assets/media/img/turismo-cerro-verde.jpg" alt="Cerro Verde" loading="lazy"></div>
+        <div class="v-card-img"><img src="assets/media/img/Volcán Cerro Verde.jpg" alt="Cerro Verde" loading="lazy"></div>
         <div class="v-card-body">
+          <span class="v-card-chip">2,030 msnm · Fácil</span>
           <h4>Cerro Verde</h4>
-          <p>Parque recreativo con senderos de "Flores Misteriosas".</p>
+          <p>El más antiguo de los tres y hoy sin actividad eruptiva, cubierto por un fresco bosque nuboso. El sendero de las <strong>"Flores Misteriosas"</strong> lleva a miradores con vista directa al Izalco y al lago de Coatepeque.</p>
         </div>
       </div>
       <div class="v-card-horizontal">
-        <div class="v-card-img"><img src="assets/media/img/turismo-coatepeque.jpg" alt="Coatepeque" loading="lazy"></div>
+        <div class="v-card-img"><img src="assets/media/img/volcanBanner.jpg" alt="Coatepeque" loading="lazy"></div>
         <div class="v-card-body">
+          <span class="v-card-chip">746 msnm · Caldera</span>
           <h4>Lago de Coatepeque</h4>
-          <p>Caldera volcánica con aguas turquesa. Ideal para deportes acuáticos.</p>
+          <p>Una caldera volcánica inundada, sin erupciones registradas en tiempos históricos y de <strong>aguas turquesa</strong>. Sus orillas con restaurantes, muelles y deportes acuáticos la convierten en el balneario favorito de la ruta.</p>
         </div>
       </div>
     </div>
 
     <div class="v-ruta">
       <h4>La Ruta de los Volcanes</h4>
-      <p>Recorre la Cordillera de Apaneca-Ilamatepec, visitando los volcanes Santa Ana, Izalco y Cerro Verde, junto al lago de Coatepeque.</p>
+      <p>Un recorrido por la Cordillera de Apaneca-Ilamatepec que conecta los volcanes Santa Ana, Izalco y Cerro Verde con el lago de Coatepeque, todos accesibles desde el mismo parque nacional en un solo día de excursión.</p>
     </div>
   </div>
 </section>

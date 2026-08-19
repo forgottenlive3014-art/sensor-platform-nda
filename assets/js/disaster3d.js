@@ -1,17 +1,4 @@
-// NDA - Galeria 3D de Desastres (Three.js puro, sin Sketchfab).
-//
-// Reemplaza los antiguos iframes embebidos de Sketchfab: cada tarjeta monta
-// su propia escena Three.js. Si hay un modelo .glb real para ese desastre en
-// assets/modelos3d/ (ver MODEL_FILES abajo -- por ejemplo exportado de Poly
-// Pizza, poly.pizza, con licencia libre), se carga con GLTFLoader. Si no hay
-// ninguno (o falla la carga) se arma una escena procedural de respaldo con
-// primitivas de Three.js, asi la galeria nunca depende de un servicio
-// externo ni queda vacia mientras no se hayan elegido los modelos de una
-// categoria.
-//
-// Modulo ES (no UMD como el resto del sitio) porque GLTFLoader solo existe
-// como modulo en three.js moderno; el import map que lo resuelve vive en
-// views/layout.php <head>.
+
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
@@ -23,7 +10,16 @@ const MODEL_DIR = 'assets/modelos3d/';
 // escena, para variar el diorama que se ve en cada visita/tarjeta.
 const MODEL_FILES = {
     'volcanes': ['volcan.glb'],
-    'deslizamientos': ['deslizamiento1.glb', 'deslizamiento2.glb', 'deslizamiento3.glb', 'deslizamiento4.glb'],
+    // deslizamiento.glb (77.9 MB, sin comprimir) se cambio por estas 4
+    // variantes (2-2.8 MB cada una) que ya estaban en la carpeta: cargan en
+    // un instante en vez de tardar decenas de segundos por archivo.
+    'deslizamientos': ['deslizamiento.glb'],
+    'sismos': ['sismo.glb'],
+    'tsunamis': ['tsunami.glb'],
+    'inundaciones': ['inundacion.glb'],
+    'incendios-forestales': ['incendio.glb'],
+    'tormentas-tropicales': ['tormentasTropicales.glb'],
+    'sequias': ['sequía.glb'],
 };
 
 const SCENES = {
@@ -35,9 +31,6 @@ const SCENES = {
     'incendios-forestales':  { bg: 0x0e0704, ground: 'flat',    accent: 0xff5500, mist: 0x1a1410, particles: 'embers' },
     'tormentas-tropicales':  { bg: 0x0a0e16, ground: 'none',    accent: 0xcfd8e3, mist: 0x1a2233, particles: 'spiral' },
     'sequias':               { bg: 0x140d06, ground: 'cracked', accent: 0xd9b06a, mist: 0x8a6a3a, particles: 'heat' },
-    'lahares':               { bg: 0x0e0906, ground: 'lahar',   accent: 0xb5722c, mist: 0x4a3320, particles: 'mudflow' },
-    'tormentas-electricas':  { bg: 0x05070c, ground: 'flat',    accent: 0xbfe0ff, mist: 0x10141c, particles: 'rain', lightning: true },
-    'erosion-costera':       { bg: 0x0a1420, ground: 'wave',    accent: 0xe0c88a, mist: 0xc9a86a, particles: 'foam' },
 };
 
 const activeViewers = new Map(); // container -> Viewer, para desmontar limpio
@@ -55,6 +48,11 @@ class Viewer {
         const w = container.clientWidth || 300, h = container.clientHeight || 300;
 
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        // alpha:true en el constructor solo habilita el canal alfa del canvas;
+        // el color de "clear" por defecto sigue siendo negro 100% opaco hasta
+        // que se pone en 0 aqui. Sin esto, cada frame se limpiaba a negro
+        // opaco y tapaba por completo la foto de fondo puesta en CSS.
+        renderer.setClearColor(0x000000, 0);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
         renderer.setSize(w, h);
         renderer.domElement.style.cssText = 'width:100%;height:100%;display:block;cursor:grab';
@@ -63,7 +61,10 @@ class Viewer {
         this.renderer = renderer;
 
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(cfg.bg);
+        // Sin scene.background: el canvas queda transparente (renderer con
+        // alpha:true) para que se vea la foto de fondo puesta en CSS
+        // (--sk-bg-img) detras del modelo, en vez de un color solido fijo
+        // que además no cambiaba con el tema claro/oscuro del sitio.
         scene.fog = new THREE.FogExp2(cfg.bg, 0.05);
         this.scene = scene;
 
@@ -114,15 +115,38 @@ class Viewer {
         // procedural.
         const candidates = MODEL_FILES[this.slug] || [this.slug + '.glb'];
         const chosenFile = candidates[Math.floor(Math.random() * candidates.length)];
+
+        // Indicador de progreso mientras carga (algunos .glb todavia pesan
+        // varias decenas de MB): sin esto, el visor se ve vacio y sin
+        // respuesta durante la espera.
+        const progressEl = document.createElement('div');
+        progressEl.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:700 .8rem var(--fn,sans-serif);color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.6);pointer-events:none;z-index:2;';
+        progressEl.textContent = 'Cargando…';
+        container.style.position = container.style.position || 'relative';
+        container.appendChild(progressEl);
+        this._progressEl = progressEl;
+
         try {
             const gltf = await new Promise((resolve, reject) => {
-                new GLTFLoader().load(MODEL_DIR + encodeURIComponent(chosenFile), resolve, undefined, reject);
+                new GLTFLoader().load(
+                    MODEL_DIR + encodeURIComponent(chosenFile),
+                    resolve,
+                    (evt) => {
+                        if (progressEl.isConnected && evt.lengthComputable) {
+                            progressEl.textContent = 'Cargando… ' + Math.round((evt.loaded / evt.total) * 100) + '%';
+                        }
+                    },
+                    reject
+                );
             });
+            progressEl.remove();
             const model = gltf.scene;
             const box = new THREE.Box3().setFromObject(model);
             const size = new THREE.Vector3();
             box.getSize(size);
-            const scale = 2.6 / Math.max(size.x, size.y, size.z, 0.001);
+            // 2.9 en vez de 2.6: modelo mas grande dentro del mismo encuadre,
+            // sin tocar la camara (dist/lookAt) para no romper el centrado.
+            const scale = 2.9 / Math.max(size.x, size.y, size.z, 0.001);
             model.scale.setScalar(scale);
             const center = new THREE.Vector3();
             box.getCenter(center);
@@ -130,6 +154,7 @@ class Viewer {
             scene.add(model);
             this.model = model;
         } catch (e) {
+            progressEl.remove();
             this.buildProcedural(cfg);
         }
 
@@ -384,6 +409,7 @@ class Viewer {
         if (this._raf) cancelAnimationFrame(this._raf);
         if (this._resize) window.removeEventListener('resize', this._resize);
         if (this._cleanupDrag) this._cleanupDrag();
+        if (this._progressEl) this._progressEl.remove();
         if (this.renderer) {
             this.renderer.dispose();
             if (this.renderer.forceContextLoss) this.renderer.forceContextLoss();

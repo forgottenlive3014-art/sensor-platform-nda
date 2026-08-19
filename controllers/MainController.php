@@ -119,7 +119,7 @@ class MainController {
     }
 
     public function deslizamientos() {
-        view('desastres/deslizamientos', ['title' => 'Deslizamientos - NDA', 'user' => currentUser()]);
+        view('deslizamientos', ['title' => 'Deslizamientos - NDA', 'user' => currentUser()]);
     }
 
     public function incendiosForestales() {

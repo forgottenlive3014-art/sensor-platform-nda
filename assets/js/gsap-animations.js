@@ -21,13 +21,15 @@
     ].join(', ');
 
     // ============================================================
-    // CONFIGURACIÓN RÁPIDA: DURACIONES MÁS CORTAS
+    // CONFIGURACIÓN: fluida pero ligera (ScrollTrigger.batch + once:true
+    // ya evitan el costo repetido, así que no hace falta recortar tanto
+    // la duración/desplazamiento para que rinda bien)
     // ============================================================
     const DEFAULTS = {
-        duration: 0.4,      // Antes: 0.65
-        stagger: 0.04,      // Antes: 0.08
-        ease: 'power1.out', // Antes: power2.out (más suave y rápido)
-        y: 15               // Antes: 28 (menos movimiento)
+        duration: 0.5,
+        stagger: 0.06,
+        ease: 'power1.out', // power2 acelera de golpe al inicio y se siente "lanzado"; power1 es mas parejo
+        y: 16
     };
 
     // ============================================================
@@ -77,17 +79,17 @@
 
     document.querySelectorAll(TEXT_SELECTORS).forEach(el => {
         if (el.closest('.reveal')) return;
-        gsap.fromTo(el, { opacity: 0, y: 8 }, {
+        gsap.fromTo(el, { opacity: 0, y: 10 }, {
             opacity: 1,
             y: 0,
-            duration: 0.35,
+            duration: 0.4,
             ease: 'power1.out',
             scrollTrigger: { trigger: el, start: 'top 92%', once: true }
         });
     });
 
     // ============================================================
-    // IMÁGENES (fade in simple, sin scale)
+    // IMÁGENES (fade + scale sutil, igual que en volcanes.js)
     // ============================================================
     const IMAGE_SELECTORS = [
         '.sismo-image-card', '.sv-image', '.step-image',
@@ -97,9 +99,10 @@
 
     document.querySelectorAll(IMAGE_SELECTORS).forEach(el => {
         if (el.closest('.reveal')) return;
-        gsap.fromTo(el, { opacity: 0 }, {
+        gsap.fromTo(el, { opacity: 0, scale: 0.98 }, {
             opacity: 1,
-            duration: 0.45,
+            scale: 1,
+            duration: 0.5,
             ease: 'power1.out',
             scrollTrigger: { trigger: el, start: 'top 90%', once: true }
         });
@@ -150,17 +153,17 @@
     // ============================================================
     document.querySelectorAll('.sv-banner').forEach(el => {
         if (el.closest('.reveal')) return;
-        gsap.fromTo(el, { opacity: 0, x: -10 }, {
+        gsap.fromTo(el, { opacity: 0, x: -12 }, {
             opacity: 1,
             x: 0,
-            duration: 0.4,
+            duration: 0.45,
             ease: 'power1.out',
             scrollTrigger: { trigger: el, start: 'top 94%', once: true }
         });
     });
 
     // ============================================================
-    // HOVER EFFECTS (más suaves y rápidos)
+    // HOVER EFFECTS (duración alineada con --tr del sitio, 0.28s)
     // ============================================================
     const HOVER_SELECTORS = [
         '.mod-card', '.card', '.h3d-card', '.guide-card',
@@ -170,10 +173,10 @@
 
     document.querySelectorAll(HOVER_SELECTORS).forEach(el => {
         el.addEventListener('mouseenter', () => {
-            gsap.to(el, { y: -3, duration: 0.15, ease: 'power1.out' }); // Antes: -6, 0.25
+            gsap.to(el, { y: -4, duration: 0.28, ease: 'power1.out' });
         });
         el.addEventListener('mouseleave', () => {
-            gsap.to(el, { y: 0, duration: 0.2, ease: 'power1.out' });
+            gsap.to(el, { y: 0, duration: 0.28, ease: 'power1.out' });
         });
     });
 

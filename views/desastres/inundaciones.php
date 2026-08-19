@@ -24,19 +24,6 @@ ob_start();
   <a href="#info-general" class="scroll-hint"><span>Scroll</span><div class="sh-arr"></div></a>
 </section>
 
-<section class="dis-hero">
-  <div class="dis-particles" id="inundacionesParticles" aria-hidden="true"></div>
-  <div class="wrap">
-    <div class="dis-hero-icon">I</div>
-    <div class="sec-hd" style="text-align:left;margin:0;">
-      <div class="sec-eyebrow">Temporada de lluvias · El Salvador</div>
-      <h1 class="sec-title">Inundaciones: cuando el <span class="acc">agua no tiene a dónde ir</span></h1>
-      <p class="sec-sub">Ríos cortos, de pendiente pronunciada, y ciudades con poco drenaje: la combinación que explica por qué El Salvador se inunda rápido.</p>
-    </div>
-    <?php include __DIR__ . '/_quicknav.php'; ?>
-  </div>
-</section>
-
 <!-- INFORMACION GENERAL -->
 <section class="sec" id="info-general">
   <div class="wrap">
@@ -164,7 +151,6 @@ ob_start();
 </section>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    ndaInitDisParticles('inundacionesParticles', 'inundaciones');
     ndaInitTimeline('inundaciones', [
         { year: '1998', title: 'Huracán Mitch', badge: 'Histórico', region: 'Todo El Salvador',
           desc: 'Uno de los huracanes más devastadores de la historia centroamericana; sus lluvias provocaron inundaciones y deslaves masivos en todo El Salvador.',

@@ -108,13 +108,14 @@
         ].join(', ');
 
         // ============================================================
-        // CONFIGURACIÓN
+        // CONFIGURACIÓN: fluida pero ligera (ScrollTrigger.batch + once:true
+        // ya evitan el costo repetido, igual que en gsap-animations.js)
         // ============================================================
         const DEFAULTS = {
-            duration: 0.4,
-            stagger: 0.05,
-            ease: 'power1.out',
-            y: 15
+            duration: 0.5,
+            stagger: 0.06,
+            ease: 'power1.out', // power2 acelera de golpe al inicio y se siente "lanzado"; power1 es mas parejo
+            y: 16
         };
 
         // ============================================================
@@ -163,10 +164,10 @@
 
         document.querySelectorAll(TEXT_SELECTORS).forEach(el => {
             if (el.closest('.reveal')) return;
-            gsap.fromTo(el, { opacity: 0, y: 8 }, {
+            gsap.fromTo(el, { opacity: 0, y: 10 }, {
                 opacity: 1,
                 y: 0,
-                duration: 0.35,
+                duration: 0.4,
                 ease: 'power1.out',
                 scrollTrigger: { trigger: el, start: 'top 92%', once: true }
             });
@@ -231,7 +232,7 @@
         });
 
         // ============================================================
-        // HOVER EFFECTS
+        // HOVER EFFECTS (duración alineada con --tr del sitio, 0.28s)
         // ============================================================
         const HOVER_SELECTORS = [
             '.v-card', '.v-stat', '.v-timeline-item',
@@ -240,10 +241,10 @@
 
         document.querySelectorAll(HOVER_SELECTORS).forEach(el => {
             el.addEventListener('mouseenter', () => {
-                gsap.to(el, { y: -3, duration: 0.15, ease: 'power1.out' });
+                gsap.to(el, { y: -4, duration: 0.28, ease: 'power1.out' });
             });
             el.addEventListener('mouseleave', () => {
-                gsap.to(el, { y: 0, duration: 0.2, ease: 'power1.out' });
+                gsap.to(el, { y: 0, duration: 0.28, ease: 'power1.out' });
             });
         });
 
@@ -252,9 +253,10 @@
         // ============================================================
         gsap.from('.v-timeline-item', {
             opacity: 0,
-            x: -15,
-            duration: 0.4,
+            x: -16,
+            duration: 0.45,
             stagger: 0.08,
+            ease: 'power1.out',
             scrollTrigger: {
                 trigger: '.v-timeline-items',
                 start: 'top 88%',
@@ -267,9 +269,10 @@
         // ============================================================
         gsap.from('.v-alerta', {
             opacity: 0,
-            y: 20,
-            duration: 0.4,
+            y: 18,
+            duration: 0.45,
             stagger: 0.08,
+            ease: 'power1.out',
             scrollTrigger: {
                 trigger: '.v-alertas-grid',
                 start: 'top 88%',
@@ -284,8 +287,9 @@
             gsap.from(pin, {
                 opacity: 0,
                 scale: 0.5,
-                duration: 0.4,
+                duration: 0.45,
                 delay: 0.1,
+                ease: 'back.out(1.6)',
                 scrollTrigger: {
                     trigger: pin,
                     start: 'top 85%',
@@ -355,6 +359,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const current = slides[currentSlide];
         const next = slides[index];
+
+        // Direccion visual del deslizamiento: por el camino mas corto en el
+        // loop (ej. de la ultima a la primera cuenta como "avanzar", no como
+        // un salto hacia atras), asi retroceder se ve realmente distinto a
+        // avanzar en vez de repetir siempre la misma animacion.
+        const forwardDist = (index - currentSlide + totalSlides) % totalSlides;
+        const dir = forwardDist <= totalSlides / 2 ? 1 : -1;
+        container.style.setProperty('--v-slide-dir', dir);
 
         // Animación de salida
         current.classList.add('exit');

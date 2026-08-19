@@ -24,19 +24,6 @@ ob_start();
   <a href="#info-general" class="scroll-hint"><span>Scroll</span><div class="sh-arr"></div></a>
 </section>
 
-<section class="dis-hero">
-  <div class="dis-particles" id="tsunamisParticles" aria-hidden="true"></div>
-  <div class="wrap">
-    <div class="dis-hero-icon">T</div>
-    <div class="sec-hd" style="text-align:left;margin:0;">
-      <div class="sec-eyebrow">Riesgo costero · El Salvador</div>
-      <h1 class="sec-title">Tsunamis: cuando el <span class="acc">mar retrocede</span> antes de golpear</h1>
-      <p class="sec-sub">Los 320 km de costa pacífica salvadoreña comparten la misma zona de subducción que genera nuestros sismos. Esto es lo que debes saber.</p>
-    </div>
-    <?php include __DIR__ . '/_quicknav.php'; ?>
-  </div>
-</section>
-
 <!-- INFORMACION GENERAL -->
 <section class="sec" id="info-general">
   <div class="wrap">
@@ -166,7 +153,6 @@ ob_start();
 </section>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    ndaInitDisParticles('tsunamisParticles', 'tsunamis');
     ndaInitTimeline('tsunamis', [
         { year: '1859', title: 'Registro histórico', badge: 'Histórico', region: 'Costa pacífica de El Salvador',
           desc: 'Las bases de datos históricas de tsunamis del Pacífico documentan un evento asociado a la costa de El Salvador, entre los más antiguos con registro para la región.',

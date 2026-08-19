@@ -24,19 +24,6 @@ ob_start();
   <a href="#info-general" class="scroll-hint"><span>Scroll</span><div class="sh-arr"></div></a>
 </section>
 
-<section class="dis-hero">
-  <div class="dis-particles" id="tormentasParticles" aria-hidden="true"></div>
-  <div class="wrap">
-    <div class="dis-hero-icon">T</div>
-    <div class="sec-hd" style="text-align:left;margin:0;">
-      <div class="sec-eyebrow">Meteorología · El Salvador</div>
-      <h1 class="sec-title">Tormentas y depresiones <span class="acc">tropicales</span></h1>
-      <p class="sec-sub">No hace falta un huracán directo: los remanentes de sistemas tropicales han causado algunas de las peores tragedias recientes del país.</p>
-    </div>
-    <?php include __DIR__ . '/_quicknav.php'; ?>
-  </div>
-</section>
-
 <!-- INFORMACION GENERAL -->
 <section class="sec" id="info-general">
   <div class="wrap">
@@ -163,7 +150,6 @@ ob_start();
 </section>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    ndaInitDisParticles('tormentasParticles', 'tormentas');
     ndaInitTimeline('tormentas', [
         { year: '1998', title: 'Huracán Mitch', badge: 'Histórico', region: 'Toda Centroamérica',
           desc: 'Uno de los ciclones más mortales del Atlántico; sus lluvias remanentes provocaron inundaciones y deslaves masivos en toda la región centroamericana.',

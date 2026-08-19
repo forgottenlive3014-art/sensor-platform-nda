@@ -1118,6 +1118,7 @@ let tlActive = 4;
 
 function renderTL() {
     const track = document.getElementById('tlTrack');
+    if (!track) return; // esta timeline solo existe en la pagina de Sismos
     track.innerHTML = tlData.map((e, i) =>
         `<div class="tl-item${i === tlActive ? ' active' : ''}" onclick="setTL(${i})">
             <div class="tli-year">${e.year}</div>
@@ -1127,7 +1128,18 @@ function renderTL() {
     ).join('');
 
     const e = tlData[tlActive];
-    document.getElementById('tlDetail').innerHTML = `
+    const detailEl = document.getElementById('tlDetail');
+
+    // El detalle es el mismo nodo en todo el ciclo de vida de la pagina, asi
+    // que reemplazar su innerHTML no vuelve a disparar la animacion CSS
+    // "tlIn" (solo corre en el paso none->block/creacion). Quitamos la clase,
+    // forzamos reflow y la regresamos para que la entrada se sienta fluida
+    // cada vez que se cambia de evento, igual que el flash de stats en vivo.
+    detailEl.classList.remove('tl-detail');
+    void detailEl.offsetWidth;
+    detailEl.classList.add('tl-detail');
+
+    detailEl.innerHTML = `
         <div class="tl-detail-inner">
             <div class="tld-img">
                 <img src="${e.img}" alt="${e.title}" onerror="this.parentElement.style.background='linear-gradient(135deg,#182840,#0a1428)';this.style.display='none'"/>
@@ -1185,6 +1197,15 @@ function ndaRenderTimeline(key) {
     ).join('');
 
     const e = data[active];
+
+    // Mismo motivo que en renderTL(): reemplazar innerHTML no vuelve a
+    // disparar la animacion CSS "tlIn" porque el nodo nunca cambia de
+    // display. Forzamos reflow para que la entrada se sienta fluida en
+    // cada cambio de evento.
+    detail.classList.remove('tl-detail');
+    void detail.offsetWidth;
+    detail.classList.add('tl-detail');
+
     detail.innerHTML = `
         <div class="tl-detail-inner">
             <div class="tld-img">
