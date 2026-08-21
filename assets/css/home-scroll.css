@@ -1,0 +1,69 @@
+/* NDA - Home: refuerzos visuales conectados al scroll (parallax, barra de
+   progreso, "colision" de placas, dibujado de la linea de tiempo). Vive
+   aparte de style.css porque solo se carga en home.php via $extraCss --
+   nada de esto afecta a las demas paginas. La logica de scroll (GSAP
+   ScrollTrigger con scrub) esta en assets/js/home-scroll.js. */
+
+.hp-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    z-index: 500;
+    background: rgba(127, 127, 127, 0.12);
+    pointer-events: none;
+}
+.hp-progress-bar {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, var(--blue), var(--acc));
+}
+
+/* Contenedor de las secciones con blobs de parallax: hay que recortar el
+   blur para que no se salga del bloque y darle position:relative para que
+   el blob absolute se ancle aqui en vez de a un ancestro mas lejano. */
+.hp-relative {
+    position: relative;
+    overflow: hidden;
+}
+.hp-relative > .wrap {
+    position: relative;
+    z-index: 1;
+}
+
+.hp-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.16;
+    pointer-events: none;
+    will-change: transform;
+    z-index: 0;
+}
+.hp-blob-acc {
+    width: 340px;
+    height: 340px;
+    top: -90px;
+    right: -60px;
+    background: radial-gradient(circle, var(--acc) 0%, transparent 70%);
+}
+.hp-blob-teal {
+    width: 300px;
+    height: 300px;
+    bottom: -110px;
+    left: -70px;
+    background: radial-gradient(circle, var(--teal) 0%, transparent 70%);
+}
+.hp-blob-blue {
+    width: 280px;
+    height: 280px;
+    top: 15%;
+    left: -80px;
+    background: radial-gradient(circle, var(--blue) 0%, transparent 70%);
+}
+
+@media (max-width: 900px) {
+    /* En pantallas chicas el blur pesa mas de lo que aporta visualmente */
+    .hp-blob { display: none; }
+}
