@@ -1,6 +1,6 @@
 <?php
 // "Me gusta" y comentarios, compartidos entre Noticias, Lugares en riesgo e
-// Incidentes (tipo_contenido genérico) — ver sql/interacciones_migration.sql.
+// Incidentes (tipo_contenido genérico) — ver sql/nda_project.sql.
 class InteraccionController {
 
     // tipo_contenido => [tabla, columna PK, columna institucion]
