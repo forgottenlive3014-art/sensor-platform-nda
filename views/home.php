@@ -3,6 +3,7 @@ $title = $title ?? 'NDA · Natural Disaster Alert';
 $user = $user ?? null;
 $__canJoinInstitution = $user && !$user['institucion_id'];
 $__hasApprovedInstitution = $user && $user['institucion_id'] && $user['estado_institucional'] === 'aprobado';
+$extraCss = ['css/home-scroll.css'];
 ob_start();
 ?>
 
@@ -96,7 +97,8 @@ ob_start();
 </section>
 
 <!-- ZONA SISMICA: mapa real con zonas de mayor sismicidad, volcanes y otros riesgos -->
-<section class="sec sec-dark" id="zona-sismica">
+<section class="sec sec-dark hp-relative" id="zona-sismica">
+  <div class="hp-blob hp-blob-acc" data-speed="0.7" aria-hidden="true"></div>
   <div class="wrap">
     <div class="sec-hd">
       <div class="sec-eyebrow">Riesgo Geológico · El Salvador</div>
@@ -136,7 +138,8 @@ ob_start();
 </section>
 
 <!-- PLACAS TECTÓNICAS -->
-<section class="sec" id="placas">
+<section class="sec hp-relative" id="placas">
+  <div class="hp-blob hp-blob-teal" data-speed="1" aria-hidden="true"></div>
   <div class="wrap">
     <div class="sec-hd">
       <div class="sec-eyebrow">Geodinámica · Centroamérica</div>
@@ -167,7 +170,8 @@ ob_start();
 </section>
 
 <!-- HISTORIA: linea de tiempo de los mayores desastres -->
-<section class="sec sec-dark" id="timeline">
+<section class="sec sec-dark hp-relative" id="timeline">
+  <div class="hp-blob hp-blob-blue" data-speed="0.85" aria-hidden="true"></div>
   <div class="wrap">
     <div class="sec-hd"><div class="sec-eyebrow">Historia Sísmica · El Salvador</div><h2 class="sec-title">Línea del <span class="acc">Tiempo</span></h2><p class="sec-sub">Los terremotos más significativos en la historia del país</p></div>
     <div class="tl-wrap"><div class="tl-line"></div><div class="tl-track" id="tlTrack"></div></div>
@@ -253,6 +257,7 @@ ob_start();
 
 <script src="https://unpkg.com/globe.gl"></script>
 <script src="<?= asset('js/hero-globe.js') ?>"></script>
+<script src="<?= asset('js/home-scroll.js') ?>" defer></script>
 
 <?php
 $content = ob_get_clean();

@@ -6,9 +6,7 @@ require_once __DIR__ . '/PHPMailer/SMTP.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception as PHPMailerException;
 
-// Envio de correo via SMTP (Gmail por defecto), configurado desde .env.
-// Sin Composer: PHPMailer vive copiado a mano en lib/PHPMailer/ (solo los
-// 3 archivos que hacen falta para SMTP, sin OAuth/POP3).
+// Envio de correo via SMTP (Gmail por defecto), configurado desde .en
 class Mailer {
 
     // Devuelve true si se pudo enviar, false si fallo (revisa error_log).
