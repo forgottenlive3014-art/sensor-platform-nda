@@ -8,6 +8,8 @@ ob_start();
 
 <div class="dis-page dis-tsunamis">
 <!-- BIG BANNER -->
+<!-- TODO IMAGEN: banner principal. Actualmente usa una foto de la playa de La Libertad (Wikimedia).
+     Reemplazar la URL de background-image por una imagen local en assets/media/desastres/tsunamis/ si se quiere una propia. -->
 <section class="dis-bigbanner" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/PLAYA%20SAN%20DIEGO%2C%20LA%20LIBERTAD%2C%20EL%20SALVADOR.%20-%20panoramio.jpg')">
   <div class="dis-bigbanner-overlay"></div>
   <div class="wrap dis-bigbanner-inner">
@@ -37,6 +39,9 @@ ob_start();
         <h3>Formación</h3>
         <p>La causa más común es un sismo submarino de gran magnitud (M7+) con desplazamiento vertical del fondo marino. También puede originarse por deslizamientos submarinos o erupciones volcánicas cerca de la costa.</p>
       </div>
+      <div class="dis-gallery-item filled">
+        <img src="assets/media/img/tsunami%201.jpg" alt="Tsunami" loading="lazy">
+      </div>
     </div>
 
     <h3 class="dis-subhead">Información de El Salvador</h3>
@@ -48,6 +53,9 @@ ob_start();
       <div class="dis-info-card">
         <h3>El mapa de amenaza (MARN)</h3>
         <p>Es un <strong>mapa agregado</strong>: combina los 23 escenarios "plausibles" más severos que podrían impactar la costa salvadoreña, calculados a partir de 23 fuentes sismotectónicas — fuentes lejanas (Chile 1960/2010, Kamchatka 1952, Alaska 1964, Samoa 2009), intermedias (México 1787, Colombia 1906) y 16 fuentes cercanas en la propia subducción. Para cada punto de la costa muestra la altura máxima de ola y la zona de inundación esperada.</p>
+      </div>
+      <div class="dis-gallery-item filled">
+        <img src="assets/media/img/formacion%20tsunami.jpg" alt="Formación de un tsunami" loading="lazy">
       </div>
     </div>
   </div>
@@ -61,20 +69,148 @@ ob_start();
       <h2 class="sec-title">Comunidades costeras <span class="acc">expuestas</span></h2>
       <p class="sec-sub">Las 9 comunidades que el mapa oficial de amenaza identifica como más expuestas, incluyendo los 3 puertos principales del país</p>
     </div>
-    <div class="dis-zones">
-      <div class="dis-zone-chip"><span class="dot"></span>La Unión (puerto principal)</div>
-      <div class="dis-zone-chip"><span class="dot"></span>San Rafael de Tasajera</div>
-      <div class="dis-zone-chip"><span class="dot"></span>El Zapote</div>
-      <div class="dis-zone-chip"><span class="dot"></span>Marcelino</div>
-      <div class="dis-zone-chip"><span class="dot"></span>La Libertad (puerto)</div>
-      <div class="dis-zone-chip"><span class="dot"></span>El Majahual</div>
-      <div class="dis-zone-chip"><span class="dot"></span>Acajutla (puerto)</div>
-      <div class="dis-zone-chip"><span class="dot"></span>Barra de Santiago</div>
-      <div class="dis-zone-chip"><span class="dot"></span>Garita Palmera</div>
+    <div class="ts-coast-carousel-wrapper">
+      <div class="ts-coast-carousel-track" id="coastCarouselTrack">
+        <div class="ts-coast-card">
+          <div class="ts-coast-card-image"><img src="assets/media/img/la%20union.jpg" alt="La Unión" loading="lazy"></div>
+          <div class="ts-coast-card-body"><span class="ts-coast-card-num">01</span><h4>La Unión</h4></div>
+        </div>
+        <div class="ts-coast-card">
+          <div class="ts-coast-card-image"><img src="assets/media/img/san%20rafel.jpg" alt="San Rafael de Tasajera" loading="lazy"></div>
+          <div class="ts-coast-card-body"><span class="ts-coast-card-num">02</span><h4>San Rafael de Tasajera</h4></div>
+        </div>
+        <div class="ts-coast-card">
+          <div class="ts-coast-card-image"><img src="assets/media/img/zapote.jpg" alt="El Zapote" loading="lazy"></div>
+          <div class="ts-coast-card-body"><span class="ts-coast-card-num">03</span><h4>El Zapote</h4></div>
+        </div>
+        <div class="ts-coast-card">
+          <div class="ts-coast-card-image"><img src="assets/media/img/marce.jpg" alt="Marcelino" loading="lazy"></div>
+          <div class="ts-coast-card-body"><span class="ts-coast-card-num">04</span><h4>Marcelino</h4></div>
+        </div>
+        <div class="ts-coast-card">
+          <div class="ts-coast-card-image"><img src="assets/media/img/puerto.jpg" alt="La Libertad" loading="lazy"></div>
+          <div class="ts-coast-card-body"><span class="ts-coast-card-num">05</span><h4>La Libertad</h4></div>
+        </div>
+        <div class="ts-coast-card">
+          <div class="ts-coast-card-image"><img src="assets/media/img/maja.jpg" alt="El Majahual" loading="lazy"></div>
+          <div class="ts-coast-card-body"><span class="ts-coast-card-num">06</span><h4>El Majahual</h4></div>
+        </div>
+        <div class="ts-coast-card">
+          <div class="ts-coast-card-image"><img src="assets/media/img/acajutla.jpg" alt="Acajutla" loading="lazy"></div>
+          <div class="ts-coast-card-body"><span class="ts-coast-card-num">07</span><h4>Acajutla</h4></div>
+        </div>
+        <div class="ts-coast-card">
+          <div class="ts-coast-card-image"><img src="assets/media/img/santiago.jpeg" alt="Barra de Santiago" loading="lazy"></div>
+          <div class="ts-coast-card-body"><span class="ts-coast-card-num">08</span><h4>Barra de Santiago</h4></div>
+        </div>
+        <div class="ts-coast-card">
+          <div class="ts-coast-card-image"><img src="assets/media/img/garita.jpg" alt="Garita Palmera" loading="lazy"></div>
+          <div class="ts-coast-card-body"><span class="ts-coast-card-num">09</span><h4>Garita Palmera</h4></div>
+        </div>
+      </div>
+      <button class="ts-coast-carousel-btn prev" id="coastPrev">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button class="ts-coast-carousel-btn next" id="coastNext">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
     </div>
     <p style="margin-top:14px;font-size:.8rem;color:var(--text3)">La Unión, La Libertad y Acajutla concentran además los tres puertos más grandes del país y la mayor densidad de población costera.</p>
   </div>
 </section>
+<script>
+(function () {
+    'use strict';
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initCoastCarousel);
+    } else {
+        initCoastCarousel();
+    }
+
+    function initCoastCarousel() {
+        var track = document.getElementById('coastCarouselTrack');
+        var prevBtn = document.getElementById('coastPrev');
+        var nextBtn = document.getElementById('coastNext');
+        if (!track) return;
+
+        var originalCards = Array.prototype.slice.call(track.querySelectorAll('.ts-coast-card'));
+        var realTotal = originalCards.length;
+        if (realTotal === 0) return;
+
+        var EDGE = 3;
+        var headClones = originalCards.slice(-EDGE).map(function (c) { return c.cloneNode(true); });
+        var tailClones = originalCards.slice(0, EDGE).map(function (c) { return c.cloneNode(true); });
+        headClones.forEach(function (c) { c.setAttribute('aria-hidden', 'true'); track.insertBefore(c, track.firstChild); });
+        tailClones.forEach(function (c) { c.setAttribute('aria-hidden', 'true'); track.appendChild(c); });
+
+        var cards = Array.prototype.slice.call(track.querySelectorAll('.ts-coast-card'));
+        var currentIndex = EDGE;
+        var visibleCards = 3;
+        var isAnimating = false;
+
+        function getVisibleCards() {
+            if (window.innerWidth <= 700) return 1;
+            if (window.innerWidth <= 1024) return 2;
+            return 3;
+        }
+        function getCardWidth() {
+            var gap = parseFloat(window.getComputedStyle(track).columnGap) || 0;
+            return cards[0].getBoundingClientRect().width + gap;
+        }
+        function setTransform(withTransition) {
+            track.style.transition = withTransition ? '' : 'none';
+            track.style.transform = 'translateX(-' + (currentIndex * getCardWidth()) + 'px)';
+            if (!withTransition) void track.offsetWidth;
+        }
+        function updateCarousel() {
+            visibleCards = getVisibleCards();
+            setTransform(true);
+            updateCenterCard();
+        }
+        function updateCenterCard() {
+            var centerIndex = currentIndex + Math.floor(visibleCards / 2);
+            cards.forEach(function (card, i) { card.classList.toggle('center', i === centerIndex); });
+        }
+        function snapIfInCloneZone() {
+            if (currentIndex < EDGE) {
+                currentIndex += realTotal;
+                setTransform(false);
+            } else if (currentIndex >= EDGE + realTotal) {
+                currentIndex -= realTotal;
+                setTransform(false);
+            }
+        }
+        function goTo(index) {
+            if (isAnimating) return;
+            isAnimating = true;
+            currentIndex = index;
+            setTransform(true);
+            updateCenterCard();
+            setTimeout(function () { snapIfInCloneZone(); isAnimating = false; }, 600);
+        }
+        function nextSlide() { goTo(currentIndex + 1); }
+        function prevSlide() { goTo(currentIndex - 1); }
+
+        if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+        if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+
+        var resizeTimeout;
+        window.addEventListener('resize', function () {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function () {
+                visibleCards = getVisibleCards();
+                setTransform(false);
+                updateCenterCard();
+            }, 200);
+        });
+
+        setTimeout(function () { setTransform(false); updateCenterCard(); }, 300);
+        window.addEventListener('load', function () {
+            setTimeout(function () { setTransform(false); updateCenterCard(); }, 100);
+        });
+    }
+})();
+</script>
 
 <!-- RIESGOS -->
 <section class="sec">
@@ -153,22 +289,26 @@ ob_start();
 </section>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    // TODO IMAGEN: las 3 rutas 'img' de abajo apuntan a assets/media/desastres/tsunamis/,
+    // carpeta que todavía no existe en el proyecto -> las imágenes de la línea de tiempo están rotas.
+    // Crear la carpeta y colocar ahí 1859.jpg, 2012-alerta.jpg y sat.jpg (o cambiar las rutas
+    // a donde se guarden las imágenes reales, por ejemplo assets/media/img/).
     ndaInitTimeline('tsunamis', [
         { year: '1859', title: 'Registro histórico', badge: 'Histórico', region: 'Costa pacífica de El Salvador',
           desc: 'Las bases de datos históricas de tsunamis del Pacífico documentan un evento asociado a la costa de El Salvador, entre los más antiguos con registro para la región.',
           tags: [{ t: 'Histórico', c: '' }],
           stats: [{ v: '1859', l: 'Año' }],
-          img: 'assets/media/desastres/tsunamis/1859.jpg' },
+          img: 'assets/media/desastres/tsunamis/1859.jpg' /* TODO IMAGEN: falta el archivo */ },
         { year: '2012', title: 'Alerta preventiva regional', badge: 'M 7.3', region: 'Costa Rica / Nicaragua (regional)',
           desc: 'Un sismo de magnitud 7.3 frente a Costa Rica/Nicaragua activó por primera vez a gran escala el protocolo de evacuación costera en El Salvador. No hubo impacto mayor, pero sirvió para probar los planes municipales.',
           tags: [{ t: 'Alerta', c: 'o' }, { t: 'Regional', c: '' }],
           stats: [{ v: '7.3', l: 'Magnitud' }, { v: '2012', l: 'Año' }],
-          img: 'assets/media/desastres/tsunamis/2012-alerta.jpg' },
+          img: 'assets/media/desastres/tsunamis/2012-alerta.jpg' /* TODO IMAGEN: falta el archivo */ },
         { year: '2012', title: 'Fortalecimiento del sistema de alerta', badge: 'Prevención', region: 'Centroamérica',
           desc: 'A partir de este evento, MARN y CEPREDENAC reforzaron el Sistema de Alerta Temprana de Tsunamis para Centroamérica, con mejor coordinación con el Pacific Tsunami Warning Center (PTWC).',
           tags: [{ t: 'Prevención', c: 't' }],
           stats: [{ v: 'PTWC', l: 'Coordinación' }],
-          img: 'assets/media/desastres/tsunamis/sat.jpg' }
+          img: 'assets/media/desastres/tsunamis/sat.jpg' /* TODO IMAGEN: falta el archivo */ }
     ]);
 });
 </script>
@@ -181,10 +321,15 @@ document.addEventListener('DOMContentLoaded', function () {
       <h2 class="sec-title">Galería de <span class="acc">imágenes</span></h2>
       <p class="sec-sub">Espacio reservado para fotografías del mapa de amenaza, señalización de rutas y comunidades costeras</p>
     </div>
-    <?php $galleryItems = [
+    <?php
+    // TODO IMAGEN: las 3 imágenes actuales son referenciales de Wikimedia Commons (2 de ellas ni siquiera son de El Salvador).
+    // Hay un archivo nuevo sin usar en assets/media/img/tsunami 1.jpg -- agregarlo aquí (o a la carpeta
+    // assets/media/desastres/tsunamis/ propuesta arriba) y sustituir las URLs externas por rutas locales cuando haya fotos reales.
+    $galleryItems = [
         ['img' => 'https://commons.wikimedia.org/wiki/Special:FilePath/PLAYA%20SAN%20DIEGO%2C%20LA%20LIBERTAD%2C%20EL%20SALVADOR.%20-%20panoramio.jpg', 'cap' => 'Costa de La Libertad, El Salvador', 'credit' => 'Wikimedia Commons'],
         ['img' => 'https://commons.wikimedia.org/wiki/Special:FilePath/Tsunami-dart-system3.jpg', 'cap' => 'Sistema DART de boyas de alerta temprana (referencial, no de El Salvador)', 'credit' => 'Wikimedia Commons'],
         ['img' => 'https://commons.wikimedia.org/wiki/Special:FilePath/Nusa-Dua%20Bali%20Indonesia%20Tsunami-evacuation-sign-01.jpg', 'cap' => 'Señalización de ruta de evacuación vertical (referencial, no de El Salvador)', 'credit' => 'Wikimedia Commons'],
+        // TODO IMAGEN: ['img' => 'assets/media/img/tsunami 1.jpg', 'cap' => '...', 'credit' => '...'],
     ]; include __DIR__ . '/_gallery.php'; ?>
   </div>
 </section>

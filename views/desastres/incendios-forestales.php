@@ -41,7 +41,7 @@ ob_start();
         <h3>Prevención</h3>
         <p>Evitar quemas agrícolas y fogatas en época seca, mantener rondas cortafuego alrededor de áreas naturales, y reportar humo sospechoso apenas se detecta.</p>
       </div>
-    </div>
+      
 
     <h3 class="dis-subhead">Información de El Salvador</h3>
     <div class="dis-info-grid">
