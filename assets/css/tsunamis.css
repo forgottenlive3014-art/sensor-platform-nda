@@ -135,3 +135,29 @@
     .dis-tsunamis .ts-coast-carousel-btn.prev { left: 2px; }
     .dis-tsunamis .ts-coast-carousel-btn.next { right: 2px; }
 }
+
+/* ---------- TARJETAS DE RIESGOS: imagen arriba, info abajo ---------- */
+.dis-tsunamis .dis-impact-card {
+    padding: 0;
+    overflow: hidden;
+}
+.dis-tsunamis .dis-impact-card-img {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+}
+.dis-tsunamis .dis-impact-card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .4s ease;
+}
+.dis-tsunamis .dis-impact-card:hover .dis-impact-card-img img {
+    transform: scale(1.06);
+}
+.dis-tsunamis .dis-impact-card h4 {
+    margin: 14px 16px 6px;
+}
+.dis-tsunamis .dis-impact-card p {
+    margin: 0 16px 16px;
+}

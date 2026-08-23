@@ -220,10 +220,22 @@ ob_start();
       <h2 class="sec-title">Riesgos de un <span class="acc">tsunami</span></h2>
     </div>
     <div class="dis-impact-grid">
-      <div class="dis-impact-card"><h4>Inundación costera</h4><p>Arrastra viviendas, embarcaciones y vehículos hasta 1-2 km tierra adentro según la topografía.</p></div>
-      <div class="dis-impact-card"><h4>Salinización de suelos</h4><p>El agua salada inutiliza cultivos y pozos de agua dulce por meses o años.</p></div>
-      <div class="dis-impact-card"><h4>Daño a manglares</h4><p>Ecosistemas como Jiquilisco, que además amortiguan futuras olas, quedan dañados.</p></div>
-      <div class="dis-impact-card"><h4>Escombros y contaminación</h4><p>El agua de retorno arrastra desechos, combustibles y aguas negras hacia el mar y los esteros.</p></div>
+      <div class="dis-impact-card">
+        <div class="dis-impact-card-img"><img src="assets/media/img/inundaci%C3%B3n%20costera.jpg" alt="Inundación costera" loading="lazy"></div>
+        <h4>Inundación costera</h4><p>Arrastra viviendas, embarcaciones y vehículos hasta 1-2 km tierra adentro según la topografía.</p>
+      </div>
+      <div class="dis-impact-card">
+        <div class="dis-impact-card-img"><img src="assets/media/img/salinizaci%C3%B3n.jpg" alt="Salinización de suelos" loading="lazy"></div>
+        <h4>Salinización de suelos</h4><p>El agua salada inutiliza cultivos y pozos de agua dulce por meses o años.</p>
+      </div>
+      <div class="dis-impact-card">
+        <div class="dis-impact-card-img"><img src="assets/media/img/manglares.jpg" alt="Daño a manglares" loading="lazy"></div>
+        <h4>Daño a manglares</h4><p>Ecosistemas como Jiquilisco, que además amortiguan futuras olas, quedan dañados.</p>
+      </div>
+      <div class="dis-impact-card">
+        <div class="dis-impact-card-img"><img src="assets/media/img/contaminacion.jpg" alt="Escombros y contaminación" loading="lazy"></div>
+        <h4>Escombros y contaminación</h4><p>El agua de retorno arrastra desechos, combustibles y aguas negras hacia el mar y los esteros.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -289,26 +301,37 @@ ob_start();
 </section>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // TODO IMAGEN: las 3 rutas 'img' de abajo apuntan a assets/media/desastres/tsunamis/,
-    // carpeta que todavía no existe en el proyecto -> las imágenes de la línea de tiempo están rotas.
-    // Crear la carpeta y colocar ahí 1859.jpg, 2012-alerta.jpg y sat.jpg (o cambiar las rutas
-    // a donde se guarden las imágenes reales, por ejemplo assets/media/img/).
     ndaInitTimeline('tsunamis', [
-        { year: '1859', title: 'Registro histórico', badge: 'Histórico', region: 'Costa pacífica de El Salvador',
-          desc: 'Las bases de datos históricas de tsunamis del Pacífico documentan un evento asociado a la costa de El Salvador, entre los más antiguos con registro para la región.',
+        { year: '1859', title: 'Primeros registros históricos', badge: 'Histórico', region: 'Costa pacífica de El Salvador',
+          desc: 'Las bases de datos históricas de tsunamis del Pacífico documentan dos eventos asociados a la costa de El Salvador en este año, siendo los más antiguos con registro para la región. El 25 de agosto se registró un sismo de magnitud 6.2 y el 8 de diciembre uno de 7.5, este último generó un tsunami en la Bahía de Acajutla.',
           tags: [{ t: 'Histórico', c: '' }],
-          stats: [{ v: '1859', l: 'Año' }],
-          img: 'assets/media/desastres/tsunamis/1859.jpg' /* TODO IMAGEN: falta el archivo */ },
-        { year: '2012', title: 'Alerta preventiva regional', badge: 'M 7.3', region: 'Costa Rica / Nicaragua (regional)',
-          desc: 'Un sismo de magnitud 7.3 frente a Costa Rica/Nicaragua activó por primera vez a gran escala el protocolo de evacuación costera en El Salvador. No hubo impacto mayor, pero sirvió para probar los planes municipales.',
-          tags: [{ t: 'Alerta', c: 'o' }, { t: 'Regional', c: '' }],
-          stats: [{ v: '7.3', l: 'Magnitud' }, { v: '2012', l: 'Año' }],
-          img: 'assets/media/desastres/tsunamis/2012-alerta.jpg' /* TODO IMAGEN: falta el archivo */ },
-        { year: '2012', title: 'Fortalecimiento del sistema de alerta', badge: 'Prevención', region: 'Centroamérica',
-          desc: 'A partir de este evento, MARN y CEPREDENAC reforzaron el Sistema de Alerta Temprana de Tsunamis para Centroamérica, con mejor coordinación con el Pacific Tsunami Warning Center (PTWC).',
-          tags: [{ t: 'Prevención', c: 't' }],
-          stats: [{ v: 'PTWC', l: 'Coordinación' }],
-          img: 'assets/media/desastres/tsunamis/sat.jpg' /* TODO IMAGEN: falta el archivo */ }
+          stats: [{ v: '8 dic', l: 'M 7.5 · tsunami' }, { v: '25 ago', l: 'M 6.2' }],
+          img: 'assets/media/img/1859.jpg' },
+        { year: '1902', title: 'El tsunami más mortífero en El Salvador', badge: '185 muertos', region: 'Costa pacífica de El Salvador y Guatemala',
+          desc: 'Este es el tsunami más letal registrado en el país. Se originó por un terremoto de magnitud 7.0-8.3 frente a las costas de Garita Palmera, en Ahuachapán, fronterizo con Guatemala. Causó la muerte de 185 personas y una destrucción masiva. El mayor golpe lo recibió Acajutla, en Sonsonate, con un centenar de muertes; le siguió la Barra de Santiago, en Ahuachapán, con 85 víctimas. Fueron tres olas de hasta 20 metros que se adentraron hasta 100 metros en la playa.',
+          tags: [{ t: '185 muertos', c: 'r' }, { t: 'Más letal', c: 'r' }],
+          stats: [{ v: '185', l: 'Muertos' }, { v: '20 m', l: 'Altura máx. de ola' }],
+          img: 'assets/media/img/1902.jpg' },
+        { year: '1957', title: 'Tsunami transoceánico', badge: 'M 8.6', region: 'Costa de Acajutla, El Salvador',
+          desc: 'El 9 de marzo, un terremoto de magnitud 8.6 en las Islas Andreanof (Alaska) generó un tsunami que causó daños en 6 países. En El Salvador, impactó principalmente la zona de Acajutla, aunque con menor intensidad.',
+          tags: [{ t: 'Transoceánico', c: 't' }, { t: 'Origen: Alaska', c: '' }],
+          stats: [{ v: '9 mar', l: 'M 8.6 · Alaska' }, { v: '6', l: 'Países afectados' }],
+          img: 'assets/media/img/1957.jpg' },
+        { year: '2012', title: 'Alerta y prevención regional', badge: 'M 7.3', region: 'El Salvador / Nicaragua',
+          desc: 'El sismo de magnitud 7.3 frente a las costas de El Salvador y Nicaragua generó olas de hasta 6.3 metros. El tsunami golpeó principalmente la región de la Bahía de Jiquilisco y también afectó las Islas Galápagos, a más de 1,400 km de distancia. Aunque se activaron protocolos de evacuación, no hubo víctimas mortales, lo que sirvió como un exitoso ejercicio de preparación para el país.',
+          tags: [{ t: 'Alerta', c: 'o' }, { t: 'Sin víctimas', c: 't' }],
+          stats: [{ v: '27 ago', l: 'M 7.3' }, { v: '6.3 m', l: 'Altura máx. de ola' }],
+          img: 'assets/media/img/2012.jpg' },
+        { year: '2017', title: 'Amenaza por tsunami lejano', badge: 'M 8.0', region: 'Origen: Chiapas, México',
+          desc: 'Un terremoto de magnitud 8.0 frente a las costas de Chiapas, México, activó una alerta de tsunami para toda Centroamérica, incluido El Salvador. El Sistema Nacional de Protección Civil activó las comunicaciones con Comisiones Municipales y Comunales para evacuación inmediata en caso necesario. Se pidió a las comunidades cercanas a las playas vigilar posibles cambios en el mar. No se reportaron daños mayores.',
+          tags: [{ t: 'Alerta', c: 'o' }, { t: 'Tsunami lejano', c: '' }],
+          stats: [{ v: '8 sep', l: 'M 8.0 · Chiapas' }, { v: '2017', l: 'Año' }],
+          img: 'assets/media/img/2017.jpg' },
+        { year: '2019', title: 'Alerta local por sismo en La Libertad', badge: 'M 6.8', region: 'La Libertad, El Salvador',
+          desc: 'Un terremoto de magnitud 6.8 con epicentro frente a la costa del departamento de La Libertad, a 66 km al sur de la playa Mizata, generó una alerta de tsunami. El Centro de Alerta de Tsunamis del Pacífico (PTWC) emitió una advertencia y se activaron protocolos de evacuación en la zona costera. No se reportaron víctimas mortales.',
+          tags: [{ t: 'Advertencia', c: 'o' }],
+          stats: [{ v: '30 may', l: 'M 6.8' }, { v: '66 km', l: 'S de playa Mizata' }],
+          img: 'assets/media/img/2019%202.jpg' }
     ]);
 });
 </script>
@@ -344,6 +367,9 @@ document.addEventListener('DOMContentLoaded', function () {
     <div class="dis-sources">
       <a class="dis-source-item" href="https://www.snet.gob.sv/ver/oceanografia/amenaza/mapa+de+amenaza+por+tsunami/" target="_blank">MARN — Mapa de amenaza por tsunami</a>
       <a class="dis-source-item" href="https://www.proteccioncivil.gob.sv/" target="_blank">Dirección General de Protección Civil</a>
+      <a class="dis-source-item" href="https://www.pnc.gob.sv/servicios/sistema-911/" target="_blank">Policía Nacional Civil — Sistema 911</a>
+      <a class="dis-source-item" href="https://www.bomberos.gob.sv/" target="_blank">Cuerpo de Bomberos de El Salvador</a>
+      <a class="dis-source-item" href="https://www.gobernacion.gob.sv/" target="_blank">Ministerio de Gobernación y Desarrollo Territorial</a>
     </div>
     <p style="text-align:center;margin-top:24px">
       <a href="?url=home#zona-sismica" class="btn-out">← Ver mapa de peligros</a>
