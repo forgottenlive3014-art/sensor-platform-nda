@@ -7,7 +7,9 @@ class ChatController {
     // sacar la clave de aqui primero.
     private $apiKey = "";
 
-    private $model = "llama-3.3-70b-versatile";
+    // Groq retiro los modelos "llama-3.x-*" de su catalogo (ver /v1/models);
+    // gpt-oss-120b es el reemplazo actual: buena calidad en español y rapido.
+    private $model = "openai/gpt-oss-120b";
     private $url = "https://api.groq.com/openai/v1/chat/completions";
 
     // Mapa de intenciones de navegacion: palabras clave => destino dentro del sitio.
@@ -87,9 +89,9 @@ class ChatController {
     private function faqKnowledge() {
         return [
             ['keywords' => ['hola', 'hey', 'buenas', 'saludos'],
-                'reply' => 'Hola. Soy el asistente de NDA (Natural Disaster Alert), la plataforma educativa de prevención de desastres naturales de El Salvador. Dato rápido: El Salvador registra en promedio ~100 sismos perceptibles al año por la subducción de la Placa de Cocos bajo la Placa del Caribe. Puedo ayudarte con dudas sobre sismos, volcanes, tsunamis, evacuación, la mochila de emergencia, el módulo de colegio o cómo usar la plataforma. ¿En qué te ayudo?'],
+                'reply' => 'Hola, soy el asistente de NDA. Pregúntame sobre sismos, volcanes, tsunamis, evacuación, la mochila de emergencia o cómo usar la plataforma.'],
             ['keywords' => ['que es nda', 'que es esta pagina', 'que es este sitio', 'de que trata', 'de que se trata', 'para que sirve esta pagina', 'para que sirve esta plataforma', 'que hace esta plataforma', 'que hace este sitio', 'que puedo hacer en esta pagina', 'que puedo hacer aqui'],
-                'reply' => 'NDA (Natural Disaster Alert) es una plataforma educativa sobre prevención de desastres naturales en El Salvador, pensada para la comunidad escolar. Reúne: monitoreo sísmico en tiempo real (datos reales del USGS), un sismógrafo interactivo y un simulador de movimiento sísmico, páginas propias de cada amenaza (sismos, volcanes, tsunamis, inundaciones, deslizamientos, incendios forestales, tormentas tropicales y sequías) más una galería 3D con modelos interactivos de cada una, mapa de peligros y puntos de emergencia, clima y fases lunares en tiempo real, una maqueta de sensor Arduino/ESP32 (MPU-6050) que mide vibración en 3 ejes, guías de "¿qué hacer AHORA?" ante una emergencia, una biblioteca de recursos con guías PDF descargables, juegos y trivias educativas, y un módulo de Gestión Escolar para que colegios organicen simulacros, rutas de evacuación y reportes de incidentes. Algunos datos clave de El Salvador: 26 volcanes, subducción de la Placa de Cocos a ~8 cm/año, y el terremoto más devastador reciente fue el del 13 de enero de 2001 (M7.7).',
+                'reply' => 'NDA es una plataforma educativa de prevención de desastres en El Salvador: monitoreo sísmico en tiempo real, páginas por amenaza (sismos, volcanes, tsunamis, inundaciones, deslizamientos, incendios, tormentas, sequías) con galería 3D, clima y fases lunares, guías de "¿qué hacer AHORA?", recursos descargables, juegos educativos y un módulo de Gestión Escolar para simulacros.',
                 'navigate' => 'home', 'navigateLabel' => 'Explorar NDA'],
             ['keywords' => ['sismo', 'terremoto', 'tiembla', 'movimiento sismico', 'cuando tiembla'],
                 'reply' => 'Durante un sismo: agáchate, cúbrete bajo un mueble resistente y agárrate hasta que termine el movimiento. No corras ni uses el ascensor. Aléjate de ventanas y objetos que puedan caer. Al terminar, revisa heridos y aléjate de estructuras dañadas antes de salir.',
@@ -107,10 +109,10 @@ class ChatController {
                 'reply' => 'Para registrarte, haz clic en "Registrarse" en la barra de navegación. Puedes crear una cuenta general, o vincularte a una institución educativa como docente, estudiante, padre/madre o personal administrativo.',
                 'navigate' => 'register', 'navigateLabel' => 'Crear Cuenta'],
             ['keywords' => ['rol', 'roles', 'que puede hacer un docente', 'que puede hacer un alumno', 'que puede hacer un estudiante', 'que puede hacer el admin'],
-                'reply' => 'En el módulo de colegio: el Administrador gestiona toda la institución (usuarios, aulas, simulacros, reportes). El Docente pasa lista, ve sus aulas y reporta incidentes. El Estudiante ve su aula y los simulacros futuros. El Padre/Madre ve el estado de sus hijos durante un simulacro. El Personal Administrativo apoya con publicaciones y estado durante una emergencia.',
+                'reply' => 'En Gestión Escolar: el Administrador gestiona toda la institución, el Docente pasa lista y reporta incidentes, el Estudiante ve su aula y simulacros, el Padre/Madre ve el estado de sus hijos, y el Personal Administrativo apoya con publicaciones.',
                 'navigate' => 'school', 'navigateLabel' => 'Gestión Escolar'],
             ['keywords' => ['marn', 'usgs', 'emsc', 'de donde salen los datos', 'fuente de los datos'],
-                'reply' => 'Los datos sísmicos en tiempo real se combinan de dos catálogos públicos: el USGS (Servicio Geológico de EE.UU.) y el EMSC (European-Mediterranean Seismological Centre), filtrados a la región de Centroamérica y El Salvador — se combinan porque ninguno de los dos detecta el 100% de la actividad local por sí solo. La información institucional y de alertas se basa en criterios del MARN (Ministerio de Medio Ambiente de El Salvador), que no publica una API pública propia.',
+                'reply' => 'Los sismos en tiempo real combinan dos catálogos públicos, USGS y EMSC, para no depender de uno solo. La información institucional se basa en criterios del MARN, que no publica una API propia.',
                 'navigate' => 'sismos', 'navigateLabel' => 'Monitor Sísmico'],
             ['keywords' => ['magnitud', 'richter', 'escala sismica', 'que tan fuerte'],
                 'reply' => 'La escala de magnitud mide la energía liberada por un sismo: M1-2 es imperceptible, M3-4 leve (puede sentirse), M5 moderado (posibles daños), M6 fuerte (daños estructurales), M7+ es un gran terremoto. El terremoto de El Salvador de 2001 fue de magnitud 7.7.',
@@ -287,12 +289,19 @@ class ChatController {
         }
 
         $systemPrompt = "Eres el asistente virtual de NDA (Natural Disaster Alert), una plataforma educativa "
-            . "sobre prevención de desastres naturales en El Salvador dirigida a la comunidad escolar. Responde de "
-            . "forma breve, clara y amable, SIEMPRE en español, salvo que el usuario escriba en inglés. Si la "
-            . "pregunta es sobre algo fuera de desastres naturales, prevención o el uso de la plataforma, redirige "
-            . "amablemente el tema. Cuando tenga sentido, cierra tu respuesta con un dato relevante y concreto "
-            . "(una cifra, un nombre de volcán o falla, un porcentaje) tomado de los datos de referencia de abajo, "
-            . "para reforzar el aprendizaje, pero sin forzarlo si la pregunta no lo amerita.\n\n"
+            . "sobre prevención de desastres naturales en El Salvador dirigida a la comunidad escolar. Responde "
+            . "SIEMPRE en español (salvo que el usuario escriba en inglés), de forma directa y al punto: "
+            . "maximo 3 a 4 oraciones cortas, sin rodeos ni relleno. Organiza esas oraciones en 2 parrafos cortos "
+            . "(separa los parrafos con una linea en blanco), nunca en un solo bloque de texto largo. PROHIBIDO "
+            . "usar formato Markdown de cualquier tipo: nunca escribas **, __, #, ni guiones o numeros de lista al "
+            . "inicio de linea, ni siquiera para resaltar un nombre propio. Tu respuesta se muestra como texto "
+            . "plano tal cual la escribas, asi que cualquier simbolo de Markdown apareceria literal (por ejemplo "
+            . "\"**Izalco**\" se veria con los asteriscos incluidos) y eso se ve mal. Si la pregunta requiere pasos "
+            . "a seguir, sepáralos con comas o punto y coma dentro de la misma oracion, no en lineas separadas. "
+            . "Si la pregunta es sobre algo fuera de desastres "
+            . "naturales, prevención o el uso de la plataforma, redirige amablemente el tema en una sola frase. "
+            . "Incluye un dato concreto (cifra, nombre de volcán o falla) solo si aporta valor real a esa "
+            . "respuesta puntual, nunca como relleno para alargarla.\n\n"
             . "Qué es NDA y qué contiene la plataforma (usa esto si preguntan de qué trata el sitio): monitoreo "
             . "sísmico en tiempo real con datos del USGS, sismógrafo interactivo y simulador de movimiento sísmico, "
             . "páginas propias por amenaza (sismos, volcanes, tsunamis, inundaciones, deslizamientos, incendios "
@@ -350,8 +359,11 @@ class ChatController {
         $payload = [
             'model' => $this->model,
             'messages' => $messages,
-            'temperature' => 0.7,
-            'max_tokens' => 500,
+            'temperature' => 0.6,
+            // gpt-oss-120b gasta parte del presupuesto en razonamiento interno
+            // antes del texto visible; la brevedad real la impone el prompt
+            // (3-4 oraciones), esto solo evita que la respuesta se corte a medias.
+            'max_tokens' => 420,
         ];
 
         $ch = curl_init($this->url);
@@ -377,7 +389,40 @@ class ChatController {
 
         $data = json_decode($response, true);
         $reply = $data['choices'][0]['message']['content'] ?? 'No pude generar una respuesta. Intenta reformular tu pregunta.';
+        $reply = $this->stripMarkdown($reply);
 
-        jsonResponse(['reply' => $reply]);
+        $resp = ['reply' => $reply];
+        // La IA no elige a donde redirigir: reusamos el mismo mapa de
+        // navegacion por palabras clave que los pasos 2/3 (deterministico y
+        // ya probado), asi las respuestas generadas por la IA tambien pueden
+        // traer el boton de "ir a la seccion" cuando el mensaje lo amerita.
+        $navMatch = $this->matchNavigation($message);
+        if ($navMatch) {
+            $resp['navigate'] = $navMatch['url'];
+            $resp['navigateLabel'] = $navMatch['label'];
+        }
+
+        jsonResponse($resp);
+    }
+
+    // Red de seguridad por si la IA ignora la instruccion de no usar
+    // Markdown: el chat pinta la respuesta con textContent (texto plano), asi
+    // que un "**Izalco**" sin limpiar se veria literal con los asteriscos.
+    private function stripMarkdown($text) {
+        $text = preg_replace('/\*\*(.+?)\*\*/s', '$1', $text);   // **negrita**
+        $text = preg_replace('/__(.+?)__/s', '$1', $text);        // __negrita__
+        $text = preg_replace('/(?<!\*)\*([^\*\n]+)\*(?!\*)/', '$1', $text); // *cursiva*
+        $text = preg_replace('/^#{1,6}\s*/m', '', $text);         // # encabezados
+        $text = preg_replace('/^[\-\*]\s+/m', '', $text);         // - viñetas
+        $text = preg_replace('/^\d+\.\s+/m', '', $text);          // 1. listas numeradas
+        $text = str_replace("\r\n", "\n", $text);
+        $text = preg_replace('/[ \t]{2,}/', ' ', $text);
+        // Un salto de linea "suelto" (sobrante de una vineta ya limpiada) se
+        // une en la misma oracion; dos o mas saltos SI se respetan como
+        // separacion de parrafo (el CSS del chat usa white-space:pre-wrap).
+        $text = preg_replace('/\n{3,}/', "\n\n", $text);
+        $text = preg_replace('/(?<!\n)\n(?!\n)/', ' ', $text);
+        $text = implode("\n\n", array_filter(array_map('trim', explode("\n\n", $text)), 'strlen'));
+        return trim($text);
     }
 }

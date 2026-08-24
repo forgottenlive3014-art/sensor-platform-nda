@@ -135,7 +135,7 @@
     overflow: hidden; position: relative; z-index: 2;
     display: flex; flex-direction: column;
 }
-.clima-map-card #climaMap { flex: 1; min-height: 220px; }
+.clima-map-card #climaMap, .clima-map-card #climaMapOwm { flex: 1; min-height: 220px; }
 .clima-card-hdr {
     display: flex; align-items: center; gap: 9px; padding: 12px 16px;
     font-family: var(--fn); font-weight: 700; font-size: .84rem; color: var(--text);
@@ -156,12 +156,12 @@
     transition: all var(--tr) var(--ez);
 }
 .clima-map-expand-btn:hover { color: var(--acc3); border-color: var(--acc3); }
-#climaMap { background: var(--bg2); }
+#climaMap, #climaMapOwm { background: var(--bg2); }
 .clima-map-expanded {
     position: fixed; inset: 16px; z-index: 9999; margin: 0;
     box-shadow: var(--shl);
 }
-.clima-map-expanded #climaMap { height: calc(100% - 47px); }
+.clima-map-expanded #climaMap, .clima-map-expanded #climaMapOwm { height: calc(100% - 47px); }
 
 /* ---------- SECCIONES GENERICAS ---------- */
 .clima-section { margin-bottom: 20px; position: relative; z-index: 2; }
