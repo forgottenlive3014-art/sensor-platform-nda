@@ -303,6 +303,57 @@
 @media (max-width: 520px) {
     .find-cards-grid { grid-template-columns: 1fr; }
 }
+
+/* ---------------------------------------------------------------
+   Variante carrusel (solo Inicio): .fc-scrollzone es un espaciador de
+   alto fijo (define cuanto scroll dura la secuencia); .fc-carousel
+   queda pegada en pantalla (position: sticky, mecanismo nativo del
+   navegador, no ScrollTrigger pin) mientras dura ese alto; adentro,
+   .find-cards-track se desplaza en horizontal segun el progreso del
+   scroll (ver home-scroll.js). No afecta el grid normal de arriba,
+   que sigue igual en monitoreo.php.
+   --------------------------------------------------------------- */
+.fc-scrollzone {
+    position: relative;
+    height: 280vh;
+}
+.find-cards-grid.fc-carousel {
+    position: sticky;
+    top: calc(var(--nh) + 24px);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    height: 72vh;
+    min-height: 480px;
+}
+.find-cards-track {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    width: max-content;
+}
+.find-cards-track .find-card {
+    flex: 0 0 440px;
+}
+.find-cards-track .find-card-visual {
+    height: 280px;
+}
+.find-cards-track .find-card-body {
+    padding: 22px 24px 26px;
+}
+.find-cards-track .find-card-body h3 {
+    font-size: 1.15rem;
+}
+.find-cards-track .find-card-body p {
+    font-size: .88rem;
+}
+@media (max-width: 520px) {
+    .fc-scrollzone { height: 320vh; }
+    .find-cards-grid.fc-carousel { height: 62vh; min-height: 420px; }
+    .find-cards-track .find-card { flex-basis: 300px; }
+    .find-cards-track .find-card-visual { height: 200px; }
+}
+
 .find-card {
     display: flex;
     flex-direction: column;

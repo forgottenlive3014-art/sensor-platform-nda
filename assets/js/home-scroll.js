@@ -111,6 +111,42 @@
         });
     });
 
+    // ============================================================
+    // CARRUSEL "QUE ENCONTRARAS": .fc-carousel queda pegada en pantalla
+    // via CSS position:sticky (NO ScrollTrigger pin -- eso fue lo que
+    // corrompio el layout y la superpuso con la linea de tiempo la vez
+    // pasada). El "recorrido" de scroll lo da .fc-scrollzone, un
+    // espaciador de alto FIJO en CSS (280vh), asi que esto no depende
+    // de medir nada dinamico al cargar. Mientras se hace scroll dentro
+    // de esa zona, el track se desplaza en horizontal; al llegar al
+    // final de la zona, la tarjeta deja de estar pegada y la pagina
+    // sigue bajando normal. snap hace que, al soltar el scroll, la
+    // tarjeta mas cercana se termine de acomodar en vez de quedar a
+    // medio camino -- eso da tiempo real de leerla.
+    // ============================================================
+    const fcZone = document.querySelector('.fc-scrollzone');
+    const fcCarousel = document.querySelector('.fc-carousel');
+    const fcTrack = document.querySelector('.find-cards-track');
+    if (fcZone && fcCarousel && fcTrack) {
+        const fcCards = fcTrack.querySelectorAll('.find-card');
+        gsap.to(fcTrack, {
+            x: () => -Math.max(0, fcTrack.scrollWidth - fcCarousel.clientWidth),
+            ease: 'none',
+            scrollTrigger: {
+                trigger: fcZone,
+                start: 'top top+=62',
+                end: 'bottom bottom',
+                scrub: 1,
+                snap: fcCards.length > 1 ? {
+                    snapTo: 1 / (fcCards.length - 1),
+                    duration: 0.3,
+                    ease: 'power1.inOut'
+                } : false,
+                invalidateOnRefresh: true
+            }
+        });
+    }
+
     window.addEventListener('load', () => {
         setTimeout(() => ScrollTrigger.refresh(), 300);
     });

@@ -191,7 +191,9 @@ ob_start();
       <h2 class="sec-title">¿Qué <span class="acc">encontrarás</span> en la página?</h2>
       <p class="sec-sub">Un recorrido rápido por todo lo que la plataforma tiene para ti</p>
     </div>
-    <div class="find-cards-grid">
+    <div class="fc-scrollzone">
+    <div class="find-cards-grid fc-carousel">
+    <div class="find-cards-track">
       <a href="?url=clima" class="find-card">
         <div class="find-card-visual"><video autoplay muted loop playsinline><source src="assets/media/video/clima.mp4" type="video/mp4"></video></div>
         <div class="find-card-body"><h3>Clima en Tiempo Real</h3><p>Consulta la temperatura, el pronóstico y las condiciones meteorológicas en tiempo real para tu ubicación.</p><span class="fc-cta">Ver clima →</span></div>
@@ -231,6 +233,8 @@ ob_start();
         <div class="find-card-visual"><video autoplay muted loop playsinline><source src="assets/media/video/sensor.mp4" type="video/mp4"></video></div>
         <div class="find-card-body"><h3>Sismógrafo de Arduino</h3><p>Observa cómo funciona el sensor MPU-6050 y la detección de vibraciones en tiempo real.</p><span class="fc-cta">Ver demo →</span></div>
       </a>
+    </div>
+    </div>
     </div>
   </div>
 </section>
