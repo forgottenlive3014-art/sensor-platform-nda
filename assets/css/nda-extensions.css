@@ -315,7 +315,7 @@
    --------------------------------------------------------------- */
 .fc-scrollzone {
     position: relative;
-    height: 280vh;
+    height: 420vh;
 }
 .find-cards-grid.fc-carousel {
     position: sticky;
@@ -348,7 +348,7 @@
     font-size: .88rem;
 }
 @media (max-width: 520px) {
-    .fc-scrollzone { height: 320vh; }
+    .fc-scrollzone { height: 480vh; }
     .find-cards-grid.fc-carousel { height: 62vh; min-height: 420px; }
     .find-cards-track .find-card { flex-basis: 300px; }
     .find-cards-track .find-card-visual { height: 200px; }
