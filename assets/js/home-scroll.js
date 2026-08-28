@@ -129,7 +129,7 @@
     const fcTrack = document.querySelector('.find-cards-track');
     if (fcZone && fcCarousel && fcTrack) {
         const fcCards = fcTrack.querySelectorAll('.find-card');
-        gsap.to(fcTrack, {
+        const fcTween = gsap.to(fcTrack, {
             x: () => -Math.max(0, fcTrack.scrollWidth - fcCarousel.clientWidth),
             ease: 'none',
             scrollTrigger: {
@@ -145,6 +145,26 @@
                 invalidateOnRefresh: true
             }
         });
+
+        // Flechas del teclado: saltan a la tarjeta anterior/siguiente
+        // moviendo el scroll de la pagina al punto exacto que le corresponde
+        // a esa tarjeta dentro de .fc-scrollzone (mismo mecanismo que ya usa
+        // el scroll normal, solo que en pasos discretos).
+        const fcSteps = fcCards.length - 1;
+        if (fcSteps > 0) {
+            document.addEventListener('keydown', e => {
+                if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+                const activeTag = document.activeElement && document.activeElement.tagName;
+                if (activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT') return;
+                const r = fcCarousel.getBoundingClientRect();
+                if (r.top >= window.innerHeight * 0.85 || r.bottom <= window.innerHeight * 0.15) return;
+                e.preventDefault();
+                const st = fcTween.scrollTrigger;
+                const current = Math.round(st.progress * fcSteps);
+                const next = Math.min(fcSteps, Math.max(0, current + (e.key === 'ArrowLeft' ? -1 : 1)));
+                window.scrollTo({ top: st.start + (next / fcSteps) * (st.end - st.start), behavior: 'smooth' });
+            });
+        }
     }
 
     window.addEventListener('load', () => {

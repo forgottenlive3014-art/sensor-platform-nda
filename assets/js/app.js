@@ -472,6 +472,32 @@ function ndaSetText(id, val) {
     const el = document.getElementById(id);
     if (el) el.textContent = val;
 }
+// Igual que ndaSetText pero para numeros: en vez de reemplazar el texto de
+// golpe, cuenta con GSAP desde el valor actual hasta el nuevo (se usa para
+// las estadisticas sismicas en vivo -- hero del home y barra de sismos.php
+// -- que llegan por API despues de cargar la pagina y se refrescan solas
+// cada 30s). prefix/suffix son texto fijo que no se anima (p.ej. "M" o
+// " km"). Si GSAP no esta disponible o el valor no es numerico, cae de
+// vuelta a texto plano.
+function ndaCountTo(id, val, decimals, prefix, suffix) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    prefix = prefix || '';
+    suffix = suffix || '';
+    const target = parseFloat(val);
+    if (typeof gsap === 'undefined' || isNaN(target)) {
+        el.textContent = prefix + val + suffix;
+        return;
+    }
+    const currentMatch = el.textContent.match(/-?\d+(\.\d+)?/);
+    const obj = { v: currentMatch ? parseFloat(currentMatch[0]) : 0 };
+    gsap.to(obj, {
+        v: target,
+        duration: 0.9,
+        ease: 'power1.out',
+        onUpdate: () => { el.textContent = prefix + (decimals ? obj.v.toFixed(decimals) : Math.round(obj.v)) + suffix; }
+    });
+}
 function ndaSetHtml(id, val) {
     const el = document.getElementById(id);
     if (el) el.innerHTML = val;
@@ -608,18 +634,19 @@ async function loadQuakes() {
         const lastDepth = Math.round(last.geometry?.coordinates?.[2] || 0);
         const lastPlace = (last.properties.place || '').split(' of ').pop()?.slice(0, 25) || '—';
 
-        // Hero stats (pagina Inicio)
-        ndaSetText('hp-quakes', h24);
-        ndaSetText('hm-today', h24);
-        ndaSetText('hm-max', maxM.toFixed(1));
-        ndaSetText('hm-depth', lastDepth);
+        // Hero stats (pagina Inicio) -- cuentan hacia el valor nuevo en vez
+        // de reemplazar el texto de golpe.
+        ndaCountTo('hp-quakes', h24);
+        ndaCountTo('hm-today', h24);
+        ndaCountTo('hm-max', maxM, 1);
+        ndaCountTo('hm-depth', lastDepth);
         ndaSetText('h3d-actividad-reciente', h24 > 0
             ? `${h24} sismo${h24 === 1 ? '' : 's'} registrados en las últimas 24 horas cerca de El Salvador, con magnitud máxima de ${maxM.toFixed(1)}.`
             : 'Sin sismos significativos registrados cerca de El Salvador en las últimas 24 horas.');
 
         // Side stats (pagina Sismos) -- todo sobre el MISMO ultimo evento real.
-        ndaSetText('sc-last', 'M' + lastMag.toFixed(1));
-        ndaSetText('sc-24h', h24);
+        ndaCountTo('sc-last', lastMag, 1, 'M');
+        ndaCountTo('sc-24h', h24);
         ndaSetHtml('sc-depth', lastDepth + '<span style="font-size:.8rem;color:var(--text3)">km</span>');
         ndaSetText('sc-time', new Date(last.properties.time).toLocaleString('es-SV', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }));
 
@@ -627,12 +654,12 @@ async function loadQuakes() {
         // ultimo sismo real reportado por USGS o EMSC, nunca de un valor
         // inventado segun la magnitud elegida en el simulador (ver botones
         // .sg-preset mas abajo, que ya NO tocan estos campos).
-        ndaSetText('sg-last-mag', 'M' + lastMag.toFixed(1));
+        ndaCountTo('sg-last-mag', lastMag, 1, 'M');
         ndaSetText('sg-last-loc', lastPlace);
-        ndaSetText('sg-today', h24);
-        ndaSetText('sg-depth-v', lastDepth + ' km');
+        ndaCountTo('sg-today', h24);
+        ndaCountTo('sg-depth-v', lastDepth, 0, '', ' km');
         ndaSetText('sg-depth-l', lastDepth <= 15 ? 'corteza superior' : lastDepth <= 40 ? 'corteza media' : 'manto superior / subducción');
-        ndaSetText('sgDepth', lastDepth + ' KM');
+        ndaCountTo('sgDepth', lastDepth, 0, '', ' KM');
 
         // Nav alert (comun a todo el sitio) -- mismo ultimo evento real.
         ndaSetText('navAlertText', `M${lastMag.toFixed(1)} · ${(last.properties.place || '').split(', ')[0]?.slice(0, 15)}`);
@@ -1115,6 +1142,7 @@ const tlData = [
 ];
 
 let tlActive = 4;
+let tlSwapTimeout = null;
 
 function renderTL() {
     const track = document.getElementById('tlTrack');
@@ -1127,17 +1155,25 @@ function renderTL() {
         </div>`
     ).join('');
 
-    const e = tlData[tlActive];
+    // El detalle no cambia de golpe: primero se desvanece el evento
+    // anterior (clase tl-fade-out, transicion CSS) y recien cuando termina
+    // ese fundido se mete el contenido nuevo y se le quita la clase para
+    // que entre con el mismo fundido en sentido inverso. Ritmo pensado
+    // para que se note pero no se sienta lento ni marea al usuario.
     const detailEl = document.getElementById('tlDetail');
+    clearTimeout(tlSwapTimeout);
+    const swapContent = () => renderTLDetail(detailEl);
+    if (!detailEl.innerHTML.trim()) {
+        swapContent();
+        return;
+    }
+    detailEl.classList.add('tl-fade-out');
+    tlSwapTimeout = setTimeout(swapContent, 280);
+}
 
-    // El detalle es el mismo nodo en todo el ciclo de vida de la pagina, asi
-    // que reemplazar su innerHTML no vuelve a disparar la animacion CSS
-    // "tlIn" (solo corre en el paso none->block/creacion). Quitamos la clase,
-    // forzamos reflow y la regresamos para que la entrada se sienta fluida
-    // cada vez que se cambia de evento, igual que el flash de stats en vivo.
-    detailEl.classList.remove('tl-detail');
-    void detailEl.offsetWidth;
-    detailEl.classList.add('tl-detail');
+function renderTLDetail(detailEl) {
+    const e = tlData[tlActive];
+    detailEl.classList.remove('tl-fade-out');
 
     detailEl.innerHTML = `
         <div class="tl-detail-inner">
@@ -1169,6 +1205,7 @@ function renderTL() {
 }
 
 window.setTL = function(i) {
+    if (i === tlActive) return;
     tlActive = i;
     renderTL();
 };
@@ -1180,6 +1217,7 @@ window.setTL = function(i) {
 // generalizada para poder tener una por pagina sin pisar tlData/renderTL.
 window.__ndaTlData = window.__ndaTlData || {};
 window.__ndaTlActive = window.__ndaTlActive || {};
+window.__ndaTlSwapTimeout = window.__ndaTlSwapTimeout || {};
 
 function ndaRenderTimeline(key) {
     const data = window.__ndaTlData[key];
@@ -1196,15 +1234,23 @@ function ndaRenderTimeline(key) {
         </div>`
     ).join('');
 
-    const e = data[active];
+    // Mismo fundido que renderTL() del home: primero desaparece el evento
+    // anterior y recien al terminar entra el nuevo, en vez de un swap seco.
+    clearTimeout(window.__ndaTlSwapTimeout[key]);
+    const swapContent = () => ndaRenderTimelineDetail(key, detail);
+    if (!detail.innerHTML.trim()) {
+        swapContent();
+        return;
+    }
+    detail.classList.add('tl-fade-out');
+    window.__ndaTlSwapTimeout[key] = setTimeout(swapContent, 280);
+}
 
-    // Mismo motivo que en renderTL(): reemplazar innerHTML no vuelve a
-    // disparar la animacion CSS "tlIn" porque el nodo nunca cambia de
-    // display. Forzamos reflow para que la entrada se sienta fluida en
-    // cada cambio de evento.
-    detail.classList.remove('tl-detail');
-    void detail.offsetWidth;
-    detail.classList.add('tl-detail');
+function ndaRenderTimelineDetail(key, detail) {
+    const data = window.__ndaTlData[key];
+    const active = window.__ndaTlActive[key] || 0;
+    const e = data[active];
+    detail.classList.remove('tl-fade-out');
 
     detail.innerHTML = `
         <div class="tl-detail-inner">
@@ -1233,6 +1279,7 @@ function ndaRenderTimeline(key) {
 }
 
 window.ndaSetTimeline = function (key, i) {
+    if (i === (window.__ndaTlActive[key] || 0)) return;
     window.__ndaTlActive[key] = i;
     ndaRenderTimeline(key);
 };
@@ -1242,6 +1289,47 @@ window.ndaInitTimeline = function (key, data) {
     window.__ndaTlActive[key] = 0;
     ndaRenderTimeline(key);
 };
+
+// Navegacion con flechas del teclado (izquierda/derecha) para cualquier
+// linea de tiempo visible en pantalla, sea la del home (tlTrack) o una de
+// las reutilizables de paginas de desastres (tlTrack-{key}). Se ignora si
+// el foco esta en un campo de texto, y solo actua sobre una linea de
+// tiempo que este realmente a la vista, para no interferir con el resto
+// de la pagina.
+document.addEventListener('keydown', function (e) {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    const activeTag = document.activeElement && document.activeElement.tagName;
+    if (activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT'
+        || (document.activeElement && document.activeElement.isContentEditable)) return;
+
+    let wrap = null;
+    document.querySelectorAll('.tl-wrap').forEach(function (w) {
+        if (wrap) return;
+        const r = w.getBoundingClientRect();
+        if (r.top < window.innerHeight * 0.85 && r.bottom > window.innerHeight * 0.15) wrap = w;
+    });
+    if (!wrap) return;
+
+    const track = wrap.querySelector('.tl-track');
+    if (!track) return;
+    const dir = e.key === 'ArrowLeft' ? -1 : 1;
+
+    if (track.id === 'tlTrack') {
+        const next = tlActive + dir;
+        if (next < 0 || next > tlData.length - 1) return;
+        e.preventDefault();
+        setTL(next);
+    } else if (track.id.indexOf('tlTrack-') === 0) {
+        const key = track.id.slice('tlTrack-'.length);
+        const data = window.__ndaTlData[key];
+        if (!data) return;
+        const active = window.__ndaTlActive[key] || 0;
+        const next = active + dir;
+        if (next < 0 || next > data.length - 1) return;
+        e.preventDefault();
+        ndaSetTimeline(key, next);
+    }
+});
 
 
 //  11. LEAFLET MAP
@@ -3491,17 +3579,16 @@ function updateRTMStats(quakes) {
     today.setHours(0, 0, 0, 0);
     const todayQ = quakes.filter(q => new Date(q.properties.time) >= today);
 
-    const el1 = document.getElementById('rtm-today');
-    if (el1) el1.textContent = todayQ.length || '—';
+    if (todayQ.length) ndaCountTo('rtm-today', todayQ.length);
+    else ndaSetText('rtm-today', '—');
 
     if (quakes.length > 0) {
         const last = quakes[0];
-        const el2 = document.getElementById('rtm-mag');
-        if (el2) el2.textContent = 'M' + last.properties.mag;
+        ndaCountTo('rtm-mag', last.properties.mag, 1, 'M');
 
         const depth = last.geometry?.coordinates?.[2];
-        const el3 = document.getElementById('rtm-depth');
-        if (el3) el3.textContent = depth ? Math.round(depth) + 'km' : '—';
+        if (depth) ndaCountTo('rtm-depth', Math.round(depth), 0, '', 'km');
+        else ndaSetText('rtm-depth', '—');
     }
 }
 

@@ -120,6 +120,102 @@
     border-color: #fff;
 }
 
+/* ---------- CONTEXTO: banner de fondo con tarjetas encima (estilo del
+   globo 3D del home, fase El Salvador) ---------- */
+.dis-context {
+    position: relative;
+    min-height: 68vh;
+    display: flex;
+    align-items: center;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+    padding: 60px 0;
+}
+.dis-context-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(6, 8, 12, .55) 0%, rgba(6, 8, 12, .72) 100%);
+}
+.dis-context-inner {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+}
+.dis-context-hd {
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto 32px;
+}
+.dis-context-eyebrow {
+    display: block;
+    font-family: var(--fd);
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .15em;
+    color: var(--v-accent);
+    margin-bottom: 10px;
+}
+.dis-context-title {
+    font-family: var(--fd);
+    font-size: clamp(1.5rem, 4vw, 2.3rem);
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.25;
+    text-shadow: 0 4px 24px rgba(0, 0, 0, .4);
+}
+.dis-context-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+.dis-context-card {
+    background: rgba(255, 255, 255, .07);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, .16);
+    border-radius: var(--v-radius);
+    padding: 18px;
+    transition: transform .25s ease, background .25s ease;
+}
+.dis-context-card:hover {
+    transform: translateY(-3px);
+    background: rgba(255, 255, 255, .1);
+}
+.dis-context-card-ico {
+    display: inline-flex;
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    background: rgba(255, 255, 255, .12);
+    color: var(--v-accent);
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+.dis-context-card h4 {
+    font-family: var(--fd);
+    font-size: .9rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+    line-height: 1.3;
+}
+.dis-context-card p {
+    font-size: .78rem;
+    color: rgba(255, 255, 255, .75);
+    line-height: 1.55;
+}
+@media (max-width: 900px) {
+    .dis-context-cards { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+    .dis-context-cards { grid-template-columns: 1fr; }
+    .dis-context { padding: 44px 0; }
+}
+
 /* ============================================================
    HERO
    ============================================================ */
@@ -3481,6 +3577,56 @@
 
 .v-grid-5 .v-card .v-card-body p {
     font-size: 0.8rem;
+}
+
+/* ---------------------------------------------------------------
+   Carrusel pineado con scroll (mismo mecanismo que .fc-carousel del
+   home, ver nda-extensions.css y home-scroll.js): .v-beneficios-scrollzone
+   es un espaciador de alto fijo; .v-beneficios-carousel queda pegada en
+   pantalla (position: sticky, no ScrollTrigger pin) mientras dura ese
+   alto; .v-beneficios-track se desplaza en horizontal segun el progreso
+   del scroll (ver volcanes.js). Solo afecta esta seccion -- .v-card y
+   .v-grid-5 siguen igual en el resto de la pagina.
+   --------------------------------------------------------------- */
+.v-beneficios-scrollzone {
+    position: relative;
+    height: 340vh;
+}
+.v-beneficios-carousel {
+    position: sticky;
+    top: calc(var(--nh) + 24px);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    height: 76vh;
+    min-height: 520px;
+}
+.v-beneficios-track {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    width: max-content;
+}
+.v-beneficios-track .v-card {
+    flex: 0 0 480px;
+}
+.v-beneficios-track .v-card .v-card-img img {
+    height: 310px;
+}
+.v-beneficios-track .v-card .v-card-body {
+    padding: 22px 24px 26px;
+}
+.v-beneficios-track .v-card .v-card-body h4 {
+    font-size: 1.15rem;
+}
+.v-beneficios-track .v-card .v-card-body p {
+    font-size: .88rem;
+}
+@media (max-width: 520px) {
+    .v-beneficios-scrollzone { height: 420vh; }
+    .v-beneficios-carousel { height: 62vh; min-height: 420px; }
+    .v-beneficios-track .v-card { flex-basis: 300px; }
+    .v-beneficios-track .v-card .v-card-img img { height: 200px; }
 }
 
 /* ============================================================

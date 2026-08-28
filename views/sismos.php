@@ -24,6 +24,39 @@ ob_start();
   <a href="#que-es-un-sismo" class="scroll-hint"><span>Scroll</span><div class="sh-arr"></div></a>
 </section>
 
+<!-- CONTEXTO RAPIDO -->
+<section class="dis-context" style="--dis-accent:#c98a3d; background-image:url('assets/media/img/Sismo.png')">
+  <div class="dis-context-overlay"></div>
+  <div class="wrap dis-context-inner">
+    <div class="dis-context-hd">
+      <span class="dis-context-eyebrow">El Salvador</span>
+      <h2 class="dis-context-title">Uno de los países más sísmicos del mundo</h2>
+    </div>
+    <div class="dis-context-cards">
+      <div class="dis-context-card">
+        <span class="dis-context-card-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
+        <h4>¿Por qué aquí?</h4>
+        <p>El país está sobre el límite entre la Placa de Cocos y la Placa del Caribe, una de las zonas de subducción más activas del mundo.</p>
+      </div>
+      <div class="dis-context-card">
+        <span class="dis-context-card-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>
+        <h4>¿Cómo se mide?</h4>
+        <p>La magnitud (energía liberada) se mide con la escala de momento; la intensidad (daño percibido) con la escala de Mercalli.</p>
+      </div>
+      <div class="dis-context-card">
+        <span class="dis-context-card-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+        <h4>Sismo más devastador</h4>
+        <p>El terremoto del 13 de enero de 2001, magnitud 7.7, dejó 1,259 fallecidos: el más letal de la historia reciente del país.</p>
+      </div>
+      <div class="dis-context-card">
+        <span class="dis-context-card-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l10 18H2L12 3z"/><path d="M12 10v4"/><path d="M12 17h.01"/></svg></span>
+        <h4>Frecuencia</h4>
+        <p>Cerca de 100 sismos perceptibles al año, aunque la gran mayoría son de baja magnitud y pasan casi desapercibidos.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ============================================================
      SECCIÓN 1: ¿QUÉ ES UN SISMO? - CON IMAGEN
      ============================================================ -->

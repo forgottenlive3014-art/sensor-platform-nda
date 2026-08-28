@@ -26,6 +26,39 @@ ob_start();
   <a href="#info-general" class="scroll-hint"><span>Scroll</span><div class="sh-arr"></div></a>
 </section>
 
+<!-- CONTEXTO RAPIDO -->
+<section class="dis-context" style="background-image:url('assets/media/img/puerto.jpg')">
+  <div class="dis-context-overlay"></div>
+  <div class="wrap dis-context-inner">
+    <div class="dis-context-hd">
+      <span class="dis-context-eyebrow">El Salvador</span>
+      <h2 class="dis-context-title">Toda la costa pacífica está en riesgo</h2>
+    </div>
+    <div class="dis-context-cards">
+      <div class="dis-context-card">
+        <span class="dis-context-card-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
+        <h4>¿Por qué aquí?</h4>
+        <p>Toda la costa está frente a la zona de subducción Cocos–Caribe, la misma falla que genera los sismos más fuertes del país.</p>
+      </div>
+      <div class="dis-context-card">
+        <span class="dis-context-card-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+        <h4>Tiempo de reacción</h4>
+        <p>Un tsunami de origen local puede llegar a la costa en minutos tras el sismo: no hay tiempo de esperar una alerta oficial.</p>
+      </div>
+      <div class="dis-context-card">
+        <span class="dis-context-card-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+        <h4>Antecedente más letal</h4>
+        <p>El tsunami de 1902 dejó 185 muertos: sigue siendo el más letal registrado en el país.</p>
+      </div>
+      <div class="dis-context-card">
+        <span class="dis-context-card-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l10 18H2L12 3z"/><path d="M12 10v4"/><path d="M12 17h.01"/></svg></span>
+        <h4>Riesgo principal</h4>
+        <p>Inundación costera que puede avanzar 1-2 km tierra adentro según la topografía de cada zona.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- INFORMACION GENERAL -->
 <section class="sec" id="info-general">
   <div class="wrap">
@@ -194,6 +227,20 @@ ob_start();
         if (prevBtn) prevBtn.addEventListener('click', prevSlide);
         if (nextBtn) nextBtn.addEventListener('click', nextSlide);
 
+        // Flechas del teclado, solo mientras el carrusel esta a la vista y
+        // no se esta escribiendo en un campo de texto.
+        document.addEventListener('keydown', function (e) {
+            if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+            var activeTag = document.activeElement && document.activeElement.tagName;
+            if (activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT') return;
+            var wrapper = track.closest('.ts-coast-carousel-wrapper');
+            if (!wrapper) return;
+            var r = wrapper.getBoundingClientRect();
+            if (r.top >= window.innerHeight * 0.85 || r.bottom <= window.innerHeight * 0.15) return;
+            e.preventDefault();
+            if (e.key === 'ArrowLeft') prevSlide(); else nextSlide();
+        });
+
         var resizeTimeout;
         window.addEventListener('resize', function () {
             clearTimeout(resizeTimeout);
@@ -219,7 +266,9 @@ ob_start();
       <div class="sec-eyebrow">Consecuencias</div>
       <h2 class="sec-title">Riesgos de un <span class="acc">tsunami</span></h2>
     </div>
-    <div class="dis-impact-grid">
+    <div class="dis-riesgos-scrollzone">
+    <div class="dis-riesgos-carousel">
+    <div class="dis-riesgos-track">
       <div class="dis-impact-card">
         <div class="dis-impact-card-img"><img src="assets/media/img/inundaci%C3%B3n%20costera.jpg" alt="Inundación costera" loading="lazy"></div>
         <h4>Inundación costera</h4><p>Arrastra viviendas, embarcaciones y vehículos hasta 1-2 km tierra adentro según la topografía.</p>
@@ -237,8 +286,65 @@ ob_start();
         <h4>Escombros y contaminación</h4><p>El agua de retorno arrastra desechos, combustibles y aguas negras hacia el mar y los esteros.</p>
       </div>
     </div>
+    </div>
+    </div>
   </div>
 </section>
+<script>
+(function () {
+    'use strict';
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initRiesgosCarousel);
+    } else {
+        initRiesgosCarousel();
+    }
+
+    function initRiesgosCarousel() {
+        if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+
+        var zone = document.querySelector('.dis-riesgos-scrollzone');
+        var carousel = document.querySelector('.dis-riesgos-carousel');
+        var track = document.querySelector('.dis-riesgos-track');
+        if (!zone || !carousel || !track) return;
+
+        var cards = track.querySelectorAll('.dis-impact-card');
+        if (!cards.length) return;
+
+        var tween = gsap.to(track, {
+            x: function () { return -Math.max(0, track.scrollWidth - carousel.clientWidth); },
+            ease: 'none',
+            scrollTrigger: {
+                trigger: zone,
+                start: 'top top+=62',
+                end: 'bottom bottom',
+                scrub: 1,
+                snap: cards.length > 1 ? {
+                    snapTo: 1 / (cards.length - 1),
+                    duration: 0.3,
+                    ease: 'power1.inOut'
+                } : false,
+                invalidateOnRefresh: true
+            }
+        });
+
+        var steps = cards.length - 1;
+        if (steps > 0) {
+            document.addEventListener('keydown', function (e) {
+                if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+                var activeTag = document.activeElement && document.activeElement.tagName;
+                if (activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT') return;
+                var r = carousel.getBoundingClientRect();
+                if (r.top >= window.innerHeight * 0.85 || r.bottom <= window.innerHeight * 0.15) return;
+                e.preventDefault();
+                var st = tween.scrollTrigger;
+                var current = Math.round(st.progress * steps);
+                var next = Math.min(steps, Math.max(0, current + (e.key === 'ArrowLeft' ? -1 : 1)));
+                window.scrollTo({ top: st.start + (next / steps) * (st.end - st.start), behavior: 'smooth' });
+            });
+        }
+    }
+})();
+</script>
 
 <!-- SISTEMA DE ALERTA -->
 <section class="sec sec-dark">

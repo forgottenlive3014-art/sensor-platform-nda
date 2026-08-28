@@ -24,6 +24,39 @@ ob_start();
   <a href="#info-general" class="scroll-hint"><span>Scroll</span><div class="sh-arr"></div></a>
 </section>
 
+<!-- CONTEXTO RAPIDO -->
+<section class="dis-context" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/Incendie%20de%20Landiras%2016%20juillet%202022.jpg')">
+  <div class="dis-context-overlay"></div>
+  <div class="wrap dis-context-inner">
+    <div class="dis-context-hd">
+      <span class="dis-context-eyebrow">El Salvador</span>
+      <h2 class="dis-context-title">La época seca multiplica el riesgo</h2>
+    </div>
+    <div class="dis-context-cards">
+      <div class="dis-context-card">
+        <span class="dis-context-card-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2s7 7.5 7 12a7 7 0 0 1-14 0c0-4.5 7-12 7-12z"/></svg></span>
+        <h4>¿Cómo se produce?</h4>
+        <p>Combustible seco, calor y una fuente de ignición: casi siempre, en el país, una quema agrícola mal manejada.</p>
+      </div>
+      <div class="dis-context-card">
+        <span class="dis-context-card-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+        <h4>Época de mayor riesgo</h4>
+        <p>Estación seca (noviembre–abril): altas temperaturas, baja humedad y quema de rastrojos para preparar tierra de cultivo.</p>
+      </div>
+      <div class="dis-context-card">
+        <span class="dis-context-card-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
+        <h4>Causa principal</h4>
+        <p>Quemas agrícolas, fogatas o colillas de cigarro mal apagadas: casi nunca son de origen natural.</p>
+      </div>
+      <div class="dis-context-card">
+        <span class="dis-context-card-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l10 18H2L12 3z"/><path d="M12 10v4"/><path d="M12 17h.01"/></svg></span>
+        <h4>Zona más propensa</h4>
+        <p>El Parque de Los Volcanes (Cerro Verde, Izalco y Santa Ana), por su vegetación seca y afluencia turística.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- INFORMACION GENERAL -->
 <section class="sec" id="info-general">
   <div class="wrap">

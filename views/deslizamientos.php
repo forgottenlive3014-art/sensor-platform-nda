@@ -11,6 +11,7 @@ ob_start();
      ============================================================ -->
 <section class="dis-bigbanner" style="background-image:url('assets/media/img/deslizamientoTierra.jpg')">
   <div class="dis-bigbanner-overlay"></div>
+  <div class="dis-particles" id="deslizamientosParticles" aria-hidden="true"></div>
   <div class="wrap dis-bigbanner-inner">
     <div class="dis-bigbanner-badge">El Salvador · Movimientos de Tierra</div>
     <h2 class="dis-bigbanner-word">Des<span class="highlight">liz</span>amientos</h2>
@@ -23,6 +24,46 @@ ob_start();
     </div>
   </div>
   <a href="#que-es" class="scroll-hint"><span>Scroll</span><div class="sh-arr"></div></a>
+</section>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    if (typeof ndaInitDisParticles === 'function') {
+        ndaInitDisParticles('deslizamientosParticles', 'deslizamientos');
+    }
+});
+</script>
+
+<!-- CONTEXTO RAPIDO -->
+<section class="dis-context" style="background-image:url('assets/media/img/riesgosD.jpg')">
+  <div class="dis-context-overlay"></div>
+  <div class="wrap dis-context-inner">
+    <div class="dis-context-hd">
+      <span class="dis-context-eyebrow">El Salvador</span>
+      <h2 class="dis-context-title">Un territorio de laderas empinadas y lluvia intensa</h2>
+    </div>
+    <div class="dis-context-cards">
+      <div class="dis-context-card">
+        <span class="dis-context-card-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
+        <h4>¿Por qué aquí?</h4>
+        <p>El principal detonante son las lluvias intensas y la actividad sísmica, combinadas con laderas empinadas.</p>
+      </div>
+      <div class="dis-context-card">
+        <span class="dis-context-card-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+        <h4>Desastre más letal</h4>
+        <p>Las Colinas, Santa Tecla (2001): 536 fallecidos tras el terremoto del 13 de enero.</p>
+      </div>
+      <div class="dis-context-card">
+        <span class="dis-context-card-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l2-5 3 10 2-7 3 5h4"/></svg></span>
+        <h4>Señal de alerta clave</h4>
+        <p>Grietas nuevas en el suelo o árboles inclinados ("pata de palo") indican movimiento activo del terreno.</p>
+      </div>
+      <div class="dis-context-card">
+        <span class="dis-context-card-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l10 18H2L12 3z"/><path d="M12 10v4"/><path d="M12 17h.01"/></svg></span>
+        <h4>Zona de mayor riesgo</h4>
+        <p>La cadena volcánica central, con flujos y lahares súbitos y rápidos.</p>
+      </div>
+    </div>
+  </div>
 </section>
 
 
