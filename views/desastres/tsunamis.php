@@ -186,7 +186,7 @@ ob_start();
             currentIndex = index;
             setTransform(true);
             updateCenterCard();
-            setTimeout(function () { snapIfInCloneZone(); isAnimating = false; }, 600);
+            setTimeout(function () { snapIfInCloneZone(); updateCenterCard(); isAnimating = false; }, 600);
         }
         function nextSlide() { goTo(currentIndex + 1); }
         function prevSlide() { goTo(currentIndex - 1); }

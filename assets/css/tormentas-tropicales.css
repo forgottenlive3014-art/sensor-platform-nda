@@ -11,3 +11,181 @@
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
 }
+
+/* ---------- TARJETA "INFO DE EL SALVADOR": texto + foto lado a lado ---------- */
+.dis-tormentas .dis-info-card-split {
+    display: flex;
+    align-items: stretch;
+    padding: 0;
+    overflow: hidden;
+    margin-top: 28px;
+}
+.dis-tormentas .dis-info-card-text {
+    flex: 1 1 55%;
+    padding: 26px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.dis-tormentas .dis-info-card-photo {
+    flex: 1 1 45%;
+    min-height: 260px;
+}
+.dis-tormentas .dis-info-card-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+@media (max-width: 700px) {
+    .dis-tormentas .dis-info-card-split {
+        flex-direction: column;
+    }
+    .dis-tormentas .dis-info-card-photo {
+        min-height: 200px;
+    }
+}
+
+/* ---------- CARRUSEL DE ZONAS EXPUESTAS ---------- */
+.dis-tormentas .in-zone-carousel-wrapper {
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: visible;
+    padding: 30px 50px;
+}
+.dis-tormentas .in-zone-carousel-track {
+    display: flex !important;
+    gap: 24px;
+    transition: transform .6s cubic-bezier(.25, .46, .45, .94);
+    will-change: transform;
+}
+.dis-tormentas .in-zone-card {
+    flex: 0 0 calc(33.333% - 16px) !important;
+    min-width: 0 !important;
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: var(--r);
+    overflow: hidden;
+    transition: all .4s ease;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, .25);
+    position: relative;
+}
+.dis-tormentas .in-zone-card-image {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+}
+.dis-tormentas .in-zone-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .6s ease;
+}
+.dis-tormentas .in-zone-card:hover .in-zone-card-image img {
+    transform: scale(1.08);
+}
+.dis-tormentas .in-zone-card.center {
+    transform: scale(1.1) !important;
+    box-shadow: 0 12px 50px rgba(0, 0, 0, .35);
+    border-color: rgba(74, 111, 165, .5);
+    z-index: 2;
+}
+.dis-tormentas .in-zone-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 50px rgba(0, 0, 0, .35);
+    border-color: var(--dis-accent);
+    z-index: 3;
+}
+.dis-tormentas .in-zone-card-body {
+    padding: 12px 16px 16px;
+}
+.dis-tormentas .in-zone-card-num {
+    font-family: var(--fd);
+    font-size: .6rem;
+    font-weight: 700;
+    color: var(--text3);
+    opacity: .6;
+    letter-spacing: .06em;
+}
+.dis-tormentas .in-zone-card-body h4 {
+    font-family: var(--fd);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 2px 0 0;
+    line-height: 1.25;
+}
+.dis-tormentas .in-zone-card-loc {
+    font-size: .78rem;
+    color: var(--text3);
+    margin-top: 4px;
+}
+.dis-tormentas .in-zone-carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--border2);
+    background: var(--card);
+    color: var(--text);
+    cursor: pointer;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    transition: all .3s ease;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, .25);
+}
+.dis-tormentas .in-zone-carousel-btn:hover {
+    background: var(--dis-accent);
+    color: #fff;
+    border-color: var(--dis-accent);
+    transform: translateY(-50%) scale(1.08);
+}
+.dis-tormentas .in-zone-carousel-btn.prev { left: 4px; }
+.dis-tormentas .in-zone-carousel-btn.next { right: 4px; }
+.dis-tormentas .in-zone-carousel-btn svg { width: 16px; height: 16px; stroke: currentColor; }
+
+@media (max-width: 1024px) {
+    .dis-tormentas .in-zone-card { flex: 0 0 calc(50% - 12px) !important; }
+    .dis-tormentas .in-zone-carousel-wrapper { padding: 20px 40px; }
+    .dis-tormentas .in-zone-card.center { transform: scale(1.06) !important; }
+}
+@media (max-width: 700px) {
+    .dis-tormentas .in-zone-card { flex: 0 0 100% !important; }
+    .dis-tormentas .in-zone-card.center { transform: scale(1) !important; }
+    .dis-tormentas .in-zone-carousel-wrapper { padding: 10px 30px; }
+    .dis-tormentas .in-zone-carousel-track { gap: 16px; }
+    .dis-tormentas .in-zone-carousel-btn { width: 32px; height: 32px; }
+    .dis-tormentas .in-zone-carousel-btn svg { width: 13px; height: 13px; }
+    .dis-tormentas .in-zone-carousel-btn.prev { left: 2px; }
+    .dis-tormentas .in-zone-carousel-btn.next { right: 2px; }
+}
+
+/* ---------- TARJETAS DE RIESGOS: imagen arriba, info abajo ---------- */
+.dis-tormentas .dis-impact-card {
+    padding: 0;
+    overflow: hidden;
+}
+.dis-tormentas .dis-impact-card-img {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+}
+.dis-tormentas .dis-impact-card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .4s ease;
+}
+.dis-tormentas .dis-impact-card:hover .dis-impact-card-img img {
+    transform: scale(1.06);
+}
+.dis-tormentas .dis-impact-card h4 {
+    margin: 14px 16px 6px;
+}
+.dis-tormentas .dis-impact-card p {
+    margin: 0 16px 16px;
+}
