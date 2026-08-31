@@ -62,25 +62,31 @@ ob_start();
   <div class="wrap">
     <h3 class="dis-subhead">Información general</h3>
     <div class="dis-info-grid">
-      <div class="dis-info-card">
+      <div class="dis-info-card" style="display:flex;flex-direction:column;justify-content:center">
         <h3>¿Qué es una sequía?</h3>
         <p>Es un déficit prolongado de lluvia respecto al patrón normal de una zona, que reduce la disponibilidad de agua para consumo humano, agricultura y ecosistemas.</p>
       </div>
-      <div class="dis-info-card">
+      <div class="dis-info-card" style="display:flex;flex-direction:column;justify-content:center">
         <h3>¿Cómo se produce?</h3>
         <p>Se origina por variabilidad climática natural —el fenómeno de El Niño reduce las lluvias en Centroamérica— o por una "canícula" (veranillo) más larga de lo normal en medio de la temporada lluviosa.</p>
+      </div>
+      <div class="dis-info-card" style="padding:0;overflow:hidden">
+        <img src="assets/media/img/Sequia.jpg" alt="Sequía" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block">
       </div>
     </div>
 
     <h3 class="dis-subhead">Información de El Salvador</h3>
     <div class="dis-info-grid">
-      <div class="dis-info-card">
+      <div class="dis-info-card" style="display:flex;flex-direction:column;justify-content:center">
         <h3>¿Por qué ocurre aquí?</h3>
         <p>El oriente del país forma parte del <strong>Corredor Seco Centroamericano</strong>, una franja con lluvias más irregulares. Ahí la agricultura depende en gran parte de granos básicos de secano (sin riego), lo que la hace muy sensible a cualquier retraso o déficit de lluvia.</p>
       </div>
-      <div class="dis-info-card">
+      <div class="dis-info-card" style="display:flex;flex-direction:column;justify-content:center">
         <h3>Impacto en El Salvador</h3>
         <p>Pérdida de cosechas de maíz y frijol, escasez de agua para consumo humano y ganado, inseguridad alimentaria en familias de subsistencia, y migración rural hacia zonas urbanas o fuera del país.</p>
+      </div>
+      <div class="dis-info-card" style="padding:0;overflow:hidden">
+        <img src="assets/media/img/sequia1.jpg" alt="Impacto de la sequía en El Salvador" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block">
       </div>
     </div>
   </div>
@@ -93,15 +99,131 @@ ob_start();
       <div class="sec-eyebrow">Mapa de Riesgo</div>
       <h2 class="sec-title">Zonas más <span class="acc">afectadas</span></h2>
     </div>
-    <div class="dis-zones">
-      <div class="dis-zone-chip"><span class="dot"></span>La Unión</div>
-      <div class="dis-zone-chip"><span class="dot"></span>Morazán</div>
-      <div class="dis-zone-chip"><span class="dot"></span>San Miguel</div>
-      <div class="dis-zone-chip"><span class="dot"></span>Parte de Usulután</div>
-      <div class="dis-zone-chip"><span class="dot"></span>Zonas secas de Chalatenango</div>
+    <div class="in-zone-carousel-wrapper">
+      <div class="in-zone-carousel-track" id="zonesCarouselTrack">
+        <div class="in-zone-card">
+          <div class="in-zone-card-image"><img src="assets/media/img/union.jpg" alt="La Unión" loading="lazy"></div>
+          <div class="in-zone-card-body"><span class="in-zone-card-num">01</span><h4>La Unión</h4><p class="in-zone-card-loc">Corredor Seco</p></div>
+        </div>
+        <div class="in-zone-card">
+          <div class="in-zone-card-image"><img src="assets/media/img/morazan.jpg" alt="Morazán" loading="lazy"></div>
+          <div class="in-zone-card-body"><span class="in-zone-card-num">02</span><h4>Morazán</h4><p class="in-zone-card-loc">Corredor Seco</p></div>
+        </div>
+        <div class="in-zone-card">
+          <div class="in-zone-card-image"><img src="assets/media/img/miguelito.jpg" alt="San Miguel" loading="lazy"></div>
+          <div class="in-zone-card-body"><span class="in-zone-card-num">03</span><h4>San Miguel</h4><p class="in-zone-card-loc">Corredor Seco</p></div>
+        </div>
+        <div class="in-zone-card">
+          <div class="in-zone-card-image"><img src="assets/media/img/usu.jpg" alt="Parte de Usulután" loading="lazy"></div>
+          <div class="in-zone-card-body"><span class="in-zone-card-num">04</span><h4>Usulután</h4><p class="in-zone-card-loc">Parte del departamento</p></div>
+        </div>
+        <div class="in-zone-card">
+          <div class="in-zone-card-image"><img src="assets/media/img/chalate.jpg" alt="Zonas secas de Chalatenango" loading="lazy"></div>
+          <div class="in-zone-card-body"><span class="in-zone-card-num">05</span><h4>Chalatenango</h4><p class="in-zone-card-loc">Zonas secas</p></div>
+        </div>
+      </div>
+      <button class="in-zone-carousel-btn prev" id="zonesPrev">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button class="in-zone-carousel-btn next" id="zonesNext">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
     </div>
   </div>
 </section>
+<script>
+(function () {
+    'use strict';
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initZonesCarousel);
+    } else {
+        initZonesCarousel();
+    }
+
+    function initZonesCarousel() {
+        var track = document.getElementById('zonesCarouselTrack');
+        var prevBtn = document.getElementById('zonesPrev');
+        var nextBtn = document.getElementById('zonesNext');
+        if (!track) return;
+
+        var originalCards = Array.prototype.slice.call(track.querySelectorAll('.in-zone-card'));
+        var realTotal = originalCards.length;
+        if (realTotal === 0) return;
+
+        var EDGE = 3;
+        var headClones = originalCards.slice(-EDGE).map(function (c) { return c.cloneNode(true); });
+        var tailClones = originalCards.slice(0, EDGE).map(function (c) { return c.cloneNode(true); });
+        headClones.forEach(function (c) { c.setAttribute('aria-hidden', 'true'); track.insertBefore(c, track.firstChild); });
+        tailClones.forEach(function (c) { c.setAttribute('aria-hidden', 'true'); track.appendChild(c); });
+
+        var cards = Array.prototype.slice.call(track.querySelectorAll('.in-zone-card'));
+        var currentIndex = EDGE;
+        var visibleCards = 3;
+        var isAnimating = false;
+
+        function getVisibleCards() {
+            if (window.innerWidth <= 700) return 1;
+            if (window.innerWidth <= 1024) return 2;
+            return 3;
+        }
+        function getCardWidth() {
+            var gap = parseFloat(window.getComputedStyle(track).columnGap) || 0;
+            return cards[0].getBoundingClientRect().width + gap;
+        }
+        function setTransform(withTransition) {
+            track.style.transition = withTransition ? '' : 'none';
+            track.style.transform = 'translateX(-' + (currentIndex * getCardWidth()) + 'px)';
+            if (!withTransition) void track.offsetWidth;
+        }
+        function updateCarousel() {
+            visibleCards = getVisibleCards();
+            setTransform(true);
+            updateCenterCard();
+        }
+        function updateCenterCard() {
+            var centerIndex = currentIndex + Math.floor(visibleCards / 2);
+            cards.forEach(function (card, i) { card.classList.toggle('center', i === centerIndex); });
+        }
+        function snapIfInCloneZone() {
+            if (currentIndex < EDGE) {
+                currentIndex += realTotal;
+                setTransform(false);
+            } else if (currentIndex >= EDGE + realTotal) {
+                currentIndex -= realTotal;
+                setTransform(false);
+            }
+        }
+        function goTo(index) {
+            if (isAnimating) return;
+            isAnimating = true;
+            currentIndex = index;
+            setTransform(true);
+            updateCenterCard();
+            setTimeout(function () { snapIfInCloneZone(); updateCenterCard(); isAnimating = false; }, 600);
+        }
+        function nextSlide() { goTo(currentIndex + 1); }
+        function prevSlide() { goTo(currentIndex - 1); }
+
+        if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+        if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+
+        var resizeTimeout;
+        window.addEventListener('resize', function () {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function () {
+                visibleCards = getVisibleCards();
+                setTransform(false);
+                updateCenterCard();
+            }, 200);
+        });
+
+        setTimeout(function () { setTransform(false); updateCenterCard(); }, 300);
+        window.addEventListener('load', function () {
+            setTimeout(function () { setTransform(false); updateCenterCard(); }, 100);
+        });
+    }
+})();
+</script>
 
 <!-- RIESGOS -->
 <section class="sec">

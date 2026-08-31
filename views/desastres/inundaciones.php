@@ -61,30 +61,20 @@ ob_start();
 <section class="sec" id="info-general">
   <div class="wrap">
     <h3 class="dis-subhead">Información general</h3>
-    <div class="dis-info-grid">
+    <div class="dis-info-grid dis-info-grid-2">
       <div class="dis-info-card">
         <h3>¿Qué es?</h3>
-        <p>Ocurre cuando el volumen de agua supera la capacidad de un río, quebrada o del suelo para contenerla o absorberla, cubriendo áreas que normalmente están secas.</p>
+        <p>Ocurre cuando el volumen de agua supera la capacidad de un río, quebrada o del suelo para contenerla, cubriendo áreas normalmente secas. Las lluvias intensas y prolongadas saturan el suelo, así que cada nuevo aguacero corre por la superficie en vez de infiltrarse.</p>
+        <div class="dis-info-card-img">
+          <img src="assets/media/img/inundaciones.jpg" alt="Inundación" loading="lazy">
+        </div>
       </div>
       <div class="dis-info-card">
-        <h3>Causas</h3>
-        <p>Lluvias intensas y prolongadas saturan el suelo; a partir de ahí, cada nuevo aguacero corre por la superficie en vez de infiltrarse, haciendo crecer ríos y quebradas hasta desbordarlos.</p>
-      </div>
-      <div class="dis-info-card">
-        <h3>Tipos</h3>
-        <p><strong>Fluviales</strong> (un río se desborda tras días de lluvia), <strong>repentinas o "flash floods"</strong> (quebradas que crecen en minutos por lluvia cercana) y <strong>urbanas</strong> (el agua no drena por falta de infraestructura pluvial).</p>
-      </div>
-    </div>
-
-    <h3 class="dis-subhead">Información de El Salvador</h3>
-    <div class="dis-info-grid">
-      <div class="dis-info-card">
-        <h3>¿Por qué ocurre aquí?</h3>
-        <p>Es un territorio pequeño y montañoso: los ríos recorren poca distancia con mucha pendiente, así que suben muy rápido. Sumado a eso, la alta densidad urbana reduce la infiltración natural del agua.</p>
-      </div>
-      <div class="dis-info-card">
-        <h3>Temporada lluviosa</h3>
-        <p>La temporada de lluvias va de mayo a noviembre, con el mayor riesgo entre septiembre y octubre, cuando el suelo ya está saturado por meses de lluvia acumulada y cualquier sistema tropical adicional puede desbordar ríos rápidamente.</p>
+        <h3>Información de El Salvador</h3>
+        <p>Es un territorio pequeño y montañoso, así que los ríos suben muy rápido, y la alta densidad urbana reduce la infiltración natural del agua. La temporada lluviosa va de mayo a noviembre, con el mayor riesgo entre septiembre y octubre, cuando el suelo ya está saturado.</p>
+        <div class="dis-info-card-img">
+          <img src="assets/media/img/inundacion%202.jpg" alt="Inundación en El Salvador" loading="lazy">
+        </div>
       </div>
     </div>
   </div>
@@ -97,15 +87,131 @@ ob_start();
       <div class="sec-eyebrow">Mapa de Riesgo</div>
       <h2 class="sec-title">Zonas más <span class="acc">propensas</span></h2>
     </div>
-    <div class="dis-zones">
-      <div class="dis-zone-chip"><span class="dot"></span>Bajo Lempa (Usulután / San Vicente)</div>
-      <div class="dis-zone-chip"><span class="dot"></span>Cuenca del río Acelhuate, San Salvador</div>
-      <div class="dis-zone-chip"><span class="dot"></span>Ciudad Delgado y zonas bajas de Mejicanos</div>
-      <div class="dis-zone-chip"><span class="dot"></span>Bajo Río Grande de San Miguel</div>
-      <div class="dis-zone-chip"><span class="dot"></span>Zonas costeras con desembocaduras de ríos</div>
+    <div class="in-zone-carousel-wrapper">
+      <div class="in-zone-carousel-track" id="zonesCarouselTrack">
+        <div class="in-zone-card">
+          <div class="in-zone-card-image"><img src="assets/media/img/lempa.jpg" alt="Bajo Lempa" loading="lazy"></div>
+          <div class="in-zone-card-body"><span class="in-zone-card-num">01</span><h4>Bajo Lempa</h4><p class="in-zone-card-loc">Usulután / San Vicente</p></div>
+        </div>
+        <div class="in-zone-card">
+          <div class="in-zone-card-image"><img src="assets/media/img/acelhuate.jpg" alt="Cuenca del río Acelhuate" loading="lazy"></div>
+          <div class="in-zone-card-body"><span class="in-zone-card-num">02</span><h4>Cuenca del río Acelhuate</h4><p class="in-zone-card-loc">San Salvador</p></div>
+        </div>
+        <div class="in-zone-card">
+          <div class="in-zone-card-image"><img src="assets/media/img/mejicanos.jpg" alt="Ciudad Delgado y Mejicanos" loading="lazy"></div>
+          <div class="in-zone-card-body"><span class="in-zone-card-num">03</span><h4>Ciudad Delgado y Mejicanos</h4><p class="in-zone-card-loc">Zonas bajas</p></div>
+        </div>
+        <div class="in-zone-card">
+          <div class="in-zone-card-image"><img src="assets/media/img/san%20miguel.jpg" alt="Bajo Río Grande de San Miguel" loading="lazy"></div>
+          <div class="in-zone-card-body"><span class="in-zone-card-num">04</span><h4>Bajo Río Grande</h4><p class="in-zone-card-loc">San Miguel</p></div>
+        </div>
+        <div class="in-zone-card">
+          <div class="in-zone-card-image"><img src="assets/media/img/costeras.jpg" alt="Zonas costeras" loading="lazy"></div>
+          <div class="in-zone-card-body"><span class="in-zone-card-num">05</span><h4>Zonas costeras</h4><p class="in-zone-card-loc">Desembocaduras de ríos</p></div>
+        </div>
+      </div>
+      <button class="in-zone-carousel-btn prev" id="zonesPrev">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button class="in-zone-carousel-btn next" id="zonesNext">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
     </div>
   </div>
 </section>
+<script>
+(function () {
+    'use strict';
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initZonesCarousel);
+    } else {
+        initZonesCarousel();
+    }
+
+    function initZonesCarousel() {
+        var track = document.getElementById('zonesCarouselTrack');
+        var prevBtn = document.getElementById('zonesPrev');
+        var nextBtn = document.getElementById('zonesNext');
+        if (!track) return;
+
+        var originalCards = Array.prototype.slice.call(track.querySelectorAll('.in-zone-card'));
+        var realTotal = originalCards.length;
+        if (realTotal === 0) return;
+
+        var EDGE = 3;
+        var headClones = originalCards.slice(-EDGE).map(function (c) { return c.cloneNode(true); });
+        var tailClones = originalCards.slice(0, EDGE).map(function (c) { return c.cloneNode(true); });
+        headClones.forEach(function (c) { c.setAttribute('aria-hidden', 'true'); track.insertBefore(c, track.firstChild); });
+        tailClones.forEach(function (c) { c.setAttribute('aria-hidden', 'true'); track.appendChild(c); });
+
+        var cards = Array.prototype.slice.call(track.querySelectorAll('.in-zone-card'));
+        var currentIndex = EDGE;
+        var visibleCards = 3;
+        var isAnimating = false;
+
+        function getVisibleCards() {
+            if (window.innerWidth <= 700) return 1;
+            if (window.innerWidth <= 1024) return 2;
+            return 3;
+        }
+        function getCardWidth() {
+            var gap = parseFloat(window.getComputedStyle(track).columnGap) || 0;
+            return cards[0].getBoundingClientRect().width + gap;
+        }
+        function setTransform(withTransition) {
+            track.style.transition = withTransition ? '' : 'none';
+            track.style.transform = 'translateX(-' + (currentIndex * getCardWidth()) + 'px)';
+            if (!withTransition) void track.offsetWidth;
+        }
+        function updateCarousel() {
+            visibleCards = getVisibleCards();
+            setTransform(true);
+            updateCenterCard();
+        }
+        function updateCenterCard() {
+            var centerIndex = currentIndex + Math.floor(visibleCards / 2);
+            cards.forEach(function (card, i) { card.classList.toggle('center', i === centerIndex); });
+        }
+        function snapIfInCloneZone() {
+            if (currentIndex < EDGE) {
+                currentIndex += realTotal;
+                setTransform(false);
+            } else if (currentIndex >= EDGE + realTotal) {
+                currentIndex -= realTotal;
+                setTransform(false);
+            }
+        }
+        function goTo(index) {
+            if (isAnimating) return;
+            isAnimating = true;
+            currentIndex = index;
+            setTransform(true);
+            updateCenterCard();
+            setTimeout(function () { snapIfInCloneZone(); updateCenterCard(); isAnimating = false; }, 600);
+        }
+        function nextSlide() { goTo(currentIndex + 1); }
+        function prevSlide() { goTo(currentIndex - 1); }
+
+        if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+        if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+
+        var resizeTimeout;
+        window.addEventListener('resize', function () {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function () {
+                visibleCards = getVisibleCards();
+                setTransform(false);
+                updateCenterCard();
+            }, 200);
+        });
+
+        setTimeout(function () { setTransform(false); updateCenterCard(); }, 300);
+        window.addEventListener('load', function () {
+            setTimeout(function () { setTransform(false); updateCenterCard(); }, 100);
+        });
+    }
+})();
+</script>
 
 <!-- RIESGOS -->
 <section class="sec">
@@ -115,10 +221,22 @@ ob_start();
       <h2 class="sec-title">Riesgos de una <span class="acc">inundación</span></h2>
     </div>
     <div class="dis-impact-grid">
-      <div class="dis-impact-card"><h4>Pérdida de cosechas</h4><p>Los cultivos de subsistencia en zonas bajas son de los más afectados por cada temporada de lluvia.</p></div>
-      <div class="dis-impact-card"><h4>Viviendas anegadas</h4><p>Comunidades enteras quedan bajo agua, muchas veces con pérdida total de enseres.</p></div>
-      <div class="dis-impact-card"><h4>Enfermedades</h4><p>El agua estancada aumenta el riesgo de dengue, leptospirosis y enfermedades gastrointestinales.</p></div>
-      <div class="dis-impact-card"><h4>Vías interrumpidas</h4><p>Puentes y carreteras quedan bajo agua o dañados, aislando comunidades por días.</p></div>
+      <div class="dis-impact-card">
+        <div class="dis-impact-card-img"><img src="assets/media/img/perdida.jpg" alt="Pérdida de cosechas" loading="lazy"></div>
+        <h4>Pérdida de cosechas</h4><p>Los cultivos de subsistencia en zonas bajas son de los más afectados por cada temporada de lluvia.</p>
+      </div>
+      <div class="dis-impact-card">
+        <div class="dis-impact-card-img"><img src="assets/media/img/vivienda.jpg" alt="Viviendas anegadas" loading="lazy"></div>
+        <h4>Viviendas anegadas</h4><p>Comunidades enteras quedan bajo agua, muchas veces con pérdida total de enseres.</p>
+      </div>
+      <div class="dis-impact-card">
+        <div class="dis-impact-card-img"><img src="assets/media/img/estancada.jpeg" alt="Enfermedades" loading="lazy"></div>
+        <h4>Enfermedades</h4><p>El agua estancada aumenta el riesgo de dengue, leptospirosis y enfermedades gastrointestinales.</p>
+      </div>
+      <div class="dis-impact-card">
+        <div class="dis-impact-card-img"><img src="assets/media/img/vias.jpg" alt="Vías interrumpidas" loading="lazy"></div>
+        <h4>Vías interrumpidas</h4><p>Puentes y carreteras quedan bajo agua o dañados, aislando comunidades por días.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -185,26 +303,26 @@ ob_start();
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     ndaInitTimeline('inundaciones', [
-        { year: '1998', title: 'Huracán Mitch', badge: 'Histórico', region: 'Todo El Salvador',
-          desc: 'Uno de los huracanes más devastadores de la historia centroamericana; sus lluvias provocaron inundaciones y deslaves masivos en todo El Salvador.',
+        { year: '1998', title: 'Huracán Mitch', badge: '861 mm de lluvia', region: 'Todo El Salvador',
+          desc: 'Uno de los eventos meteorológicos más destructivos de la década de 1990. Sus lluvias provocaron inundaciones, desbordamientos de ríos y deslizamientos en diferentes zonas de El Salvador. Se registró un acumulado de aproximadamente 861 mm de lluvia.',
           tags: [{ t: 'Histórico', c: '' }],
-          stats: [{ v: '1998', l: 'Año' }],
-          img: 'assets/media/desastres/inundaciones/1998-mitch.jpg' },
-        { year: '2009', title: 'Tormenta tropical Ida', badge: '198 muertos', region: 'San Vicente, San Miguel',
-          desc: 'El 8 de noviembre de 2009 dejó lluvias acumuladas de más de 400 mm en algunas zonas, el río Grande de San Miguel se desbordó y un deslave en San Vicente sepultó a decenas de personas.',
-          tags: [{ t: '198 muertos', c: 'r' }, { t: '15,000 damnificados', c: 'o' }],
-          stats: [{ v: '198', l: 'Fallecidos' }, { v: '15,000', l: 'Damnificados' }, { v: '2009', l: 'Año' }],
-          img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Lo%20que%20dejo%20a%20su%20paso%20el%20huracan%20Ida%20(7%2C8%20Noviembre%202009)%20Playa%20de%20Las%20Hojas.%20-%20panoramio%20(3).jpg' },
-        { year: '2011', title: 'Depresión Tropical 12-E', badge: '34 muertos', region: 'Zona central',
-          desc: 'En octubre de 2011 dejó acumulados de más de 500 mm en 48 horas, con 34 muertos y 50,000 damnificados en la zona central del país.',
-          tags: [{ t: '34 muertos', c: 'r' }],
-          stats: [{ v: '34', l: 'Fallecidos' }, { v: '50,000', l: 'Damnificados' }, { v: '2011', l: 'Año' }],
-          img: 'assets/media/desastres/inundaciones/2011-dt12e.jpg' },
-        { year: '2020', title: 'Tormentas Amanda y Cristóbal', badge: '31 muertos', region: 'San Salvador, La Libertad, Cuscatlán',
-          desc: 'Golpearon en plena pandemia de COVID-19: Amanda dejó 31 muertos y más de 7,000 personas en albergues; Cristóbal prolongó la emergencia días después.',
-          tags: [{ t: '31 muertos', c: 'r' }, { t: 'Pandemia', c: 't' }],
-          stats: [{ v: '31', l: 'Fallecidos' }, { v: '7,000', l: 'Albergados' }, { v: '2020', l: 'Año' }],
-          img: 'assets/media/desastres/inundaciones/2020-amanda.jpg' }
+          stats: [{ v: '861 mm', l: 'Lluvia acumulada' }, { v: '1998', l: 'Año' }],
+          img: 'assets/media/img/mitch.jpg' },
+        { year: '2009', title: 'Tormenta Tropical Ida', badge: '13,680 albergados', region: 'Zona costera y San Vicente',
+          desc: 'Las lluvias asociadas a la Tormenta Tropical Ida provocaron graves inundaciones, especialmente en la zona costera. El desbordamiento de ríos como el Acelhuate, Jiboa, Quezalapa y Acahuapa causó daños en viviendas, cultivos y otras infraestructuras.',
+          tags: [{ t: 'Emergencia Nacional', c: 'o' }],
+          stats: [{ v: '13,680', l: 'Albergados' }, { v: '2009', l: 'Año' }],
+          img: 'assets/media/img/ida.jpg' },
+        { year: '2011', title: 'Depresión Tropical 12-E', badge: '10% territorio anegado', region: 'Costa y cadena volcánica',
+          desc: 'Las lluvias persistentes de la Depresión Tropical 12-E provocaron inundaciones y deslizamientos en gran parte del país. El desbordamiento de numerosos ríos afectó principalmente la zona costera y la cadena volcánica.',
+          tags: [{ t: 'Emergencia Nacional', c: 'o' }],
+          stats: [{ v: '1,256 mm', l: 'Lluvia acumulada' }, { v: '10%', l: 'Territorio anegado' }, { v: '2011', l: 'Año' }],
+          img: 'assets/media/img/12e.jpg' },
+        { year: '2020', title: 'Tormentas Amanda y Cristóbal', badge: 'SNPC activado', region: 'Diferentes zonas del país',
+          desc: 'Las tormentas Amanda y Cristóbal generaron un fuerte temporal que provocó inundaciones, desbordamientos de ríos y deslizamientos en diferentes partes del territorio. Las autoridades activaron alertas debido al riesgo provocado por las lluvias.',
+          tags: [{ t: 'Emergencia Nacional', c: 'o' }],
+          stats: [{ v: 'Activo', l: 'Sistema Nacional de Protección Civil' }, { v: '2020', l: 'Año' }],
+          img: 'assets/media/img/amanda.jpeg' }
     ]);
 });
 </script>
@@ -233,7 +351,9 @@ document.addEventListener('DOMContentLoaded', function () {
       <h2 class="sec-title">Fuentes <span class="acc">oficiales</span> consultadas</h2>
     </div>
     <div class="dis-sources">
-      <a class="dis-source-item" href="https://www.snet.gob.sv/" target="_blank">MARN — DGOA/SNET, Observatorio de Amenazas</a>
+      <a class="dis-source-item" href="https://www.proteccioncivil.gob.sv/?utm_source" target="_blank">Dirección General de Protección Civil</a>
+      <a class="dis-source-item" href="https://www.proteccioncivil.gob.sv/contactenos/?utm_source" target="_blank">Contacto de Protección Civil</a>
+      <a class="dis-source-item" href="https://snet.gob.sv/?utm_source" target="_blank">MARN — Observatorio de Amenazas</a>
     </div>
     <p style="text-align:center;margin-top:24px">
       <a href="?url=home#zona-sismica" class="btn-out">← Ver mapa de peligros</a>

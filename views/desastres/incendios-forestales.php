@@ -74,10 +74,10 @@ ob_start();
         <h3>Prevención</h3>
         <p>Evitar quemas agrícolas y fogatas en época seca, mantener rondas cortafuego alrededor de áreas naturales, y reportar humo sospechoso apenas se detecta.</p>
       </div>
-      
+    </div>
 
     <h3 class="dis-subhead">Información de El Salvador</h3>
-    <div class="dis-info-grid">
+    <div class="dis-info-grid" style="grid-template-columns:1fr">
       <div class="dis-info-card">
         <h3>Época seca</h3>
         <p>La estación seca (noviembre a abril) trae altas temperaturas y baja humedad, justo cuando es más común la quema de rastrojos para preparar tierra de cultivo o cosechar caña de azúcar, una práctica muy extendida en el país.</p>
@@ -93,15 +93,131 @@ ob_start();
       <div class="sec-eyebrow">Mapa de Riesgo</div>
       <h2 class="sec-title">Zonas más <span class="acc">propensas</span></h2>
     </div>
-    <div class="dis-zones">
-      <div class="dis-zone-chip"><span class="dot"></span>Parque Nacional El Imposible, Ahuachapán</div>
-      <div class="dis-zone-chip"><span class="dot"></span>Parque de Los Volcanes (Cerro Verde, Izalco, Santa Ana)</div>
-      <div class="dis-zone-chip"><span class="dot"></span>Bosque de Montecristo (Trifinio)</div>
-      <div class="dis-zone-chip"><span class="dot"></span>Cordillera del Bálsamo</div>
-      <div class="dis-zone-chip"><span class="dot"></span>Zonas cañeras de la costa</div>
+    <div class="in-zone-carousel-wrapper">
+      <div class="in-zone-carousel-track" id="zonesCarouselTrack">
+        <div class="in-zone-card">
+          <div class="in-zone-card-image"><img src="assets/media/img/imposible.jpg" alt="Parque Nacional El Imposible" loading="lazy"></div>
+          <div class="in-zone-card-body"><span class="in-zone-card-num">01</span><h4>Parque Nacional El Imposible</h4><p class="in-zone-card-loc">Ahuachapán</p></div>
+        </div>
+        <div class="in-zone-card">
+          <div class="in-zone-card-image"><img src="assets/media/img/tres.jpg" alt="Parque de Los Volcanes" loading="lazy"></div>
+          <div class="in-zone-card-body"><span class="in-zone-card-num">02</span><h4>Parque de Los Volcanes</h4><p class="in-zone-card-loc">Cerro Verde, Izalco, Santa Ana</p></div>
+        </div>
+        <div class="in-zone-card">
+          <div class="in-zone-card-image"><img src="assets/media/img/monte.jpg" alt="Bosque de Montecristo" loading="lazy"></div>
+          <div class="in-zone-card-body"><span class="in-zone-card-num">03</span><h4>Bosque de Montecristo</h4><p class="in-zone-card-loc">Trifinio</p></div>
+        </div>
+        <div class="in-zone-card">
+          <div class="in-zone-card-image"><img src="assets/media/img/cordillera.jpg" alt="Cordillera del Bálsamo" loading="lazy"></div>
+          <div class="in-zone-card-body"><span class="in-zone-card-num">04</span><h4>Cordillera del Bálsamo</h4><p class="in-zone-card-loc">Zona central</p></div>
+        </div>
+        <div class="in-zone-card">
+          <div class="in-zone-card-image"><img src="assets/media/img/ca%C3%B1era.jpg" alt="Zonas cañeras de la costa" loading="lazy"></div>
+          <div class="in-zone-card-body"><span class="in-zone-card-num">05</span><h4>Zonas cañeras</h4><p class="in-zone-card-loc">Costa</p></div>
+        </div>
+      </div>
+      <button class="in-zone-carousel-btn prev" id="zonesPrev">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button class="in-zone-carousel-btn next" id="zonesNext">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
     </div>
   </div>
 </section>
+<script>
+(function () {
+    'use strict';
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initZonesCarousel);
+    } else {
+        initZonesCarousel();
+    }
+
+    function initZonesCarousel() {
+        var track = document.getElementById('zonesCarouselTrack');
+        var prevBtn = document.getElementById('zonesPrev');
+        var nextBtn = document.getElementById('zonesNext');
+        if (!track) return;
+
+        var originalCards = Array.prototype.slice.call(track.querySelectorAll('.in-zone-card'));
+        var realTotal = originalCards.length;
+        if (realTotal === 0) return;
+
+        var EDGE = 3;
+        var headClones = originalCards.slice(-EDGE).map(function (c) { return c.cloneNode(true); });
+        var tailClones = originalCards.slice(0, EDGE).map(function (c) { return c.cloneNode(true); });
+        headClones.forEach(function (c) { c.setAttribute('aria-hidden', 'true'); track.insertBefore(c, track.firstChild); });
+        tailClones.forEach(function (c) { c.setAttribute('aria-hidden', 'true'); track.appendChild(c); });
+
+        var cards = Array.prototype.slice.call(track.querySelectorAll('.in-zone-card'));
+        var currentIndex = EDGE;
+        var visibleCards = 3;
+        var isAnimating = false;
+
+        function getVisibleCards() {
+            if (window.innerWidth <= 700) return 1;
+            if (window.innerWidth <= 1024) return 2;
+            return 3;
+        }
+        function getCardWidth() {
+            var gap = parseFloat(window.getComputedStyle(track).columnGap) || 0;
+            return cards[0].getBoundingClientRect().width + gap;
+        }
+        function setTransform(withTransition) {
+            track.style.transition = withTransition ? '' : 'none';
+            track.style.transform = 'translateX(-' + (currentIndex * getCardWidth()) + 'px)';
+            if (!withTransition) void track.offsetWidth;
+        }
+        function updateCarousel() {
+            visibleCards = getVisibleCards();
+            setTransform(true);
+            updateCenterCard();
+        }
+        function updateCenterCard() {
+            var centerIndex = currentIndex + Math.floor(visibleCards / 2);
+            cards.forEach(function (card, i) { card.classList.toggle('center', i === centerIndex); });
+        }
+        function snapIfInCloneZone() {
+            if (currentIndex < EDGE) {
+                currentIndex += realTotal;
+                setTransform(false);
+            } else if (currentIndex >= EDGE + realTotal) {
+                currentIndex -= realTotal;
+                setTransform(false);
+            }
+        }
+        function goTo(index) {
+            if (isAnimating) return;
+            isAnimating = true;
+            currentIndex = index;
+            setTransform(true);
+            updateCenterCard();
+            setTimeout(function () { snapIfInCloneZone(); updateCenterCard(); isAnimating = false; }, 600);
+        }
+        function nextSlide() { goTo(currentIndex + 1); }
+        function prevSlide() { goTo(currentIndex - 1); }
+
+        if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+        if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+
+        var resizeTimeout;
+        window.addEventListener('resize', function () {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function () {
+                visibleCards = getVisibleCards();
+                setTransform(false);
+                updateCenterCard();
+            }, 200);
+        });
+
+        setTimeout(function () { setTransform(false); updateCenterCard(); }, 300);
+        window.addEventListener('load', function () {
+            setTimeout(function () { setTransform(false); updateCenterCard(); }, 100);
+        });
+    }
+})();
+</script>
 
 <!-- RIESGOS -->
 <section class="sec">
@@ -111,10 +227,22 @@ ob_start();
       <h2 class="sec-title">Riesgos de un <span class="acc">incendio forestal</span></h2>
     </div>
     <div class="dis-impact-grid">
-      <div class="dis-impact-card"><h4>Pérdida de bosque</h4><p>Áreas naturales protegidas tardan años o décadas en recuperar su cobertura original.</p></div>
-      <div class="dis-impact-card"><h4>Daño a fauna</h4><p>Especies que no logran escapar a tiempo mueren o pierden su hábitat.</p></div>
-      <div class="dis-impact-card"><h4>Suelo más erosionable</h4><p>Sin cobertura vegetal, la siguiente temporada de lluvia trae más riesgo de deslizamientos e inundación.</p></div>
-      <div class="dis-impact-card"><h4>Mala calidad del aire</h4><p>El humo afecta la salud respiratoria de comunidades cercanas, incluso a varios kilómetros.</p></div>
+      <div class="dis-impact-card">
+        <div class="dis-impact-card-img"><img src="assets/media/img/bosque.jpg" alt="Pérdida de bosque" loading="lazy"></div>
+        <h4>Pérdida de bosque</h4><p>Áreas naturales protegidas tardan años o décadas en recuperar su cobertura original.</p>
+      </div>
+      <div class="dis-impact-card">
+        <div class="dis-impact-card-img"><img src="assets/media/img/animales.jpg" alt="Daño a fauna" loading="lazy"></div>
+        <h4>Daño a fauna</h4><p>Especies que no logran escapar a tiempo mueren o pierden su hábitat.</p>
+      </div>
+      <div class="dis-impact-card">
+        <div class="dis-impact-card-img"><img src="assets/media/img/suelo.jpg" alt="Suelo más erosionable" loading="lazy"></div>
+        <h4>Suelo más erosionable</h4><p>Sin cobertura vegetal, la siguiente temporada de lluvia trae más riesgo de deslizamientos e inundación.</p>
+      </div>
+      <div class="dis-impact-card">
+        <div class="dis-impact-card-img"><img src="assets/media/img/aire.jpg" alt="Mala calidad del aire" loading="lazy"></div>
+        <h4>Mala calidad del aire</h4><p>El humo afecta la salud respiratoria de comunidades cercanas, incluso a varios kilómetros.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -181,11 +309,31 @@ ob_start();
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     ndaInitTimeline('incendios', [
-        { year: 'Nov–Abr', title: 'Temporada de incendios forestales', badge: 'Recurrente cada año', region: 'El Imposible, Los Volcanes, Montecristo',
-          desc: 'El MARN y el Cuerpo de Bomberos registran cientos de conatos e incendios forestales cada estación seca, concentrados en áreas naturales protegidas. La mayoría se originan por quemas agrícolas.',
-          tags: [{ t: 'Estacional', c: 'o' }, { t: 'Origen humano', c: 't' }],
-          stats: [{ v: 'Nov–Abr', l: 'Temporada' }],
-          img: 'assets/media/desastres/incendios/temporada.jpg' }
+        { year: '2017', title: 'Gran temporada de incendios forestales', badge: '2,624 ha afectadas', region: 'San Vicente y otros departamentos',
+          desc: 'Aumentaron 29.3% los incendios respecto a 2016 y se afectaron 2,624 hectáreas. San Vicente y otros departamentos registraron incendios de gran magnitud.',
+          tags: [{ t: 'Estacional', c: 'o' }],
+          stats: [{ v: '29.3%', l: 'Incremento vs. 2016' }, { v: '2,624 ha', l: 'Área afectada' }, { v: '2017', l: 'Año' }],
+          img: 'assets/media/img/2017%201.jpg' },
+        { year: '2017', title: 'Parque Walter Thilo Deininger', badge: '800 manzanas afectadas', region: 'La Libertad',
+          desc: 'Un incendio forestal afectó aproximadamente 800 manzanas de terreno en el parque, provocando importantes daños ambientales.',
+          tags: [{ t: 'Área protegida', c: 't' }],
+          stats: [{ v: '800 mz', l: 'Área afectada' }, { v: '2017', l: 'Año' }],
+          img: 'assets/media/img/2017%202.jpg' },
+        { year: '2021', title: 'Mercado Municipal de Santa Ana', badge: '2,000 puestos destruidos', region: 'Santa Ana',
+          desc: 'El incendio del 10 de marzo destruyó aproximadamente 2,000 puestos de venta y dejó grandes pérdidas económicas para los comerciantes.',
+          tags: [{ t: 'Incendio urbano', c: 'r' }],
+          stats: [{ v: '2,000', l: 'Puestos destruidos' }, { v: '2021', l: 'Año' }],
+          img: 'assets/media/img/santa%20ana.jpg' },
+        { year: '2021', title: 'Mercado San Miguelito', badge: 'Mercado histórico afectado', region: 'San Salvador',
+          desc: 'Un incendio destruyó una gran cantidad de locales y puestos del histórico mercado de San Salvador, afectando a numerosos comerciantes.',
+          tags: [{ t: 'Incendio urbano', c: 'r' }],
+          stats: [{ v: '2021', l: 'Año' }],
+          img: 'assets/media/img/miguelito.jpg' },
+        { year: '2022', title: 'Emergencia Nacional por incendios', badge: 'Estado de Emergencia', region: 'Todo El Salvador',
+          desc: 'El incremento de incendios forestales llevó a declarar Estado de Emergencia Nacional debido a las condiciones de sequedad y fuertes vientos.',
+          tags: [{ t: 'Emergencia Nacional', c: 'o' }],
+          stats: [{ v: '2022', l: 'Año' }],
+          img: 'assets/media/img/2022.jpg' }
     ]);
 });
 </script>

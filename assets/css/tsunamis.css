@@ -27,8 +27,9 @@
 /* ---------- CARRUSEL DE COMUNIDADES COSTERAS ---------- */
 .dis-tsunamis .ts-coast-carousel-wrapper {
     position: relative;
-    overflow: hidden;
-    padding: 10px 50px 10px;
+    overflow-x: hidden;
+    overflow-y: visible;
+    padding: 30px 50px;
 }
 .dis-tsunamis .ts-coast-carousel-track {
     display: flex !important;
@@ -122,13 +123,13 @@
 
 @media (max-width: 1024px) {
     .dis-tsunamis .ts-coast-card { flex: 0 0 calc(50% - 12px) !important; }
-    .dis-tsunamis .ts-coast-carousel-wrapper { padding: 10px 40px 10px; }
+    .dis-tsunamis .ts-coast-carousel-wrapper { padding: 20px 40px; }
     .dis-tsunamis .ts-coast-card.center { transform: scale(1.06) !important; }
 }
 @media (max-width: 700px) {
     .dis-tsunamis .ts-coast-card { flex: 0 0 100% !important; }
     .dis-tsunamis .ts-coast-card.center { transform: scale(1) !important; }
-    .dis-tsunamis .ts-coast-carousel-wrapper { padding: 10px 30px 10px; }
+    .dis-tsunamis .ts-coast-carousel-wrapper { padding: 10px 30px; }
     .dis-tsunamis .ts-coast-carousel-track { gap: 16px; }
     .dis-tsunamis .ts-coast-carousel-btn { width: 32px; height: 32px; }
     .dis-tsunamis .ts-coast-carousel-btn svg { width: 13px; height: 13px; }

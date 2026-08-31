@@ -761,6 +761,7 @@ ob_start();
             updateCenterCard();
             setTimeout(function() {
                 snapIfInCloneZone();
+                updateCenterCard();
                 isAnimating = false;
             }, 600);
         }

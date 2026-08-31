@@ -201,6 +201,9 @@
     gap: 18px;
     margin-top: 28px;
 }
+.dis-info-grid.dis-info-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
 .dis-info-card {
     background: var(--card);
     border: 1px solid var(--border2);
@@ -725,7 +728,7 @@
 }
 
 @media (max-width: 900px) {
-    .dis-info-grid { grid-template-columns: 1fr; }
+    .dis-info-grid, .dis-info-grid.dis-info-grid-2 { grid-template-columns: 1fr; }
     .dis-actions { grid-template-columns: 1fr; }
     .dis-alert-scale { grid-template-columns: repeat(2, 1fr); }
 }
