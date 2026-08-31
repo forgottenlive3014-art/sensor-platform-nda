@@ -374,6 +374,50 @@
         });
     }
 
+    // Segundo mapa, independiente del radar RainViewer de arriba: capas de
+    // OpenWeatherMap (precipitacion/nubes/temperatura/viento), una a la vez
+    // como pestañas. La API key es publica (solo pide tiles de mapa, no
+    // accede a la cuenta) y llega por data-owm-key desde clima.php.
+    let climaMapOwm = null;
+    function initOwmMap(lat, lng) {
+        const el = document.getElementById('climaMapOwm');
+        const root = document.getElementById('climaRoot');
+        const key = root ? root.dataset.owmKey : '';
+        if (!el || !window.L || !key) return;
+
+        const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+        const tileUrl = isDark
+            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+            : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+
+        climaMapOwm = L.map(el, { zoomControl: true, attributionControl: false }).setView([lat, lng], 7);
+        L.tileLayer(tileUrl, { subdomains: 'abcd', maxZoom: 18 }).addTo(climaMapOwm);
+        L.control.attribution({ prefix: false }).addAttribution('© CARTO · © OpenWeatherMap · © OpenStreetMap').addTo(climaMapOwm);
+        L.circleMarker([lat, lng], { radius: 7, color: '#3d6f8f', fillColor: '#3d6f8f', fillOpacity: .9, weight: 2 }).addTo(climaMapOwm);
+
+        let owmLayer = null;
+        function setOwmLayer(layerId) {
+            if (owmLayer) climaMapOwm.removeLayer(owmLayer);
+            owmLayer = L.tileLayer(`https://tile.openweathermap.org/map/${layerId}/{z}/{x}/{y}.png?appid=${key}`, { opacity: 0.7, maxZoom: 18 });
+            owmLayer.addTo(climaMapOwm);
+        }
+        setOwmLayer('precipitation_new');
+
+        const btns = document.querySelectorAll('#climaMapOwmCard .clima-layer-btn');
+        btns.forEach(btn => btn.addEventListener('click', () => {
+            btns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            setOwmLayer(btn.dataset.owmLayer);
+        }));
+
+        const expandBtn = document.getElementById('climaMapOwmExpand');
+        const mapCard = document.getElementById('climaMapOwmCard');
+        if (expandBtn) expandBtn.addEventListener('click', () => {
+            mapCard.classList.toggle('clima-map-expanded');
+            setTimeout(() => climaMapOwm.invalidateSize(), 260);
+        });
+    }
+
     async function boot() {
         try {
             const loc = await window.ndaGetLocation();
@@ -385,6 +429,7 @@
             renderAlerts(data);
             renderRecs(data);
             initMap(loc.lat, loc.lng);
+            initOwmMap(loc.lat, loc.lng);
         } catch (e) {
             const root = document.getElementById('climaRoot');
             if (root) root.querySelector('.clima-hero-main').innerHTML = '<div class="loading-s">⚠️ No se pudo cargar el clima. Intenta de nuevo más tarde.</div>';

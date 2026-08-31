@@ -25,9 +25,9 @@ ob_start();
           <p class="hero-sub">Monitoreo sísmico en tiempo real, simulaciones interactivas y educación en prevención de desastres para la comunidad escolar salvadoreña.</p>
           <div class="hero-pills">
             <div class="hp"><strong id="hp-quakes">—</strong> sismos hoy</div>
-            <div class="hp"><strong>7.7</strong> magnitud máx. histórica</div>
-            <div class="hp"><strong>26</strong> volcanes</div>
-            <div class="hp"><strong>2</strong> placas tectónicas</div>
+            <div class="hp"><strong data-gsap-count="7.7" data-gsap-decimals="1">0</strong> magnitud máx. histórica</div>
+            <div class="hp"><strong data-gsap-count="26">0</strong> volcanes</div>
+            <div class="hp"><strong data-gsap-count="2">0</strong> placas tectónicas</div>
           </div>
           <div class="hero-cta">
             <a href="?url=sismos" class="btn-acc"> Monitor Sísmico</a>
@@ -126,10 +126,10 @@ ob_start();
       </div>
     </div>
     <div class="facts-bar" style="margin-top:18px">
-      <div class="fbi"><div class="fbi-n">26</div><div class="fbi-l">volcanes en territorio salvadoreño</div></div>
-      <div class="fbi"><div class="fbi-n">6</div><div class="fbi-l">volcanes activos monitoreados por MARN</div></div>
-      <div class="fbi"><div class="fbi-n">~100</div><div class="fbi-l">sismos perceptibles al año</div></div>
-      <div class="fbi"><div class="fbi-n">4</div><div class="fbi-l">zonas de mayor actividad tectónica</div></div>
+      <div class="fbi"><div class="fbi-n nda-count">26</div><div class="fbi-l">volcanes en territorio salvadoreño</div></div>
+      <div class="fbi"><div class="fbi-n nda-count">6</div><div class="fbi-l">volcanes activos monitoreados por MARN</div></div>
+      <div class="fbi"><div class="fbi-n nda-count">~100</div><div class="fbi-l">sismos perceptibles al año</div></div>
+      <div class="fbi"><div class="fbi-n nda-count">4</div><div class="fbi-l">zonas de mayor actividad tectónica</div></div>
     </div>
     <p style="text-align:center;margin-top:20px">
       <a href="?url=sismos" class="btn-out">Ver monitor sísmico completo →</a>
@@ -191,7 +191,9 @@ ob_start();
       <h2 class="sec-title">¿Qué <span class="acc">encontrarás</span> en la página?</h2>
       <p class="sec-sub">Un recorrido rápido por todo lo que la plataforma tiene para ti</p>
     </div>
-    <div class="find-cards-grid">
+    <div class="fc-scrollzone">
+    <div class="find-cards-grid fc-carousel">
+    <div class="find-cards-track">
       <a href="?url=clima" class="find-card">
         <div class="find-card-visual"><video autoplay muted loop playsinline><source src="assets/media/video/clima.mp4" type="video/mp4"></video></div>
         <div class="find-card-body"><h3>Clima en Tiempo Real</h3><p>Consulta la temperatura, el pronóstico y las condiciones meteorológicas en tiempo real para tu ubicación.</p><span class="fc-cta">Ver clima →</span></div>
@@ -231,6 +233,8 @@ ob_start();
         <div class="find-card-visual"><video autoplay muted loop playsinline><source src="assets/media/video/sensor.mp4" type="video/mp4"></video></div>
         <div class="find-card-body"><h3>Sismógrafo de Arduino</h3><p>Observa cómo funciona el sensor MPU-6050 y la detección de vibraciones en tiempo real.</p><span class="fc-cta">Ver demo →</span></div>
       </a>
+    </div>
+    </div>
     </div>
   </div>
 </section>

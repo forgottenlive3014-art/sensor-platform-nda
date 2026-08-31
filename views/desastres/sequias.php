@@ -24,6 +24,39 @@ ob_start();
   <a href="#info-general" class="scroll-hint"><span>Scroll</span><div class="sh-arr"></div></a>
 </section>
 
+<!-- CONTEXTO RAPIDO -->
+<section class="dis-context" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/Drought%20land%20dry%20mud%20BOUHANIFIA%20Algeria%2002.jpg')">
+  <div class="dis-context-overlay"></div>
+  <div class="wrap dis-context-inner">
+    <div class="dis-context-hd">
+      <span class="dis-context-eyebrow">El Salvador</span>
+      <h2 class="dis-context-title">El oriente del país, parte del Corredor Seco</h2>
+    </div>
+    <div class="dis-context-cards">
+      <div class="dis-context-card">
+        <span class="dis-context-card-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
+        <h4>¿Por qué aquí?</h4>
+        <p>El oriente del país forma parte del Corredor Seco Centroamericano, una franja con lluvias más irregulares.</p>
+      </div>
+      <div class="dis-context-card">
+        <span class="dis-context-card-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2s7 7.5 7 12a7 7 0 0 1-14 0c0-4.5 7-12 7-12z"/></svg></span>
+        <h4>Cómo se origina</h4>
+        <p>El fenómeno de El Niño reduce las lluvias en Centroamérica, o una "canícula" (veranillo) se alarga más de lo normal.</p>
+      </div>
+      <div class="dis-context-card">
+        <span class="dis-context-card-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></span>
+        <h4>Impacto principal</h4>
+        <p>Pérdida de cosechas de maíz y frijol, y escasez de agua para consumo humano y ganado.</p>
+      </div>
+      <div class="dis-context-card">
+        <span class="dis-context-card-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l10 18H2L12 3z"/><path d="M12 10v4"/><path d="M12 17h.01"/></svg></span>
+        <h4>Zona más afectada</h4>
+        <p>La Unión, Morazán y San Miguel, el llamado "corredor seco" salvadoreño.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- INFORMACION GENERAL -->
 <section class="sec" id="info-general">
   <div class="wrap">

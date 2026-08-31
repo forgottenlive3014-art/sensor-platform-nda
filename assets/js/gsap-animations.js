@@ -17,7 +17,12 @@
         // Sismos
         '.sismo-step', '.type-card', '.wave-card', '.measure-card',
         '.historic-card', '.depth-card', '.term-card', '.sv-stat',
-        '.foco-image-card'
+        '.foco-image-card',
+        // Paginas de desastres (desastres-base.css: tsunamis, inundaciones,
+        // sequias, tormentas-tropicales, incendios-forestales, sismos)
+        '.dis-info-card', '.dis-impact-card', '.dis-alert-card',
+        '.dis-gallery-item', '.dis-action-col', '.dis-zone-chip',
+        '.dis-context-card'
     ].join(', ');
 
     // ============================================================
@@ -26,10 +31,11 @@
     // la duración/desplazamiento para que rinda bien)
     // ============================================================
     const DEFAULTS = {
-        duration: 0.5,
-        stagger: 0.06,
-        ease: 'power1.out', // power2 acelera de golpe al inicio y se siente "lanzado"; power1 es mas parejo
-        y: 16
+        duration: 0.65,
+        stagger: 0.08,
+        ease: 'back.out(1.6)', // "pop": se pasa un poco y rebota, se nota mucho mas que un fade parejo
+        x: 90, // entra deslizandose desde la derecha, no de abajo -- rompe la monotonia del scroll vertical
+        scale: 0.9
     };
 
     // ============================================================
@@ -41,31 +47,36 @@
     });
 
     // ============================================================
-    // ANIMACIÓN DE TARJETAS (más rápida y sutil)
+    // ANIMACIÓN DE TARJETAS: atada en vivo al scroll (scrub), no un
+    // "aparece una vez y listo". Cada tarjeta tiene su propio ScrollTrigger
+    // -- si scrolleas lento, se desliza lento; si volves para arriba, se
+    // devuelve. ease:'none' porque con scrub la curva la da el scroll
+    // mismo, un ease con rebote se ve raro atado a la posicion en vez del
+    // tiempo.
     // ============================================================
-    const groups = new Map();
     document.querySelectorAll(CARD_SELECTORS).forEach(el => {
         if (el.closest('.reveal')) return;
-        const parent = el.parentElement;
-        if (!groups.has(parent)) groups.set(parent, []);
-        groups.get(parent).push(el);
-    });
-
-    groups.forEach(items => {
-        if (!items.length) return;
-        gsap.set(items, { opacity: 0, y: DEFAULTS.y });
-        ScrollTrigger.batch(items, {
-            start: 'top 90%',      // Antes: 88% (se activa un poco antes)
-            once: true,
-            onEnter: batch => gsap.to(batch, {
+        gsap.fromTo(el,
+            { opacity: 0, x: DEFAULTS.x, scale: DEFAULTS.scale },
+            {
                 opacity: 1,
-                y: 0,
-                duration: DEFAULTS.duration,
-                ease: DEFAULTS.ease,
-                stagger: DEFAULTS.stagger,
-                overwrite: true
-            })
-        });
+                x: 0,
+                scale: 1,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: el,
+                    start: 'top 90%',
+                    end: 'top 55%',
+                    scrub: 0.6,
+                    // Limpia el transform inline al terminar de entrar:
+                    // varias tarjetas (.dis-info-card, .dis-impact-card,
+                    // .dis-alert-card...) ya tienen su propio transform en
+                    // :hover via CSS -- sin esto, el que deja esta animacion
+                    // se queda pisando ese hover para siempre.
+                    onLeave: () => gsap.set(el, { clearProps: 'transform' })
+                }
+            }
+        );
     });
 
     // ============================================================
@@ -74,7 +85,7 @@
     const TEXT_SELECTORS = [
         '.sec-hd', '.page-title', '.rtm-title-area',
         '.sismo-intro-text', '.sismo-etymology', '.sv-description',
-        '.sismo-sv-note', '.dis-bigbanner-word'
+        '.sismo-sv-note', '.dis-bigbanner-word', '.dis-subhead'
     ].join(', ');
 
     document.querySelectorAll(TEXT_SELECTORS).forEach(el => {
@@ -181,10 +192,12 @@
     });
 
     // ============================================================
-    // CONTADORES (data-gsap-count)
+    // CONTADORES (data-gsap-count, decimales opcionales via
+    // data-gsap-decimals para numeros como "7.7")
     // ============================================================
     document.querySelectorAll('[data-gsap-count]').forEach(el => {
         const target = parseFloat(el.dataset.gsapCount) || 0;
+        const decimals = parseInt(el.dataset.gsapDecimals, 10) || 0;
         const obj = { val: 0 };
         ScrollTrigger.create({
             trigger: el,
@@ -192,9 +205,43 @@
             once: true,
             onEnter: () => gsap.to(obj, {
                 val: target,
-                duration: 0.8,
+                duration: 0.9,
                 ease: 'power1.out',
-                onUpdate: () => { el.textContent = Math.round(obj.val); }
+                onUpdate: () => { el.textContent = decimals ? obj.val.toFixed(decimals) : Math.round(obj.val); }
+            })
+        });
+    });
+
+    // ============================================================
+    // CONTADORES AUTOMATICOS (.nda-count): a diferencia de data-gsap-count,
+    // este lee el numero directo del texto que ya esta en el HTML (asi no
+    // hay que duplicar el valor en un atributo aparte). Soporta un prefijo
+    // no numerico ("~100") y un sufijo ("500+", "1.5M") que se preservan
+    // tal cual y no se animan, solo la parte numerica. Si el texto no
+    // matchea el patron (fechas, texto libre, etc.) no hace nada -- asi es
+    // seguro agregar la clase sin tener que auditar cada caso a mano.
+    // ============================================================
+    document.querySelectorAll('.nda-count').forEach(el => {
+        const raw = el.textContent.trim();
+        const match = raw.match(/^(\D*)([\d.,]*\d)(\D*)$/);
+        if (!match) return;
+        const [, prefix, numStr, suffix] = match;
+        const decimals = (numStr.split('.')[1] || '').length;
+        const target = parseFloat(numStr.replace(/,/g, ''));
+        if (isNaN(target)) return;
+        const obj = { val: 0 };
+        ScrollTrigger.create({
+            trigger: el,
+            start: 'top 92%',
+            once: true,
+            onEnter: () => gsap.to(obj, {
+                val: target,
+                duration: 0.9,
+                ease: 'power1.out',
+                onUpdate: () => {
+                    const shown = decimals ? obj.val.toFixed(decimals) : Math.round(obj.val).toLocaleString('en-US');
+                    el.textContent = prefix + shown + suffix;
+                }
             })
         });
     });

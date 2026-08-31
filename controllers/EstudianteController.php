@@ -126,6 +126,7 @@ class EstudianteController {
             'password' => $password,
             'institucion_id' => $instId,
             'aulas_id' => $input['aula_id'] ?? null,
+            'numero_lista' => $input['numero_lista'] ?? null,
             'edad' => $input['edad'] ?? null,
             'telefono_emergencia' => trim($input['telefono'] ?? ''),
         ]);
@@ -157,6 +158,7 @@ class EstudianteController {
             'nombre' => trim($input['nombre'] ?? ''),
             'apellido' => trim($input['apellido'] ?? ''),
             'aulas_id' => $input['aula_id'] ?? null,
+            'numero_lista' => $input['numero_lista'] ?? null,
             'edad' => $input['edad'] ?? null,
             'telefono_emergencia' => trim($input['telefono'] ?? ''),
         ]);

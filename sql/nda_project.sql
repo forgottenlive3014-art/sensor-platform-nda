@@ -89,6 +89,7 @@ CREATE TABLE estudiantes (
     aulas_id INT,
     nombre VARCHAR(100),
     apellido VARCHAR(100),
+    numero_lista INT,
     edad INT,
     telefono_emergencia VARCHAR(20),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

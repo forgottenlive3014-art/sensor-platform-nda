@@ -1,13 +1,14 @@
 <?php
 class ChatController {
 
-    // Clave de Groq (https://console.groq.com/keys). Este archivo esta
-    // excluido de git (ver .gitignore) precisamente porque tiene la clave
-    // real escrita aqui abajo -- si alguna vez se saca del .gitignore,
-    // sacar la clave de aqui primero.
-    private $apiKey = "";
+    // Clave de Groq (https://console.groq.com/keys), leida de .env
+    // (GROQ_API_KEY) -- igual que MAIL_* en Mailer.php. Este archivo SI
+    // esta trackeado por git, asi que la clave real nunca va aqui escrita.
+    private $apiKey = null;
 
-    private $model = "llama-3.3-70b-versatile";
+    // Groq retiro los modelos "llama-3.x-*" de su catalogo (ver /v1/models);
+    // gpt-oss-120b es el reemplazo actual: buena calidad en español y rapido.
+    private $model = "openai/gpt-oss-120b";
     private $url = "https://api.groq.com/openai/v1/chat/completions";
 
     // Mapa de intenciones de navegacion: palabras clave => destino dentro del sitio.
@@ -87,9 +88,9 @@ class ChatController {
     private function faqKnowledge() {
         return [
             ['keywords' => ['hola', 'hey', 'buenas', 'saludos'],
-                'reply' => 'Hola. Soy el asistente de NDA (Natural Disaster Alert), la plataforma educativa de prevención de desastres naturales de El Salvador. Dato rápido: El Salvador registra en promedio ~100 sismos perceptibles al año por la subducción de la Placa de Cocos bajo la Placa del Caribe. Puedo ayudarte con dudas sobre sismos, volcanes, tsunamis, evacuación, la mochila de emergencia, el módulo de colegio o cómo usar la plataforma. ¿En qué te ayudo?'],
+                'reply' => 'Hola, soy el asistente de NDA. Pregúntame sobre sismos, volcanes, tsunamis, evacuación, la mochila de emergencia o cómo usar la plataforma.'],
             ['keywords' => ['que es nda', 'que es esta pagina', 'que es este sitio', 'de que trata', 'de que se trata', 'para que sirve esta pagina', 'para que sirve esta plataforma', 'que hace esta plataforma', 'que hace este sitio', 'que puedo hacer en esta pagina', 'que puedo hacer aqui'],
-                'reply' => 'NDA (Natural Disaster Alert) es una plataforma educativa sobre prevención de desastres naturales en El Salvador, pensada para la comunidad escolar. Reúne: monitoreo sísmico en tiempo real (datos reales del USGS), un sismógrafo interactivo y un simulador de movimiento sísmico, páginas propias de cada amenaza (sismos, volcanes, tsunamis, inundaciones, deslizamientos, incendios forestales, tormentas tropicales y sequías) más una galería 3D con modelos interactivos de cada una, mapa de peligros y puntos de emergencia, clima y fases lunares en tiempo real, una maqueta de sensor Arduino/ESP32 (MPU-6050) que mide vibración en 3 ejes, guías de "¿qué hacer AHORA?" ante una emergencia, una biblioteca de recursos con guías PDF descargables, juegos y trivias educativas, y un módulo de Gestión Escolar para que colegios organicen simulacros, rutas de evacuación y reportes de incidentes. Algunos datos clave de El Salvador: 26 volcanes, subducción de la Placa de Cocos a ~8 cm/año, y el terremoto más devastador reciente fue el del 13 de enero de 2001 (M7.7).',
+                'reply' => 'NDA es una plataforma educativa de prevención de desastres en El Salvador: monitoreo sísmico en tiempo real, páginas por amenaza (sismos, volcanes, tsunamis, inundaciones, deslizamientos, incendios, tormentas, sequías) con galería 3D, clima y fases lunares, guías de "¿qué hacer AHORA?", recursos descargables, juegos educativos y un módulo de Gestión Escolar para simulacros.',
                 'navigate' => 'home', 'navigateLabel' => 'Explorar NDA'],
             ['keywords' => ['sismo', 'terremoto', 'tiembla', 'movimiento sismico', 'cuando tiembla'],
                 'reply' => 'Durante un sismo: agáchate, cúbrete bajo un mueble resistente y agárrate hasta que termine el movimiento. No corras ni uses el ascensor. Aléjate de ventanas y objetos que puedan caer. Al terminar, revisa heridos y aléjate de estructuras dañadas antes de salir.',
@@ -107,10 +108,10 @@ class ChatController {
                 'reply' => 'Para registrarte, haz clic en "Registrarse" en la barra de navegación. Puedes crear una cuenta general, o vincularte a una institución educativa como docente, estudiante, padre/madre o personal administrativo.',
                 'navigate' => 'register', 'navigateLabel' => 'Crear Cuenta'],
             ['keywords' => ['rol', 'roles', 'que puede hacer un docente', 'que puede hacer un alumno', 'que puede hacer un estudiante', 'que puede hacer el admin'],
-                'reply' => 'En el módulo de colegio: el Administrador gestiona toda la institución (usuarios, aulas, simulacros, reportes). El Docente pasa lista, ve sus aulas y reporta incidentes. El Estudiante ve su aula y los simulacros futuros. El Padre/Madre ve el estado de sus hijos durante un simulacro. El Personal Administrativo apoya con publicaciones y estado durante una emergencia.',
+                'reply' => 'En Gestión Escolar: el Administrador gestiona toda la institución, el Docente pasa lista y reporta incidentes, el Estudiante ve su aula y simulacros, el Padre/Madre ve el estado de sus hijos, y el Personal Administrativo apoya con publicaciones.',
                 'navigate' => 'school', 'navigateLabel' => 'Gestión Escolar'],
             ['keywords' => ['marn', 'usgs', 'emsc', 'de donde salen los datos', 'fuente de los datos'],
-                'reply' => 'Los datos sísmicos en tiempo real se combinan de dos catálogos públicos: el USGS (Servicio Geológico de EE.UU.) y el EMSC (European-Mediterranean Seismological Centre), filtrados a la región de Centroamérica y El Salvador — se combinan porque ninguno de los dos detecta el 100% de la actividad local por sí solo. La información institucional y de alertas se basa en criterios del MARN (Ministerio de Medio Ambiente de El Salvador), que no publica una API pública propia.',
+                'reply' => 'Los sismos en tiempo real combinan dos catálogos públicos, USGS y EMSC, para no depender de uno solo. La información institucional se basa en criterios del MARN, que no publica una API propia.',
                 'navigate' => 'sismos', 'navigateLabel' => 'Monitor Sísmico'],
             ['keywords' => ['magnitud', 'richter', 'escala sismica', 'que tan fuerte'],
                 'reply' => 'La escala de magnitud mide la energía liberada por un sismo: M1-2 es imperceptible, M3-4 leve (puede sentirse), M5 moderado (posibles daños), M6 fuerte (daños estructurales), M7+ es un gran terremoto. El terremoto de El Salvador de 2001 fue de magnitud 7.7.',
@@ -173,6 +174,39 @@ class ChatController {
         ];
         foreach ($starters as $s) {
             if (strpos($norm, $this->normalize($s)) !== false) return true;
+        }
+        return false;
+    }
+
+    // Pregunta de "como hago X" (procedimiento dentro de la plataforma),
+    // ej. "y como vero las personas qeu han ingresado a mi colegio" (con
+    // errores de tipeo y todo). Estas NO deben caer en matchNavigation
+    // (paso 3): esa tabla solo tiene palabras sueltas como "colegio"/
+    // "escuela" y devuelve un simple "Te llevo a X" sin contestar la
+    // pregunta real. Si no hay FAQ que la cubra, mejor dejarla pasar
+    // directo a la IA (paso 4).
+    //
+    // En vez de una lista de frases exactas (fragil ante errores de
+    // tipeo: "como vero" no calza con "como veo"), se detecta por señales
+    // mas generales: palabras de pregunta sueltas, termina en "?", o el
+    // mensaje es largo (mas de 5 palabras casi siempre es una oracion/
+    // pregunta real, no solo el nombre corto de una seccion). Los
+    // comandos de navegacion explicitos ("llevame a...", "ir a...")
+    // siguen usando el atajo rapido aunque sean mensajes largos.
+    private function isProceduralQuestion($message) {
+        $norm = $this->normalize($message);
+
+        $navCommands = ['llevame', 'llevarme', 'ir a', 'vamos a', 'quiero ir', 'muestrame', 'abrir', 'abre'];
+        foreach ($navCommands as $c) {
+            if (strpos($norm, $this->normalize($c)) !== false) return false;
+        }
+
+        if (substr(rtrim($message), -1) === '?') return true;
+        if (str_word_count($norm) > 5) return true;
+
+        $questionWords = ['como ', 'donde ', 'cuando ', 'quien ', 'quienes ', 'cual ', 'cuales ', 'para que'];
+        foreach ($questionWords as $w) {
+            if (strpos($norm, $this->normalize($w)) !== false) return true;
         }
         return false;
     }
@@ -266,33 +300,45 @@ class ChatController {
 
             // 3) Intencion de navegacion (sin respuesta de contenido propia):
             //    si coincide, respondemos y sugerimos el enlace SIN necesitar
-            //    la IA (mas rapido y siempre disponible).
-            $navMatch = $this->matchNavigation($message);
-            if ($navMatch) {
-                jsonResponse([
-                    'reply' => 'Te llevo a "' . $navMatch['label'] . '". Si quieres, haz clic en el botón de abajo.',
-                    'navigate' => $navMatch['url'],
-                    'navigateLabel' => $navMatch['label'],
-                ]);
-                return;
+            //    la IA (mas rapido y siempre disponible). Se salta si es una
+            //    pregunta de procedimiento ("como veo...", "donde esta...",
+            //    termina en "?"): esas quedan mejor respondidas por la IA en
+            //    el paso 4, en vez de solo un "Te llevo a X" sin contenido.
+            if (!$this->isProceduralQuestion($message)) {
+                $navMatch = $this->matchNavigation($message);
+                if ($navMatch) {
+                    jsonResponse([
+                        'reply' => 'Te llevo a "' . $navMatch['label'] . '". Si quieres, haz clic en el botón de abajo.',
+                        'navigate' => $navMatch['url'],
+                        'navigateLabel' => $navMatch['label'],
+                    ]);
+                    return;
+                }
             }
         }
 
         // 4) Sin coincidencia de FAQ ni navegacion: usamos la IA (Groq) si
-        //    hay API key configurada en $this->apiKey (arriba del archivo).
-        $apiKey = $this->apiKey;
+        //    hay API key configurada en .env (GROQ_API_KEY).
+        $apiKey = $this->apiKey ?? env('GROQ_API_KEY', '');
         if (empty($apiKey)) {
-            jsonResponse(['reply' => 'Puedo ayudarte a moverte por NDA (sismos, clima, mapa de riesgos, gestión escolar, recursos...). Para preguntas abiertas, el administrador del sitio todavía no configuró la clave de IA (variable $apiKey en ChatController.php).']);
+            jsonResponse(['reply' => 'Puedo ayudarte a moverte por NDA (sismos, clima, mapa de riesgos, gestión escolar, recursos...). Para preguntas abiertas, el administrador del sitio todavía no configuró la clave de IA (variable GROQ_API_KEY en .env).']);
             return;
         }
 
         $systemPrompt = "Eres el asistente virtual de NDA (Natural Disaster Alert), una plataforma educativa "
-            . "sobre prevención de desastres naturales en El Salvador dirigida a la comunidad escolar. Responde de "
-            . "forma breve, clara y amable, SIEMPRE en español, salvo que el usuario escriba en inglés. Si la "
-            . "pregunta es sobre algo fuera de desastres naturales, prevención o el uso de la plataforma, redirige "
-            . "amablemente el tema. Cuando tenga sentido, cierra tu respuesta con un dato relevante y concreto "
-            . "(una cifra, un nombre de volcán o falla, un porcentaje) tomado de los datos de referencia de abajo, "
-            . "para reforzar el aprendizaje, pero sin forzarlo si la pregunta no lo amerita.\n\n"
+            . "sobre prevención de desastres naturales en El Salvador dirigida a la comunidad escolar. Responde "
+            . "SIEMPRE en español (salvo que el usuario escriba en inglés), de forma directa y al punto: "
+            . "maximo 3 a 4 oraciones cortas, sin rodeos ni relleno. Organiza esas oraciones en 2 parrafos cortos "
+            . "(separa los parrafos con una linea en blanco), nunca en un solo bloque de texto largo. PROHIBIDO "
+            . "usar formato Markdown de cualquier tipo: nunca escribas **, __, #, ni guiones o numeros de lista al "
+            . "inicio de linea, ni siquiera para resaltar un nombre propio. Tu respuesta se muestra como texto "
+            . "plano tal cual la escribas, asi que cualquier simbolo de Markdown apareceria literal (por ejemplo "
+            . "\"**Izalco**\" se veria con los asteriscos incluidos) y eso se ve mal. Si la pregunta requiere pasos "
+            . "a seguir, sepáralos con comas o punto y coma dentro de la misma oracion, no en lineas separadas. "
+            . "Si la pregunta es sobre algo fuera de desastres "
+            . "naturales, prevención o el uso de la plataforma, redirige amablemente el tema en una sola frase. "
+            . "Incluye un dato concreto (cifra, nombre de volcán o falla) solo si aporta valor real a esa "
+            . "respuesta puntual, nunca como relleno para alargarla.\n\n"
             . "Qué es NDA y qué contiene la plataforma (usa esto si preguntan de qué trata el sitio): monitoreo "
             . "sísmico en tiempo real con datos del USGS, sismógrafo interactivo y simulador de movimiento sísmico, "
             . "páginas propias por amenaza (sismos, volcanes, tsunamis, inundaciones, deslizamientos, incendios "
@@ -302,6 +348,13 @@ class ChatController {
             . "AHORA?\", una biblioteca de recursos con guías PDF descargables, juegos/trivias educativas, y un "
             . "módulo de Gestión Escolar (simulacros, rutas de evacuación, reportes de incidentes) para directores, "
             . "docentes, estudiantes, padres y personal administrativo.\n\n"
+            . "Navegación dentro del Panel de Gestión del director (usa esto si preguntan cómo hacer algo ahí "
+            . "dentro, ej. \"cómo veo quién se unió a mi colegio\"): la barra inferior del panel tiene Usuarios "
+            . "(lista de todos los miembros ya aceptados en la institución, filtrable por docentes/personal/"
+            . "estudiantes/padres), Solicitudes (pedidos pendientes de unirse a la institución, para aprobar o "
+            . "rechazar), Aulas (las 6 secciones A-F de cada año de bachillerato, con su docente asignado y pase "
+            . "de lista), Tablero (resumen general, con Reportes y Notificaciones), Croquis, Rutas de Evacuación "
+            . "y Simulacros.\n\n"
             . "Datos geológicos y geográficos de El Salvador que DEBES usar como referencia (no inventes otras "
             . "placas, fallas o cifras si el usuario pregunta sobre esto):\n"
             . "- El Salvador está en el límite entre la Placa de Cocos (oceánica) y la Placa del Caribe "
@@ -350,7 +403,15 @@ class ChatController {
         $payload = [
             'model' => $this->model,
             'messages' => $messages,
-            'temperature' => 0.7,
+            'temperature' => 0.6,
+            // gpt-oss-120b gasta parte del presupuesto en razonamiento interno
+            // (oculto, no se muestra) antes del texto visible. Con esfuerzo
+            // "high" (default) esto a veces se comia TODO max_tokens en
+            // preguntas abiertas (ej. "que es lluvia"), dejando el campo
+            // "content" vacio -> el chat mostraba "No pude responder eso.".
+            // "low" alcanza de sobra para las 3-4 oraciones cortas que pide
+            // el prompt, y deja casi todo el presupuesto para el texto real.
+            'reasoning_effort' => 'low',
             'max_tokens' => 500,
         ];
 
@@ -376,8 +437,44 @@ class ChatController {
         }
 
         $data = json_decode($response, true);
-        $reply = $data['choices'][0]['message']['content'] ?? 'No pude generar una respuesta. Intenta reformular tu pregunta.';
+        $reply = $data['choices'][0]['message']['content'] ?? '';
+        $reply = trim($this->stripMarkdown($reply));
+        if ($reply === '') {
+            $reply = 'No pude generar una respuesta. Intenta reformular tu pregunta.';
+        }
 
-        jsonResponse(['reply' => $reply]);
+        $resp = ['reply' => $reply];
+        // La IA no elige a donde redirigir: reusamos el mismo mapa de
+        // navegacion por palabras clave que los pasos 2/3 (deterministico y
+        // ya probado), asi las respuestas generadas por la IA tambien pueden
+        // traer el boton de "ir a la seccion" cuando el mensaje lo amerita.
+        $navMatch = $this->matchNavigation($message);
+        if ($navMatch) {
+            $resp['navigate'] = $navMatch['url'];
+            $resp['navigateLabel'] = $navMatch['label'];
+        }
+
+        jsonResponse($resp);
+    }
+
+    // Red de seguridad por si la IA ignora la instruccion de no usar
+    // Markdown: el chat pinta la respuesta con textContent (texto plano), asi
+    // que un "**Izalco**" sin limpiar se veria literal con los asteriscos.
+    private function stripMarkdown($text) {
+        $text = preg_replace('/\*\*(.+?)\*\*/s', '$1', $text);   // **negrita**
+        $text = preg_replace('/__(.+?)__/s', '$1', $text);        // __negrita__
+        $text = preg_replace('/(?<!\*)\*([^\*\n]+)\*(?!\*)/', '$1', $text); // *cursiva*
+        $text = preg_replace('/^#{1,6}\s*/m', '', $text);         // # encabezados
+        $text = preg_replace('/^[\-\*]\s+/m', '', $text);         // - viñetas
+        $text = preg_replace('/^\d+\.\s+/m', '', $text);          // 1. listas numeradas
+        $text = str_replace("\r\n", "\n", $text);
+        $text = preg_replace('/[ \t]{2,}/', ' ', $text);
+        // Un salto de linea "suelto" (sobrante de una vineta ya limpiada) se
+        // une en la misma oracion; dos o mas saltos SI se respetan como
+        // separacion de parrafo (el CSS del chat usa white-space:pre-wrap).
+        $text = preg_replace('/\n{3,}/', "\n\n", $text);
+        $text = preg_replace('/(?<!\n)\n(?!\n)/', ' ', $text);
+        $text = implode("\n\n", array_filter(array_map('trim', explode("\n\n", $text)), 'strlen'));
+        return trim($text);
     }
 }

@@ -24,6 +24,39 @@ ob_start();
   <a href="#intro" class="scroll-hint"><span>Scroll</span><div class="sh-arr"></div></a>
 </section>
 
+<!-- CONTEXTO RAPIDO -->
+<section class="dis-context" style="background-image:url('assets/media/img/volcanBanner.jpg')">
+  <div class="dis-context-overlay"></div>
+  <div class="wrap dis-context-inner">
+    <div class="dis-context-hd">
+      <span class="dis-context-eyebrow">El Salvador</span>
+      <h2 class="dis-context-title">Uno de los países más volcánicos del mundo</h2>
+    </div>
+    <div class="dis-context-cards">
+      <div class="dis-context-card">
+        <span class="dis-context-card-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
+        <h4>¿Por qué aquí?</h4>
+        <p>El país está sobre el límite entre la Placa de Cocos y la Placa del Caribe, con 6 volcanes activos monitoreados por MARN.</p>
+      </div>
+      <div class="dis-context-card">
+        <span class="dis-context-card-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2s7 7.5 7 12a7 7 0 0 1-14 0c0-4.5 7-12 7-12z"/></svg></span>
+        <h4>Volcán más activo</h4>
+        <p>El Izalco, "El Faro del Pacífico", estuvo casi siempre activo entre 1770 y 1966.</p>
+      </div>
+      <div class="dis-context-card">
+        <span class="dis-context-card-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></span>
+        <h4>Beneficio principal</h4>
+        <p>Suelos volcánicos fértiles: la base de gran parte de la agricultura del país.</p>
+      </div>
+      <div class="dis-context-card">
+        <span class="dis-context-card-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l10 18H2L12 3z"/><path d="M12 10v4"/><path d="M12 17h.01"/></svg></span>
+        <h4>Mayor riesgo</h4>
+        <p>Lahares y flujos piroclásticos: más rápidos y letales que la propia lava.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ============================================================
      SECCIÓN 1: INTRODUCCIÓN
      ============================================================ -->
@@ -2363,7 +2396,9 @@ document.addEventListener('DOMContentLoaded', function () {
       <p class="v-sub">Lo positivo de la actividad volcánica</p>
     </div>
 
-    <div class="v-grid-5">
+    <div class="v-beneficios-scrollzone">
+    <div class="v-beneficios-carousel">
+    <div class="v-beneficios-track">
       <div class="v-card">
         <div class="v-card-img"><img src="assets/media/img/agriculturaV.jpg" alt="Agricultura" loading="lazy"></div>
         <div class="v-card-body">
@@ -2399,6 +2434,8 @@ document.addEventListener('DOMContentLoaded', function () {
           <p>Atraen a miles de turistas nacionales e internacionales.</p>
         </div>
       </div>
+    </div>
+    </div>
     </div>
   </div>
 </section>

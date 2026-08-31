@@ -26,28 +26,35 @@
         '.des-mito-card',
         '.des-recurso-card',
         '.des-fundamento',
-        '.des-mapa-info-item'
+        '.des-mapa-info-item',
+        '.dis-context-card'
     ].join(', ');
 
     const cards = document.querySelectorAll(CARD_SELECTORS);
 
-    cards.forEach(function(el) {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(20px)';
-    });
-
-    ScrollTrigger.batch(cards, {
-        start: 'top 92%',
-        once: true,
-        onEnter: function(batch) {
-            gsap.to(batch, {
+    // Entra deslizandose desde la derecha, atada en vivo al scroll (scrub):
+    // si scrolleas lento se desliza lento, si volves para arriba se
+    // devuelve. Cada tarjeta tiene su propio ScrollTrigger.
+    cards.forEach(function (el) {
+        gsap.fromTo(el,
+            { opacity: 0, x: 90, scale: 0.9 },
+            {
                 opacity: 1,
-                y: 0,
-                duration: 0.5,
-                stagger: 0.08,
-                ease: 'power1.out'
-            });
-        }
+                x: 0,
+                scale: 1,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: el,
+                    start: 'top 92%',
+                    end: 'top 57%',
+                    scrub: 0.6,
+                    // Varias de estas tarjetas (.des-tipo-card, .des-causa-card...)
+                    // ya tienen su propio transform en :hover via CSS; sin
+                    // limpiar esto se queda pisado para siempre.
+                    onLeave: function () { gsap.set(el, { clearProps: 'transform' }); }
+                }
+            }
+        );
     });
 
     // ============================================================

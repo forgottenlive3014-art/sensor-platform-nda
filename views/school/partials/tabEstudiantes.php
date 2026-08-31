@@ -1,6 +1,6 @@
         <div id="tab-students" class="school-panel">
             <div class="school-panel-header">
-                <h3>Lista de Estudiantes</h3>
+                <h3>Lista de Estudiantes <span id="studentsFilterBadge" class="school-filter-badge" style="display:none;"></span></h3>
                 <button class="school-btn primary" onclick="openModal('addStudentModal')">
                     Agregar Estudiante
                 </button>
@@ -12,6 +12,7 @@
                 <table class="school-table">
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th>Código</th>
                             <th>Nombre</th>
                             <th>Aula</th>
@@ -21,7 +22,7 @@
                         </tr>
                     </thead>
                     <tbody id="studentsTableBody">
-                        <tr><td colspan="6" class="text-center">Cargando...</td></tr>
+                        <tr><td colspan="7" class="text-center">Cargando...</td></tr>
                     </tbody>
                 </table>
             </div>

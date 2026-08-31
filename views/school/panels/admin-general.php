@@ -51,16 +51,16 @@ ob_start();
     </div>
 
     <div class="school-content">
-        <?php include __DIR__ . '/../partials/_tab-dashboard.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-institutions.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-users.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-news.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-notifications.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-reports.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-articulos.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-recursos.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-quehacer-content.php'; ?>
-        <?php include __DIR__ . '/../partials/_tab-acercade-content.php'; ?>
+        <?php include __DIR__ . '/../partials/tabTablero.php'; ?>
+        <?php include __DIR__ . '/../partials/tabInstituciones.php'; ?>
+        <?php include __DIR__ . '/../partials/tabUsuarios.php'; ?>
+        <?php include __DIR__ . '/../partials/tabNoticias.php'; ?>
+        <?php include __DIR__ . '/../partials/tabNotificaciones.php'; ?>
+        <?php include __DIR__ . '/../partials/tabReportes.php'; ?>
+        <?php include __DIR__ . '/../partials/tabArticulos.php'; ?>
+        <?php include __DIR__ . '/../partials/tabRecursos.php'; ?>
+        <?php include __DIR__ . '/../partials/tabQueHacerContenido.php'; ?>
+        <?php include __DIR__ . '/../partials/tabAcercaDeContenido.php'; ?>
     </div>
     </div><!-- /.school-body -->
 </div>

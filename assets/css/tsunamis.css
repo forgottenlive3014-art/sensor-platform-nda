@@ -162,3 +162,33 @@
 .dis-tsunamis .dis-impact-card p {
     margin: 0 16px 16px;
 }
+
+/* ---------- CARRUSEL PINEADO CON SCROLL (mismo mecanismo que .fc-carousel
+   del home y .v-beneficios-carousel de volcanes.php) ---------- */
+.dis-riesgos-scrollzone {
+    position: relative;
+    height: 260vh;
+}
+.dis-riesgos-carousel {
+    position: sticky;
+    top: calc(var(--nh) + 24px);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    height: 72vh;
+    min-height: 480px;
+}
+.dis-riesgos-track {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    width: max-content;
+}
+.dis-riesgos-track .dis-impact-card {
+    flex: 0 0 440px;
+}
+@media (max-width: 520px) {
+    .dis-riesgos-scrollzone { height: 340vh; }
+    .dis-riesgos-carousel { height: 62vh; min-height: 420px; }
+    .dis-riesgos-track .dis-impact-card { flex-basis: 300px; }
+}

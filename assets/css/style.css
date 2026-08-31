@@ -99,6 +99,7 @@ body {
     color: var(--text);
     line-height: 1.65;
     overflow-x: hidden;
+    overflow-anchor: none;
     transition: background var(--tr) var(--ez), color var(--tr) var(--ez);
 }
 
@@ -1702,7 +1703,12 @@ canvas {
 
 .tl-detail {
     margin-top: 32px;
-    animation: tlIn 0.38s var(--ez);
+    animation: tlIn 0.45s var(--ez);
+    transition: opacity .28s ease, transform .28s ease;
+}
+.tl-detail.tl-fade-out {
+    opacity: 0;
+    transform: translateY(-10px);
 }
 @keyframes tlIn {
     from {

@@ -174,12 +174,16 @@ $navDisplayName = $isLoggedIn
             $__navUser['role'] === 'admin'
             || (in_array($__navUser['role'], $__schoolEligibleRoles, true) && $__navUser['estado_institucional'] === 'aprobado')
         );
+        // El botón "Panel de Gestión" del dock flotante es aparte de
+        // "Colegio": solo debe verlo quien realmente tiene acceso a
+        // school/panel (debe coincidir con SchoolController::isPanelRole(),
+        // que es director/docente, más el admin global) — alumno,
+        // administrativo (y padre) no usan ese panel.
+        $__canSeePanelLink = $__navUser && (
+            $__navUser['role'] === 'admin'
+            || (in_array($__navUser['role'], ['director', 'docente'], true) && $__navUser['estado_institucional'] === 'aprobado')
+        );
     ?>
-    <?php if ($__canSeeSchoolLink): ?>
-    <a href="?url=school" class="nav-school-link">
-      <?= $__navUser['role'] === 'admin' ? 'Panel de Administración' : 'Gestión Escolar' ?>
-    </a>
-    <?php endif; ?>
     <a href="?url=resources">Recursos</a>
     <a href="?url=quehacer">¿Qué hacer AHORA?</a>
     <a href="?url=Acercade">Acerca de NDA</a>

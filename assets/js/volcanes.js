@@ -104,7 +104,8 @@
         // ============================================================
         const CARD_SELECTORS = [
             '.v-card', '.v-stat', '.v-timeline-item',
-            '.v-alerta', '.v-tab-item', '.v-gallery-item'
+            '.v-alerta', '.v-tab-item', '.v-gallery-item',
+            '.dis-context-card'
         ].join(', ');
 
         // ============================================================
@@ -112,10 +113,11 @@
         // ya evitan el costo repetido, igual que en gsap-animations.js)
         // ============================================================
         const DEFAULTS = {
-            duration: 0.5,
-            stagger: 0.06,
-            ease: 'power1.out', // power2 acelera de golpe al inicio y se siente "lanzado"; power1 es mas parejo
-            y: 16
+            duration: 0.65,
+            stagger: 0.08,
+            ease: 'back.out(1.6)', // "pop": se pasa un poco y rebota, se nota mucho mas que un fade parejo
+            x: 90, // entra deslizandose desde la derecha, no de abajo -- rompe la monotonia del scroll vertical
+            scale: 0.9
         };
 
         // ============================================================
@@ -127,31 +129,30 @@
         });
 
         // ============================================================
-        // TARJETAS
+        // TARJETAS: atada en vivo al scroll (scrub), no "aparece una vez".
+        // Cada tarjeta tiene su propio ScrollTrigger -- si scrolleas lento
+        // se desliza lento, si volves para arriba se devuelve.
         // ============================================================
-        const groups = new Map();
         document.querySelectorAll(CARD_SELECTORS).forEach(el => {
             if (el.closest('.reveal')) return;
-            const parent = el.parentElement;
-            if (!groups.has(parent)) groups.set(parent, []);
-            groups.get(parent).push(el);
-        });
-
-        groups.forEach(items => {
-            if (!items.length) return;
-            gsap.set(items, { opacity: 0, y: DEFAULTS.y });
-            ScrollTrigger.batch(items, {
-                start: 'top 90%',
-                once: true,
-                onEnter: batch => gsap.to(batch, {
+            gsap.fromTo(el,
+                { opacity: 0, x: DEFAULTS.x, scale: DEFAULTS.scale },
+                {
                     opacity: 1,
-                    y: 0,
-                    duration: DEFAULTS.duration,
-                    ease: DEFAULTS.ease,
-                    stagger: DEFAULTS.stagger,
-                    overwrite: true
-                })
-            });
+                    x: 0,
+                    scale: 1,
+                    ease: 'none',
+                    scrollTrigger: {
+                        trigger: el,
+                        start: 'top 90%',
+                        end: 'top 55%',
+                        scrub: 0.6,
+                        // .v-card ya tiene su propio transform en :hover via
+                        // CSS; sin limpiar esto se queda pisado para siempre.
+                        onLeave: () => gsap.set(el, { clearProps: 'transform' })
+                    }
+                }
+            );
         });
 
         // ============================================================
@@ -408,6 +409,18 @@ document.addEventListener('DOMContentLoaded', function() {
     if (prevBtn) prevBtn.addEventListener('click', prevSlide);
     if (nextBtn) nextBtn.addEventListener('click', nextSlide);
 
+    // Flechas del teclado, solo mientras el carrusel esta a la vista y no
+    // se esta escribiendo en un campo de texto.
+    document.addEventListener('keydown', function (e) {
+        if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+        const activeTag = document.activeElement && document.activeElement.tagName;
+        if (activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT') return;
+        const r = container.getBoundingClientRect();
+        if (r.top >= window.innerHeight * 0.85 || r.bottom <= window.innerHeight * 0.15) return;
+        e.preventDefault();
+        if (e.key === 'ArrowLeft') prevSlide(); else nextSlide();
+    });
+
     // Eventos de step dots (clicables)
     stepDots.forEach((dot, index) => {
         dot.addEventListener('click', () => goToSlide(index));
@@ -420,6 +433,61 @@ document.addEventListener('DOMContentLoaded', function() {
         wrapper.addEventListener('mouseenter', () => clearInterval(autoplay));
         wrapper.addEventListener('mouseleave', () => {
             autoplay = setInterval(nextSlide, 6000);
+        });
+    }
+});
+
+// ============================================================
+// CARRUSEL "BENEFICIOS DE LOS VOLCANES" -- mismo mecanismo que el
+// carrusel "que encontraras" del home (ver assets/js/home-scroll.js):
+// .v-beneficios-carousel queda pegada en pantalla via CSS position:sticky
+// (no ScrollTrigger pin) mientras dura el alto fijo de
+// .v-beneficios-scrollzone; el track se desplaza en horizontal segun el
+// progreso del scroll, con snap para que cada tarjeta se termine de
+// acomodar al soltar el scroll, y flechas del teclado para saltar de una
+// a otra.
+// ============================================================
+document.addEventListener('DOMContentLoaded', function () {
+    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+
+    const vbZone = document.querySelector('.v-beneficios-scrollzone');
+    const vbCarousel = document.querySelector('.v-beneficios-carousel');
+    const vbTrack = document.querySelector('.v-beneficios-track');
+    if (!vbZone || !vbCarousel || !vbTrack) return;
+
+    const vbCards = vbTrack.querySelectorAll('.v-card');
+    if (!vbCards.length) return;
+
+    const vbTween = gsap.to(vbTrack, {
+        x: () => -Math.max(0, vbTrack.scrollWidth - vbCarousel.clientWidth),
+        ease: 'none',
+        scrollTrigger: {
+            trigger: vbZone,
+            start: 'top top+=62',
+            end: 'bottom bottom',
+            scrub: 1,
+            snap: vbCards.length > 1 ? {
+                snapTo: 1 / (vbCards.length - 1),
+                duration: 0.3,
+                ease: 'power1.inOut'
+            } : false,
+            invalidateOnRefresh: true
+        }
+    });
+
+    const vbSteps = vbCards.length - 1;
+    if (vbSteps > 0) {
+        document.addEventListener('keydown', e => {
+            if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+            const activeTag = document.activeElement && document.activeElement.tagName;
+            if (activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT') return;
+            const r = vbCarousel.getBoundingClientRect();
+            if (r.top >= window.innerHeight * 0.85 || r.bottom <= window.innerHeight * 0.15) return;
+            e.preventDefault();
+            const st = vbTween.scrollTrigger;
+            const current = Math.round(st.progress * vbSteps);
+            const next = Math.min(vbSteps, Math.max(0, current + (e.key === 'ArrowLeft' ? -1 : 1)));
+            window.scrollTo({ top: st.start + (next / vbSteps) * (st.end - st.start), behavior: 'smooth' });
         });
     }
 });

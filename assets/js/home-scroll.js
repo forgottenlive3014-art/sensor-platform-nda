@@ -111,6 +111,62 @@
         });
     });
 
+    // ============================================================
+    // CARRUSEL "QUE ENCONTRARAS": .fc-carousel queda pegada en pantalla
+    // via CSS position:sticky (NO ScrollTrigger pin -- eso fue lo que
+    // corrompio el layout y la superpuso con la linea de tiempo la vez
+    // pasada). El "recorrido" de scroll lo da .fc-scrollzone, un
+    // espaciador de alto FIJO en CSS (280vh), asi que esto no depende
+    // de medir nada dinamico al cargar. Mientras se hace scroll dentro
+    // de esa zona, el track se desplaza en horizontal; al llegar al
+    // final de la zona, la tarjeta deja de estar pegada y la pagina
+    // sigue bajando normal. snap hace que, al soltar el scroll, la
+    // tarjeta mas cercana se termine de acomodar en vez de quedar a
+    // medio camino -- eso da tiempo real de leerla.
+    // ============================================================
+    const fcZone = document.querySelector('.fc-scrollzone');
+    const fcCarousel = document.querySelector('.fc-carousel');
+    const fcTrack = document.querySelector('.find-cards-track');
+    if (fcZone && fcCarousel && fcTrack) {
+        const fcCards = fcTrack.querySelectorAll('.find-card');
+        const fcTween = gsap.to(fcTrack, {
+            x: () => -Math.max(0, fcTrack.scrollWidth - fcCarousel.clientWidth),
+            ease: 'none',
+            scrollTrigger: {
+                trigger: fcZone,
+                start: 'top top+=62',
+                end: 'bottom bottom',
+                scrub: 1,
+                snap: fcCards.length > 1 ? {
+                    snapTo: 1 / (fcCards.length - 1),
+                    duration: 0.3,
+                    ease: 'power1.inOut'
+                } : false,
+                invalidateOnRefresh: true
+            }
+        });
+
+        // Flechas del teclado: saltan a la tarjeta anterior/siguiente
+        // moviendo el scroll de la pagina al punto exacto que le corresponde
+        // a esa tarjeta dentro de .fc-scrollzone (mismo mecanismo que ya usa
+        // el scroll normal, solo que en pasos discretos).
+        const fcSteps = fcCards.length - 1;
+        if (fcSteps > 0) {
+            document.addEventListener('keydown', e => {
+                if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+                const activeTag = document.activeElement && document.activeElement.tagName;
+                if (activeTag === 'INPUT' || activeTag === 'TEXTAREA' || activeTag === 'SELECT') return;
+                const r = fcCarousel.getBoundingClientRect();
+                if (r.top >= window.innerHeight * 0.85 || r.bottom <= window.innerHeight * 0.15) return;
+                e.preventDefault();
+                const st = fcTween.scrollTrigger;
+                const current = Math.round(st.progress * fcSteps);
+                const next = Math.min(fcSteps, Math.max(0, current + (e.key === 'ArrowLeft' ? -1 : 1)));
+                window.scrollTo({ top: st.start + (next / fcSteps) * (st.end - st.start), behavior: 'smooth' });
+            });
+        }
+    }
+
     window.addEventListener('load', () => {
         setTimeout(() => ScrollTrigger.refresh(), 300);
     });
