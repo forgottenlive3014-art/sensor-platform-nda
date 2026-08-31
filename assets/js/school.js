@@ -46,20 +46,106 @@ function debounce(fn, wait) {
     };
 }
 
+// ─── BARRA INFERIOR DEL PANEL: Tablero/Aulas tienen subopciones que
+// aparecen en un abanico de círculos flotando arriba de su botón. Se
+// abren solo al pasar el mouse justo sobre el círculo del botón (no
+// sobre toda el área del ítem, que es más ancha por el espacio que
+// dejan los círculos del abanico) y se mantienen abiertas mientras el
+// mouse siga sobre el botón o ya dentro del abanico — con un pequeño
+// margen antes de cerrar (en JS, no solo con :hover de CSS, para que
+// no se cierre a medio camino al mover el mouse del botón hacia los
+// círculos de arriba). También con click/tap (para pantallas
+// táctiles, donde no existe hover) ───
+let bnavCloseTimer = null;
+document.querySelectorAll('.school-bnav-item').forEach(item => {
+    const popover = item.querySelector('.school-bnav-popover');
+    const btn = item.querySelector(':scope > .school-bnav-btn');
+    if (!popover || !btn) return;
+
+    const openBnavItem = () => {
+        clearTimeout(bnavCloseTimer);
+        document.querySelectorAll('.school-bnav-item.open').forEach(el => {
+            if (el !== item) el.classList.remove('open');
+        });
+        item.classList.add('open');
+    };
+    const closeBnavItem = () => {
+        clearTimeout(bnavCloseTimer);
+        bnavCloseTimer = setTimeout(() => item.classList.remove('open'), 250);
+    };
+
+    btn.addEventListener('mouseenter', openBnavItem);
+    btn.addEventListener('mouseleave', closeBnavItem);
+    popover.addEventListener('mouseenter', openBnavItem);
+    popover.addEventListener('mouseleave', closeBnavItem);
+});
+
+document.addEventListener('click', function (e) {
+    const item = e.target.closest('.school-bnav-item');
+    const clickedBtn = e.target.closest('.school-bnav-item > .school-bnav-btn');
+    const clickedSub = e.target.closest('.school-bnav-sub');
+
+    document.querySelectorAll('.school-bnav-item.open').forEach(el => {
+        if (el !== item) el.classList.remove('open');
+    });
+
+    if (clickedSub) {
+        item?.classList.remove('open');
+    } else if (clickedBtn && item.querySelector('.school-bnav-popover')) {
+        item.classList.toggle('open');
+    }
+});
+
+// ─── SALUDO SEGÚN LA HORA (usa la hora local del navegador) ───
+// También marca el bloque de saludo con la franja horaria (mañana/
+// tarde/noche) en un data-attribute, para darle a la mascota del
+// chatbot un halo de color distinto según la hora (no hay una imagen
+// distinta por franja, pero el tono cambia la sensación).
+(function () {
+    const el = document.getElementById('schoolGreetingWord');
+    const greeting = document.getElementById('schoolGreeting');
+    if (!el) return;
+    const h = new Date().getHours();
+    const period = (h >= 5 && h < 12) ? 'morning' : (h >= 12 && h < 19) ? 'afternoon' : 'night';
+    el.textContent = period === 'morning' ? 'Buenos días' : period === 'afternoon' ? 'Buenas tardes' : 'Buenas noches';
+    if (greeting) greeting.dataset.period = period;
+})();
+
 // ─── TABS ───
 function showSchoolTab(tabId) {
+    // Guarda la pestaña activa en el hash de la URL (sin agregar
+    // entradas al historial) para que un F5 / recarga vuelva al mismo
+    // apartado en vez de siempre al Tablero.
+    try { history.replaceState(null, '', '#' + tabId); } catch (e) { /* noop */ }
+
     document.querySelectorAll('.school-panel').forEach(p => p.classList.remove('active'));
     const panel = document.getElementById('tab-' + tabId);
     if (panel) panel.classList.add('active');
 
-    document.querySelectorAll('.school-tab').forEach(t => t.classList.remove('active'));
-    document.querySelector(`.school-tab[data-tab="${tabId}"]`)?.classList.add('active');
+    // .school-tab: sidebar de texto de panel-docente / Admin General.
+    // .school-bnav-btn / .school-bnav-sub: barra de abajo de panel-director.
+    document.querySelectorAll('.school-tab, .school-bnav-btn, .school-bnav-sub').forEach(t => t.classList.remove('active'));
+    const activeBtn = document.querySelector(`.school-tab[data-tab="${tabId}"], .school-bnav-btn[data-tab="${tabId}"], .school-bnav-sub[data-tab="${tabId}"]`);
+    activeBtn?.classList.add('active');
+
+    // Barra inferior: si la pestaña activa es una subopción dentro del
+    // popover (ej. "Docentes" dentro de Usuarios), el botón del grupo
+    // también se marca activo para que se note cuál sección es, y el
+    // popover se cierra (ya se navegó a donde el usuario quería).
+    document.querySelectorAll('.school-bnav-item').forEach(item => {
+        const btn = item.querySelector(':scope > .school-bnav-btn');
+        if (!btn) return;
+        if (item.querySelector('.school-bnav-sub.active')) {
+            btn.classList.add('active');
+            item.classList.remove('open');
+        }
+    });
 
     // Cargar datos según la pestaña
     const loaders = {
         'students': loadStudents,
         'teachers': loadTeachers,
-        'classrooms': loadClassrooms,
+        'classrooms': loadClassroomSections,
         'routes': loadRoutes,
         'attendance': loadDrillSelect,
         'incidents': loadIncidents,
@@ -86,6 +172,17 @@ function showSchoolTab(tabId) {
     if (loaders[tabId]) loaders[tabId]();
 }
 
+// Al cargar/recargar la página, si la URL ya trae un hash (dejado por
+// showSchoolTab en una visita anterior) y existe esa pestaña en este
+// panel, se abre esa en vez de quedarse en el Tablero por defecto.
+(function () {
+    const tabId = (location.hash || '').replace('#', '');
+    if (!tabId) return;
+    if (document.getElementById('tab-' + tabId)) {
+        showSchoolTab(tabId);
+    }
+})();
+
 // ─── MODALS ───
 function openModal(id) {
     document.getElementById(id).classList.add('open');
@@ -101,8 +198,13 @@ let __studentsPage = 1;
 async function loadStudents(page) {
     const tbody = document.getElementById('studentsTableBody');
     if (!tbody) return;
+    // loadStudents() es la lista SIN filtrar por sección — si había un
+    // filtro activo (venías de una tarjeta de Sección), se limpia aquí.
+    __studentsActiveAula = null;
+    const badge = document.getElementById('studentsFilterBadge');
+    if (badge) badge.style.display = 'none';
     __studentsPage = page || 1;
-    tbody.innerHTML = '<tr><td colspan="6" class="text-center">Cargando estudiantes...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="text-center">Cargando estudiantes...</td></tr>';
 
     const q = document.getElementById('studentsSearch')?.value.trim() || '';
 
@@ -111,19 +213,20 @@ async function loadStudents(page) {
         const result = await response.json();
 
         if (result.error) {
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center">Error: ${result.error}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center">Error: ${result.error}</td></tr>`;
             return;
         }
         __studentsCache = result.data || [];
 
         if (__studentsCache.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center">No hay estudiantes registrados</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center">No hay estudiantes registrados</td></tr>';
             renderPagination('studentsPagination', 1, 1, 'loadStudents');
             return;
         }
 
         tbody.innerHTML = __studentsCache.map(s => `
             <tr>
+                <td>${s.numero_lista ?? '—'}</td>
                 <td><code>${escapeHtml(s.codigo || '—')}</code></td>
                 <td>${escapeHtml(s.nombre)} ${escapeHtml(s.apellido || '')}</td>
                 <td>${escapeHtml(s.classroom || 'Sin aula')}</td>
@@ -138,12 +241,34 @@ async function loadStudents(page) {
 
         renderPagination('studentsPagination', result.page, result.total_pages, 'loadStudents');
     } catch (e) {
-        tbody.innerHTML = '<tr><td colspan="6" class="text-center">Error al cargar estudiantes</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center">Error al cargar estudiantes</td></tr>';
         console.error(e);
     }
 }
 
-const debounceStudentsSearch = debounce(() => loadStudents(1), 350);
+// Si hay una sección activa (viniste de una tarjeta de Sección), la
+// búsqueda y los refrescos tras agregar/editar/eliminar se quedan
+// dentro de esa sección en vez de saltar a la lista completa.
+let __studentsActiveAula = null;
+// Para refrescos tras agregar/editar/eliminar: se queda en la misma
+// página/sección donde estabas.
+function reloadStudents() {
+    if (__studentsActiveAula) {
+        loadFilteredStudents(__studentsActiveAula.id, __studentsActiveAula.nombre);
+    } else {
+        loadStudents(__studentsPage || 1);
+    }
+}
+// Para una búsqueda nueva: si hay sección activa, se queda ahí; si
+// no, vuelve a la página 1 (una búsqueda nueva no debe quedarse en
+// medio de una paginación vieja).
+const debounceStudentsSearch = debounce(() => {
+    if (__studentsActiveAula) {
+        loadFilteredStudents(__studentsActiveAula.id, __studentsActiveAula.nombre);
+    } else {
+        loadStudents(1);
+    }
+}, 350);
 
 document.getElementById('addStudentForm')?.addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -152,7 +277,8 @@ document.getElementById('addStudentForm')?.addEventListener('submit', async func
         apellido: document.getElementById('studentLastName').value,
         email: document.getElementById('studentEmail').value,
         telefono: document.getElementById('studentPhone').value,
-        aula_id: document.getElementById('studentClassroom').value || null
+        aula_id: document.getElementById('studentClassroom').value || null,
+        numero_lista: document.getElementById('studentListNumber').value || null
     };
 
     try {
@@ -166,7 +292,7 @@ document.getElementById('addStudentForm')?.addEventListener('submit', async func
             ndaAlert('✅ Estudiante agregado correctamente. Contraseña temporal: ' + result.password_temporal);
             closeModal('addStudentModal');
             this.reset();
-            loadStudents(__studentsPage);
+            reloadStudents();
         } else {
             ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
         }
@@ -184,6 +310,7 @@ async function editStudent(id) {
     document.getElementById('editStudentName').value = s.nombre || '';
     document.getElementById('editStudentLastName').value = s.apellido || '';
     document.getElementById('editStudentPhone').value = s.telefono_emergencia || '';
+    document.getElementById('editStudentListNumber').value = s.numero_lista || '';
 
     const select = document.getElementById('editStudentClassroom');
     select.innerHTML = '<option value="">Seleccionar aula</option>';
@@ -211,6 +338,7 @@ document.getElementById('editStudentForm')?.addEventListener('submit', async fun
         apellido: document.getElementById('editStudentLastName').value,
         telefono: document.getElementById('editStudentPhone').value,
         aula_id: document.getElementById('editStudentClassroom').value || null,
+        numero_lista: document.getElementById('editStudentListNumber').value || null,
     };
     try {
         const response = await fetch('?url=school/update-student', {
@@ -221,7 +349,7 @@ document.getElementById('editStudentForm')?.addEventListener('submit', async fun
         const result = await response.json();
         if (result.success) {
             closeModal('editStudentModal');
-            loadStudents(__studentsPage);
+            reloadStudents();
         } else {
             ndaAlert('Error: ' + (result.error || 'Desconocido'));
         }
@@ -237,7 +365,7 @@ async function deleteStudent(id) {
         const result = await response.json();
         if (result.success) {
             ndaAlert('✅ Estudiante eliminado');
-            loadStudents(__studentsPage);
+            reloadStudents();
         } else {
             ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
         }
@@ -1068,12 +1196,12 @@ let __routesCache = [];
 let __routesMap = null;
 let __routesMapMarkers = [];
 
-// Mismas URLs de tiles CARTO que ya usa el mapa de riesgos/sismos en app.js (assets/js/app.js:911-921).
+// CARTO (basemaps.cartocdn.com) ahora exige API key hasta para su tier
+// gratuito -- los tiles salian con el watermark "API KEY REQUIRED". Esri
+// World Imagery (satelital) es gratis, sin key, y se ve mejor que un mapa
+// de calles plano en zonas poco mapeadas en OpenStreetMap.
 function ndaTileLayerUrl() {
-    const light = document.documentElement.getAttribute('data-theme') === 'light';
-    return light
-        ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
-        : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+    return 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
 }
 
 const ROUTE_STATE_COLOR = { despejada: '#2a9d5c', bloqueada: '#e08a1e', peligro: '#e63946' };
@@ -1083,11 +1211,11 @@ function initRoutesMap() {
     if (!el || typeof L === 'undefined') return null;
     if (__routesMap) return __routesMap;
     __routesMap = L.map('routesMap', { center: [13.7942, -88.8965], zoom: 8 });
-    L.tileLayer(ndaTileLayerUrl(), { attribution: '© CARTO', maxZoom: 18 }).addTo(__routesMap);
+    L.tileLayer(ndaTileLayerUrl(), { attribution: '© Esri', maxZoom: 19 }).addTo(__routesMap);
     return __routesMap;
 }
 
-function renderRoutesMap(routes) {
+async function renderRoutesMap(routes) {
     const map = initRoutesMap();
     if (!map) return;
     __routesMapMarkers.forEach(m => map.removeLayer(m));
@@ -1103,14 +1231,46 @@ function renderRoutesMap(routes) {
         __routesMapMarkers.push(marker);
     });
 
-    if (withCoords.length > 0) {
+    // Puntos del croquis (Punto de encuentro, Zona segura, Extintor, etc.)
+    // de la institución, igual que ya se ven en el mapa de Inicio — para
+    // tener contexto de seguridad junto a las rutas, no solo las rutas.
+    let institutionLatLng = null;
+    try {
+        const res = await fetch('?url=school/croquis');
+        const data = await res.json();
+        if (data.lat !== null && data.lat !== undefined && data.lat !== '') {
+            const latN = parseFloat(data.lat), lngN = parseFloat(data.lng);
+            institutionLatLng = [latN, lngN];
+            (data.puntos || []).forEach(p => {
+                const px = parseFloat(p.pos_x), py = parseFloat(p.pos_y);
+                if (isNaN(px) || isNaN(py)) return;
+                const dLat = (((50 - py) / 50) * 60) / 111320;
+                const dLng = (((px - 50) / 50) * 60) / (111320 * Math.cos(latN * Math.PI / 180));
+                const color = CROQUIS_COLORS[p.tipo] || CROQUIS_COLORS.otro;
+                const marker = L.circleMarker([latN + dLat, lngN + dLng], { radius: 8, color: '#fff', fillColor: color, fillOpacity: 0.95, weight: 2 })
+                    .addTo(map)
+                    .bindPopup(`<strong>${escapeHtml(p.nombre)}</strong><br>${escapeHtml(CROQUIS_LABELS[p.tipo] || p.tipo)}`);
+                __routesMapMarkers.push(marker);
+            });
+        }
+    } catch (e) { /* sin puntos si falla */ }
+
+    if (__routesMapMarkers.length > 0) {
         map.fitBounds(L.featureGroup(__routesMapMarkers).getBounds().pad(0.3));
+    } else if (institutionLatLng) {
+        // Sin rutas ni puntos todavia: centra en la institución en vez de
+        // quedarse en la vista generica de todo El Salvador (zoom 8) con
+        // la que arranca initRoutesMap().
+        map.setView(institutionLatLng, 16);
     }
     setTimeout(() => map.invalidateSize(), 50);
 }
 
-// Mapa embebido en los modales de agregar/editar ruta: clic para colocar el pin.
-function setupRoutePickerMap(mapId, latInputId, lngInputId, initialLat, initialLng) {
+// Mapa embebido en los modales de agregar/editar ruta: clic para colocar el
+// pin. centerLat/centerLng: solo para centrar la vista al abrir (ej. la
+// ubicación de la institución), sin poner marcador -- initialLat/initialLng
+// SI ponen marcador (ruta que ya tiene coordenadas guardadas, al editar).
+function setupRoutePickerMap(mapId, latInputId, lngInputId, initialLat, initialLng, centerLat, centerLng) {
     const el = document.getElementById(mapId);
     if (!el || typeof L === 'undefined') return null;
     if (el._ndaLeafletMap) {
@@ -1118,10 +1278,11 @@ function setupRoutePickerMap(mapId, latInputId, lngInputId, initialLat, initialL
         el._ndaLeafletMap = null;
     }
     const hasInitial = initialLat !== null && initialLat !== undefined && !isNaN(initialLat);
-    const startLat = hasInitial ? initialLat : 13.7942;
-    const startLng = hasInitial ? initialLng : -88.8965;
-    const map = L.map(mapId, { center: [startLat, startLng], zoom: hasInitial ? 16 : 8 });
-    L.tileLayer(ndaTileLayerUrl(), { attribution: '© CARTO', maxZoom: 18 }).addTo(map);
+    const hasCenter = centerLat !== null && centerLat !== undefined && !isNaN(centerLat);
+    const startLat = hasInitial ? initialLat : (hasCenter ? centerLat : 13.7942);
+    const startLng = hasInitial ? initialLng : (hasCenter ? centerLng : -88.8965);
+    const map = L.map(mapId, { center: [startLat, startLng], zoom: (hasInitial || hasCenter) ? 16 : 8 });
+    L.tileLayer(ndaTileLayerUrl(), { attribution: '© Esri', maxZoom: 19 }).addTo(map);
 
     let marker = hasInitial ? L.marker([startLat, startLng]).addTo(map) : null;
     map.on('click', function (e) {
@@ -1157,7 +1318,18 @@ function useMyLocationForRoute(which) {
 
 function openAddRouteModal() {
     openModal('addRouteModal');
-    setTimeout(() => setupRoutePickerMap('addRouteMap', 'routeLat', 'routeLng', null, null), 50);
+    setTimeout(async () => {
+        let centerLat = null, centerLng = null;
+        try {
+            const res = await fetch('?url=school/croquis');
+            const data = await res.json();
+            if (data.lat !== null && data.lat !== undefined && data.lat !== '') {
+                centerLat = parseFloat(data.lat);
+                centerLng = parseFloat(data.lng);
+            }
+        } catch (e) { /* si falla, el mapa arranca en el centro generico */ }
+        setupRoutePickerMap('addRouteMap', 'routeLat', 'routeLng', null, null, centerLat, centerLng);
+    }, 50);
 }
 
 // ─── INICIO (Pagina Principal): mapa Leaflet con institucion + rutas + puntos de croquis ───
@@ -1167,7 +1339,7 @@ const INICIO_MAP_RADIUS_M = 60;
 // Mapa interactivo de Inicio: institucion + rutas + puntos de croquis. Si
 // eres staff, hacer clic en el mapa agrega un punto de croquis ahi mismo
 // (mismo modal y mismo endpoint que el clic sobre la imagen del croquis en
-// _tab-croquis.php — es la misma funcionalidad, solo con otra entrada).
+// tabCroquis.php — es la misma funcionalidad, solo con otra entrada).
 async function initInicioMap() {
     const el = document.getElementById('inicioMap');
     if (!el || typeof L === 'undefined') return;
@@ -1194,7 +1366,7 @@ async function initInicioMap() {
     }
 
     const map = L.map('inicioMap', { center: [latN, lngN], zoom: hasLoc ? 16 : 8 });
-    L.tileLayer(ndaTileLayerUrl(), { attribution: '© CARTO', maxZoom: 18 }).addTo(map);
+    L.tileLayer(ndaTileLayerUrl(), { attribution: '© Esri', maxZoom: 19 }).addTo(map);
     __inicioMap = map;
 
     const markers = [];
@@ -1229,8 +1401,9 @@ async function initInicioMap() {
             );
         });
 
-        // Clic en el mapa = agregar un punto de croquis ahi (solo staff).
-        if (window.__ndaIsSchoolStaff) {
+        // Clic en el mapa = agregar un punto de croquis ahi (solo el
+        // director/admin edita los puntos, no docentes).
+        if (window.__ndaIsSchoolAdmin) {
             map.on('click', function (e) {
                 const offsetYm = (e.latlng.lat - latN) * 111320;
                 const offsetXm = (e.latlng.lng - lngN) * 111320 * Math.cos(latN * Math.PI / 180);
@@ -1332,7 +1505,23 @@ function editRoute(id) {
     openModal('editRouteModal');
     const lat = r.lat ? parseFloat(r.lat) : null;
     const lng = r.lng ? parseFloat(r.lng) : null;
-    setTimeout(() => setupRoutePickerMap('editRouteMap', 'editRouteLat', 'editRouteLng', lat, lng), 50);
+    setTimeout(async () => {
+        let centerLat = null, centerLng = null;
+        if (lat === null) {
+            // Esta ruta no tiene coordenadas propias todavia: centra el
+            // mapa en la institución en vez del centro genérico lejano
+            // (mismo arreglo que openAddRouteModal()).
+            try {
+                const res = await fetch('?url=school/croquis');
+                const data = await res.json();
+                if (data.lat !== null && data.lat !== undefined && data.lat !== '') {
+                    centerLat = parseFloat(data.lat);
+                    centerLng = parseFloat(data.lng);
+                }
+            } catch (e) { /* si falla, el mapa arranca en el centro generico */ }
+        }
+        setupRoutePickerMap('editRouteMap', 'editRouteLat', 'editRouteLng', lat, lng, centerLat, centerLng);
+    }, 50);
 }
 
 document.getElementById('editRouteForm')?.addEventListener('submit', async function (e) {
@@ -1997,7 +2186,121 @@ async function loadClassroomSelect() {
     }
 }
 
-// ─── SECCIONES (18 aulas de bachillerato) ───
+// ─── Helper compartido por Aulas (director) y Secciones (docente):
+// arma el HTML del grid de tarjetas (A-F) de un año/grado ───
+function renderSectionCardsHtml(items, teachers, isAdmin, originTab) {
+    return `
+        <div class="section-cards">
+            ${items.map((s, idx) => `
+                <div class="section-card">
+                    <div class="cc-banner cc-color-${idx % 6}"></div>
+                    <span class="cc-letter-badge">${escapeHtml(s.seccion)}</span>
+                    <div class="cc-body">
+                        <div class="cc-meta">${s.total_alumnos || 0} ${s.total_alumnos === 1 ? 'estudiante' : 'estudiantes'}</div>
+                        <div class="cc-title" data-aula-id="${s.aulas_id}" data-aula-nombre="${escapeHtml(s.nombre)}" onclick="filterStudentsBySection(this.dataset.aulaId, this.dataset.aulaNombre, '${originTab || 'classrooms'}')">Sección ${escapeHtml(s.seccion)}</div>
+                        <div class="cc-bottom">
+                            <span class="cc-avatar">${escapeHtml((s.teacher || 'S').trim().charAt(0).toUpperCase())}</span>
+                            ${isAdmin ? `
+                                <select class="section-teacher-select" onchange="assignSectionTeacher(${s.aulas_id}, this.value)" onclick="event.stopPropagation()">
+                                    <option value="">Sin docente asignado</option>
+                                    ${teachers.map(t => `<option value="${t.usuarios_id}" ${String(t.usuarios_id) === String(s.maestro_id) ? 'selected' : ''}>${escapeHtml(t.nombre)}</option>`).join('')}
+                                </select>
+                            ` : `
+                                <div class="cc-teacher-info">
+                                    <div class="cc-teacher-name">${escapeHtml(s.teacher || 'Sin docente asignado')}</div>
+                                    <div class="cc-teacher-role">Docente</div>
+                                </div>
+                                <span class="cc-count-badge">Sección ${escapeHtml(s.seccion)}</span>
+                            `}
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+// ─── AULAS (director): paginado por año — 6 secciones (A-F) a la
+// vez, con Anterior/Siguiente ───
+let __classroomsGrados = [];
+let __classroomsGradoIdx = 0;
+let __classroomsTeachers = [];
+
+async function loadClassroomSections() {
+    const grid = document.getElementById('classroomsSectionsGrid');
+    if (!grid) return;
+    grid.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);">Cargando...</div>';
+
+    try {
+        const response = await fetch('?url=school/sections');
+        const sections = await response.json();
+
+        if (!Array.isArray(sections) || sections.length === 0) {
+            __classroomsGrados = [];
+            renderClassroomsYear();
+            return;
+        }
+
+        __classroomsTeachers = [];
+        if (window.__ndaIsSchoolAdmin) {
+            try {
+                const tRes = await fetch('?url=school/assignable-teachers');
+                __classroomsTeachers = await tRes.json();
+                if (!Array.isArray(__classroomsTeachers)) __classroomsTeachers = [];
+            } catch (e) { __classroomsTeachers = []; }
+        }
+
+        const grados = {};
+        sections.forEach(s => {
+            const g = s.grado || 'Sin año';
+            if (!grados[g]) grados[g] = [];
+            grados[g].push(s);
+        });
+        __classroomsGrados = Object.keys(grados).sort().map(g => ({ grado: g, items: grados[g] }));
+        if (__classroomsGradoIdx >= __classroomsGrados.length) __classroomsGradoIdx = 0;
+
+        renderClassroomsYear();
+    } catch (e) {
+        grid.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);">Error al cargar secciones</div>';
+        console.error(e);
+    }
+}
+
+function renderClassroomsYear() {
+    const grid = document.getElementById('classroomsSectionsGrid');
+    const label = document.getElementById('classroomsYearLabel');
+    const prevBtn = document.getElementById('classroomsYearPrev');
+    const nextBtn = document.getElementById('classroomsYearNext');
+    if (!grid) return;
+
+    if (__classroomsGrados.length === 0) {
+        grid.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);">No hay secciones para mostrar. Si eres director, crea tu institución para generarlas automáticamente.</div>';
+        if (label) label.textContent = '—';
+        if (prevBtn) prevBtn.disabled = true;
+        if (nextBtn) nextBtn.disabled = true;
+        return;
+    }
+
+    const group = __classroomsGrados[__classroomsGradoIdx];
+    if (label) label.textContent = group.grado;
+    grid.innerHTML = renderSectionCardsHtml(group.items, __classroomsTeachers, !!window.__ndaIsSchoolAdmin, 'classrooms');
+
+    if (prevBtn) prevBtn.disabled = __classroomsGradoIdx <= 0;
+    if (nextBtn) nextBtn.disabled = __classroomsGradoIdx >= __classroomsGrados.length - 1;
+}
+
+function changeClassroomsYear(step) {
+    const next = __classroomsGradoIdx + step;
+    if (next < 0 || next >= __classroomsGrados.length) return;
+    __classroomsGradoIdx = next;
+    renderClassroomsYear();
+}
+
+// ─── SECCIONES (docente/admin): mismo patrón paginado que Aulas ───
+let __sectionsGrados = [];
+let __sectionsGradoIdx = 0;
+let __sectionsTeachers = [];
+
 async function loadSections() {
     const grid = document.getElementById('sectionsGrid');
     if (!grid) return;
@@ -2009,17 +2312,18 @@ async function loadSections() {
         const sections = await response.json();
 
         if (!Array.isArray(sections) || sections.length === 0) {
-            grid.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);">No hay secciones para mostrar. Si eres director, crea tu institución para generarlas automáticamente.</div>';
+            __sectionsGrados = [];
+            renderSectionsYear();
             return;
         }
 
-        let teachers = [];
+        __sectionsTeachers = [];
         if (window.__ndaIsSchoolAdmin) {
             try {
                 const tRes = await fetch('?url=school/assignable-teachers');
-                teachers = await tRes.json();
-                if (!Array.isArray(teachers)) teachers = [];
-            } catch (e) { teachers = []; }
+                __sectionsTeachers = await tRes.json();
+                if (!Array.isArray(__sectionsTeachers)) __sectionsTeachers = [];
+            } catch (e) { __sectionsTeachers = []; }
         }
 
         const grados = {};
@@ -2028,32 +2332,44 @@ async function loadSections() {
             if (!grados[g]) grados[g] = [];
             grados[g].push(s);
         });
+        __sectionsGrados = Object.keys(grados).sort().map(g => ({ grado: g, items: grados[g] }));
+        if (__sectionsGradoIdx >= __sectionsGrados.length) __sectionsGradoIdx = 0;
 
-        grid.innerHTML = Object.keys(grados).sort().map(grado => `
-            <div class="section-group">
-                <h4>${grado}</h4>
-                <div class="section-cards">
-                    ${grados[grado].map(s => `
-                        <div class="section-card">
-                            <div class="section-card-top" data-aula-id="${s.aulas_id}" data-aula-nombre="${escapeHtml(s.nombre)}" onclick="filterStudentsBySection(this.dataset.aulaId, this.dataset.aulaNombre)" style="cursor:pointer;">
-                                <strong>Sección ${escapeHtml(s.seccion)}</strong>
-                                <span class="section-count">${s.total_alumnos || 0} estudiantes</span>
-                            </div>
-                            ${window.__ndaIsSchoolAdmin ? `
-                                <select class="section-teacher-select" onchange="assignSectionTeacher(${s.aulas_id}, this.value)" onclick="event.stopPropagation()">
-                                    <option value="">Sin docente asignado</option>
-                                    ${teachers.map(t => `<option value="${t.usuarios_id}" ${String(t.usuarios_id) === String(s.maestro_id) ? 'selected' : ''}>${escapeHtml(t.nombre)}</option>`).join('')}
-                                </select>
-                            ` : `<div class="section-teacher">${escapeHtml(s.teacher || 'Sin docente asignado')}</div>`}
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `).join('');
+        renderSectionsYear();
     } catch (e) {
         grid.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);">Error al cargar secciones</div>';
         console.error(e);
     }
+}
+
+function renderSectionsYear() {
+    const grid = document.getElementById('sectionsGrid');
+    const label = document.getElementById('sectionsYearLabel');
+    const prevBtn = document.getElementById('sectionsYearPrev');
+    const nextBtn = document.getElementById('sectionsYearNext');
+    if (!grid) return;
+
+    if (__sectionsGrados.length === 0) {
+        grid.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);">No hay secciones para mostrar. Si eres director, crea tu institución para generarlas automáticamente.</div>';
+        if (label) label.textContent = '—';
+        if (prevBtn) prevBtn.disabled = true;
+        if (nextBtn) nextBtn.disabled = true;
+        return;
+    }
+
+    const group = __sectionsGrados[__sectionsGradoIdx];
+    if (label) label.textContent = group.grado;
+    grid.innerHTML = renderSectionCardsHtml(group.items, __sectionsTeachers, !!window.__ndaIsSchoolAdmin, 'sections');
+
+    if (prevBtn) prevBtn.disabled = __sectionsGradoIdx <= 0;
+    if (nextBtn) nextBtn.disabled = __sectionsGradoIdx >= __sectionsGrados.length - 1;
+}
+
+function changeSectionsYear(step) {
+    const next = __sectionsGradoIdx + step;
+    if (next < 0 || next >= __sectionsGrados.length) return;
+    __sectionsGradoIdx = next;
+    renderSectionsYear();
 }
 
 async function assignSectionTeacher(aulaId, maestroId) {
@@ -2070,34 +2386,73 @@ async function assignSectionTeacher(aulaId, maestroId) {
     }
 }
 
-function filterStudentsBySection(aulaId, nombre) {
+// originTab: a qué pestaña regresar con el enlace "Volver" de aquí
+// abajo — 'classrooms' (Aulas, director) o 'sections' (Secciones,
+// docente/admin), según desde dónde se hizo click en la sección.
+function filterStudentsBySection(aulaId, nombre, originTab) {
+    originTab = originTab || 'classrooms';
+    // showSchoolTab('students') dispara internamente loadStudents()
+    // (la lista SIN filtro, vía el mapa "loaders"), que borra
+    // __studentsActiveAula al iniciar — por eso esta variable se
+    // asigna DESPUÉS de showSchoolTab, no antes, si no loadStudents()
+    // la pisa de inmediato y el filtro se "pierde" apenas se toca la
+    // búsqueda o se agrega/edita/elimina un estudiante.
     showSchoolTab('students');
     setTimeout(async () => {
-        const tbody = document.getElementById('studentsTableBody');
-        if (!tbody) return;
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center">Cargando estudiantes de ${escapeHtml(nombre)}...</td></tr>`;
-        try {
-            const response = await fetch('?url=school/students&aula_id=' + aulaId + '&per_page=100');
-            const result = await response.json();
-            const students = result.data || [];
-            if (students.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center">No hay estudiantes registrados en ${escapeHtml(nombre)}</td></tr>`;
-                return;
-            }
-            tbody.innerHTML = students.map(s => `
-                <tr>
-                    <td>${escapeHtml(s.codigo || '')}</td>
-                    <td>${escapeHtml(s.nombre)} ${escapeHtml(s.apellido || '')}</td>
-                    <td>${escapeHtml(s.classroom || nombre)}</td>
-                    <td>${escapeHtml(s.telefono_emergencia || '-')}</td>
-                    <td>${escapeHtml(s.teacher || '-')}</td>
-                    <td><button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteStudent(${s.estudiantes_id})">Eliminar</button></td>
-                </tr>
-            `).join('');
-        } catch (e) {
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center">Error al cargar estudiantes</td></tr>';
-        }
+        __studentsActiveAula = { id: aulaId, nombre: nombre };
+        const search = document.getElementById('studentsSearch');
+        if (search) search.value = '';
+        renderStudentsFilterBar(aulaId, nombre, originTab);
+        await loadFilteredStudents(aulaId, nombre);
     }, 50);
+}
+
+function renderStudentsFilterBar(aulaId, nombre, originTab) {
+    const badge = document.getElementById('studentsFilterBadge');
+    if (!badge) return;
+    badge.style.display = '';
+
+    // Para ver otra sección hay que volver a Aulas/Secciones y elegir
+    // ahí — no hay selector para saltar de sección desde esta lista.
+    const backLabel = originTab === 'sections' ? 'Secciones' : 'Aulas';
+    const backLink = `<button type="button" class="school-filter-back" onclick="showSchoolTab('${originTab}')">&laquo; ${backLabel}</button>`;
+    badge.innerHTML = `${backLink}<span class="school-filter-pill">${escapeHtml(nombre)}</span>`;
+}
+
+async function loadFilteredStudents(aulaId, nombre) {
+    const tbody = document.getElementById('studentsTableBody');
+    if (!tbody) return;
+    // La vista filtrada trae hasta 100 estudiantes de una sola vez (no
+    // pagina), así que limpia los botones de Anterior/Siguiente que
+    // hayan quedado de la última vez que se vio la lista completa —
+    // si no, esos botones viejos siguen llamando a loadStudents(page)
+    // y sacan de la sección filtrada sin querer.
+    const pagination = document.getElementById('studentsPagination');
+    if (pagination) pagination.innerHTML = '';
+    tbody.innerHTML = `<tr><td colspan="7" class="text-center">Cargando estudiantes de ${escapeHtml(nombre)}...</td></tr>`;
+    const q = document.getElementById('studentsSearch')?.value.trim() || '';
+    try {
+        const response = await fetch('?url=school/students&aula_id=' + aulaId + '&per_page=100&q=' + encodeURIComponent(q));
+        const result = await response.json();
+        const students = result.data || [];
+        if (students.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center">No hay estudiantes registrados en ${escapeHtml(nombre)}</td></tr>`;
+            return;
+        }
+        tbody.innerHTML = students.map(s => `
+            <tr>
+                <td>${s.numero_lista ?? '—'}</td>
+                <td>${escapeHtml(s.codigo || '')}</td>
+                <td>${escapeHtml(s.nombre)} ${escapeHtml(s.apellido || '')}</td>
+                <td>${escapeHtml(s.classroom || nombre)}</td>
+                <td>${escapeHtml(s.telefono_emergencia || '-')}</td>
+                <td>${escapeHtml(s.teacher || '-')}</td>
+                <td><button class="school-attendance-btn" style="color:var(--acc2);" onclick="deleteStudent(${s.estudiantes_id})">Eliminar</button></td>
+            </tr>
+        `).join('');
+    } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center">Error al cargar estudiantes</td></tr>';
+    }
 }
 
 // ─── CROQUIS INTERACTIVO ───
@@ -2149,11 +2504,13 @@ async function loadCroquis() {
             dot.style.left = p.pos_x + '%';
             dot.style.top = p.pos_y + '%';
             dot.title = p.nombre;
-            dot.innerHTML = `<span class="croquis-marker-tooltip"><strong>${escapeHtml(p.nombre)}</strong><br>${escapeHtml(CROQUIS_LABELS[p.tipo] || p.tipo)}${p.descripcion ? '<br>' + escapeHtml(p.descripcion) : ''}${window.__ndaIsSchoolStaff ? `<br><a href="#" onclick="deleteCroquisPoint(${p.puntos_croquis_id});return false;">Eliminar</a>` : ''}</span>`;
+            dot.innerHTML = `<span class="croquis-marker-tooltip"><strong>${escapeHtml(p.nombre)}</strong><br>${escapeHtml(CROQUIS_LABELS[p.tipo] || p.tipo)}${p.descripcion ? '<br>' + escapeHtml(p.descripcion) : ''}${window.__ndaIsSchoolAdmin ? `<br><a href="#" onclick="deleteCroquisPoint(${p.puntos_croquis_id});return false;">Eliminar</a>` : ''}</span>`;
             wrap.appendChild(dot);
         });
 
-        if (window.__ndaIsSchoolStaff) {
+        // Clic sobre el plano = agregar un punto (solo el director/admin
+        // edita los puntos del croquis, no docentes).
+        if (window.__ndaIsSchoolAdmin) {
             wrap.addEventListener('click', function (e) {
                 if (e.target.closest('.croquis-marker')) return;
                 const rect = wrap.getBoundingClientRect();
@@ -2174,6 +2531,24 @@ async function loadCroquis() {
 let __croquisLastData = null;
 let __croquisMap = null;
 let __croquisMapMarkers = [];
+let __croquisEditLocationMode = false;
+
+// Botón "Editar ubicación": mientras no está activo, hacer clic en el mapa
+// no mueve nada (evita corregir la ubicación sin querer). Se desactiva
+// solo despues de guardar un clic (ver saveInstitutionLocation).
+function toggleCroquisEditLocation(forceOff) {
+    __croquisEditLocationMode = forceOff ? false : !__croquisEditLocationMode;
+    const btn = document.getElementById('croquisEditLocationBtn');
+    if (btn) {
+        btn.textContent = __croquisEditLocationMode ? 'Cancelar' : 'Editar ubicación';
+        btn.classList.toggle('primary', __croquisEditLocationMode);
+        btn.classList.toggle('secondary', !__croquisEditLocationMode);
+    }
+    const hint = document.getElementById('croquisMapHint');
+    if (hint && __croquisEditLocationMode) {
+        hint.textContent = 'Haz clic en el mapa para fijar la ubicación.';
+    }
+}
 
 function showCroquisView(view) {
     document.querySelectorAll('[data-croquis-view]').forEach(btn => {
@@ -2183,6 +2558,10 @@ function showCroquisView(view) {
     const viewMap = document.getElementById('croquisViewMap');
     if (view2d) view2d.style.display = view === '2d' ? '' : 'none';
     if (viewMap) viewMap.style.display = view === 'map' ? '' : 'none';
+    // "Subir plano" solo tiene sentido en la Vista 2D (sube la imagen del
+    // croquis) -- en la vista de mapa real no hay nada que subir.
+    const uploadBtn = document.getElementById('croquisUploadBtn');
+    if (uploadBtn) uploadBtn.style.display = view === '2d' ? '' : 'none';
     if (view === 'map') initCroquisMap();
 }
 
@@ -2200,11 +2579,12 @@ function initCroquisMap() {
 
         const lat = hasLoc ? parseFloat(data.lat) : 13.7942;
         const lng = hasLoc ? parseFloat(data.lng) : -88.8965;
-        const theme = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
-        const subs = ['a', 'b', 'c', 'd'];
-        const darkTiles = subs.map(s => `https://${s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png`);
-        const lightTiles = subs.map(s => `https://${s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png`);
-        const terrainTiles = 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png';
+        // Un mapa de calles (vector u Esri Gray) se ve vacío en zonas rurales
+        // poco mapeadas en OpenStreetMap. Imágenes satelitales (Esri World
+        // Imagery, gratis y sin key) muestran el terreno real -vegetación,
+        // construcciones- sin depender de qué tan mapeada esté la zona; tiene
+        // más sentido ademas para una pestaña que se llama "Vista en mapa real".
+        const satelliteTiles = ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'];
 
         if (__croquisMap) {
             __croquisMap.remove();
@@ -2217,16 +2597,14 @@ function initCroquisMap() {
             style: {
                 version: 8,
                 sources: {
-                    'nda-base': { type: 'raster', tiles: theme === 'light' ? lightTiles : darkTiles, tileSize: 512, attribution: '© CARTO © OpenStreetMap' },
-                    'nda-terrain': { type: 'raster-dem', tiles: [terrainTiles], tileSize: 256, encoding: 'terrarium' },
+                    'nda-base': { type: 'raster', tiles: satelliteTiles, tileSize: 256, maxzoom: 19, attribution: '© Esri' },
                 },
                 layers: [{ id: 'nda-base-layer', type: 'raster', source: 'nda-base' }],
-                terrain: { source: 'nda-terrain', exaggeration: 1.6 },
             },
             center: [lng, lat],
-            zoom: hasLoc ? 17.5 : 8,
-            pitch: 60,
-            bearing: -15,
+            zoom: hasLoc ? 17 : 8,
+            pitch: 0,
+            bearing: 0,
         });
 
         __croquisMap.on('load', function () {
@@ -2235,12 +2613,16 @@ function initCroquisMap() {
 
         if (hint) {
             hint.textContent = hasLoc
-                ? (window.__ndaIsSchoolAdmin ? 'Ubicación aproximada de tu institución. Haz clic en el mapa para corregirla.' : 'Ubicación aproximada de tu institución (los puntos del croquis son una proyección aproximada, no coordenadas exactas).')
-                : (window.__ndaIsSchoolAdmin ? 'Tu institución todavía no tiene coordenadas: haz clic en el mapa para fijarlas.' : 'Tu institución todavía no tiene coordenadas registradas.');
+                ? 'Ubicación aproximada de tu institución (los puntos del croquis son una proyección aproximada, no coordenadas exactas).'
+                : (window.__ndaIsSchoolAdmin ? 'Tu institución todavía no tiene coordenadas registradas — usa "Editar ubicación" para fijarlas.' : 'Tu institución todavía no tiene coordenadas registradas.');
         }
 
+        // El clic solo mueve la ubicación con el modo de edición activo (ver
+        // toggleCroquisEditLocation) -- antes cualquier clic la movía, lo
+        // cual era fácil de disparar sin querer.
         if (window.__ndaIsSchoolAdmin) {
             __croquisMap.on('click', function (e) {
+                if (!__croquisEditLocationMode) return;
                 saveInstitutionLocation(e.lngLat.lat, e.lngLat.lng);
             });
         }
@@ -2314,8 +2696,9 @@ async function saveInstitutionLocation(lat, lng) {
         const result = await response.json();
         if (result.success) {
             if (__croquisLastData) { __croquisLastData.lat = lat; __croquisLastData.lng = lng; }
+            toggleCroquisEditLocation(true);
             const hint = document.getElementById('croquisMapHint');
-            if (hint) hint.textContent = 'Ubicación guardada. Haz clic de nuevo para corregirla.';
+            if (hint) hint.textContent = 'Ubicación guardada.';
             renderCroquisMapMarkers(lat, lng, true, (__croquisLastData && __croquisLastData.puntos) || []);
         } else {
             ndaAlert('Error: ' + (result.error || 'Desconocido'));

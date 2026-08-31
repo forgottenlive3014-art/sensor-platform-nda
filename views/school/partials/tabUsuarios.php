@@ -9,13 +9,17 @@
                 <input type="text" id="usersSearch" class="school-select" placeholder="Buscar por nombre o correo..." oninput="debounceUsersSearch()" style="max-width:240px;">
                 <select id="usersRoleFilter" class="school-select" onchange="loadUsers(1)">
                     <option value="">Todos los roles</option>
+                    <?php if (($user['role'] ?? '') === 'admin'): ?>
                     <option value="admin">Admin General</option>
+                    <?php endif; ?>
                     <option value="director">Admin Institucional</option>
                     <option value="docente">Docente</option>
                     <option value="alumno">Estudiante</option>
                     <option value="padre">Padre</option>
                     <option value="administrativo">Personal</option>
+                    <?php if (($user['role'] ?? '') !== 'director'): ?>
                     <option value="user">Usuario registrado</option>
+                    <?php endif; ?>
                 </select>
             </div>
             <div class="school-table-wrap">
@@ -61,8 +65,12 @@
                         <div class="school-form-group">
                             <label>Rol *</label>
                             <select id="userRole" required>
+                                <?php if (($user['role'] ?? '') !== 'director'): ?>
                                 <option value="user">Usuario registrado</option>
+                                <?php endif; ?>
+                                <?php if (($user['role'] ?? '') === 'admin'): ?>
                                 <option value="admin">Admin General</option>
+                                <?php endif; ?>
                                 <option value="director">Admin Institucional</option>
                                 <option value="docente">Docente</option>
                                 <option value="alumno">Estudiante</option>
@@ -100,8 +108,12 @@
                         <div class="school-form-group">
                             <label>Rol *</label>
                             <select id="editUserRole" required>
+                                <?php if (($user['role'] ?? '') !== 'director'): ?>
                                 <option value="user">Usuario registrado</option>
+                                <?php endif; ?>
+                                <?php if (($user['role'] ?? '') === 'admin'): ?>
                                 <option value="admin">Admin General</option>
+                                <?php endif; ?>
                                 <option value="director">Admin Institucional</option>
                                 <option value="docente">Docente</option>
                                 <option value="alumno">Estudiante</option>

@@ -7,7 +7,13 @@
                 </label>
                 <?php endif; ?>
             </div>
-            <p class="school-hint">6 secciones de 1er año, 6 de 2do año y 6 de 3er año (A-F). Cada docente ve sus secciones asignadas; el listado completo está disponible para el director.</p>
+            <div class="school-panel-header" style="margin-top:0;">
+                <div class="school-year-pager">
+                    <button type="button" class="school-btn secondary" id="sectionsYearPrev" onclick="changeSectionsYear(-1)">&laquo; Anterior</button>
+                    <span class="school-year-label" id="sectionsYearLabel">—</span>
+                    <button type="button" class="school-btn secondary" id="sectionsYearNext" onclick="changeSectionsYear(1)">Siguiente &raquo;</button>
+                </div>
+            </div>
             <div class="sections-grid" id="sectionsGrid">
                 <div class="text-center" style="padding:20px;color:var(--text3);">Cargando secciones...</div>
             </div>

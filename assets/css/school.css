@@ -3,8 +3,8 @@
    ============================================ */
 
 .school-module {
-    padding: 100px 30px 40px;
-    max-width: 1400px;
+    padding: 84px 40px 40px;
+    max-width: 1240px;
     margin: 0 auto;
 }
 
@@ -17,8 +17,8 @@
     flex-wrap: wrap;
     gap: 16px;
     background: linear-gradient(150deg, var(--card2) 0%, var(--card) 65%);
-    border-radius: 22px;
-    padding: 28px 32px;
+    border-radius: 28px;
+    padding: 26px 32px;
     border: 1px solid var(--border2);
     margin-bottom: 22px;
     box-shadow: var(--sh);
@@ -36,17 +36,14 @@
     align-items: center;
     gap: 18px;
 }
-.school-header-icon {
-    width: 56px;
-    height: 56px;
-    border-radius: 16px;
-    background: linear-gradient(135deg, var(--acc), var(--acc3));
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    box-shadow: 0 8px 22px var(--gA);
+.school-eyebrow {
+    font-family: var(--fn);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--acc);
+    margin-bottom: 2px;
 }
 .school-header h1 {
     font-family: var(--fd);
@@ -54,6 +51,9 @@
     font-weight: 800;
     color: var(--text);
     letter-spacing: -0.01em;
+}
+.school-header h1 #schoolGreetingWord {
+    color: var(--text);
 }
 .school-header-sub {
     color: var(--text3);
@@ -155,10 +155,9 @@ html { scroll-behavior: smooth; }
 }
 
 .school-tabs {
-    /* Antes: barra horizontal de tabs. Ahora: sidebar vertical fija a la
-       izquierda. Se conserva el nombre de la clase porque school.js no la
-       referencia directamente (solo usa .school-tab y .school-panel), así
-       que este cambio es puramente visual, sin tocar el JS. */
+    /* Sidebar de texto usada por panel-docente y el panel de Admin
+       General. panel-director ya no usa sidebar: su navegación vive en
+       .school-bnav, la barra de abajo (ver más abajo en este archivo). */
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -177,6 +176,7 @@ html { scroll-behavior: smooth; }
 .school-content {
     flex: 1 1 auto;
     min-width: 0; /* evita que las tablas anchas empujen el layout */
+    min-height: 620px; /* evita que la página salte de tamaño al cambiar de pestaña */
 }
 .school-tab {
     padding: 10px 14px;
@@ -213,6 +213,323 @@ html { scroll-behavior: smooth; }
     line-height: 1;
     flex: 0 0 auto;
 }
+a.school-tab {
+    text-decoration: none;
+}
+
+/* ─── CONTENIDO: saludo arriba de las pestañas (reemplaza la barra
+   horizontal larga que antes iba encima de todo el panel) ─── */
+.school-main {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+.school-content-greeting {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    text-align: left;
+    padding: 10px 4px 32px;
+}
+.school-greeting-mascot {
+    position: relative;
+    flex-shrink: 0;
+    width: 132px;
+    height: 132px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.school-greeting-mascot::before {
+    content: '';
+    position: absolute;
+    inset: -22px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 176, 60, 0.32) 0%, transparent 72%);
+    filter: blur(2px);
+    z-index: 0;
+    transition: background 0.4s ease;
+}
+.school-greeting-mascot img {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 50%;
+    z-index: 1;
+}
+/* Halo de la mascota según la franja horaria (mismo saludo/mismo
+   componente en JS que decide "Buenos días/tardes/noches") — no hay
+   una imagen distinta por franja, pero el color del halo cambia la
+   sensación de mañana/tarde/noche. */
+[data-period="afternoon"] .school-greeting-mascot::before {
+    background: radial-gradient(circle, rgba(255, 122, 60, 0.34) 0%, transparent 72%);
+}
+[data-period="night"] .school-greeting-mascot::before {
+    background: radial-gradient(circle, rgba(90, 110, 255, 0.34) 0%, transparent 72%);
+}
+.school-content-greeting .school-eyebrow {
+    font-family: var(--fn);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--acc);
+    margin-bottom: 6px;
+}
+.school-content-greeting h2 {
+    font-family: var(--fd);
+    font-size: 2.1rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+}
+.school-content-greeting .school-header-sub {
+    font-family: var(--fn);
+    font-size: 0.92rem;
+    font-weight: 400;
+    color: var(--text3);
+    max-width: 480px;
+    margin: 8px 0 0;
+    line-height: 1.5;
+}
+.school-content-bnav-pad {
+    padding-bottom: 130px;
+}
+
+/* ─── DOCK DE NAVEGACIÓN DEL PANEL (abajo) ───
+   Calcado del dock flotante del sitio (Monitor Sísmico / Colegio /
+   Panel / Chat: .nda-dock/.dock-btn/.dock-tip en style.css) — mismo
+   tamaño, mismo glass, mismos botones circulares (todos parejos, sin
+   elevar ninguno), mismo bottom:24px (mismo nivel que ese dock), solo
+   tooltip al pasar el mouse (sin texto fijo). Centrado en la página.
+   Orden: Usuarios, Solicitudes, Aulas, Tablero, Croquis, Rutas,
+   Simulacros. No se toca el dock del sitio (se queda abajo a la
+   derecha, en su lugar de siempre). */
+.school-bnav {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    height: 72px;
+    padding: 0 10px;
+}
+/* El "cristal" (fondo/blur/borde/sombra + muesca) vive en un
+   pseudo-elemento detrás de los botones: si la máscara de la muesca
+   se pusiera directo en .school-bnav, también recortaría al botón
+   central que sobresale por encima (queda solo una rebanada visible
+   en vez del círculo completo). Separado así, la muesca solo corta
+   el fondo, nunca los botones que van encima. */
+.school-bnav::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: rgba(6, 14, 26, 0.55);
+    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+    border: 1px solid rgba(120, 170, 255, 0.16);
+    border-radius: 32px;
+    box-shadow: 0 16px 44px rgba(0, 0, 0, 0.4), 0 2px 10px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    -webkit-mask-image: radial-gradient(circle 44px at 50% -16px, transparent 98%, #000 100%);
+    mask-image: radial-gradient(circle 44px at 50% -16px, transparent 98%, #000 100%);
+}
+[data-theme="light"] .school-bnav::before {
+    background: rgba(255, 255, 255, 0.6);
+    border-color: rgba(59, 130, 246, 0.18);
+    box-shadow: 0 16px 40px rgba(20, 30, 50, 0.14), 0 2px 10px rgba(20, 30, 50, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+.school-bnav-item {
+    position: relative;
+    display: flex;
+    flex-shrink: 0;
+}
+/* Item central (Tablero): botón más grande que sale por la muesca,
+   como el botón de cámara en apps con dock inferior. */
+.school-bnav-item-main {
+    margin: 0 22px;
+    z-index: 3;
+}
+.school-bnav-btn-main {
+    position: relative;
+    top: -46px;
+    width: 58px;
+    height: 58px;
+    border: 4px solid rgba(6, 14, 26, 0.55);
+    box-shadow: 0 10px 24px rgba(var(--dc), 0.55), 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+[data-theme="light"] .school-bnav-btn-main {
+    border-color: rgba(255, 255, 255, 0.6);
+}
+.school-bnav-btn-main svg {
+    width: 24px;
+    height: 24px;
+}
+.school-bnav-btn-main.active {
+    background: rgb(var(--dc));
+    color: #fff;
+    border-color: rgba(6, 14, 26, 0.55);
+}
+[data-theme="light"] .school-bnav-btn-main.active {
+    border-color: rgba(255, 255, 255, 0.6);
+}
+.school-bnav-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 100px;
+    background: var(--red, #e5484d);
+    border: 2px solid #06101c;
+    color: #fff;
+    font-family: var(--fn);
+    font-size: 0.62rem;
+    font-weight: 800;
+    line-height: 12px;
+    text-align: center;
+}
+
+/* Popover de subopciones: los sub-botones "brotan" arriba del botón
+   padre como un abanico de círculos (accesos rápidos estilo
+   Instagram/apps con FAB), cada uno con su nombre visible debajo
+   (no solo en hover — con el abanico ya requiriendo pasar el mouse
+   para abrirse, pedir un segundo hover preciso sobre cada círculo
+   para leer su nombre era confuso). Se abren con .open, controlado
+   desde school.js con mouseenter/mouseleave (con un pequeño margen
+   antes de cerrar) — más confiable que :hover puro de CSS, que se
+   corta si el mouse sale un instante al subir del botón hacia los
+   círculos. El click sigue funcionando igual para pantallas táctiles.
+   Animación con rebote ligero y escalonada al abrir; al cerrar todos
+   se repliegan juntos (sin retraso). */
+.school-bnav-popover {
+    position: absolute;
+    /* 46px, no 18px: deja espacio para el tooltip (.dock-tip) del
+       botón principal, que aparece justo arriba de él — si el abanico
+       empezaba antes, le tapaba el nombre (ej. "Aulas"/"Tablero"). */
+    bottom: calc(100% + 46px);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 20px;
+    z-index: 61;
+    pointer-events: none;
+}
+/* El botón de Tablero (.school-bnav-btn-main) se dibuja 46px más
+   arriba de su caja real (position:relative; top:-46px, ver más
+   abajo), pero .school-bnav-popover se posiciona en base a la caja
+   SIN ese desplazamiento visual (el "top" no mueve la caja para
+   efectos de layout, solo el dibujo). Sin este ajuste, el popover
+   quedaba encimado sobre el botón ya elevado y, al abrirse, esa capa
+   (ahora clickeable) tapaba el botón real — por eso dejaba de llevar
+   a ningún lado al hacer click estando el popover abierto. */
+/* Reportes/Notificaciones no se apilan arriba de Tablero: se separan
+   uno a cada lado del círculo elevado, pero lo bastante arriba (fuera
+   de la fila de botones) para no invadir el recuadro de Aulas/Croquis,
+   los botones vecinos. */
+.school-bnav-item-main .school-bnav-popover {
+    bottom: calc(100% + 30px);
+    align-items: center;
+    gap: 108px;
+}
+.school-bnav-item.open .school-bnav-popover {
+    pointer-events: auto;
+}
+.school-bnav-sub-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    opacity: 0;
+    transform: scale(0.35) translateY(16px);
+    transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
+}
+.school-bnav-sub {
+    position: relative;
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid rgba(59, 130, 246, 0.35);
+    background: rgba(15, 27, 46, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: rgb(96, 165, 250);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35), 0 0 0 6px rgba(59, 130, 246, 0.08);
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+[data-theme="light"] .school-bnav-sub {
+    background: rgba(255, 255, 255, 0.96);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+.school-bnav-sub svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+.school-bnav-sub:hover {
+    background: rgb(59, 130, 246);
+    border-color: rgb(59, 130, 246);
+    color: #fff;
+    transform: scale(1.12);
+}
+.school-bnav-sub.active {
+    background: var(--acc);
+    border-color: var(--acc);
+    color: #fff;
+}
+/* Nombre de la subopción, siempre visible (no requiere hover) en
+   cuanto el abanico está abierto. */
+.school-bnav-sub-label {
+    font-family: var(--fn);
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--text);
+    white-space: nowrap;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+    background: rgba(6, 14, 26, 0.7);
+    padding: 3px 9px;
+    border-radius: 100px;
+}
+[data-theme="light"] .school-bnav-sub-label {
+    background: rgba(255, 255, 255, 0.85);
+    text-shadow: none;
+}
+/* Halo naranja para las subopciones del botón central (Tablero, ya
+   elevado) en vez del azul por defecto de las demás. */
+.school-bnav-item-main .school-bnav-sub {
+    border-color: rgba(230, 126, 34, 0.4);
+    color: rgb(230, 126, 34);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35), 0 0 0 6px rgba(230, 126, 34, 0.1);
+}
+.school-bnav-item-main .school-bnav-sub:hover {
+    background: rgb(230, 126, 34);
+    border-color: rgb(230, 126, 34);
+    color: #fff;
+}
+
+.school-bnav-item.open .school-bnav-sub-wrap {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+}
+.school-bnav-item.open .school-bnav-sub-wrap:nth-child(1) { transition-delay: 0.02s; }
+.school-bnav-item.open .school-bnav-sub-wrap:nth-child(2) { transition-delay: 0.07s; }
+.school-bnav-item.open .school-bnav-sub-wrap:nth-child(3) { transition-delay: 0.12s; }
 
 @media (max-width: 900px) {
     /* En pantallas angostas, la sidebar vuelve a ser una barra horizontal
@@ -232,6 +549,20 @@ html { scroll-behavior: smooth; }
     .school-tab {
         width: auto;
         white-space: nowrap;
+    }
+
+    .school-bnav {
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        bottom: 92px;
+        height: 64px;
+        padding: 0 6px;
+        max-width: calc(100vw - 20px);
+        overflow-x: auto;
+    }
+    .school-content-bnav-pad {
+        padding-bottom: 170px;
     }
 }
 
@@ -580,6 +911,60 @@ html { scroll-behavior: smooth; }
 }
 .school-panel-header h3 i {
     color: var(--acc);
+}
+/* Insignia que muestra el filtro activo (ej. "3° Año A") al entrar a
+   Estudiantes desde una tarjeta de Sección — con "x" para quitarlo. */
+.school-filter-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    vertical-align: middle;
+    margin-left: 10px;
+}
+/* Enlace para volver a Aulas/Secciones (de donde se entró a esta
+   lista filtrada), sin depender del botón "Volver" del sitio, que no
+   sabe de las pestañas internas del panel. */
+.school-filter-back {
+    display: inline-flex;
+    align-items: center;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    color: var(--text2);
+    font-family: var(--fn);
+    font-size: 0.72rem;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 5px 12px;
+    border-radius: 100px;
+}
+.school-filter-back:hover {
+    color: var(--acc);
+    border-color: var(--acc);
+    background: var(--gA);
+}
+.school-filter-pill {
+    font-family: var(--fn);
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--acc);
+    background: var(--gA);
+    border: 1px solid rgba(201, 138, 61, 0.35);
+    padding: 4px 10px;
+    border-radius: 100px;
+}
+/* Para el director/admin: en vez de la píldora, un selector para
+   saltar directo a cualquier otra sección existente sin volver a
+   Aulas/Secciones primero. */
+.school-filter-select {
+    font-family: var(--fn);
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--acc);
+    background: var(--gA);
+    border: 1px solid rgba(201, 138, 61, 0.35);
+    padding: 4px 10px;
+    border-radius: 100px;
+    cursor: pointer;
 }
 
 /* ─── BUTTONS ─── */
@@ -988,6 +1373,19 @@ html { scroll-behavior: smooth; }
     opacity: 0.4;
     cursor: not-allowed;
 }
+.school-year-pager {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.school-year-label {
+    font-family: var(--fd);
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text);
+    min-width: 60px;
+    text-align: center;
+}
 .school-toggle-all {
     font-size: 0.8rem;
     color: var(--text2);
@@ -1063,6 +1461,148 @@ html { scroll-behavior: smooth; }
 .section-teacher {
     font-size: 0.75rem;
     color: var(--text2);
+}
+
+/* Aulas del director (ver tabAulas.php / loadClassroomSections
+   en school.js): tarjetas de sección con banner de color y letra
+   grande arriba, docente con avatar abajo — inspirado en tarjetas de
+   curso tipo "Edujar", adaptado a la paleta del sitio. Mismo diseño
+   tanto en Aulas del director como en Secciones del docente (ambos
+   usan .section-cards/.section-card + las clases .cc-* de aquí). */
+.section-cards {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+.section-card {
+    position: relative;
+    padding: 0;
+    overflow: hidden;
+    border-radius: 20px;
+    border-color: var(--border2);
+}
+.section-card:hover {
+    transform: translateY(-4px);
+}
+.cc-banner {
+    position: relative;
+    height: 92px;
+    overflow: hidden;
+    border-radius: 20px 20px 0 0;
+    background-size: cover;
+    background-position: center;
+}
+.cc-banner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 120%, rgba(255, 255, 255, 0.16) 0%, transparent 60%);
+}
+/* Tinte de color por sección encima de la foto: degradado semi-
+   opaco sobre la misma imagen, apilado como una segunda capa de
+   fondo (no background-blend-mode: con los colores tenues del sitio
+   el resultado se veía casi igual entre secciones). Con esto cada
+   tarjeta se distingue claro por color, la foto sigue asomando. */
+.cc-color-0 { background-image: linear-gradient(135deg, rgba(230, 163, 82, 0.78), rgba(230, 163, 82, 0.42)), url('../media/img/Sismo.png'); }
+.cc-color-1 { background-image: linear-gradient(135deg, rgba(61, 143, 255, 0.78), rgba(61, 143, 255, 0.42)), url('../media/img/Sismo.png'); }
+.cc-color-2 { background-image: linear-gradient(135deg, rgba(0, 212, 176, 0.78), rgba(0, 212, 176, 0.42)), url('../media/img/Sismo.png'); }
+.cc-color-3 { background-image: linear-gradient(135deg, rgba(139, 92, 246, 0.78), rgba(139, 92, 246, 0.42)), url('../media/img/Sismo.png'); }
+.cc-color-4 { background-image: linear-gradient(135deg, rgba(34, 197, 94, 0.78), rgba(34, 197, 94, 0.42)), url('../media/img/Sismo.png'); }
+.cc-color-5 { background-image: linear-gradient(135deg, rgba(224, 104, 95, 0.78), rgba(224, 104, 95, 0.42)), url('../media/img/Sismo.png'); }
+/* Círculo con la letra de la sección, flotando sobre la costura entre
+   el banner y el cuerpo — igual que el botón "⋮" de la referencia. */
+.cc-letter-badge {
+    position: absolute;
+    top: 74px;
+    right: 14px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.94);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--fd);
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: #1a1a1a;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+    z-index: 2;
+}
+.cc-body {
+    background: var(--card2);
+    border-radius: 0 0 20px 20px;
+    padding: 16px 18px 18px;
+}
+.cc-meta {
+    font-size: 0.74rem;
+    color: var(--text3);
+    margin-bottom: 4px;
+}
+.cc-title {
+    font-family: var(--fd);
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text);
+    cursor: pointer;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border2);
+}
+.cc-bottom {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.cc-avatar {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--fd);
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: #fff;
+    background: linear-gradient(135deg, var(--acc), var(--acc3));
+}
+.cc-teacher-info { flex: 1 1 auto; line-height: 1.3; min-width: 0; }
+.cc-teacher-name {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.cc-teacher-role {
+    font-size: 0.68rem;
+    color: var(--text3);
+}
+.cc-count-badge {
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text);
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    padding: 4px 10px;
+    border-radius: 100px;
+    white-space: nowrap;
+}
+.section-teacher-select {
+    width: 100%;
+}
+@media (max-width: 760px) {
+    .section-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 480px) {
+    .section-cards {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* ============================================================
@@ -1371,12 +1911,36 @@ html { scroll-behavior: smooth; }
 
 .section-teacher-select {
     width: 100%;
-    background: var(--card3);
-    border: 1px solid var(--border2);
+    flex: 1 1 auto;
+    min-width: 0;
+    background: transparent;
+    border: none;
     border-radius: 7px;
     color: var(--text2);
     font-size: 0.72rem;
     padding: 5px 7px;
     margin-top: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    transition: background 0.15s ease;
     font-family: var(--fn);
+}
+/* Dentro de la tarjeta de sección, el selector reemplaza al texto
+   "Docente Demo": debe leerse igual que ese texto (no como un campo
+   de formulario suelto) hasta que le den click. */
+.cc-bottom .section-teacher-select {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text);
+    padding: 4px 20px 4px 0;
+    margin-top: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a94a6' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 2px center;
+    background-size: 13px;
+}
+.cc-bottom .section-teacher-select:hover {
+    background-color: var(--bg3);
+    border-radius: 6px;
 }

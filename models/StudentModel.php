@@ -77,7 +77,7 @@ class StudentModel {
             $params[] = "%$search%";
             $params[] = "%$search%";
         }
-        $sql .= " ORDER BY e.nombre ASC LIMIT $perPage OFFSET $offset";
+        $sql .= " ORDER BY e.numero_lista ASC, e.nombre ASC LIMIT $perPage OFFSET $offset";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
@@ -112,12 +112,12 @@ class StudentModel {
 
         $codigo = 'EST' . str_pad($userId, 6, '0', STR_PAD_LEFT);
         $stmt = $this->db->prepare("
-            INSERT INTO estudiantes (codigo, usuarios_id, aulas_id, nombre, apellido, edad, telefono_emergencia)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO estudiantes (codigo, usuarios_id, aulas_id, nombre, apellido, numero_lista, edad, telefono_emergencia)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ");
         $stmt->execute([
             $codigo, $userId, $data['aulas_id'] ?: null, $data['nombre'], $data['apellido'],
-            $data['edad'] ?: null, $data['telefono_emergencia'] ?: null,
+            $data['numero_lista'] ?: null, $data['edad'] ?: null, $data['telefono_emergencia'] ?: null,
         ]);
 
         return ['estudiante_id' => $this->db->lastInsertId(), 'usuario_id' => $userId];
@@ -125,11 +125,11 @@ class StudentModel {
 
     public function update($id, $data) {
         $stmt = $this->db->prepare("
-            UPDATE estudiantes SET nombre = ?, apellido = ?, aulas_id = ?, edad = ?, telefono_emergencia = ?
+            UPDATE estudiantes SET nombre = ?, apellido = ?, aulas_id = ?, numero_lista = ?, edad = ?, telefono_emergencia = ?
             WHERE estudiantes_id = ?
         ");
         $stmt->execute([
-            $data['nombre'], $data['apellido'], $data['aulas_id'] ?: null,
+            $data['nombre'], $data['apellido'], $data['aulas_id'] ?: null, $data['numero_lista'] ?: null,
             $data['edad'] ?: null, $data['telefono_emergencia'] ?: null, $id,
         ]);
         return $stmt->rowCount() > 0;

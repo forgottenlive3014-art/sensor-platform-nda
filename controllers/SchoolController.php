@@ -166,7 +166,7 @@ class SchoolController {
             'isSchoolStaff' => $isReadOnlyView ? false : $this->isSchoolStaff(),
             'isPanelRole' => $isReadOnlyView ? true : $this->isPanelRole(),
             'isReadOnlyView' => $isReadOnlyView,
-            'panelTitle' => $isReadOnlyView ? ('Gestión Escolar — ' . ($institucion['nombre'] ?? '')) : 'Gestión Escolar',
+            'panelTitle' => $institucion['nombre'] ?? 'Gestión Escolar',
             'panelSubtitle' => $isReadOnlyView
                 ? 'Estás viendo esta institución como Admin General — modo solo lectura.'
                 : 'Información de seguridad, noticias y comunidad de tu institución',
@@ -232,7 +232,7 @@ class SchoolController {
         $panel = ($user['role'] === 'director' || $isReadOnlyView) ? 'panel-director' : 'panel-docente';
         $subtitles = [
             'panel-director' => 'Administra estudiantes, docentes, rutas de evacuación, simulacros y más',
-            'panel-docente'  => 'Tus secciones, pase de lista, notificaciones y croquis',
+            'panel-docente'  => 'Tus secciones, pase de lista, notificaciones y rutas de evacuación',
         ];
 
         $institucionNombre = null;
@@ -266,7 +266,7 @@ class SchoolController {
                 : $subtitles[$panel],
         ];
 
-        view('school/' . $panel, $data);
+        view('school/panels/' . $panel, $data);
     }
 
     // Admin General: gestiona toda la plataforma (no una institucion
@@ -859,7 +859,9 @@ class SchoolController {
     }
 
     public function addCroquisPoint() {
-        if (!isLoggedIn() || !$this->isSchoolStaff()) {
+        // Solo el director/admin edita los puntos del croquis (antes
+        // isSchoolStaff() tambien dejaba al docente).
+        if (!isLoggedIn() || !$this->isSchoolAdmin()) {
             jsonResponse(['error' => 'No autorizado'], 401);
         }
         $instId = $this->myInstitutionId();
@@ -885,7 +887,7 @@ class SchoolController {
     }
 
     public function deleteCroquisPoint() {
-        if (!isLoggedIn() || !$this->isSchoolStaff()) {
+        if (!isLoggedIn() || !$this->isSchoolAdmin()) {
             jsonResponse(['error' => 'No autorizado'], 401);
         }
         $id = $_GET['id'] ?? null;

@@ -1,11 +1,10 @@
 <?php
 class ChatController {
 
-    // Clave de Groq (https://console.groq.com/keys). Este archivo esta
-    // excluido de git (ver .gitignore) precisamente porque tiene la clave
-    // real escrita aqui abajo -- si alguna vez se saca del .gitignore,
-    // sacar la clave de aqui primero.
-    private $apiKey = "";
+    // Clave de Groq (https://console.groq.com/keys), leida de .env
+    // (GROQ_API_KEY) -- igual que MAIL_* en Mailer.php. Este archivo SI
+    // esta trackeado por git, asi que la clave real nunca va aqui escrita.
+    private $apiKey = null;
 
     // Groq retiro los modelos "llama-3.x-*" de su catalogo (ver /v1/models);
     // gpt-oss-120b es el reemplazo actual: buena calidad en español y rapido.
@@ -179,6 +178,39 @@ class ChatController {
         return false;
     }
 
+    // Pregunta de "como hago X" (procedimiento dentro de la plataforma),
+    // ej. "y como vero las personas qeu han ingresado a mi colegio" (con
+    // errores de tipeo y todo). Estas NO deben caer en matchNavigation
+    // (paso 3): esa tabla solo tiene palabras sueltas como "colegio"/
+    // "escuela" y devuelve un simple "Te llevo a X" sin contestar la
+    // pregunta real. Si no hay FAQ que la cubra, mejor dejarla pasar
+    // directo a la IA (paso 4).
+    //
+    // En vez de una lista de frases exactas (fragil ante errores de
+    // tipeo: "como vero" no calza con "como veo"), se detecta por señales
+    // mas generales: palabras de pregunta sueltas, termina en "?", o el
+    // mensaje es largo (mas de 5 palabras casi siempre es una oracion/
+    // pregunta real, no solo el nombre corto de una seccion). Los
+    // comandos de navegacion explicitos ("llevame a...", "ir a...")
+    // siguen usando el atajo rapido aunque sean mensajes largos.
+    private function isProceduralQuestion($message) {
+        $norm = $this->normalize($message);
+
+        $navCommands = ['llevame', 'llevarme', 'ir a', 'vamos a', 'quiero ir', 'muestrame', 'abrir', 'abre'];
+        foreach ($navCommands as $c) {
+            if (strpos($norm, $this->normalize($c)) !== false) return false;
+        }
+
+        if (substr(rtrim($message), -1) === '?') return true;
+        if (str_word_count($norm) > 5) return true;
+
+        $questionWords = ['como ', 'donde ', 'cuando ', 'quien ', 'quienes ', 'cual ', 'cuales ', 'para que'];
+        foreach ($questionWords as $w) {
+            if (strpos($norm, $this->normalize($w)) !== false) return true;
+        }
+        return false;
+    }
+
     private function matchFaq($message) {
         $norm = $this->normalize($message);
         foreach ($this->faqKnowledge() as $item) {
@@ -268,23 +300,28 @@ class ChatController {
 
             // 3) Intencion de navegacion (sin respuesta de contenido propia):
             //    si coincide, respondemos y sugerimos el enlace SIN necesitar
-            //    la IA (mas rapido y siempre disponible).
-            $navMatch = $this->matchNavigation($message);
-            if ($navMatch) {
-                jsonResponse([
-                    'reply' => 'Te llevo a "' . $navMatch['label'] . '". Si quieres, haz clic en el botón de abajo.',
-                    'navigate' => $navMatch['url'],
-                    'navigateLabel' => $navMatch['label'],
-                ]);
-                return;
+            //    la IA (mas rapido y siempre disponible). Se salta si es una
+            //    pregunta de procedimiento ("como veo...", "donde esta...",
+            //    termina en "?"): esas quedan mejor respondidas por la IA en
+            //    el paso 4, en vez de solo un "Te llevo a X" sin contenido.
+            if (!$this->isProceduralQuestion($message)) {
+                $navMatch = $this->matchNavigation($message);
+                if ($navMatch) {
+                    jsonResponse([
+                        'reply' => 'Te llevo a "' . $navMatch['label'] . '". Si quieres, haz clic en el botón de abajo.',
+                        'navigate' => $navMatch['url'],
+                        'navigateLabel' => $navMatch['label'],
+                    ]);
+                    return;
+                }
             }
         }
 
         // 4) Sin coincidencia de FAQ ni navegacion: usamos la IA (Groq) si
-        //    hay API key configurada en $this->apiKey (arriba del archivo).
-        $apiKey = $this->apiKey;
+        //    hay API key configurada en .env (GROQ_API_KEY).
+        $apiKey = $this->apiKey ?? env('GROQ_API_KEY', '');
         if (empty($apiKey)) {
-            jsonResponse(['reply' => 'Puedo ayudarte a moverte por NDA (sismos, clima, mapa de riesgos, gestión escolar, recursos...). Para preguntas abiertas, el administrador del sitio todavía no configuró la clave de IA (variable $apiKey en ChatController.php).']);
+            jsonResponse(['reply' => 'Puedo ayudarte a moverte por NDA (sismos, clima, mapa de riesgos, gestión escolar, recursos...). Para preguntas abiertas, el administrador del sitio todavía no configuró la clave de IA (variable GROQ_API_KEY en .env).']);
             return;
         }
 
@@ -311,6 +348,13 @@ class ChatController {
             . "AHORA?\", una biblioteca de recursos con guías PDF descargables, juegos/trivias educativas, y un "
             . "módulo de Gestión Escolar (simulacros, rutas de evacuación, reportes de incidentes) para directores, "
             . "docentes, estudiantes, padres y personal administrativo.\n\n"
+            . "Navegación dentro del Panel de Gestión del director (usa esto si preguntan cómo hacer algo ahí "
+            . "dentro, ej. \"cómo veo quién se unió a mi colegio\"): la barra inferior del panel tiene Usuarios "
+            . "(lista de todos los miembros ya aceptados en la institución, filtrable por docentes/personal/"
+            . "estudiantes/padres), Solicitudes (pedidos pendientes de unirse a la institución, para aprobar o "
+            . "rechazar), Aulas (las 6 secciones A-F de cada año de bachillerato, con su docente asignado y pase "
+            . "de lista), Tablero (resumen general, con Reportes y Notificaciones), Croquis, Rutas de Evacuación "
+            . "y Simulacros.\n\n"
             . "Datos geológicos y geográficos de El Salvador que DEBES usar como referencia (no inventes otras "
             . "placas, fallas o cifras si el usuario pregunta sobre esto):\n"
             . "- El Salvador está en el límite entre la Placa de Cocos (oceánica) y la Placa del Caribe "
@@ -361,9 +405,14 @@ class ChatController {
             'messages' => $messages,
             'temperature' => 0.6,
             // gpt-oss-120b gasta parte del presupuesto en razonamiento interno
-            // antes del texto visible; la brevedad real la impone el prompt
-            // (3-4 oraciones), esto solo evita que la respuesta se corte a medias.
-            'max_tokens' => 420,
+            // (oculto, no se muestra) antes del texto visible. Con esfuerzo
+            // "high" (default) esto a veces se comia TODO max_tokens en
+            // preguntas abiertas (ej. "que es lluvia"), dejando el campo
+            // "content" vacio -> el chat mostraba "No pude responder eso.".
+            // "low" alcanza de sobra para las 3-4 oraciones cortas que pide
+            // el prompt, y deja casi todo el presupuesto para el texto real.
+            'reasoning_effort' => 'low',
+            'max_tokens' => 500,
         ];
 
         $ch = curl_init($this->url);
@@ -388,8 +437,11 @@ class ChatController {
         }
 
         $data = json_decode($response, true);
-        $reply = $data['choices'][0]['message']['content'] ?? 'No pude generar una respuesta. Intenta reformular tu pregunta.';
-        $reply = $this->stripMarkdown($reply);
+        $reply = $data['choices'][0]['message']['content'] ?? '';
+        $reply = trim($this->stripMarkdown($reply));
+        if ($reply === '') {
+            $reply = 'No pude generar una respuesta. Intenta reformular tu pregunta.';
+        }
 
         $resp = ['reply' => $reply];
         // La IA no elige a donde redirigir: reusamos el mismo mapa de

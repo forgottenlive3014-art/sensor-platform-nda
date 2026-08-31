@@ -28,6 +28,10 @@
                         <option value="">Seleccionar aula</option>
                     </select>
                 </div>
+                <div class="school-form-group">
+                    <label># de Lista</label>
+                    <input type="number" id="studentListNumber" min="1" placeholder="1">
+                </div>
                 <button type="submit" class="school-btn primary">Guardar Estudiante</button>
             </form>
         </div>
@@ -242,6 +246,10 @@
                     <select id="editStudentClassroom">
                         <option value="">Seleccionar aula</option>
                     </select>
+                </div>
+                <div class="school-form-group">
+                    <label># de Lista</label>
+                    <input type="number" id="editStudentListNumber" min="1" placeholder="1">
                 </div>
                 <button type="submit" class="school-btn primary">Guardar cambios</button>
             </form>

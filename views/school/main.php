@@ -25,12 +25,6 @@ ob_start();
         <a href="?url=school/panel" class="school-btn primary">Ver Panel completo</a>
         <a href="?url=school/exit-view" class="school-btn secondary">Salir</a>
     </div>
-    <?php elseif ($isPanelRole): ?>
-    <div class="school-panel-header" style="padding:0 0 10px;">
-        <a href="?url=school/panel" class="school-btn primary">
-            Ir al Panel de Gestión
-        </a>
-    </div>
     <?php endif; ?>
 
     <nav class="school-scroll-nav">
@@ -48,17 +42,17 @@ ob_start();
         <?php endif; ?>
     </nav>
 
-    <?php include __DIR__ . '/partials/_tab-inicio.php'; ?>
-    <?php include __DIR__ . '/partials/_tab-croquis.php'; ?>
-    <?php include __DIR__ . '/partials/_tab-news.php'; ?>
-    <?php include __DIR__ . '/partials/_tab-blog.php'; ?>
-    <?php include __DIR__ . '/partials/_tab-incidents.php'; ?>
-    <?php include __DIR__ . '/partials/_tab-board.php'; ?>
+    <?php include __DIR__ . '/partials/tabInicio.php'; ?>
+    <?php include __DIR__ . '/partials/tabCroquis.php'; ?>
+    <?php include __DIR__ . '/partials/tabNoticias.php'; ?>
+    <?php include __DIR__ . '/partials/tabLugaresRiesgo.php'; ?>
+    <?php include __DIR__ . '/partials/tabIncidentes.php'; ?>
+    <?php include __DIR__ . '/partials/tabCorcho.php'; ?>
     <?php if ($role === 'alumno'): ?>
-        <?php include __DIR__ . '/partials/_tab-my-classroom.php'; ?>
+        <?php include __DIR__ . '/partials/tabMiAula.php'; ?>
     <?php endif; ?>
     <?php if ($role === 'padre'): ?>
-        <?php include __DIR__ . '/partials/_tab-my-children.php'; ?>
+        <?php include __DIR__ . '/partials/tabMisHijos.php'; ?>
     <?php endif; ?>
 </div>
 
