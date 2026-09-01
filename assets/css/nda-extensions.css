@@ -605,3 +605,85 @@
     background: var(--card2);
     color: var(--text);
 }
+
+/* ---------- GATE: apartados que exigen sesion iniciada ---------- */
+/* El contenido real SI se manda al navegador (por eso se puede desenfocar
+   en vez de ocultar), pero queda inerte: sin puntero, sin seleccion. */
+.nda-gate-blur {
+    filter: blur(7px);
+    pointer-events: none;
+    user-select: none;
+}
+.nda-gate-overlay {
+    position: fixed;
+    top: var(--nh);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 8000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(2, 21, 38, 0.6);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+}
+[data-theme="light"] .nda-gate-overlay {
+    background: rgba(20, 24, 30, 0.45);
+}
+.nda-gate-card {
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: var(--rl);
+    padding: 36px 32px;
+    box-shadow: var(--shl);
+}
+.nda-gate-icon {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gA);
+    font-size: 1.5rem;
+}
+.nda-gate-card h2 {
+    font-family: var(--fd);
+    font-size: 1.1rem;
+    color: var(--text);
+    margin-bottom: 10px;
+    line-height: 1.35;
+}
+.nda-gate-card p {
+    color: var(--text2);
+    font-size: 0.88rem;
+    line-height: 1.65;
+    margin-bottom: 22px;
+}
+.nda-gate-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+.nda-gate-actions a {
+    flex: 1;
+    justify-content: center;
+}
+.nda-gate-back {
+    display: inline-block;
+    font-size: 0.8rem;
+    color: var(--text3);
+    text-decoration: none;
+    transition: color var(--tr);
+}
+.nda-gate-back:hover { color: var(--text2); }
+@media (max-width: 480px) {
+    .nda-gate-card { padding: 28px 22px; }
+    .nda-gate-actions { flex-direction: column; }
+}
