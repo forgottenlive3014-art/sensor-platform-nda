@@ -185,6 +185,7 @@ $routeMap = [
     'login'      => ['AuthController', 'login'],
     'google-login' => ['AuthController', 'googleLogin'],
     'register'   => ['AuthController', 'register'],
+    'register/check-availability' => ['AuthController', 'checkAvailability'],
     'register/verify'       => ['AuthController', 'verifyEmail'],
     'register/resend-code'  => ['AuthController', 'resendVerificationCode'],
     'register/verify-account'      => ['AuthController', 'verifyAccountEmail'],

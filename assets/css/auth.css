@@ -81,6 +81,116 @@
     margin: 0 auto 14px;
 }
 
+/*   VERIFICACION DE CORREO: el mismo muñeco animado de login, pero a
+     la izquierda de la tarjeta en vez de a la derecha, y el par
+     muñeco+tarjeta centrado como bloque en la página (no fijado a la
+     izquierda con espacio vacío a la derecha).   */
+.auth-wrap-verify {
+    grid-template-columns: auto 420px;
+    justify-content: center;
+    gap: 8px;
+}
+@media (max-width: 1100px) {
+    .auth-wrap-verify { grid-template-columns: 1fr; }
+}
+/* Angosta el texto "Enviamos un código..." para que envuelva en 3
+   líneas en vez de 2. */
+.auth-wrap-verify .auth-subtitle {
+    max-width: 300px;
+}
+/* El .auth-hero de login trae padding:50px pensado para su columna
+   1fr; acá la columna es "auto" (ajustada al muñeco), así que ese
+   padding solo agrega espacio muerto entre el muñeco y la tarjeta. */
+.auth-wrap-verify .auth-hero {
+    padding: 0;
+    /* .auth-wrap centra todo verticalmente (align-items:center), asi
+       que si la tarjeta crece (ej. aparece la alerta de error) el
+       muñeco+globito se recentran mas abajo y quedan desalineados del
+       título. Se fija arriba, a la altura del título, para que no se
+       mueva segun el contenido de la tarjeta. */
+    align-self: flex-start;
+    margin-top: 34px;
+}
+
+/* Insignia + borde de acento arriba de la tarjeta, para que no se vea
+   como puro texto plano. */
+.auth-wrap-verify .auth-card {
+    border-top: 3px solid var(--acc);
+}
+.auth-title-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 5px;
+}
+.auth-title-row .auth-title {
+    margin-bottom: 0;
+    white-space: nowrap;
+}
+.auth-icon-badge {
+    flex-shrink: 0;
+    width: 46px;
+    height: 46px;
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--acc), var(--acc2));
+    box-shadow: 0 10px 26px var(--gA);
+}
+.auth-icon-badge svg {
+    width: 22px;
+    height: 22px;
+    stroke: #fff;
+}
+@media (max-width: 600px) {
+    .auth-title-row .auth-title { white-space: normal; }
+}
+
+/* Globito de diálogo a la izquierda de la cabeza del muñeco, con
+   colita horizontal apuntando hacia él (triángulo simétrico, no
+   torcido). */
+.auth-verify-bubble {
+    position: absolute;
+    top: 22%;
+    right: 100%;
+    margin-right: 24px;
+    transform: translateY(-50%);
+    width: 210px;
+    background: var(--auth-bubble-bg);
+    border: 1.5px solid var(--acc);
+    border-radius: 16px;
+    padding: 14px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--text);
+    text-align: left;
+    box-shadow: 0 0 30px var(--gA), 0 12px 30px rgba(0, 0, 0, .3);
+    backdrop-filter: blur(12px);
+    z-index: 8;
+    animation: auth-bubble-bounce 3.5s ease-in-out infinite;
+}
+.auth-verify-bubble::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    width: 0;
+    height: 0;
+    transform: translateY(-50%);
+    border-top: 9px solid transparent;
+    border-bottom: 9px solid transparent;
+    border-left: 12px solid var(--acc);
+}
+@keyframes auth-bubble-bounce {
+    0%, 100% { transform: translateY(-50%) translateX(0); }
+    50% { transform: translateY(-50%) translateX(-6px); }
+}
+@media (max-width: 1100px) {
+    .auth-verify-bubble { display: none; }
+}
+
 .auth-title {
     font-family: var(--fd);
     font-size: 28px;

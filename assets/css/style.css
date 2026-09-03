@@ -3529,6 +3529,20 @@ canvas {
     background: var(--green, #22c55e);
 }
 
+/* Estado de disponibilidad de username/correo en vivo, ver
+   register-wizard.js (checkFieldAvailability). */
+.wiz-hint.checking {
+    color: var(--text3);
+}
+.wiz-hint.ok {
+    color: var(--green, #22c55e);
+    font-weight: 600;
+}
+.wiz-hint.taken {
+    color: var(--acc2);
+    font-weight: 600;
+}
+
 .auth-btn-main {
     width: 100%;
     padding: 12px;

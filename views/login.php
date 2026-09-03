@@ -90,7 +90,7 @@ ob_start();
         <div class="auth-robot-wrap">
             <div class="auth-robot-glow"></div>
             <canvas id="rings-canvas" width="320" height="80"></canvas>
-             <img src="assets/media/img/bot1.png" class="auth-robot-img" alt="BotA">
+             <img src="assets/media/img/alegre.png" class="auth-robot-img" alt="NDA">
         </div>
     </div>
 
