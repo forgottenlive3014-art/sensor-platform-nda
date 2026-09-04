@@ -30,8 +30,8 @@ ob_start();
             <div class="hp"><strong data-gsap-count="2">0</strong> placas tectónicas</div>
           </div>
           <div class="hero-cta">
-            <a href="?url=sismos" class="btn-acc"> Monitor Sísmico</a>
-            <a href="?url=arduino" class="btn-out"> Demo Arduino</a>
+            <a href="?url=arduino" class="btn-acc"> Monitor Sísmico</a>
+            <a href="?url=sismos" class="btn-out"> Acerca de Sismos</a>
           </div>
         </div>
         <div class="hi-right">
@@ -107,23 +107,15 @@ ob_start();
     </div>
     <div class="map-container">
       <div class="map-ctrl-bar">
-        <button class="mc-btn on" data-layer="seismic">Zonas sísmicas</button>
-        <button class="mc-btn" data-layer="volcanic">Volcanes</button>
-        <button class="mc-btn" data-layer="quakes">Sismos recientes (USGS)</button>
-        <button class="mc-btn" data-layer="flood">Riesgo de tsunami</button>
-        <button class="mc-btn" data-layer="slides">Deslizamientos</button>
-        <button class="mc-btn" data-layer="safe">Zonas seguras</button>
-        <button class="mc-btn" data-layer="all">Ver todo</button>
+        <button class="mc-btn" data-layer="seismic"><span class="mld" style="background:#e63946"></span>Zonas sísmicas</button>
+        <button class="mc-btn" data-layer="volcanic"><span class="mld" style="background:#ff9500"></span>Volcanes</button>
+        <button class="mc-btn" data-layer="quakes"><span class="mld" style="background:#ff9500"></span>Sismos recientes (USGS)</button>
+        <button class="mc-btn" data-layer="flood"><span class="mld" style="background:#3d9bff"></span>Riesgo de tsunami</button>
+        <button class="mc-btn" data-layer="slides"><span class="mld" style="background:#ffcc00"></span>Deslizamientos</button>
+        <button class="mc-btn" data-layer="safe"><span class="mld" style="background:#22c55e"></span>Zonas seguras</button>
+        <button class="mc-btn on" data-layer="all">Ver todo</button>
       </div>
       <div id="hazardMap"></div>
-      <div class="map-legend-bar">
-        <div class="mli"><span class="mld" style="background:#e63946"></span>Zona sísmica activa</div>
-        <div class="mli"><span class="mld" style="background:#ff9500"></span>Volcán activo</div>
-        <div class="mli"><span class="mld" style="background:#555"></span>Volcán inactivo</div>
-        <div class="mli"><span class="mld" style="background:#3d9bff"></span>Riesgo de tsunami</div>
-        <div class="mli"><span class="mld" style="background:#ffcc00"></span>Deslizamiento</div>
-        <div class="mli"><span class="mld" style="background:#22c55e"></span>Zona segura</div>
-      </div>
     </div>
     <div class="facts-bar" style="margin-top:18px">
       <div class="fbi"><div class="fbi-n nda-count">26</div><div class="fbi-l">volcanes en territorio salvadoreño</div></div>

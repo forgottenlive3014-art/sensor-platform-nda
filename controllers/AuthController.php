@@ -359,6 +359,10 @@ class AuthController {
             jsonResponse(['error' => 'Las contraseñas no coinciden.'], 400);
             return;
         }
+        if (empty($_POST['terms'])) {
+            jsonResponse(['error' => 'Debes aceptar los Términos y la Política de Privacidad para crear tu cuenta.'], 400);
+            return;
+        }
         if (!$this->isRealEmail($email)) {
             jsonResponse(['error' => 'Ingresa un correo electrónico real (revisa que esté bien escrito).'], 400);
             return;

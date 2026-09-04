@@ -330,14 +330,16 @@
     async function initMap(lat, lng) {
         const el = document.getElementById('climaMap');
         if (!el || !window.L) return;
+        // CARTO dejo de servir tiles gratis sin API key; Esri no pide key.
+        // Ojo: Esri usa orden {z}/{y}/{x}, al reves que CARTO/OSM.
         const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
         const tileUrl = isDark
-            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-            : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+            ? 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'
+            : 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}';
 
         climaMap = L.map(el, { zoomControl: true, attributionControl: false }).setView([lat, lng], 9);
-        L.tileLayer(tileUrl, { subdomains: 'abcd', maxZoom: 18 }).addTo(climaMap);
-        L.control.attribution({ prefix: false }).addAttribution('© CARTO · © RainViewer · © OpenStreetMap').addTo(climaMap);
+        L.tileLayer(tileUrl, { maxZoom: 16 }).addTo(climaMap);
+        L.control.attribution({ prefix: false }).addAttribution('© Esri · © RainViewer').addTo(climaMap);
         const marker = L.circleMarker([lat, lng], { radius: 7, color: '#3d6f8f', fillColor: '#3d6f8f', fillOpacity: .9, weight: 2 }).addTo(climaMap);
 
         let rainLayer = null, cloudLayer = null;
@@ -387,12 +389,12 @@
 
         const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
         const tileUrl = isDark
-            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-            : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+            ? 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'
+            : 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}';
 
         climaMapOwm = L.map(el, { zoomControl: true, attributionControl: false }).setView([lat, lng], 7);
-        L.tileLayer(tileUrl, { subdomains: 'abcd', maxZoom: 18 }).addTo(climaMapOwm);
-        L.control.attribution({ prefix: false }).addAttribution('© CARTO · © OpenWeatherMap · © OpenStreetMap').addTo(climaMapOwm);
+        L.tileLayer(tileUrl, { maxZoom: 16 }).addTo(climaMapOwm);
+        L.control.attribution({ prefix: false }).addAttribution('© Esri · © OpenWeatherMap').addTo(climaMapOwm);
         L.circleMarker([lat, lng], { radius: 7, color: '#3d6f8f', fillColor: '#3d6f8f', fillOpacity: .9, weight: 2 }).addTo(climaMapOwm);
 
         let owmLayer = null;

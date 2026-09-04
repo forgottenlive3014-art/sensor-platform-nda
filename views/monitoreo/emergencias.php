@@ -1,5 +1,6 @@
 <?php
 $title = $title ?? 'Puntos de Emergencia - NDA';
+$currentSlug = 'emergencias';
 $user = $user ?? null;
 $extraCss = ['css/emergencias.css'];
 ob_start();

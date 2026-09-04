@@ -1,5 +1,6 @@
 <?php
 $title = $title ?? 'Monitoreo - NDA';
+$currentSlug = 'monitoreo';
 $user = $user ?? null;
 ob_start();
 ?>

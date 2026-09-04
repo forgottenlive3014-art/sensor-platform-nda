@@ -11,9 +11,9 @@ ob_start();
     <canvas id="particles"></canvas>
 
     <div class="auth-hero">
+        <div class="auth-verify-bubble">¡Revisa tu correo! Te enviamos un código para confirmar tu cuenta.</div>
         <div class="auth-robot-wrap">
             <div class="auth-robot-glow"></div>
-            <div class="auth-verify-bubble">📬 ¡Revisa tu correo! Te envié un código para confirmar tu cuenta.</div>
             <img src="assets/media/img/alegre.png" class="auth-robot-img" alt="">
         </div>
     </div>

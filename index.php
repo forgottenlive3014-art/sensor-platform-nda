@@ -223,6 +223,7 @@ $routeMap = [
     'blog'        => ['MainController', 'blog'],
     'juegos'      => ['MainController', 'juegos'],
     'Acercade'    => ['MainController', 'acercaDe'],
+    'terminos'    => ['MainController', 'terminos'],
     // ============================================================
     'school'                    => ['SchoolController', 'index'],
     'school/panel'              => ['SchoolController', 'panel'],

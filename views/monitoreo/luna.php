@@ -1,5 +1,6 @@
 <?php
 $title = $title ?? 'Fases de la Luna - NDA';
+$currentSlug = 'luna';
 $user = $user ?? null;
 $extraCss = ['css/luna.css'];
 ob_start();

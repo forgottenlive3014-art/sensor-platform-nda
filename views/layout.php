@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <meta name="csrf-token" content="<?= csrfToken() ?>">
 <title><?= $title ?? 'svNDA — Natural Disaster Alert' ?></title>
+<link rel="icon" type="image/png" href="assets/media/img/favicon.png">
 <script>
 // Evita el flash del tema incorrecto antes de que cargue el CSS/JS.
 (function(){
@@ -111,6 +112,7 @@ $navDisplayName = $isLoggedIn
 ?>
 <script>
     window.__ndaHasInstitution = <?= ($isLoggedIn && !empty($_SESSION['institucion_id']) && ($_SESSION['estado_institucional'] ?? '') === 'aprobado') ? 'true' : 'false' ?>;
+    window.__ndaCartoKey = <?= json_encode(env('CARTO_API_KEY', '')) ?>;
 </script>
 
 <!-- Se llena via JS si hay una alerta de simulacro activa -->
@@ -165,10 +167,10 @@ $navDisplayName = $isLoggedIn
     <div class="nav-drop">
       <button type="button" class="nav-drop-btn" onclick="toggleNavDrop(this)">Monitoreo <span class="nav-drop-car">▾</span></button>
       <div class="nav-drop-dd">
-        <a class="ndd-item" href="?url=clima">Clima</a>
-        <a class="ndd-item" href="?url=luna">Luna</a>
-        <a class="ndd-item" href="?url=monitoreo#zonas-riesgo">Riesgo y Tsunamis</a>
-        <a class="ndd-item" href="?url=emergencias">Puntos de Emergencia</a>
+        <a class="ndd-item<?= ($currentSlug ?? '') === 'clima' ? ' sel' : '' ?>" href="?url=clima">Clima</a>
+        <a class="ndd-item<?= ($currentSlug ?? '') === 'luna' ? ' sel' : '' ?>" href="?url=luna">Luna</a>
+        <a class="ndd-item<?= ($currentSlug ?? '') === 'monitoreo' ? ' sel' : '' ?>" href="?url=monitoreo#zonas-riesgo">Riesgo y Tsunamis</a>
+        <a class="ndd-item<?= ($currentSlug ?? '') === 'emergencias' ? ' sel' : '' ?>" href="?url=emergencias">Puntos de Emergencia</a>
       </div>
     </div>
     <a href="?url=blog">Blog</a>
@@ -197,10 +199,6 @@ $navDisplayName = $isLoggedIn
   </div>
   
   <div class="nav-right">
-    <div class="nav-alert" id="navAlert">
-      <span class="ad"></span>
-      <span id="navAlertText">Sistema Activo</span>
-    </div>
     <button class="theme-btn" id="themeBtn" title="Cambiar tema" aria-label="Cambiar tema claro/oscuro">
       <svg id="themeIcoMoon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </button>
@@ -337,22 +335,16 @@ $__ndaIsGated = !$isLoggedIn && in_array($__ndaCurrentUrl, $__ndaGatedRoutes, tr
       <div class="ftb">
         <div class="nav-brand">
           <div class="nda-logo-wave">
-            <svg width="42" height="18" viewBox="0 0 50 22" fill="none">
-              <polyline points="1,11 5,11 7,3 9,19 11,8 13,14 15,11 19,11" stroke="#ff5500" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
-              <line x1="19" y1="11" x2="22" y2="11" stroke="#ff7700" stroke-width="1.9" stroke-linecap="round"/>
-              <line x1="24" y1="11" x2="30" y2="11" stroke="#ff9200" stroke-width="1.4" stroke-linecap="round"/>
-              <polyline points="30,11 33,6 36,11" stroke="#ff9200" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-              <line x1="37" y1="11" x2="42" y2="11" stroke="#ff9200" stroke-width="1.4" stroke-linecap="round"/>
-            </svg>
+            <img src="assets/media/img/logo.png" alt="Logo NDA" style="height:32px; width:auto;">
           </div>
           <span class="nda-logo-text">NDA</span>
         </div>
-        <p>Natural Disaster Alert — Plataforma educativa para la comunidad escolar de El Salvador. Datos en tiempo real y simulaciones interactivas.</p>
+        <p>Natural Disaster Alert<br>Plataforma educativa para la comunidad escolar de El Salvador. Datos en tiempo real y simulaciones interactivas.</p>
       </div>
       <div class="ftc"><h5>Secciones</h5><a href="?url=sismos">Monitor Sísmico</a><a href="?url=home#placas">Placas Tectónicas</a><a href="?url=home#timeline">Historia</a><a href="?url=luna">Fases Lunares</a><a href="?url=home#zona-sismica">Mapa de Peligros</a><a href="?url=quehacer">¿Qué hacer AHORA?</a></div>
       <div class="ftc"><h5>Fuentes</h5><a href="https://earthquake.usgs.gov" target="_blank">USGS Earthquakes</a><a href="https://www.emsc-csem.org" target="_blank">EMSC</a><a href="https://www.marn.gob.sv" target="_blank">MARN El Salvador</a><a href="https://api.open-meteo.com" target="_blank">Open-Meteo API</a><a href="https://api.sunrise-sunset.org" target="_blank">Sunrise-Sunset API</a></div>
     </div>
-    <div class="ft-btm"><p>© 2026 svNDA — Natural Disaster Alert · Proyecto educativo El Salvador · Proyecto con fines educativos</p></div>
+    <div class="ft-btm"><p>© 2026 svNDA: Natural Disaster Alert · Proyecto educativo El Salvador · Proyecto con fines educativos</p></div>
   </div>
 </footer>
 

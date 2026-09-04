@@ -661,9 +661,6 @@ async function loadQuakes() {
         ndaSetText('sg-depth-l', lastDepth <= 15 ? 'corteza superior' : lastDepth <= 40 ? 'corteza media' : 'manto superior / subducción');
         ndaCountTo('sgDepth', lastDepth, 0, '', ' KM');
 
-        // Nav alert (comun a todo el sitio) -- mismo ultimo evento real.
-        ndaSetText('navAlertText', `M${lastMag.toFixed(1)} · ${(last.properties.place || '').split(', ')[0]?.slice(0, 15)}`);
-
         // Marca "actualizado hace..." -- confirma visualmente que esto es un
         // fetch en vivo y no un valor estatico.
         window.__ndaQuakesFetchedAt = Date.now();
@@ -710,7 +707,6 @@ async function loadQuakes() {
 
     } catch (e) {
         ndaSetHtml('quakeFeed', '<div class="loading-s">⚠️ Error USGS/EMSC — revisa conexión</div>');
-        ndaSetText('navAlertText', 'Sistema activo');
     }
 }
 
@@ -1341,11 +1337,14 @@ function initMap() {
     if (!document.getElementById('hazardMap')) return;
     hazMap = L.map('hazardMap', { center: [13.7942, -88.8965], zoom: 8 });
 
+    // CARTO ahora exige API key hasta en el tier gratuito (window.__ndaCartoKey,
+    // ver layout.php); sin ella los tiles salen con el watermark "API KEY REQUIRED".
+    const cartoKey = window.__ndaCartoKey ? '?key=' + encodeURIComponent(window.__ndaCartoKey) : '';
     const isLightTheme = document.documentElement.getAttribute('data-theme') === 'light';
     const hazTiles = L.tileLayer(
-        isLightTheme
+        (isLightTheme
             ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
-            : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+            : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png') + cartoKey,
         { attribution: '© CARTO', maxZoom: 18 }
     ).addTo(hazMap);
 
@@ -1353,9 +1352,9 @@ function initMap() {
     new MutationObserver(() => {
         const light = document.documentElement.getAttribute('data-theme') === 'light';
         hazTiles.setUrl(
-            light
+            (light
                 ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
-                : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+                : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png') + cartoKey
         );
     }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
@@ -1397,25 +1396,25 @@ function initMap() {
 
     slideLayer = L.layerGroup();
     [
-        { lat: 13.72, lng: -89.1, lbl: 'Deslizamiento — Cuscatlán' },
-        { lat: 13.78, lng: -89.5, lbl: 'Deslizamiento — Santa Ana Norte' },
-        { lat: 13.84, lng: -89.0, lbl: 'Deslizamiento — Chalatenango' }
+        { lat: 13.72, lng: -89.1, lbl: 'Deslizamiento — Cuscatlán', desc: 'Suelo inestable en ladera pronunciada; el riesgo aumenta con lluvias prolongadas.' },
+        { lat: 13.78, lng: -89.5, lbl: 'Deslizamiento — Santa Ana Norte', desc: 'Zona de laderas erosionadas cerca de asentamientos; deslizamientos reportados en temporada lluviosa.' },
+        { lat: 13.84, lng: -89.0, lbl: 'Deslizamiento — Chalatenango', desc: 'Terreno montañoso con pendiente alta y suelo saturable, susceptible a movimientos de masa.' }
     ].forEach(s => L.circleMarker([s.lat, s.lng], { radius: 7, color: '#ffcc00', fillColor: '#ffcc00', fillOpacity: .7,
             weight: 1.5 })
-        .bindPopup(`<b style="color:#ffcc00">${s.lbl}</b><br><small>Fuente: MARN</small>`)
+        .bindPopup(`<b style="color:#ffcc00">${s.lbl}</b><br>${s.desc}<br><small>Fuente: MARN</small>`)
         .addTo(slideLayer));
 
     safeLayer = L.layerGroup();
     [
-        { lat: 13.82, lng: -88.5, lbl: 'Zona Segura — Morazán Norte' },
-        { lat: 14.0, lng: -89.2, lbl: 'Zona Segura — Chalatenango' }
+        { lat: 13.82, lng: -88.5, lbl: 'Zona Segura — Morazán Norte', desc: 'Punto de encuentro alejado de laderas y ríos, con acceso vial estable para evacuación.' },
+        { lat: 14.0, lng: -89.2, lbl: 'Zona Segura — Chalatenango', desc: 'Área abierta en terreno firme, designada como refugio temporal ante sismos o deslizamientos.' }
     ].forEach(s => L.circleMarker([s.lat, s.lng], { radius: 8, color: '#22c55e', fillColor: '#22c55e', fillOpacity: .6,
             weight: 1.5 })
-        .bindPopup(`<b style="color:#22c55e">${s.lbl}</b>`)
+        .bindPopup(`<b style="color:#22c55e">${s.lbl}</b><br>${s.desc}<br><small>Fuente: Protección Civil</small>`)
         .addTo(safeLayer));
 
     qLayer2 = L.layerGroup();
-    sLayer2.addTo(hazMap);
+    [sLayer2, vLayer2, fLayer2, slideLayer, safeLayer, qLayer2].forEach(l => l.addTo(hazMap));
 
     document.querySelectorAll('.mc-btn').forEach(btn => {
         btn.onclick = () => {
@@ -2784,11 +2783,17 @@ function sk3dRender() {
         p.classList.toggle('active', Number(p.dataset.index) === active);
     });
 
-    // El fondo del hero refleja el color de acento del modelo activo con un
-    // resplandor sutil (antes mostraba la foto Sketchfab del modelo).
+    // El fondo del hero muestra la foto real del modelo activo (capa
+    // .sk3d-hero-photo) con un resplandor de acento y overlay oscuro encima
+    // (.sk3d-hero-bg) para que el texto y las tarjetas sigan siendo legibles.
     const heroBg = document.getElementById('sk3dHeroBg');
     if (heroBg && activeSlide) {
         heroBg.style.setProperty('--sk-accent', getComputedStyle(activeSlide).getPropertyValue('--sk-accent'));
+    }
+    const heroPhoto = document.getElementById('sk3dHeroPhoto');
+    if (heroPhoto && activeSlide) {
+        const bg = activeSlide.dataset.bg || '';
+        heroPhoto.style.backgroundImage = bg ? "url('" + bg + "')" : 'none';
     }
 
     // Stepper vertical: nombre del modelo anterior/siguiente atenuado arriba

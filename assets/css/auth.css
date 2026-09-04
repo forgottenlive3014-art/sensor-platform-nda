@@ -100,16 +100,18 @@
 }
 /* El .auth-hero de login trae padding:50px pensado para su columna
    1fr; acá la columna es "auto" (ajustada al muñeco), así que ese
-   padding solo agrega espacio muerto entre el muñeco y la tarjeta. */
+   padding solo agrega espacio muerto entre el muñeco y la tarjeta.
+   También va en fila (globito + muñeco lado a lado) en vez de columna:
+   así el globito ya no queda posicionado "absolute" por fuera del
+   flujo, sino que su ancho SÍ cuenta para el auto de la columna del
+   grid — si no, .auth-wrap-verify centraba el bloque calculando solo
+   el ancho del muñeco, y el globito (que sobresalía a la izquierda sin
+   contar) dejaba todo corrido a la derecha con espacio de más ahí. */
 .auth-wrap-verify .auth-hero {
     padding: 0;
-    /* .auth-wrap centra todo verticalmente (align-items:center), asi
-       que si la tarjeta crece (ej. aparece la alerta de error) el
-       muñeco+globito se recentran mas abajo y quedan desalineados del
-       título. Se fija arriba, a la altura del título, para que no se
-       mueva segun el contenido de la tarjeta. */
-    align-self: flex-start;
-    margin-top: 34px;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 16px;
 }
 
 /* Insignia + borde de acento arriba de la tarjeta, para que no se vea
@@ -151,17 +153,15 @@
    colita horizontal apuntando hacia él (triángulo simétrico, no
    torcido). */
 .auth-verify-bubble {
-    position: absolute;
-    top: 22%;
-    right: 100%;
-    margin-right: 24px;
-    transform: translateY(-50%);
-    width: 210px;
+    position: relative;
+    flex-shrink: 0;
+    margin-top: 55px;
+    width: 230px;
     background: var(--auth-bubble-bg);
     border: 1.5px solid var(--acc);
     border-radius: 16px;
     padding: 14px 16px;
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 600;
     line-height: 1.5;
     color: var(--text);
@@ -184,8 +184,8 @@
     border-left: 12px solid var(--acc);
 }
 @keyframes auth-bubble-bounce {
-    0%, 100% { transform: translateY(-50%) translateX(0); }
-    50% { transform: translateY(-50%) translateX(-6px); }
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(-6px); }
 }
 @media (max-width: 1100px) {
     .auth-verify-bubble { display: none; }
@@ -776,8 +776,38 @@
 /* ============================================================
    WIZARD DE REGISTRO (tipo de cuenta / rol / institucion / datos)
    ============================================================ */
+/* Envuelve la tarjeta (que scrollea internamente) + el bloque de
+   Google/"ya tienes cuenta", para que ese bloque quede siempre visible
+   FUERA de la tarjeta en vez de scrollear junto con el formulario. */
+.auth-col-wizard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.auth-switch-outer {
+    width: 100%;
+    max-width: 460px;
+    margin-top: 18px;
+}
 .auth-card-wizard {
     width: 460px;
+    max-height: calc(100vh - 130px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+/* Titulo, subtitulo, pasos y alerta de error: fijos arriba, no scrollean
+   con el formulario. */
+.wiz-header {
+    flex-shrink: 0;
+}
+/* Solo el formulario (los 4 pasos) scrollea; min-height:0 es necesario
+   para que un hijo flex pueda encogerse por debajo de su alto natural y
+   el overflow-y realmente entre en accion. */
+.wiz-form-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
 }
 
 .wiz-steps {

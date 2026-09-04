@@ -19,12 +19,6 @@
     var accountType = 'general';
     var instRole = '';
 
-    // Guarda el paso del wizard y lo ya escrito en sessionStorage, para
-    // que un F5 (o cualquier recarga) te deje donde estabas en vez de
-    // mandarte de nuevo al paso 1 "Tipo de cuenta" con todo en blanco.
-    // Las contraseñas NO se guardan (no conviene dejarlas ni un momento
-    // en el almacenamiento del navegador). Se limpia al crear la cuenta
-    // con éxito, para que el próximo registro empiece de cero.
     var WIZ_STORAGE_KEY = 'ndaRegisterWizardState';
     function saveWizardState() {
         try {
@@ -338,6 +332,15 @@
             confirm.focus();
             return;
         }
+        // El <input required> no alcanza porque el form tiene novalidate
+        // (necesario para que el submit por fetch controle el flujo), asi
+        // que hay que chequear el checkbox de terminos a mano.
+        var termsInput = form.querySelector('input[name="terms"]');
+        if (termsInput && !termsInput.checked) {
+            ndaAlert('Debes aceptar los Términos y la Política de Privacidad para crear tu cuenta.');
+            termsInput.focus();
+            return;
+        }
 
         var originalBtnText = submitBtn ? submitBtn.textContent : '';
         if (submitBtn) {
@@ -421,9 +424,6 @@
             }
         }
 
-        // Setear .value por JS no dispara 'input', asi que se disparan a
-        // mano para que corran el saneo y el chequeo de disponibilidad de
-        // username/correo restaurados.
         if (usernameInput) usernameInput.dispatchEvent(new Event('input'));
         if (emailInput) emailInput.dispatchEvent(new Event('input'));
 

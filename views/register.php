@@ -12,27 +12,30 @@ ob_start();
     <canvas id="wave-right"></canvas>
     <canvas id="particles"></canvas>
 
+    <div class="auth-col-wizard">
     <div class="auth-card auth-card-wizard">
-        <h1 class="auth-title">CREAR CUENTA</h1>
-        <p class="auth-subtitle">Únete y comienza a monitorear</p>
+        <div class="wiz-header">
+            <h1 class="auth-title">CREAR CUENTA</h1>
+            <p class="auth-subtitle">Únete y comienza a monitorear</p>
 
-        <div class="wiz-steps" id="wizSteps">
-            <div class="wiz-step on" data-wiz-dot="1"><span>1</span>Tipo de cuenta</div>
-            <div class="wiz-step" data-wiz-dot="2"><span>2</span>Rol</div>
-            <div class="wiz-step" data-wiz-dot="3"><span>3</span>Institución</div>
-            <div class="wiz-step" data-wiz-dot="4"><span>4</span>Tus datos</div>
+            <div class="wiz-steps" id="wizSteps">
+                <div class="wiz-step on" data-wiz-dot="1"><span>1</span>Tipo de cuenta</div>
+                <div class="wiz-step" data-wiz-dot="2"><span>2</span>Rol</div>
+                <div class="wiz-step" data-wiz-dot="3"><span>3</span>Institución</div>
+                <div class="wiz-step" data-wiz-dot="4"><span>4</span>Tus datos</div>
+            </div>
+
+            <?php if (isset($_SESSION['error'])): ?>
+                <div class="auth-alert error">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+                    </svg>
+                    <?= e($_SESSION['error']); unset($_SESSION['error']); ?>
+                </div>
+            <?php endif; ?>
         </div>
 
-        <?php if (isset($_SESSION['error'])): ?>
-            <div class="auth-alert error">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
-                </svg>
-                <?= e($_SESSION['error']); unset($_SESSION['error']); ?>
-            </div>
-        <?php endif; ?>
-
-        <form method="POST" action="?url=register" id="registerForm" novalidate>
+        <form method="POST" action="?url=register" id="registerForm" class="wiz-form-scroll" novalidate>
             <?= csrfField() ?>
             <input type="hidden" name="account_type" id="fAccountType" value="general">
             <input type="hidden" name="inst_role" id="fInstRole" value="">
@@ -244,7 +247,7 @@ ob_start();
                 <div class="auth-remember">
                     <label class="auth-terms">
                         <input type="checkbox" name="terms" required>
-                        <a>Acepto los Términos y la Política de Privacidad</a>
+                        <a href="?url=terminos" target="_blank" onclick="event.stopPropagation()">Acepto los Términos y la Política de Privacidad</a>
                     </label>
                 </div>
 
@@ -254,7 +257,9 @@ ob_start();
                 </div>
             </div>
         </form>
+    </div>
 
+    <div class="auth-switch-outer">
         <div class="auth-divider">o continúa con</div>
 
         <div class="auth-socials" style="justify-content:center;">
@@ -275,6 +280,7 @@ ob_start();
         </form>
 
         <p class="auth-switch">¿Ya tienes cuenta? <a href="?url=login">Inicia sesión</a></p>
+    </div>
     </div>
 
     <div class="auth-hero">

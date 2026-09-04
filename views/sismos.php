@@ -607,23 +607,15 @@ ob_start();
     </div>
     <div class="map-container">
       <div class="map-ctrl-bar">
-        <button class="mc-btn on" data-layer="seismic">Zonas sísmicas</button>
-        <button class="mc-btn" data-layer="volcanic">Volcanes</button>
-        <button class="mc-btn" data-layer="quakes">Sismos recientes (USGS+EMSC)</button>
-        <button class="mc-btn" data-layer="flood">Riesgo de tsunami</button>
-        <button class="mc-btn" data-layer="slides">Deslizamientos</button>
-        <button class="mc-btn" data-layer="safe">Zonas seguras</button>
+        <button class="mc-btn on" data-layer="seismic"><span class="mld" style="background:#e63946"></span>Zonas sísmicas</button>
+        <button class="mc-btn" data-layer="volcanic"><span class="mld" style="background:#ff9500"></span>Volcanes</button>
+        <button class="mc-btn" data-layer="quakes"><span class="mld" style="background:#ff9500"></span>Sismos recientes (USGS+EMSC)</button>
+        <button class="mc-btn" data-layer="flood"><span class="mld" style="background:#3d9bff"></span>Riesgo de tsunami</button>
+        <button class="mc-btn" data-layer="slides"><span class="mld" style="background:#ffcc00"></span>Deslizamientos</button>
+        <button class="mc-btn" data-layer="safe"><span class="mld" style="background:#22c55e"></span>Zonas seguras</button>
         <button class="mc-btn" data-layer="all">Ver todo</button>
       </div>
       <div id="hazardMap"></div>
-      <div class="map-legend-bar">
-        <div class="mli"><span class="mld" style="background:#e63946"></span>Zona sísmica activa</div>
-        <div class="mli"><span class="mld" style="background:#ff9500"></span>Volcán activo</div>
-        <div class="mli"><span class="mld" style="background:#555"></span>Volcán inactivo</div>
-        <div class="mli"><span class="mld" style="background:#3d9bff"></span>Riesgo de tsunami</div>
-        <div class="mli"><span class="mld" style="background:#ffcc00"></span>Deslizamiento</div>
-        <div class="mli"><span class="mld" style="background:#22c55e"></span>Zona segura</div>
-      </div>
     </div>
   </div>
 </section>

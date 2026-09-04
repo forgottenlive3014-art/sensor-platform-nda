@@ -150,6 +150,14 @@ class MainController {
         view('Acercade', $data);
     }
 
+    public function terminos() {
+        $data = [
+            'title' => 'Términos y Condiciones · NDA',
+            'user' => currentUser()
+        ];
+        view('terminos', $data);
+    }
+
     public function blog() {
         $data = [
             'title' => 'Blog - NDA',

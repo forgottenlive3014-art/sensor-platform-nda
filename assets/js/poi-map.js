@@ -96,14 +96,17 @@
         const el = document.getElementById('poiMap');
         if (!el) return;
         await waitForLeaflet();
+        // CARTO dejo de servir tiles gratis sin API key (por eso salia el
+        // watermark "API KEY REQUIRED"); Esri no pide key. Ojo: Esri usa
+        // orden {z}/{y}/{x} en la URL, al reves que CARTO/OSM ({z}/{x}/{y}).
         const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
         const tileUrl = isDark
-            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-            : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+            ? 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'
+            : 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}';
 
         map = L.map(el, { zoomControl: true, attributionControl: false }).setView([lat, lon], 10);
-        L.tileLayer(tileUrl, { subdomains: 'abcd', maxZoom: 18 }).addTo(map);
-        L.control.attribution({ prefix: false }).addAttribution('© CARTO · © OpenStreetMap').addTo(map);
+        L.tileLayer(tileUrl, { maxZoom: 16 }).addTo(map);
+        L.control.attribution({ prefix: false }).addAttribution('© Esri').addTo(map);
         L.marker([lat, lon], {
             icon: L.divIcon({ className: '', html: '<div class="poi-marker user-loc"></div>', iconSize: [18, 18], iconAnchor: [9, 9] })
         }).addTo(map).bindPopup('Tu ubicación');

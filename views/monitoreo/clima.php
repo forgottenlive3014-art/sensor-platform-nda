@@ -1,5 +1,6 @@
 <?php
 $title = $title ?? 'Clima en Tiempo Real - NDA';
+$currentSlug = 'clima';
 $user = $user ?? null;
 $extraCss = ['css/clima.css'];
 ob_start();
@@ -16,14 +17,6 @@ ob_start();
   </div>
 
   <div class="wrap">
-
-    <div class="clima-topnav">
-      <a href="?url=monitoreo" class="clima-back-link">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-        Monitoreo
-      </a>
-      <a href="?url=luna" class="clima-switch-link">Ver Fases de la Luna →</a>
-    </div>
 
     <!-- HERO: lo unico visible al entrar, centrado, sin scroll -->
     <div class="clima-hero">

@@ -27,50 +27,56 @@ $extraCss = ['css/desastres-base.css', 'css/galeria-3d.css'];
 // transparente, ver disaster3d.js). Solo se agrega en los tipos que ya
 // tienen una foto propia en assets/media/img/ -- el resto se queda con el
 // degradado de acento de siempre para no depender de imagenes externas.
+// Se aplica como background-image inline directo (NO como custom property
+// --sk-bg-img consumida via var() en el CSS externo): un url() dentro de
+// una custom property se resuelve relativo a la hoja de estilos donde se
+// USA el var(), no relativo a esta pagina -- con --sk-bg-img el navegador
+// buscaba la foto en assets/css/assets/media/img/... y nunca la encontraba,
+// por eso no salian las imagenes de fondo en el carrusel.
 $modelos = [
     [
         'slug' => 'sismos', 'accent' => '#c98a3d', 'nombre' => 'Sismos',
-        'desc' => 'Visualización 3D de edificios vibrando sobre el terreno durante un sismo.',
-        'riesgo' => 'El Salvador está sobre el Cinturón de Fuego del Pacífico: es el país con más sismos por km² de Centroamérica.',
+        'desc' => 'La subducción de la Placa de Cocos bajo la Placa del Caribe libera energía acumulada en forma de ondas sísmicas que hacen vibrar el suelo.',
+        'riesgo' => 'El país está sobre el límite entre la Placa de Cocos y la Placa del Caribe, una de las zonas de subducción más activas del mundo.',
         'bg' => 'assets/media/img/SISMOS2.png',
     ],
     [
         'slug' => 'volcanes', 'accent' => '#e0631f', 'nombre' => 'Volcanes',
-        'desc' => 'Visualización 3D de un cono volcánico con cráter incandescente y ceniza en el aire.',
-        'riesgo' => '26 volcanes recorren el territorio; el Izalco y el Chaparrastique son los de mayor actividad histórica reciente.',
+        'desc' => 'El magma acumulado bajo la corteza terrestre busca salida hacia la superficie cuando la presión supera la resistencia de la roca que lo cubre.',
+        'riesgo' => 'El país está sobre el límite entre la Placa de Cocos y la Placa del Caribe, con 6 volcanes activos monitoreados por MARN.',
         'bg' => 'assets/media/img/volcan.jpg',
     ],
     [
         'slug' => 'tsunamis', 'accent' => '#1f7aa8', 'nombre' => 'Tsunamis',
-        'desc' => 'Visualización 3D de oleaje avanzando con espuma marina.',
-        'riesgo' => 'Toda la costa del Pacífico salvadoreño está en zona de riesgo por sismos submarinos frente a la fosa Mesoamericana.',
+        'desc' => 'Un sismo submarino desplaza verticalmente el fondo marino, moviendo toda la columna de agua sobre él en forma de olas de gran longitud.',
+        'riesgo' => 'Toda la costa está frente a la zona de subducción Cocos–Caribe, la misma falla que genera los sismos más fuertes del país.',
         'bg' => 'assets/media/img/tsunamiV.webp',
     ],
     [
         'slug' => 'inundaciones', 'accent' => '#2e7da6', 'nombre' => 'Inundaciones',
-        'desc' => 'Visualización 3D de una zona urbana con el nivel del agua subiendo entre las viviendas.',
-        'riesgo' => 'La Cuenca Baja del Río Lempa y el Bajo Lempa son las zonas más golpeadas en cada temporada lluviosa.',
+        'desc' => 'Las lluvias intensas saturan el suelo y superan la capacidad de ríos y quebradas, que se desbordan sobre zonas normalmente secas.',
+        'riesgo' => 'Territorio pequeño y montañoso: los ríos recorren poca distancia con mucha pendiente, así que suben muy rápido.',
     ],
     [
         'slug' => 'deslizamientos', 'accent' => '#7a6a4a', 'nombre' => 'Deslizamientos',
-        'desc' => 'Visualización 3D de una ladera con rocas y sedimento deslizándose pendiente abajo.',
-        'riesgo' => 'Las laderas del volcán de San Salvador y la Cordillera del Bálsamo concentran el mayor historial de deslaves.',
+        'desc' => 'Movimiento de masas de tierra, roca o escombros ladera abajo bajo la influencia de la gravedad.',
+        'riesgo' => 'El principal detonante son las lluvias intensas y la actividad sísmica, combinadas con laderas empinadas.',
         'bg' => 'assets/media/img/deslizamientoTierra.jpg',
     ],
     [
         'slug' => 'incendios-forestales', 'accent' => '#d9481f', 'nombre' => 'Incendios forestales',
-        'desc' => 'Visualización 3D de un bosque con brasas y humo ascendiendo entre los árboles.',
-        'riesgo' => 'La estación seca (nov.–abr.) dispara los incendios por quemas agrícolas mal manejadas cerca de áreas protegidas.',
+        'desc' => 'Combustible seco, calor y una fuente de ignición: en El Salvador, casi siempre una quema agrícola mal manejada.',
+        'riesgo' => 'Estación seca (noviembre–abril): altas temperaturas, baja humedad y quema de rastrojos para preparar tierra de cultivo.',
     ],
     [
         'slug' => 'tormentas-tropicales', 'accent' => '#4a6fa5', 'nombre' => 'Tormentas tropicales',
-        'desc' => 'Visualización 3D de la espiral de nubes de un ciclón tropical vista desde arriba.',
-        'riesgo' => 'Tormentas como Ida (2009), Ágatha (2010) e Iota-Eta (2020) dejaron algunas de las peores inundaciones recientes.',
+        'desc' => 'Se forma sobre aguas oceánicas cálidas: la evaporación alimenta de energía al sistema y la rotación de la Tierra organiza los vientos en espiral.',
+        'riesgo' => 'Recibe sistemas formados en el Pacífico y remanentes del Atlántico/Caribe, sobre todo en temporada oficial (mayo–noviembre).',
     ],
     [
         'slug' => 'sequias', 'accent' => '#b8862e', 'nombre' => 'Sequías',
-        'desc' => 'Visualización 3D de suelo agrietado con vegetación seca y calor en el ambiente.',
-        'riesgo' => 'El Corredor Seco (La Unión, Morazán, San Miguel) sufre pérdidas de cosecha casi cada año por déficit de lluvia.',
+        'desc' => 'Un déficit prolongado de lluvia respecto al patrón normal reduce el agua disponible para consumo, agricultura y ecosistemas.',
+        'riesgo' => 'El oriente del país forma parte del Corredor Seco Centroamericano, una franja con lluvias más irregulares.',
     ],
 ];
 
@@ -80,6 +86,7 @@ ob_start();
 <div class="dis-page">
 <!-- HERO 3D: info a un lado, carrusel "coverflow" con escena Three.js al otro -->
 <section class="sk3d-hero" id="sk3dHero">
+  <div class="sk3d-hero-photo" id="sk3dHeroPhoto" aria-hidden="true"<?= !empty($modelos[0]['bg']) ? ' style="background-image:url(\'' . e($modelos[0]['bg']) . '\')"' : '' ?>></div>
   <div class="sk3d-hero-bg" id="sk3dHeroBg" aria-hidden="true" style="--sk-accent:<?= e($modelos[0]['accent']) ?>"></div>
 
   <div class="wrap sk3d-hero-inner">
@@ -122,11 +129,11 @@ ob_start();
         <div class="sk3d-track-viewport" id="sk3dTrackViewport">
           <div class="sk3d-track" id="sk3dTrack">
             <?php foreach ($modelos as $i => $m): ?>
-            <div class="sk3d-slide<?= $i === 0 ? ' active' : '' ?>" data-index="<?= $i ?>" data-slug="<?= e($m['slug']) ?>" data-nombre="<?= e($m['nombre']) ?>" style="--sk-accent:<?= e($m['accent']) ?>" onclick="sk3dGoTo(<?= $i ?>)">
+            <div class="sk3d-slide<?= $i === 0 ? ' active' : '' ?>" data-index="<?= $i ?>" data-slug="<?= e($m['slug']) ?>" data-nombre="<?= e($m['nombre']) ?>" data-bg="<?= e($m['bg'] ?? '') ?>" style="--sk-accent:<?= e($m['accent']) ?>" onclick="sk3dGoTo(<?= $i ?>)">
               <div class="sk3d-slide-caption">
                 <span class="sk3d-slide-name"><?= e($m['nombre']) ?></span>
               </div>
-              <div class="sk3d-slide-viewport"<?= !empty($m['bg']) ? ' style="--sk-bg-img:url(\'' . e($m['bg']) . '\')"' : '' ?>>
+              <div class="sk3d-slide-viewport">
                 <div class="sk3d-placeholder">
                   <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
                 </div>

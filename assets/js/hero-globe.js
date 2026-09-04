@@ -11,9 +11,12 @@
     // MapLibre (a diferencia de Leaflet) no sustituye {s} ni {r} en las URLs
     // de tiles -- hay que dar la lista real de subdominios y pedir @2x a
     // proposito para que el mapa se vea nitido, no solo el relieve sin foto.
+    // CARTO ahora exige API key hasta en el tier gratuito (window.__ndaCartoKey,
+    // ver layout.php); sin ella los tiles salen con el watermark "API KEY REQUIRED".
+    const cartoKey = window.__ndaCartoKey ? '?key=' + encodeURIComponent(window.__ndaCartoKey) : '';
     const CARTO_SUBDOMAINS = ['a', 'b', 'c', 'd'];
-    const DARK_TILES = CARTO_SUBDOMAINS.map(s => `https://${s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png`);
-    const LIGHT_TILES = CARTO_SUBDOMAINS.map(s => `https://${s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png`);
+    const DARK_TILES = CARTO_SUBDOMAINS.map(s => `https://${s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png${cartoKey}`);
+    const LIGHT_TILES = CARTO_SUBDOMAINS.map(s => `https://${s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png${cartoKey}`);
     const TERRAIN_TILES = 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png';
 
     function currentTheme() {
