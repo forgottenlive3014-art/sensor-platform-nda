@@ -191,9 +191,9 @@ ob_start();
                         <span class="auth-inp-ico">
                             <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c0-3.6 3.1-5.5 7-5.5s7 1.9 7 5.5"/></svg>
                         </span>
-                        <input type="text" name="username" id="username-reg" placeholder="ej. azucena_hz" pattern="[a-z0-9_]{3,20}" title="3 a 20 caracteres: minúsculas, números y guion bajo" required>
+                        <input type="text" name="username" id="username-reg" placeholder="ej. azucena_hz" pattern="[a-zA-Z0-9_]{3,20}" title="3 a 20 caracteres: letras, números y guion bajo" required>
                     </div>
-                    <p class="wiz-hint" id="usernameHint">Es el nombre corto que se muestra en la barra de navegación: 3 a 20 caracteres, solo minúsculas, números y guion bajo.</p>
+                    <p class="wiz-hint" id="usernameHint">Es el nombre corto que se muestra en la barra de navegación: 3 a 20 caracteres, letras, números y guion bajo (se guarda en minúsculas).</p>
                 </div>
 
                 <div class="auth-field">
@@ -202,8 +202,9 @@ ob_start();
                         <span class="auth-inp-ico">
                             <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
                         </span>
-                        <input type="email" name="email" value="<?= e($prefillEmail) ?>" placeholder="ejemplo@correo.com" required>
+                        <input type="email" name="email" id="email-reg" value="<?= e($prefillEmail) ?>" placeholder="ejemplo@correo.com" required>
                     </div>
+                    <p class="wiz-hint" id="emailHint" style="display:none"></p>
                 </div>
 
                 <div class="auth-field">
@@ -237,6 +238,7 @@ ob_start();
                             <svg viewBox="0 0 24 24" id="eye-ico-conf"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                         </button>
                     </div>
+                    <p class="wiz-hint" id="pwdConfirmHint" style="display:none"></p>
                 </div>
 
                 <div class="auth-remember">
@@ -279,7 +281,7 @@ ob_start();
         <div class="auth-robot-wrap">
             <div class="auth-robot-glow"></div>
             <canvas id="rings-canvas" width="320" height="80"></canvas>
-             <img src="assets/media/img/bot1.png" class="auth-robot-img" alt="BotA">
+             <img src="assets/media/img/alegre.png" class="auth-robot-img" alt="NDA">
         </div>
     </div>
 

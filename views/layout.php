@@ -291,7 +291,21 @@ $navDisplayName = $isLoggedIn
   </div>
 </nav>
 
-<?php $__ndaCurrentUrl = $_GET['url'] ?? 'home'; ?>
+<?php
+$__ndaCurrentUrl = $_GET['url'] ?? 'home';
+
+// Apartados que solo se pueden VER completos con sesion iniciada (los del
+// menu de navegacion: Desastres + su desplegable, Monitoreo + su
+// desplegable, Blog, Juegos, Recursos, Que hacer AHORA y Acerca de NDA).
+// Home siempre queda libre para cualquier visitante.
+$__ndaGatedRoutes = [
+    'galeria-3d', 'sismos', 'volcanes', 'tsunamis', 'inundaciones',
+    'deslizamientos', 'incendios-forestales', 'tormentas-tropicales', 'sequias',
+    'monitoreo', 'clima', 'luna', 'emergencias',
+    'blog', 'juegos', 'resources', 'quehacer', 'Acercade',
+];
+$__ndaIsGated = !$isLoggedIn && in_array($__ndaCurrentUrl, $__ndaGatedRoutes, true);
+?>
 <?php if ($__ndaCurrentUrl !== 'home'): ?>
 <button type="button" class="nda-back-btn" onclick="ndaGoBack()" aria-label="Volver a la página anterior">
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
@@ -299,7 +313,23 @@ $navDisplayName = $isLoggedIn
 </button>
 <?php endif; ?>
 
+<?php if ($__ndaIsGated): ?>
+<div class="nda-gate-blur"><?= $content ?? '' ?></div>
+<div class="nda-gate-overlay">
+  <div class="nda-gate-card">
+    <div class="nda-gate-icon">🔒</div>
+    <h2>Inicia sesión para ver esta sección</h2>
+    <p>Regístrate gratis o inicia sesión para acceder a todo el contenido de NDA: desastres, monitoreo en tiempo real, blog, juegos y más.</p>
+    <div class="nda-gate-actions">
+      <a href="?url=login" class="btn-acc">Iniciar sesión</a>
+      <a href="?url=register" class="btn-out">Registrarme</a>
+    </div>
+    <a href="?url=home" class="nda-gate-back">← Volver al inicio</a>
+  </div>
+</div>
+<?php else: ?>
 <?= $content ?? '' ?>
+<?php endif; ?>
 
 <footer class="footer">
   <div class="wrap">

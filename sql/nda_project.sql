@@ -1,11 +1,3 @@
--- ============================================================
--- NDA — Esquema completo. Un solo archivo, correr una vez sobre
--- una base vacia. Motor: MyISAM (default del servidor); FOREIGN KEY
--- se deja solo como documentacion de relaciones, MyISAM no la aplica.
--- Orden: catalogo -> gestion escolar -> desastres/sensor ->
--- notificaciones/interacciones -> CMS -> gamificacion -> seeds.
--- ============================================================
-
 CREATE DATABASE IF NOT EXISTS nda_project;
 USE nda_project;
 
