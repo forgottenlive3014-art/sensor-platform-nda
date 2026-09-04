@@ -303,16 +303,31 @@ ob_start();
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     ndaInitTimeline('sequias', [
-        { year: '2014', title: 'Sequía asociada a El Niño', badge: 'El Niño', region: 'Corredor Seco (oriente)',
-          desc: 'Uno de los eventos de El Niño más fuertes registrados afectó severamente el Corredor Seco Centroamericano (2014–2016), con pérdidas importantes de maíz y frijol en el oriente de El Salvador.',
-          tags: [{ t: 'El Niño', c: 'o' }, { t: 'Corredor Seco', c: '' }],
-          stats: [{ v: '2014–2016', l: 'Periodo' }],
-          img: 'assets/media/desastres/sequias/2014-el-nino.jpg' },
-        { year: '2018', title: 'Canícula prolongada', badge: 'Veranillo largo', region: 'Varias zonas del país',
-          desc: 'Un "veranillo" más largo de lo habitual, en plena temporada lluviosa, redujo cosechas de granos básicos en varias zonas del país.',
-          tags: [{ t: 'Canícula', c: 't' }],
-          stats: [{ v: '2018', l: 'Año' }],
-          img: 'assets/media/desastres/sequias/2018-canicula.jpg' }
+        { year: '2012', title: 'Sequía y pérdidas agrícolas', badge: 'US$38 millones en pérdidas', region: 'Corredor Seco',
+          desc: 'La sequía de 2012 provocó importantes pérdidas en el sector agropecuario, especialmente en los cultivos de granos básicos. El MAG estima pérdidas de aproximadamente US$38 millones. Impacto: pérdidas en cultivos de maíz, frijol y otros granos básicos.',
+          tags: [{ t: 'Pérdidas agrícolas', c: 'o' }],
+          stats: [{ v: 'US$38M', l: 'Pérdidas estimadas' }, { v: '2012', l: 'Año' }],
+          img: 'assets/media/img/uno.jpg' },
+        { year: '2014', title: 'Sequía asociada a El Niño', badge: 'US$70.1 millones en pérdidas', region: 'Corredor Seco (oriente)',
+          desc: 'El año 2014 estuvo marcado por una fuerte sequía relacionada con el fenómeno El Niño. Protección Civil señaló que las sequías recurrentes afectan especialmente a las familias rurales dedicadas a la producción de granos básicos. El MAG registra que la sequía de 2014 ocasionó aproximadamente US$70.1 millones en pérdidas agropecuarias. Además, afectó 98,016 manzanas de granos básicos, con pérdidas estimadas de US$76.1 millones según la Política de Cambio Climático del MAG. Impacto: grandes pérdidas agrícolas, principalmente en maíz y frijol.',
+          tags: [{ t: 'El Niño', c: 'o' }],
+          stats: [{ v: 'US$70.1M', l: 'Pérdidas agropecuarias' }, { v: '98,016', l: 'Manzanas afectadas' }, { v: '2014', l: 'Año' }],
+          img: 'assets/media/img/do.jpg' },
+        { year: '2015', title: 'Sequía prolongada', badge: 'Año seco', region: 'Zonas rurales',
+          desc: 'La sequía continuó durante 2015, formando parte de un período seco que se extendió durante varios años. Protección Civil utilizó el Monitoreo de la Sequía 2015 del MARN para establecer medidas relacionadas con la seguridad alimentaria. Documentos oficiales del MARN señalan que 2013, 2014 y 2015 fueron años secos, mientras que otros registros relacionan este período con la variabilidad climática y El Niño. Impacto: afectación de la agricultura y de la seguridad alimentaria, especialmente en las zonas rurales.',
+          tags: [{ t: 'Año seco', c: '' }],
+          stats: [{ v: '2013–2015', l: 'Período seco' }, { v: '2015', l: 'Año' }],
+          img: 'assets/media/img/3.jpg' },
+        { year: '2014–2016', title: 'Período prolongado de sequía', badge: 'US$208.7 millones acumulados', region: 'Corredor Seco Centroamericano',
+          desc: 'La sequía afectó especialmente al Corredor Seco Centroamericano. Protección Civil señala que esta zona presenta un riesgo recurrente de sequía asociado al fenómeno El Niño-Oscilación del Sur (ENOS) y que sus efectos afectan directamente a las familias rurales que dependen de los granos básicos. Además, documentos oficiales del Gobierno indican que las sequías de 2012, 2014, 2015 y 2018 provocaron pérdidas económicas acumuladas de aproximadamente US$208.7 millones y la destrucción de 227,601.88 manzanas de granos básicos. Impacto: pérdida de cultivos, reducción de medios de vida y afectación de la seguridad alimentaria.',
+          tags: [{ t: 'Corredor Seco', c: 'o' }, { t: 'ENOS', c: 't' }],
+          stats: [{ v: 'US$208.7M', l: 'Pérdidas acumuladas' }, { v: '227,601.88', l: 'Manzanas destruidas' }, { v: '2014–2016', l: 'Periodo' }],
+          img: 'assets/media/img/4.jpg' },
+        { year: '2018', title: 'Sequía meteorológica extrema', badge: '77,322 productores afectados', region: '12 departamentos, 143 municipios',
+          desc: 'En julio de 2018, Protección Civil declaró alerta naranja en 12 departamentos y alerta roja en 143 municipios debido a las pérdidas agrícolas provocadas por una sequía meteorológica extrema. El MARN registró 29 días secos consecutivos en 10 departamentos. La afectación en la producción de maíz alcanzó 62,089 manzanas, de las cuales 28,700 tuvieron pérdida total y 33,290 pérdida parcial, afectando a 77,322 productores. Aunque posteriormente finalizaron las condiciones meteorológicas de sequía, Protección Civil mantuvo las alertas porque las pérdidas agrícolas ya eran irreversibles. Impacto: 62,089 manzanas de maíz afectadas y 77,322 productores perjudicados.',
+          tags: [{ t: 'Alerta roja', c: 'r' }, { t: 'Alerta naranja', c: 'o' }],
+          stats: [{ v: '29', l: 'Días secos consecutivos' }, { v: '62,089', l: 'Manzanas de maíz afectadas' }, { v: '77,322', l: 'Productores afectados' }, { v: '2018', l: 'Año' }],
+          img: 'assets/media/img/5.jpg' }
     ]);
 });
 </script>

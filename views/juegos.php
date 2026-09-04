@@ -204,12 +204,15 @@ ob_start();
 /* ===== SIMULACRO ===== */
 .drill-best{ font-size:.9rem; color:var(--text2); }
 .drill-stage{
-    height:160px; border-radius:18px; background:var(--card2); border:1.5px solid var(--border);
-    display:flex; align-items:center; justify-content:center; margin-bottom:18px; transition:background .2s, border-color .2s; text-align:center;
+    min-height:160px; border-radius:18px; background:var(--card2); border:1.5px solid var(--border);
+    display:flex; align-items:center; justify-content:center; margin-bottom:18px; transition:background .2s, border-color .2s; text-align:center; padding:16px;
 }
 .drill-stage.go{ background:rgba(46, 139, 127,.16); border-color:#2e8b7f; }
 .drill-stage.wait{ background:rgba(242, 159, 5,.1); border-color:#f29f05; }
-.drill-msg{ font-size:1.3rem; font-weight:800; color:var(--text); padding:0 16px; }
+.drill-msg{ display:flex; flex-direction:column; align-items:center; gap:10px; font-size:1.3rem; font-weight:800; color:var(--text); padding:0 16px; }
+.drill-act-img{
+    width:200px; height:200px; object-fit:contain; mix-blend-mode:multiply;
+}
 .drill-actions{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:18px; }
 .drill-act{
     background:var(--card2); border:1.5px solid var(--border); color:var(--text); padding:18px 8px;
@@ -425,7 +428,9 @@ document.addEventListener('DOMContentLoaded', function () {
     buildBackpack();
 
     const ACTS = [
-        {k:'agachate', t:'¡AGÁCHATE! <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="12" cy="4" r="2"/><path d="M12 6v6l-4 4M12 12l4 4"/></svg>'}, {k:'cubrete', t:'¡CÚBRETE! <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/></svg>'}, {k:'agarrate', t:'¡AGÁRRATE! <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="12" cy="13" r="6"/><path d="M9 8V5a1 1 0 0 1 2 0v2M13 8V4a1 1 0 0 1 2 0v3"/></svg>'}
+        {k:'agachate', label:'¡AGÁCHATE!', img:'assets/media/img/agachate.png'},
+        {k:'cubrete', label:'¡CÚBRETE!', img:'assets/media/img/cubrete.png'},
+        {k:'agarrate', label:'¡AGÁRRATE!', img:'assets/media/img/agarrate.png'}
     ];
     let drillTarget=null, drillStart=0, drillBest=null, drillTimeout=null;
     const stage = document.getElementById('drillStage'), dmsg = document.getElementById('drillMsg');
@@ -435,16 +440,19 @@ document.addEventListener('DOMContentLoaded', function () {
         const wait = 900 + Math.random()*2200;
         drillTimeout = setTimeout(() => {
             drillTarget = ACTS[Math.floor(Math.random()*ACTS.length)];
-            stage.className='drill-stage go'; dmsg.textContent = drillTarget.t; drillStart = performance.now();
+            stage.className='drill-stage go';
+            dmsg.innerHTML = `<img class="drill-act-img" src="${drillTarget.img}" alt="${drillTarget.label}"><span>${drillTarget.label}</span>`;
+            drillStart = performance.now();
         }, wait);
     }
     document.querySelectorAll('.drill-act').forEach(btn => {
         btn.addEventListener('click', () => {
             if (!drillTarget) { stage.className='drill-stage'; dmsg.textContent='Aún no. ¡Espera la señal y vuelve a empezar!'; clearTimeout(drillTimeout); drillTarget=null; return; }
             const ms = Math.round(performance.now() - drillStart);
+            const secs = (ms/1000).toFixed(2);
             if (btn.dataset.act === drillTarget.k) {
-                if (drillBest===null || ms<drillBest){ drillBest=ms; document.getElementById('drillBest').textContent = ms+' ms'; }
-                stage.className='drill-stage'; dmsg.innerHTML=`<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg> ¡Correcto en ${ms} ms! Toca "Empezar" otra vez.`;
+                if (drillBest===null || ms<drillBest){ drillBest=ms; document.getElementById('drillBest').textContent = (drillBest/1000).toFixed(2)+' s'; }
+                stage.className='drill-stage'; dmsg.innerHTML=`<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg> ¡Correcto en ${secs} s! Toca "Empezar" otra vez.`;
             } else {
                 stage.className='drill-stage'; dmsg.innerHTML='<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> Acción equivocada. La señal pedía otra cosa.';
             }

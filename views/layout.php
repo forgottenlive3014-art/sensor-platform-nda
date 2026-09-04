@@ -144,15 +144,22 @@ $navDisplayName = $isLoggedIn
     <div class="nav-drop">
       <button type="button" class="nav-drop-btn" onclick="toggleNavDrop(this)">Desastres <span class="nav-drop-car">▾</span></button>
       <div class="nav-drop-dd">
-        <a class="ndd-item" href="?url=galeria-3d">Desastres</a>
-        <a class="ndd-item" href="?url=sismos">Sismos</a>
-        <a class="ndd-item" href="?url=volcanes">Volcanes</a>
-        <a class="ndd-item" href="?url=tsunamis">Tsunamis</a>
-        <a class="ndd-item" href="?url=inundaciones">Inundaciones</a>
-        <a class="ndd-item" href="?url=deslizamientos">Deslizamientos</a>
-        <a class="ndd-item" href="?url=incendios-forestales">Incendios forestales</a>
-        <a class="ndd-item" href="?url=tormentas-tropicales">Tormentas tropicales</a>
-        <a class="ndd-item" href="?url=sequias">Sequías</a>
+        <?php
+            $__ddDisItems = [
+                'galeria-3d'            => 'Desastres',
+                'sismos'                => 'Sismos',
+                'volcanes'              => 'Volcanes',
+                'tsunamis'              => 'Tsunamis',
+                'inundaciones'          => 'Inundaciones',
+                'deslizamientos'        => 'Deslizamientos',
+                'incendios-forestales'  => 'Incendios forestales',
+                'tormentas-tropicales'  => 'Tormentas tropicales',
+                'sequias'               => 'Sequías',
+            ];
+            foreach ($__ddDisItems as $__ddSlug => $__ddLabel):
+        ?>
+        <a class="ndd-item<?= $__ddSlug === ($currentSlug ?? '') ? ' sel' : '' ?>" href="?url=<?= $__ddSlug ?>"><?= $__ddLabel ?></a>
+        <?php endforeach; ?>
       </div>
     </div>
     <div class="nav-drop">
