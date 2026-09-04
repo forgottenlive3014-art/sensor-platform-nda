@@ -79,8 +79,20 @@ ob_start();
                     <h2><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M6 4h9l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M9 12h6M9 16h6"/></svg> Arma tu Mochila de Emergencia</h2>
                     <span class="bp-counter"><b id="bpCount">0</b>/8 esenciales</span>
                 </div>
-                <p class="game-hint">Toca solo los objetos que SÍ debe llevar tu mochila de 72 horas. ¡Cuidado con los distractores!</p>
-                <div class="bp-grid" id="bpGrid"></div>
+                <p class="game-hint">Arrastra (o toca) solo los objetos que SÍ debe llevar tu mochila de 72 horas hasta dentro de la mochila abierta. ¡Cuidado con los distractores!</p>
+                <div class="bp-scene" id="bpScene">
+                    <div class="bp-kid-wrap">
+                        <img class="bp-kid-img" src="assets/media/img/mochila/nino-mochila.jpg" alt="Niño de espaldas con una mochila abierta">
+                        <!-- Estas 4 medidas ubican la zona donde "caen" los objetos, calcadas
+                             sobre la mochila abierta de la imagen. Si al ponerla se ve corrida,
+                             ajusta left/top/width/height en .bp-dropzone (assets del juego). -->
+                        <div class="bp-dropzone" id="bpDropzone">
+                            <span class="bp-dropzone-hint" id="bpDropzoneHint">Suelta aquí</span>
+                            <div class="bp-packed-list" id="bpPackedList"></div>
+                        </div>
+                    </div>
+                    <div class="bp-objects" id="bpShelf"></div>
+                </div>
                 <button class="play-btn" id="bpCheck">Revisar mi mochila</button>
                 <div class="bp-result" id="bpResult"></div>
             </div>
@@ -188,18 +200,65 @@ ob_start();
 /* ===== MOCHILA ===== */
 .bp-counter{ font-size:.9rem; color:var(--text2); }
 .bp-counter b{ color:#f29f05; font-size:1.1rem; }
-.bp-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(110px,1fr)); gap:12px; margin-bottom:22px; }
-.bp-item{
-    background:var(--card2); border:2px solid var(--border); border-radius:16px; padding:16px 8px;
-    text-align:center; cursor:pointer; transition:all .2s; user-select:none;
+
+.bp-scene{ display:flex; flex-direction:column; align-items:center; gap:24px; margin-bottom:22px; }
+.bp-kid-wrap{ position:relative; width:100%; max-width:460px; margin:0 auto; border-radius:20px; overflow:hidden; box-shadow:var(--shl); }
+.bp-kid-img{ width:100%; height:auto; display:block; }
+
+.bp-dropzone{
+    position:absolute; left:29.5%; top:66%; width:22%; height:22%;
+    border-radius:16px; display:flex; align-items:center; justify-content:center;
+    transition:background .2s, box-shadow .2s;
 }
-.bp-item:hover{ transform:translateY(-3px); border-color:rgba(242, 159, 5,.5); }
-.bp-item.selected{ border-color:#f29f05; background:rgba(242, 159, 5,.14); transform:translateY(-3px); }
-.bp-item .bp-emoji{ font-size:2.2rem; display:block; }
-.bp-item .bp-label{ font-size:.75rem; color:var(--text2); margin-top:6px; display:block; }
-.bp-item.reveal-good{ border-color:#2e8b7f; background:rgba(46, 139, 127,.16); }
-.bp-item.reveal-bad{ border-color:#d91a2a; background:rgba(217, 26, 42,.16); }
+.bp-dropzone-hint{
+    font-size:.62rem; font-weight:700; color:rgba(255,255,255,.55); text-transform:uppercase; letter-spacing:.06em;
+    pointer-events:none; transition:opacity .2s;
+}
+.bp-dropzone.drag-over{ background:rgba(242,159,5,.28); box-shadow:0 0 0 3px #f29f05; }
+.bp-dropzone.has-items .bp-dropzone-hint{ display:none; }
+
+.bp-packed-list{
+    position:absolute; inset:0; display:flex; flex-wrap:wrap; align-content:center; justify-content:center;
+    gap:4px; padding:4px; overflow:hidden;
+}
+.bp-packed-item{
+    width:30px; height:30px; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+    background:#fff; border-radius:50%; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,.3);
+    animation:bpDrop .35s ease; transition:box-shadow .2s;
+}
+.bp-packed-item img{ width:20px; height:20px; object-fit:contain; }
+.bp-packed-item.good{ box-shadow:0 0 0 3px #2e8b7f, 0 2px 6px rgba(0,0,0,.3); }
+.bp-packed-item.bad{ box-shadow:0 0 0 3px #d91a2a, 0 2px 6px rgba(0,0,0,.3); animation:bpShake .4s ease; }
+@keyframes bpDrop{ from{ transform:translateY(-24px) scale(.4); opacity:0; } to{ transform:none; opacity:1; } }
+@keyframes bpShake{ 0%,100%{transform:translateX(0);} 25%{transform:translateX(-4px);} 75%{transform:translateX(4px);} }
+
+.bp-objects{ width:100%; display:grid; grid-template-columns:repeat(auto-fill,minmax(84px,1fr)); gap:12px; align-content:start; justify-items:center; }
+.bp-object{
+    display:flex; flex-direction:column; align-items:center; gap:6px; padding:8px 4px;
+    cursor:grab; user-select:none; border-radius:14px; transition:transform .2s, opacity .2s;
+}
+.bp-object:hover{ transform:translateY(-3px); }
+.bp-object:active{ cursor:grabbing; }
+.bp-object .bp-emoji{
+    width:60px; height:60px; display:flex; align-items:center; justify-content:center;
+    background:var(--card2); border:2px solid var(--border); border-radius:50%; transition:border-color .2s, background .2s;
+    overflow:hidden;
+}
+.bp-object .bp-emoji img{ width:70%; height:70%; object-fit:contain; }
+.bp-object:hover .bp-emoji{ border-color:rgba(242, 159, 5,.6); background:rgba(242, 159, 5,.08); }
+.bp-object .bp-label{ font-size:.68rem; color:var(--text2); text-align:center; line-height:1.2; }
+.bp-object.packed{ opacity:.3; pointer-events:none; }
+.bp-object.missing .bp-emoji{ border-color:#d91a2a; background:rgba(217, 26, 42,.14); animation:bpPulse 1.1s ease infinite; }
+@keyframes bpPulse{ 0%,100%{box-shadow:0 0 0 0 rgba(217,26,42,.4);} 50%{box-shadow:0 0 0 6px rgba(217,26,42,0);} }
+
+.bp-scene.locked .bp-object:not(.packed){ cursor:default; }
+.bp-scene.locked .bp-packed-item{ cursor:default; }
+
 .bp-result{ text-align:center; margin-top:18px; font-size:1.05rem; font-weight:700; min-height:24px; }
+
+@media (max-width:480px){
+    .bp-kid-wrap{ max-width:320px; }
+}
 
 /* ===== SIMULACRO ===== */
 .drill-best{ font-size:.9rem; color:var(--text2); }
@@ -387,40 +446,104 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('memReset').onclick = buildMemory;
     buildMemory();
 
+    const BP_IMG_BASE = 'assets/media/img/mochila/';
     const BP_ITEMS = [
-        {e:'<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M12 2s6 7 6 12a6 6 0 0 1-12 0c0-5 6-12 6-12z"/></svg>', l:'Agua', good:true}, {e:'<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M9 2h6l1 4-2 2v12a2 2 0 0 1-2 2h-0a2 2 0 0 1-2-2V8L8 6l1-4z"/></svg>', l:'Linterna', good:true},
-        {e:'<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><rect x="4" y="9" width="16" height="6" rx="2" transform="rotate(-15 12 12)"/><line x1="10" y1="9" x2="10" y2="15"/><line x1="14" y1="9" x2="14" y2="15"/></svg>', l:'Botiquín', good:true}, {e:'<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><rect x="3" y="9" width="18" height="12" rx="2"/><circle cx="8" cy="15" r="2"/><path d="M13 13h5M13 17h3"/><path d="M7 9l3-5h6l2 5"/></svg>', l:'Radio', good:true},
-        {e:'<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><rect x="5" y="6" width="14" height="14" rx="1"/><line x1="5" y1="10" x2="19" y2="10"/></svg>', l:'Comida enlatada', good:true}, {e:'<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><rect x="2" y="7" width="18" height="10" rx="2"/><line x1="22" y1="11" x2="22" y2="13"/></svg>', l:'Pilas', good:true},
-        {e:'<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>', l:'Documentos', good:true}, {e:'<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M8 2l4 3 4-3 4 4-3 3v13H7V9L4 6z"/></svg>', l:'Abrigo', good:true},
-        {e:'<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><rect x="2" y="7" width="20" height="10" rx="4"/><line x1="7" y1="10" x2="7" y2="14"/><line x1="5" y1="12" x2="9" y2="12"/><circle cx="16" cy="10.5" r="1"/><circle cx="18.5" cy="13" r="1"/></svg>', l:'Consola', good:false}, {e:'<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em"><path d="M8 10h8l-4 11z"/><path d="M6 10a6 6 0 0 1 12 0z"/></svg>', l:'Helado', good:false},
-        {e:'<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em"><rect x="9" y="2" width="6" height="8" rx="2"/><path d="M10 10l1 12h2l1-12z"/></svg>', l:'Maquillaje', good:false}, {e:'<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M5 3v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3M6 15v6M18 15v6"/></svg>', l:'Silla', good:false},
+        {img:'agua.png', l:'Agua', good:true},
+        {img:'linterna.png', l:'Linterna', good:true},
+        {img:'botiquin.png', l:'Botiquín', good:true},
+        {img:'radio.png', l:'Radio', good:true},
+        {img:'comida-enlatada.png', l:'Comida enlatada', good:true},
+        {img:'pilas.png', l:'Pilas', good:true},
+        {img:'documentos.png', l:'Documentos', good:true},
+        {img:'abrigo.png', l:'Abrigo', good:true},
+        {img:'consola.png', l:'Consola', good:false},
+        {img:'helado.png', l:'Helado', good:false},
+        {img:'maquillaje.png', l:'Maquillaje', good:false},
+        {img:'silla.png', l:'Silla', good:false},
     ];
-    let bpSelected = new Set();
-    function buildBackpack() {
-        const grid = document.getElementById('bpGrid'); grid.innerHTML = '';
-        BP_ITEMS.map((it,i)=>({it,i})).sort(()=>Math.random()-0.5).forEach(({it,i}) => {
-            const d = document.createElement('div'); d.className='bp-item'; d.dataset.i = i;
-            d.innerHTML = `<span class="bp-emoji">${it.e}</span><span class="bp-label">${it.l}</span>`;
-            d.onclick = () => {
-                if (d.classList.contains('reveal-good')||d.classList.contains('reveal-bad')) return;
-                d.classList.toggle('selected');
-                bpSelected.has(i) ? bpSelected.delete(i) : bpSelected.add(i);
-                document.getElementById('bpCount').textContent = [...bpSelected].filter(x=>BP_ITEMS[x].good).length;
-            };
-            grid.appendChild(d);
-        });
+    function bpItemHtml(it) {
+        return `<img src="${BP_IMG_BASE}${it.img}" alt="${it.l}" loading="lazy">`;
     }
+    let bpPacked = new Set();
+    let bpLocked = false;
+
+    function bpUpdateCount() {
+        document.getElementById('bpCount').textContent = [...bpPacked].filter(x=>BP_ITEMS[x].good).length;
+        document.getElementById('bpDropzone').classList.toggle('has-items', bpPacked.size > 0);
+    }
+
+    function bpPackItem(i) {
+        if (bpLocked || bpPacked.has(i)) return;
+        const shelfItem = document.querySelector(`.bp-object[data-i="${i}"]`);
+        if (!shelfItem) return;
+        bpPacked.add(i);
+        shelfItem.classList.add('packed');
+        const chip = document.createElement('div');
+        chip.className = 'bp-packed-item';
+        chip.dataset.i = i;
+        chip.innerHTML = bpItemHtml(BP_ITEMS[i]);
+        chip.title = 'Sacar ' + BP_ITEMS[i].l + ' de la mochila';
+        chip.onclick = () => bpUnpackItem(i);
+        document.getElementById('bpPackedList').appendChild(chip);
+        bpUpdateCount();
+    }
+    function bpUnpackItem(i) {
+        if (bpLocked) return;
+        bpPacked.delete(i);
+        const shelfItem = document.querySelector(`.bp-object[data-i="${i}"]`);
+        if (shelfItem) shelfItem.classList.remove('packed');
+        const chip = document.querySelector(`.bp-packed-item[data-i="${i}"]`);
+        if (chip) chip.remove();
+        bpUpdateCount();
+    }
+
+    function buildBackpack() {
+        const shelf = document.getElementById('bpShelf'); shelf.innerHTML = '';
+        document.getElementById('bpPackedList').innerHTML = '';
+        document.getElementById('bpScene')?.classList.remove('locked');
+        bpPacked = new Set();
+        bpLocked = false;
+        BP_ITEMS.map((it,i)=>({it,i})).sort(()=>Math.random()-0.5).forEach(({it,i}) => {
+            const d = document.createElement('div'); d.className='bp-object'; d.dataset.i = i; d.draggable = true;
+            d.innerHTML = `<span class="bp-emoji">${bpItemHtml(it)}</span><span class="bp-label">${it.l}</span>`;
+            d.addEventListener('click', () => bpPackItem(i));
+            d.addEventListener('dragstart', e => {
+                e.dataTransfer.setData('text/plain', String(i));
+                e.dataTransfer.effectAllowed = 'move';
+            });
+            shelf.appendChild(d);
+        });
+        bpUpdateCount();
+    }
+
+    const bpDropzone = document.getElementById('bpDropzone');
+    bpDropzone.addEventListener('dragover', e => { e.preventDefault(); if (!bpLocked) bpDropzone.classList.add('drag-over'); });
+    bpDropzone.addEventListener('dragleave', () => bpDropzone.classList.remove('drag-over'));
+    bpDropzone.addEventListener('drop', e => {
+        e.preventDefault();
+        bpDropzone.classList.remove('drag-over');
+        const i = parseInt(e.dataTransfer.getData('text/plain'), 10);
+        if (!isNaN(i)) bpPackItem(i);
+    });
+
     document.getElementById('bpCheck').onclick = () => {
+        bpLocked = true;
+        document.getElementById('bpScene').classList.add('locked');
         let correct=0, mistakes=0;
-        document.querySelectorAll('.bp-item').forEach(d => {
-            const it = BP_ITEMS[d.dataset.i]; const sel = d.classList.contains('selected');
-            if (it.good && sel) { d.classList.add('reveal-good'); correct++; }
-            else if (!it.good && sel) { d.classList.add('reveal-bad'); mistakes++; }
-            else if (it.good && !sel) { d.classList.add('reveal-bad'); }
+        document.querySelectorAll('.bp-object').forEach(d => {
+            const i = parseInt(d.dataset.i, 10);
+            const it = BP_ITEMS[i];
+            if (it.good && !bpPacked.has(i)) d.classList.add('missing');
+        });
+        document.querySelectorAll('.bp-packed-item').forEach(chip => {
+            const i = parseInt(chip.dataset.i, 10);
+            const it = BP_ITEMS[i];
+            if (it.good) { chip.classList.add('good'); correct++; }
+            else { chip.classList.add('bad'); mistakes++; }
         });
         const res = document.getElementById('bpResult');
         if (correct===8 && mistakes===0){ res.style.color='#2e8b7f'; res.innerHTML='<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M17 5h3a2 2 0 0 1-2 4M7 5H4a2 2 0 0 0 2 4"/></svg> ¡Mochila perfecta! Llevas todo lo esencial.'; }
-        else { res.style.color='#f29f05'; res.textContent=`Acertaste ${correct}/8 esenciales. ${mistakes? 'Quita lo que no sirve (en rojo).':'¡Casi! Te faltan algunos en rojo.'}`; }
+        else { res.style.color='#f29f05'; res.textContent=`Acertaste ${correct}/8 esenciales. ${mistakes? 'Tenías objetos que no sirven (en rojo).':'Te faltaron los que quedaron marcados en rojo.'}`; }
     };
     buildBackpack();
 

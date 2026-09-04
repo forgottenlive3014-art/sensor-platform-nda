@@ -289,13 +289,13 @@ $__ndaCurrentUrl = $_GET['url'] ?? 'home';
 
 // Apartados que solo se pueden VER completos con sesion iniciada (los del
 // menu de navegacion: Desastres + su desplegable, Monitoreo + su
-// desplegable, Blog, Juegos, Recursos, Que hacer AHORA y Acerca de NDA).
-// Home siempre queda libre para cualquier visitante.
+// desplegable, Blog, Juegos, Recursos y Que hacer AHORA).
+// Home y Acerca de NDA quedan libres para cualquier visitante.
 $__ndaGatedRoutes = [
     'galeria-3d', 'sismos', 'volcanes', 'tsunamis', 'inundaciones',
     'deslizamientos', 'incendios-forestales', 'tormentas-tropicales', 'sequias',
     'monitoreo', 'clima', 'luna', 'emergencias',
-    'blog', 'juegos', 'resources', 'quehacer', 'Acercade',
+    'blog', 'juegos', 'resources', 'quehacer',
 ];
 $__ndaIsGated = !$isLoggedIn && in_array($__ndaCurrentUrl, $__ndaGatedRoutes, true);
 ?>
