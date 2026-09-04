@@ -605,6 +605,12 @@
     background: var(--card2);
     color: var(--text);
 }
+.ndd-item.sel {
+    background: var(--card2);
+    color: var(--acc);
+    font-weight: 700;
+    box-shadow: inset 3px 0 0 var(--acc);
+}
 
 /* ---------- GATE: apartados que exigen sesion iniciada ---------- */
 /* El contenido real SI se manda al navegador (por eso se puede desenfocar

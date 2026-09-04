@@ -1,6 +1,7 @@
 <?php
 $title = $title ?? 'Volcanes - NDA';
 $user = $user ?? null;
+$currentSlug = 'volcanes';
 $extraCss = ['css/volcanes.css'];
 ob_start();
 ?>

@@ -175,12 +175,24 @@ function showSchoolTab(tabId) {
 // Al cargar/recargar la página, si la URL ya trae un hash (dejado por
 // showSchoolTab en una visita anterior) y existe esa pestaña en este
 // panel, se abre esa en vez de quedarse en el Tablero por defecto.
+// Si el hash trae además el filtro de sección (dejado por
+// filterStudentsBySection), se restaura también esa sección en vez de
+// caer en el listado general de Estudiantes.
 (function () {
-    const tabId = (location.hash || '').replace('#', '');
-    if (!tabId) return;
-    if (document.getElementById('tab-' + tabId)) {
-        showSchoolTab(tabId);
+    const rawHash = (location.hash || '').replace('#', '');
+    if (!rawHash) return;
+    const [tabId, queryStr] = rawHash.split('?');
+    if (!tabId || !document.getElementById('tab-' + tabId)) return;
+    if (tabId === 'students' && queryStr) {
+        const params = new URLSearchParams(queryStr);
+        const aulaId = params.get('aula');
+        const nombre = params.get('nombre');
+        if (aulaId && nombre) {
+            filterStudentsBySection(aulaId, nombre, params.get('origin') || 'classrooms');
+            return;
+        }
     }
+    showSchoolTab(tabId);
 })();
 
 // ─── MODALS ───
@@ -2400,6 +2412,13 @@ function filterStudentsBySection(aulaId, nombre, originTab) {
     showSchoolTab('students');
     setTimeout(async () => {
         __studentsActiveAula = { id: aulaId, nombre: nombre };
+        // Deja el filtro codificado en el hash (showSchoolTab de arriba
+        // ya puso '#students' a secas) para que un F5 lo restaure en
+        // vez de caer en el listado general — ver IIFE de restauración
+        // más arriba en este archivo.
+        try {
+            history.replaceState(null, '', '#students?aula=' + encodeURIComponent(aulaId) + '&nombre=' + encodeURIComponent(nombre) + '&origin=' + encodeURIComponent(originTab));
+        } catch (e) { /* noop */ }
         const search = document.getElementById('studentsSearch');
         if (search) search.value = '';
         renderStudentsFilterBar(aulaId, nombre, originTab);

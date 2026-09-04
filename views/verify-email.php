@@ -4,15 +4,29 @@ $institucion = $institucion ?? [];
 ob_start();
 ?>
 
-<div class="auth-wrap">
+<div class="auth-wrap auth-wrap-verify">
 
     <canvas id="wave-left"></canvas>
     <canvas id="wave-right"></canvas>
     <canvas id="particles"></canvas>
 
+    <div class="auth-hero">
+        <div class="auth-robot-wrap">
+            <div class="auth-robot-glow"></div>
+            <div class="auth-verify-bubble">📬 ¡Revisa el correo de tu institución! Te envié un código para confirmarla.</div>
+            <img src="assets/media/img/alegre.png" class="auth-robot-img" alt="">
+        </div>
+    </div>
+
     <div class="auth-card">
-        <img src="assets/media/img/alegre.png" alt="" class="auth-mascot">
-        <h1 class="auth-title">VERIFICA TU INSTITUCIÓN</h1>
+        <div class="auth-title-row">
+            <div class="auth-icon-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                </svg>
+            </div>
+            <h1 class="auth-title">VERIFICA<br>TU INSTITUCIÓN</h1>
+        </div>
         <p class="auth-subtitle">
             Enviamos un código de 6 dígitos a
             <strong><?= e($institucion['correo'] ?? '') ?></strong>
@@ -45,7 +59,7 @@ ob_start();
                     <input type="text" name="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6"
                            placeholder="000000" style="letter-spacing:8px;text-align:center;font-size:1.3rem" required autofocus>
                 </div>
-                <p class="wiz-hint">El código vence 15 minutos después de enviarse.</p>
+                <p class="wiz-hint">El código vence 3 minutos después de enviarse.</p>
             </div>
 
             <button type="submit" class="auth-btn">Verificar</button>

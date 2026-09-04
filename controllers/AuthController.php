@@ -140,6 +140,37 @@ class AuthController {
         return null;
     }
 
+    // Chequeo en vivo de username/email mientras se escribe el paso 4 del
+    // registro (assets/js/register-wizard.js), para avisar "ya está en
+    // uso" antes de enviar el formulario. Sin esto, un choque de username
+    // solo se detectaba al enviar todo el wizard, y el redirect() de
+    // processRegister() perdia los pasos ya llenados (institucion, rol...).
+    public function checkAvailability() {
+        $field = $_GET['field'] ?? '';
+        $value = trim($_GET['value'] ?? '');
+
+        if ($field === 'username') {
+            $error = $this->usernameError(strtolower($value));
+            jsonResponse(['available' => $error === null, 'error' => $error]);
+            return;
+        }
+
+        if ($field === 'email') {
+            if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                jsonResponse(['available' => false, 'error' => 'Ingresa un correo electrónico válido.']);
+                return;
+            }
+            $db = getDB();
+            $stmt = $db->prepare("SELECT usuarios_id FROM usuarios WHERE email = ?");
+            $stmt->execute([$value]);
+            $inUse = (bool) $stmt->fetch();
+            jsonResponse(['available' => !$inUse, 'error' => $inUse ? 'Ese correo ya está registrado.' : null]);
+            return;
+        }
+
+        jsonResponse(['error' => 'Campo inválido'], 400);
+    }
+
     // Genera un username disponible a partir de un texto base (nombre o
     // correo), usado cuando la cuenta se crea via Google y no pedimos uno
     // a mano. Ej: "Azucena Hernández" -> "azucena_hernandez", "azucena_hernandez2"...
@@ -298,8 +329,7 @@ class AuthController {
 
     private function processRegister() {
         if (!csrfValid($_POST['csrf_token'] ?? '')) {
-            $_SESSION['error'] = 'Tu sesión expiró, intenta de nuevo.';
-            redirect('register');
+            jsonResponse(['error' => 'Tu sesión expiró, recarga la página e intenta de nuevo.'], 400);
             return;
         }
 
@@ -312,30 +342,25 @@ class AuthController {
         $instRole = $_POST['inst_role'] ?? '';               // director|docente|alumno|padre|administrativo
 
         if (empty($name) || empty($username) || empty($email) || empty($password)) {
-            $_SESSION['error'] = 'Todos los campos son obligatorios.';
-            redirect('register');
+            jsonResponse(['error' => 'Todos los campos son obligatorios.'], 400);
             return;
         }
         $usernameError = $this->usernameError($username);
         if ($usernameError) {
-            $_SESSION['error'] = $usernameError;
-            redirect('register');
+            jsonResponse(['error' => $usernameError], 400);
             return;
         }
         $passwordError = $this->passwordStrengthError($password);
         if ($passwordError) {
-            $_SESSION['error'] = $passwordError;
-            redirect('register');
+            jsonResponse(['error' => $passwordError], 400);
             return;
         }
         if ($password !== $confirm) {
-            $_SESSION['error'] = 'Las contraseñas no coinciden.';
-            redirect('register');
+            jsonResponse(['error' => 'Las contraseñas no coinciden.'], 400);
             return;
         }
         if (!$this->isRealEmail($email)) {
-            $_SESSION['error'] = 'Ingresa un correo electrónico real (revisa que esté bien escrito).';
-            redirect('register');
+            jsonResponse(['error' => 'Ingresa un correo electrónico real (revisa que esté bien escrito).'], 400);
             return;
         }
 
@@ -344,8 +369,7 @@ class AuthController {
         $stmt = $db->prepare("SELECT usuarios_id FROM usuarios WHERE email = ?");
         $stmt->execute([$email]);
         if ($stmt->fetch()) {
-            $_SESSION['error'] = 'Ese correo ya está registrado.';
-            redirect('register');
+            jsonResponse(['error' => 'Ese correo ya está registrado.'], 400);
             return;
         }
 
@@ -356,8 +380,7 @@ class AuthController {
         if ($accountType === 'institutional') {
             $validRoles = ['director', 'docente', 'alumno', 'padre', 'administrativo'];
             if (!in_array($instRole, $validRoles, true)) {
-                $_SESSION['error'] = 'Selecciona un rol institucional válido.';
-                redirect('register');
+                jsonResponse(['error' => 'Selecciona un rol institucional válido.'], 400);
                 return;
             }
             $role = $instRole;
@@ -376,28 +399,24 @@ class AuthController {
 
                 $validTipos = ['colegio', 'escuela', 'instituto', 'universidad', 'otro'];
                 if (empty($instName)) {
-                    $_SESSION['error'] = 'Ingresa el nombre de la institución que vas a administrar.';
-                    redirect('register');
+                    jsonResponse(['error' => 'Ingresa el nombre de la institución que vas a administrar.'], 400);
                     return;
                 }
                 if (!in_array($instTipo, $validTipos, true)) {
-                    $_SESSION['error'] = 'Selecciona el tipo de institución.';
-                    redirect('register');
+                    jsonResponse(['error' => 'Selecciona el tipo de institución.'], 400);
                     return;
                 }
                 if (!$this->isRealEmail($instEmail)) {
-                    $_SESSION['error'] = 'Ingresa un correo institucional real: ahí te enviaremos el código de verificación.';
-                    redirect('register');
+                    jsonResponse(['error' => 'Ingresa un correo institucional real: ahí te enviaremos el código de verificación.'], 400);
                     return;
                 }
                 if ($instDirectorEmail !== '' && !$this->isRealEmail($instDirectorEmail)) {
-                    $_SESSION['error'] = 'El correo personal del director/a no es válido.';
-                    redirect('register');
+                    jsonResponse(['error' => 'El correo personal del director/a no es válido.'], 400);
                     return;
                 }
 
                 $verifyCode = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-                $verifyExpira = date('Y-m-d H:i:s', time() + 15 * 60);
+                $verifyExpira = date('Y-m-d H:i:s', time() + 3 * 60);
 
                 $stmtI = $db->prepare("INSERT INTO instituciones
                     (nombre, tipo, correo, correo_director_personal, telefono, direccion, nombre_director, estado_verificacion, codigo_verificacion, codigo_verificacion_expira)
@@ -414,15 +433,13 @@ class AuthController {
                 // ya existente. Queda pendiente hasta que el director la apruebe.
                 $joinId = $_POST['institucion_id'] ?? '';
                 if (empty($joinId)) {
-                    $_SESSION['error'] = 'Selecciona la institución a la que perteneces.';
-                    redirect('register');
+                    jsonResponse(['error' => 'Selecciona la institución a la que perteneces.'], 400);
                     return;
                 }
                 $stmtCheck = $db->prepare("SELECT instituciones_id FROM instituciones WHERE instituciones_id = ?");
                 $stmtCheck->execute([$joinId]);
                 if (!$stmtCheck->fetch()) {
-                    $_SESSION['error'] = 'La institución seleccionada no existe.';
-                    redirect('register');
+                    jsonResponse(['error' => 'La institución seleccionada no existe.'], 400);
                     return;
                 }
                 $institucionId = $joinId;
@@ -458,10 +475,12 @@ class AuthController {
             $_SESSION['pending_verify_institucion_id'] = $institucionId;
             $_SESSION['pending_verify_user_id'] = $userId;
             $sent = Mailer::sendVerificationCode($instEmail, $name, $verifyCode);
-            $_SESSION['success'] = $sent
-                ? 'Institución creada. Te enviamos un código de verificación a ' . $instEmail . '.'
-                : 'Institución creada, pero no pudimos enviar el correo de verificación. Usa "Reenviar código" en la siguiente pantalla.';
-            redirect('register/verify');
+            if ($sent) {
+                $_SESSION['success'] = 'Institución creada. Te enviamos un código de verificación a ' . $instEmail . '.';
+            } else {
+                $_SESSION['error'] = 'Institución creada, pero no pudimos enviar el correo de verificación. Usa "Reenviar código" en la siguiente pantalla.';
+            }
+            jsonResponse(['success' => true, 'redirect' => '?url=register/verify']);
             return;
         }
 
@@ -469,16 +488,18 @@ class AuthController {
         // se le manda a SU correo personal (evita cuentas con un correo
         // inventado/ajeno que "dejaban entrar" sin comprobar nada).
         $verifyCodeAccount = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-        $verifyExpiraAccount = date('Y-m-d H:i:s', time() + 15 * 60);
+        $verifyExpiraAccount = date('Y-m-d H:i:s', time() + 3 * 60);
         $db->prepare("UPDATE usuarios SET codigo_verificacion_email = ?, codigo_verificacion_email_expira = ? WHERE usuarios_id = ?")
            ->execute([$verifyCodeAccount, $verifyExpiraAccount, $userId]);
 
         $_SESSION['pending_verify_account_user_id'] = $userId;
         $sentAccount = Mailer::sendAccountVerificationCode($email, $name, $verifyCodeAccount);
-        $_SESSION['success'] = $sentAccount
-            ? 'Casi listo — te enviamos un código de verificación a ' . $email . '.'
-            : 'Cuenta creada, pero no pudimos enviar el correo de verificación. Usa "Reenviar código" en la siguiente pantalla.';
-        redirect('register/verify-account');
+        if ($sentAccount) {
+            $_SESSION['success'] = 'Casi listo — te enviamos un código de verificación a ' . $email . '.';
+        } else {
+            $_SESSION['error'] = 'Cuenta creada, pero no pudimos enviar el correo de verificación. Usa "Reenviar código" en la siguiente pantalla.';
+        }
+        jsonResponse(['success' => true, 'redirect' => '?url=register/verify-account']);
     }
 
     // ---------------------------------------------------------------
@@ -595,15 +616,17 @@ class AuthController {
         }
 
         $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-        $expira = date('Y-m-d H:i:s', time() + 15 * 60);
+        $expira = date('Y-m-d H:i:s', time() + 3 * 60);
         $db->prepare("UPDATE instituciones SET codigo_verificacion = ?, codigo_verificacion_expira = ? WHERE instituciones_id = ?")
            ->execute([$code, $expira, $institucionId]);
 
         $sent = Mailer::sendVerificationCode($institucion['correo'], $institucion['nombre_director'] ?: $institucion['nombre'], $code);
 
-        $_SESSION['success'] = $sent
-            ? 'Te enviamos un nuevo código a ' . $institucion['correo'] . '.'
-            : 'No pudimos enviar el correo. Intenta de nuevo en unos minutos.';
+        if ($sent) {
+            $_SESSION['success'] = 'Te enviamos un nuevo código a ' . $institucion['correo'] . '.';
+        } else {
+            $_SESSION['error'] = 'No pudimos enviar el correo. Intenta de nuevo en unos minutos.';
+        }
         redirect('register/verify');
     }
 
@@ -724,15 +747,17 @@ class AuthController {
         }
 
         $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-        $expira = date('Y-m-d H:i:s', time() + 15 * 60);
+        $expira = date('Y-m-d H:i:s', time() + 3 * 60);
         $db->prepare("UPDATE usuarios SET codigo_verificacion_email = ?, codigo_verificacion_email_expira = ? WHERE usuarios_id = ?")
            ->execute([$code, $expira, $userId]);
 
         $sent = Mailer::sendAccountVerificationCode($accountUser['email'], $accountUser['nombre'], $code);
 
-        $_SESSION['success'] = $sent
-            ? 'Te enviamos un nuevo código a ' . $accountUser['email'] . '.'
-            : 'No pudimos enviar el correo. Intenta de nuevo en unos minutos.';
+        if ($sent) {
+            $_SESSION['success'] = 'Te enviamos un nuevo código a ' . $accountUser['email'] . '.';
+        } else {
+            $_SESSION['error'] = 'No pudimos enviar el correo. Intenta de nuevo en unos minutos.';
+        }
         redirect('register/verify-account');
     }
 
@@ -952,7 +977,7 @@ class AuthController {
         $name = $stmtName->fetchColumn();
 
         $verifyCode = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-        $verifyExpira = date('Y-m-d H:i:s', time() + 15 * 60);
+        $verifyExpira = date('Y-m-d H:i:s', time() + 3 * 60);
 
         $stmtI = $db->prepare("INSERT INTO instituciones
             (nombre, tipo, correo, correo_director_personal, telefono, direccion, nombre_director, estado_verificacion, codigo_verificacion, codigo_verificacion_expira)
@@ -975,9 +1000,11 @@ class AuthController {
         $_SESSION['pending_verify_institucion_id'] = $institucionId;
         $_SESSION['pending_verify_user_id'] = $userId;
         $sent = Mailer::sendVerificationCode($instEmail, $name, $verifyCode);
-        $_SESSION['success'] = $sent
-            ? 'Institución creada. Te enviamos un código de verificación a ' . $instEmail . '.'
-            : 'Institución creada, pero no pudimos enviar el correo de verificación. Usa "Reenviar código" en la siguiente pantalla.';
+        if ($sent) {
+            $_SESSION['success'] = 'Institución creada. Te enviamos un código de verificación a ' . $instEmail . '.';
+        } else {
+            $_SESSION['error'] = 'Institución creada, pero no pudimos enviar el correo de verificación. Usa "Reenviar código" en la siguiente pantalla.';
+        }
         redirect('register/verify');
     }
 

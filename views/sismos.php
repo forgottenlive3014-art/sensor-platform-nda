@@ -1,6 +1,7 @@
 <?php
 $title = $title ?? 'Sismos - NDA';
 $user = $user ?? null;
+$currentSlug = 'sismos';
 $extraCss = ['css/desastres-base.css'];
 ob_start();
 ?>
