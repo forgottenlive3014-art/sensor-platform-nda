@@ -133,6 +133,20 @@ $navDisplayName = $isLoggedIn
   </div>
 </div>
 
+<!-- ALERTA SIMULACRO: mismo tratamiento de pantalla completa que la alerta
+     de sismo fuerte de arriba, pero con paleta propia (no es una emergencia
+     real) — se llena via JS cuando arranca un simulacro nuevo en la
+     institución del usuario. -->
+<div class="csi-alert-overlay drill" id="drillAlertOverlay" role="alertdialog" aria-hidden="true">
+  <div class="csi-alert-box">
+    <img class="csi-alert-icon-img" src="<?= asset('media/img/alerta_roja.png') ?>" alt="">
+    <div class="csi-alert-title">SIMULACRO EN CURSO</div>
+    <div class="csi-alert-nivel" id="drillAlertOverlayNombre">—</div>
+    <p class="csi-alert-msg">Este es un simulacro, no es una emergencia real. Sigue las indicaciones de tu institución y dirígete a la zona segura o ruta de evacuación asignada.</p>
+    <button class="csi-alert-close" id="drillAlertOverlayClose">Entendido</button>
+  </div>
+</div>
+
 <nav class="nav" id="nav">
   <a class="nav-brand" href="?url=home">
     <div class="nda-logo-wave">
@@ -169,7 +183,6 @@ $navDisplayName = $isLoggedIn
       <div class="nav-drop-dd">
         <a class="ndd-item<?= ($currentSlug ?? '') === 'clima' ? ' sel' : '' ?>" href="?url=clima">Clima</a>
         <a class="ndd-item<?= ($currentSlug ?? '') === 'luna' ? ' sel' : '' ?>" href="?url=luna">Luna</a>
-        <a class="ndd-item<?= ($currentSlug ?? '') === 'monitoreo' ? ' sel' : '' ?>" href="?url=monitoreo#zonas-riesgo">Riesgo y Tsunamis</a>
         <a class="ndd-item<?= ($currentSlug ?? '') === 'emergencias' ? ' sel' : '' ?>" href="?url=emergencias">Puntos de Emergencia</a>
       </div>
     </div>
@@ -315,7 +328,7 @@ $__ndaIsGated = !$isLoggedIn && in_array($__ndaCurrentUrl, $__ndaGatedRoutes, tr
 <div class="nda-gate-blur"><?= $content ?? '' ?></div>
 <div class="nda-gate-overlay">
   <div class="nda-gate-card">
-    <div class="nda-gate-icon">🔒</div>
+    <img class="nda-gate-icon" src="<?= asset('media/img/cerrado.png') ?>" alt="">
     <h2>Inicia sesión para ver esta sección</h2>
     <p>Regístrate gratis o inicia sesión para acceder a todo el contenido de NDA: desastres, monitoreo en tiempo real, blog, juegos y más.</p>
     <div class="nda-gate-actions">

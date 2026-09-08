@@ -1610,6 +1610,10 @@ async function loadAttendance() {
         return;
     }
 
+    if (window.__ndaAttendanceReadOnly) {
+        return loadAttendanceSummary(drillId);
+    }
+
     const tbody = document.getElementById('attendanceTableBody');
     if (!tbody) return;
 
@@ -1653,6 +1657,75 @@ async function loadAttendance() {
 
     } catch (e) {
         tbody.innerHTML = '<tr><td colspan="4" class="text-center">Error al cargar asistencia</td></tr>';
+        console.error(e);
+    }
+}
+
+// Vista de solo lectura para la directora: nada de botones para marcar
+// asistencia (eso lo hace cada maestro desde su panel-docente) — solo el
+// estado agrupado por maestro y seccion, mas un total general arriba.
+async function loadAttendanceSummary(drillId) {
+    const box = document.getElementById('attendanceSummary');
+    if (!box) return;
+    box.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);">Cargando asistencia...</div>';
+
+    try {
+        const response = await fetch(`?url=school/attendance&drill_id=${drillId}`);
+        const students = await response.json();
+
+        if (students.error) {
+            box.innerHTML = `<div class="text-center" style="padding:20px;color:var(--text3);">Error: ${escapeHtml(students.error)}</div>`;
+            return;
+        }
+        if (students.length === 0) {
+            box.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);">No hay estudiantes para este simulacro</div>';
+            return;
+        }
+
+        const totales = { presente: 0, ausente: 0, herido: 0, pendiente: 0 };
+        const porAula = new Map();
+        students.forEach(s => {
+            const estado = s.status || 'pendiente';
+            totales[estado] = (totales[estado] || 0) + 1;
+
+            const aula = s.aula || 'Sin sección';
+            if (!porAula.has(aula)) porAula.set(aula, { maestro: s.maestro_nombre || 'Sin maestro asignado', lista: [] });
+            porAula.get(aula).lista.push(s);
+        });
+
+        const totalGeneralHtml = `
+            <div class="school-stats" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px;">
+                <div class="school-stat"><div class="school-stat-number">${totales.presente}</div><div class="school-stat-label">Presentes</div></div>
+                <div class="school-stat"><div class="school-stat-number">${totales.ausente}</div><div class="school-stat-label">Ausentes</div></div>
+                <div class="school-stat"><div class="school-stat-number">${totales.herido}</div><div class="school-stat-label">Heridos</div></div>
+                <div class="school-stat"><div class="school-stat-number">${totales.pendiente}</div><div class="school-stat-label">Pendientes</div></div>
+            </div>
+        `;
+
+        let seccionesHtml = '';
+        porAula.forEach(({ maestro, lista }, aula) => {
+            const filas = lista.map(s => `
+                <tr>
+                    <td>${escapeHtml(s.nombre)} ${escapeHtml(s.apellido || '')}</td>
+                    <td><span class="school-attendance-status ${escapeHtml(s.status || 'pendiente')}">${escapeHtml(s.status || 'Pendiente')}</span></td>
+                </tr>
+            `).join('');
+            seccionesHtml += `
+                <div class="school-card">
+                    <div class="school-panel-header">
+                        <h3>Sección ${escapeHtml(aula)}</h3>
+                        <span class="school-hint" style="margin:0;">${escapeHtml(maestro)}</span>
+                    </div>
+                    <div class="school-table-wrap">
+                        <table class="school-table"><tbody>${filas}</tbody></table>
+                    </div>
+                </div>
+            `;
+        });
+
+        box.innerHTML = totalGeneralHtml + `<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;">${seccionesHtml}</div>`;
+    } catch (e) {
+        box.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);">Error al cargar asistencia</div>';
         console.error(e);
     }
 }
@@ -3310,14 +3383,35 @@ async function deleteUser(id) {
 let __newsCache = [];
 let __newsPage = 1;
 
+let __newsInstFilterLoaded = false;
+async function populateNewsInstFilter() {
+    const select = document.getElementById('newsInstFilter');
+    if (!select || __newsInstFilterLoaded) return;
+    __newsInstFilterLoaded = true;
+    try {
+        const response = await fetch('?url=school/institutions&per_page=200');
+        const result = await response.json();
+        (result.data || []).forEach(i => {
+            const opt = document.createElement('option');
+            opt.value = i.instituciones_id;
+            opt.textContent = i.nombre;
+            select.appendChild(opt);
+        });
+    } catch (e) {
+        console.error(e);
+    }
+}
+
 async function loadNews(page) {
     const list = document.getElementById('newsList');
     if (!list) return;
     __newsPage = page || 1;
     list.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);grid-column:1/-1;">Cargando noticias...</div>';
+    await populateNewsInstFilter();
+    const instFilter = document.getElementById('newsInstFilter')?.value || '';
 
     try {
-        const response = await fetch(`?url=school/news&page=${__newsPage}&per_page=12`);
+        const response = await fetch(`?url=school/news&page=${__newsPage}&per_page=12&institucion_id=${encodeURIComponent(instFilter)}`);
         const result = await response.json();
 
         if (result.error) {
@@ -3338,7 +3432,7 @@ async function loadNews(page) {
                     ? `<img class="school-blog-card-thumb" src="${escapeHtml(n.imagen)}" alt="${escapeHtml(n.titulo)}">`
                     : `<div class="school-blog-card-thumb placeholder">Sin imagen</div>`}
                 <div class="school-blog-card-body">
-                    <h4>${escapeHtml(n.titulo)}${!n.instituciones_id ? ' <span class="chip b">Global</span>' : ''}</h4>
+                    <h4>${escapeHtml(n.titulo)}${!n.instituciones_id ? ' <span class="chip b">Global</span>' : (window.__ndaIsGlobalAdmin && n.institucion_nombre ? ` <span class="chip">${escapeHtml(n.institucion_nombre)}</span>` : '')}</h4>
                     <p class="school-blog-card-excerpt">${escapeHtml(n.resumen || n.contenido).slice(0, 140)}</p>
                     <div class="school-blog-card-meta">
                         <span>${escapeHtml(n.autor || 'Administración')}</span>

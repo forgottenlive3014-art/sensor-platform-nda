@@ -40,8 +40,24 @@ class NoticiaController {
         $page = (int) ($_GET['page'] ?? 1);
         $perPage = (int) ($_GET['per_page'] ?? 10);
 
-        $rows = $model->getPage($instId, $isGlobalAdmin, $search, $page, $perPage);
-        $total = $model->countAll($instId, $isGlobalAdmin, $search);
+        // El Admin General ve las noticias de todas las instituciones
+        // mezcladas por defecto; puede acotar a una institución puntual o
+        // a solo los comunicados globales con este filtro (ignorado para
+        // director/docente/etc., que ya vienen acotados a su institucion_id
+        // via readScopeInstitutionId()).
+        $filterInstId = null;
+        $onlyGlobal = false;
+        if ($isGlobalAdmin) {
+            $raw = $_GET['institucion_id'] ?? '';
+            if ($raw === 'global') {
+                $onlyGlobal = true;
+            } elseif ($raw !== '' && ctype_digit((string) $raw)) {
+                $filterInstId = (int) $raw;
+            }
+        }
+
+        $rows = $model->getPage($instId, $isGlobalAdmin, $search, $page, $perPage, $filterInstId, $onlyGlobal);
+        $total = $model->countAll($instId, $isGlobalAdmin, $search, $filterInstId, $onlyGlobal);
 
         jsonResponse([
             'data' => $rows,

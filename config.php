@@ -1,9 +1,4 @@
 <?php
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'nda_project');
-define('DB_USER', 'root');
-define('DB_PASS', '');
-
 // Carga variables desde .env (formato CLAVE=valor) sin depender de composer.
 function loadEnv($path) {
     if (!file_exists($path)) return;
@@ -25,6 +20,14 @@ function env($key, $default = null) {
     $value = getenv($key);
     return $value !== false ? $value : $default;
 }
+
+// Con root/sin-clave (por defecto en WAMP) funciona sin tocar nada; en un
+// servidor real, define DB_USER/DB_PASS en .env con un usuario dedicado
+// (con permisos solo sobre esta base, no root) en vez de cambiar esto.
+define('DB_HOST', env('DB_HOST', 'localhost'));
+define('DB_NAME', env('DB_NAME', 'nda_project'));
+define('DB_USER', env('DB_USER', 'root'));
+define('DB_PASS', env('DB_PASS', ''));
 
 // Token CSRF compartido por sesion, usado en forms server-rendered y expuesto via <meta> para AJAX.
 function csrfToken() {

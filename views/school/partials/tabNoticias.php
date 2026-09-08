@@ -8,11 +8,21 @@
                 <?php endif; ?>
             </div>
             <p class="school-hint">Comunicados del director o del Admin General hacia la comunidad institucional.</p>
+            <?php if (($user['role'] ?? '') === 'admin'): ?>
+            <div class="school-form-group" style="max-width:320px;">
+                <label>Filtrar por institución</label>
+                <select id="newsInstFilter" onchange="loadNews(1)">
+                    <option value="">Todas las instituciones</option>
+                    <option value="global">Solo comunicados globales</option>
+                </select>
+            </div>
+            <?php else: ?>
             <div class="school-filters" id="newsFilters">
                 <button class="sfilter active" data-cat="all">Todas</button>
                 <button class="sfilter" data-cat="institucion">Mi institución</button>
                 <button class="sfilter" data-cat="global">Global</button>
             </div>
+            <?php endif; ?>
             <div id="newsList" class="school-card-grid">
                 <div class="text-center" style="padding:20px;color:var(--text3);grid-column:1/-1;">Cargando noticias...</div>
             </div>

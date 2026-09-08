@@ -7,12 +7,17 @@ class NewsModel {
         $this->db = getDB();
     }
 
-    public function countAll($instId, $isGlobalAdmin, $search = '') {
+    public function countAll($instId, $isGlobalAdmin, $search = '', $filterInstId = null, $onlyGlobal = false) {
         $sql = "SELECT COUNT(*) as total FROM noticias_internas WHERE 1=1";
         $params = [];
         if (!$isGlobalAdmin) {
             $sql .= " AND (instituciones_id = ? OR instituciones_id IS NULL)";
             $params[] = $instId;
+        } elseif ($onlyGlobal) {
+            $sql .= " AND instituciones_id IS NULL";
+        } elseif ($filterInstId !== null) {
+            $sql .= " AND instituciones_id = ?";
+            $params[] = $filterInstId;
         }
         if ($search !== '') {
             $sql .= " AND (titulo LIKE ? OR contenido LIKE ?)";
@@ -24,7 +29,7 @@ class NewsModel {
         return (int) ($stmt->fetch()['total'] ?? 0);
     }
 
-    public function getPage($instId, $isGlobalAdmin, $search = '', $page = 1, $perPage = 10) {
+    public function getPage($instId, $isGlobalAdmin, $search = '', $page = 1, $perPage = 10, $filterInstId = null, $onlyGlobal = false) {
         $page = max(1, (int) $page);
         $perPage = max(1, min(100, (int) $perPage));
         $offset = ($page - 1) * $perPage;
@@ -42,6 +47,11 @@ class NewsModel {
         if (!$isGlobalAdmin) {
             $sql .= " AND (n.instituciones_id = ? OR n.instituciones_id IS NULL)";
             $params[] = $instId;
+        } elseif ($onlyGlobal) {
+            $sql .= " AND n.instituciones_id IS NULL";
+        } elseif ($filterInstId !== null) {
+            $sql .= " AND n.instituciones_id = ?";
+            $params[] = $filterInstId;
         }
         if ($search !== '') {
             $sql .= " AND (n.titulo LIKE ? OR n.contenido LIKE ?)";

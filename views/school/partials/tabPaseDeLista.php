@@ -1,3 +1,4 @@
+        <?php $attendanceReadOnly = $attendanceReadOnly ?? false; ?>
         <div id="tab-attendance" class="school-panel">
             <div class="school-panel-header">
                 <h3>Pase de Lista</h3>
@@ -10,6 +11,11 @@
                     </button>
                 </div>
             </div>
+            <?php if ($attendanceReadOnly): ?>
+            <div id="attendanceSummary">
+                <div class="text-center" style="padding:20px;color:var(--text3);">Selecciona un simulacro para ver el pase de lista</div>
+            </div>
+            <?php else: ?>
             <div class="school-table-wrap">
                 <table class="school-table">
                     <thead>
@@ -30,4 +36,6 @@
                     Guardar Asistencia
                 </button>
             </div>
+            <?php endif; ?>
         </div>
+        <script>window.__ndaAttendanceReadOnly = <?= $attendanceReadOnly ? 'true' : 'false' ?>;</script>

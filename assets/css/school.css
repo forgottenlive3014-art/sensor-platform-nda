@@ -586,6 +586,18 @@ a.school-tab {
     gap: 14px;
     margin-bottom: 24px;
 }
+/* El detalle de institución (modal, 500px de ancho) siempre muestra 7
+   tarjetas: con el grid de 6 columnas de arriba, la 7ma quedaba sola en
+   una fila nueva, angosta y pegada a la izquierda. Con flex-wrap cada
+   fila reparte su propio espacio sobrante, así que la tarjeta suelta de
+   la última fila se estira a todo el ancho en vez de verse huérfana. */
+#institutionStatsGrid {
+    display: flex;
+    flex-wrap: wrap;
+}
+#institutionStatsGrid .school-stat {
+    flex: 1 1 120px;
+}
 .school-stat {
     background: var(--card);
     border-radius: 12px;

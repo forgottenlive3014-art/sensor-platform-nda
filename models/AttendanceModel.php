@@ -10,11 +10,13 @@ class AttendanceModel {
     public function getForDrill($drillId) {
         $stmt = $this->db->prepare("
             SELECT e.estudiantes_id, e.nombre, e.apellido, a.nombre as aula,
+                   u.nombre as maestro_nombre,
                    at.estado as status
             FROM estudiantes e
             JOIN aulas a ON e.aulas_id = a.aulas_id
+            LEFT JOIN usuarios u ON u.usuarios_id = a.maestro_id
             LEFT JOIN asistencia_simulacros at ON at.estudiantes_id = e.estudiantes_id AND at.simulacros_id = ?
-            ORDER BY e.nombre
+            ORDER BY u.nombre, a.nombre, e.nombre
         ");
         $stmt->execute([$drillId]);
         return $stmt->fetchAll();

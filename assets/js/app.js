@@ -146,6 +146,42 @@ window.ndaGoBack = function () {
     var text = document.getElementById('drillAlertText');
     if (!banner) return;
 
+    // Overlay de pantalla completa (mismo tratamiento que la alerta de
+    // sismo fuerte, ver centrosismico-alerta.js): se muestra una sola vez
+    // por simulacro nuevo -- el id ya mostrado se guarda en localStorage
+    // para no taparle la pagina de nuevo en cada poll o cada vez que
+    // navega a otra pagina durante el mismo simulacro. El banner de arriba
+    // se sigue mostrando mientras dure, como recordatorio permanente.
+    var overlay = document.getElementById('drillAlertOverlay');
+    var overlayNombre = document.getElementById('drillAlertOverlayNombre');
+    var overlayClose = document.getElementById('drillAlertOverlayClose');
+    var STORAGE_KEY = 'nda-ultimo-simulacro-alertado-id';
+    var overlayTimeout = null;
+
+    function getUltimoAlertadoId() {
+        try { return localStorage.getItem(STORAGE_KEY); } catch (e) { return null; }
+    }
+    function setUltimoAlertadoId(id) {
+        try { localStorage.setItem(STORAGE_KEY, id); } catch (e) { /* modo privado, etc. */ }
+    }
+    function ocultarOverlay() {
+        if (!overlay) return;
+        clearTimeout(overlayTimeout);
+        overlay.classList.remove('show');
+        overlay.setAttribute('aria-hidden', 'true');
+    }
+    function mostrarOverlay(drill) {
+        if (!overlay) return;
+        if (overlayNombre) overlayNombre.textContent = drill.nombre + ' (' + drill.tipo + ')';
+        overlay.classList.add('show');
+        overlay.setAttribute('aria-hidden', 'false');
+        clearTimeout(overlayTimeout);
+        overlayTimeout = setTimeout(ocultarOverlay, 15000);
+    }
+    if (overlayClose) overlayClose.onclick = ocultarOverlay;
+
+    var ultimoAlertadoId = getUltimoAlertadoId();
+
     async function checkActiveAlert() {
         try {
             var res = await fetch('?url=school/active-alert');
@@ -154,6 +190,13 @@ window.ndaGoBack = function () {
                 text.textContent = 'Simulacro en curso: ' + data.drill.nombre + ' (' + data.drill.tipo + ')';
                 banner.style.display = 'flex';
                 document.body.classList.add('has-drill-banner');
+
+                var idActual = data.drill.simulacros_id != null ? String(data.drill.simulacros_id) : null;
+                if (idActual && idActual !== ultimoAlertadoId) {
+                    ultimoAlertadoId = idActual;
+                    setUltimoAlertadoId(idActual);
+                    mostrarOverlay(data.drill);
+                }
             } else {
                 banner.style.display = 'none';
                 document.body.classList.remove('has-drill-banner');

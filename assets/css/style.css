@@ -860,7 +860,7 @@ canvas {
 }
 #csiWave {
     width: 100%;
-    height: 186px;
+    height: 220px;
 }
 .sg-depth-badge {
     position: absolute;
@@ -1200,6 +1200,7 @@ canvas {
 .csi-alert-overlay.mm { --csi-alert-rgb: 168, 87, 54; }   /* MODERADO: naranja */
 .csi-alert-overlay.mh { --csi-alert-rgb: 184, 67, 63; }   /* FUERTE: rojo */
 .csi-alert-overlay.mx { --csi-alert-rgb: 217, 26, 42; }   /* TERREMOTO: rojo fuerte (mas intenso que FUERTE) */
+.csi-alert-overlay.drill { --csi-alert-rgb: 230, 126, 34; }  /* SIMULACRO: anaranjado, no es una emergencia real */
 .csi-alert-overlay.show {
     opacity: 1;
     pointer-events: auto;
@@ -1216,6 +1217,14 @@ canvas {
 .csi-alert-icon {
     font-size: 3.2rem;
     margin-bottom: 10px;
+}
+.csi-alert-icon-img {
+    width: 110px;
+    height: 110px;
+    object-fit: cover;
+    border-radius: var(--rl);
+    margin: 0 auto 14px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 }
 .csi-alert-title {
     font-family: var(--fd);

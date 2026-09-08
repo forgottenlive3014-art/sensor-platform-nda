@@ -1,13 +1,17 @@
 
 
 <?php
-// Dock flotante NDA: Monitor Sismico + Colegio + Panel/Gestion Escolar +
+// Dock flotante NDA: Monitor Sismico + Colegio + Panel de Gestion Escolar +
 // Asistente NDA, unificados en un solo componente glassmorphism (ver
-// .nda-dock en style.css). $__canSeeSchoolLink ya viene calculado en layout.php.
+// .nda-dock en style.css). El boton "Colegio" (?url=school, pagina
+// informativa) se oculta solo para el Admin General: a el ya le sirve
+// "Panel de Gestion" para llegar a su panel, y "Colegio" era redundante
+// en su caso. Director/docente/alumno/padre/administrativo si lo ven.
 $__dockUrl = $_GET['url'] ?? 'home';
 $__dockArduinoActive = ($__dockUrl === 'arduino');
 $__dockSchoolActive = ($__dockUrl === 'school');
 $__dockPanelActive = ($__dockUrl === 'school/panel');
+$__dockIsSuperAdmin = ($__navUser['role'] ?? '') === 'admin';
 ?>
 <div class="nda-dock" id="ndaDock">
   <a href="?url=arduino" class="dock-btn dock-orange<?= $__dockArduinoActive ? ' active' : '' ?>" aria-label="Monitor Sísmico">
@@ -16,7 +20,7 @@ $__dockPanelActive = ($__dockUrl === 'school/panel');
     <span class="dock-tip" aria-hidden="true">Monitor Sísmico</span>
   </a>
 
-  <?php if ($__canSeeSchoolLink): ?>
+  <?php if ($__canSeeSchoolLink && !$__dockIsSuperAdmin): ?>
   <a href="?url=school" class="dock-btn dock-blue<?= $__dockSchoolActive ? ' active' : '' ?>" aria-label="Colegio">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M22 10 12 5 2 10l10 5 10-5Z"/>
@@ -24,6 +28,7 @@ $__dockPanelActive = ($__dockUrl === 'school/panel');
     </svg>
     <span class="dock-tip" aria-hidden="true">Colegio</span>
   </a>
+  <?php endif; ?>
 
   <?php if ($__canSeePanelLink): ?>
   <a href="?url=school/panel" class="dock-btn dock-blue<?= $__dockPanelActive ? ' active' : '' ?>" aria-label="Panel de Gestión Escolar">
@@ -32,7 +37,6 @@ $__dockPanelActive = ($__dockUrl === 'school/panel');
     </svg>
     <span class="dock-tip" aria-hidden="true">Panel de Gestión</span>
   </a>
-  <?php endif; ?>
   <?php endif; ?>
 
   <button type="button" class="dock-btn dock-orange dock-btn-chat" id="ndabotFab" aria-label="Abrir chat de ayuda">

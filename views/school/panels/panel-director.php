@@ -11,6 +11,10 @@ $isSchoolStaff = $isSchoolStaff ?? false;
 $pendingRequestsCount = $pendingRequestsCount ?? 0;
 $isReadOnlyView = $isReadOnlyView ?? false;
 $viewingInstitucionNombre = $viewingInstitucionNombre ?? null;
+// La directora no debe poder marcar asistencia estudiante por estudiante
+// (eso es trabajo del maestro, en su panel-docente): aca solo ve el estado
+// del pase de lista agrupado por maestro y seccion, mas el total general.
+$attendanceReadOnly = true;
 ob_start();
 ?>
 <link rel="stylesheet" href="<?= asset('css/school.css') ?>">

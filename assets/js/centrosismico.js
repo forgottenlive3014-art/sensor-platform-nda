@@ -90,7 +90,7 @@
 
     function resizeWave() {
         waveEl.width = waveEl.offsetWidth;
-        waveEl.height = waveEl.clientHeight || 186;
+        waveEl.height = waveEl.clientHeight || 220;
     }
     resizeWave();
     window.addEventListener('resize', resizeWave);
@@ -111,7 +111,7 @@
         ];
         const laneH = h / lanes.length;
         const ampPx = laneH / 2 - 8; // px disponibles a cada lado de la línea base
-        const gRange = 2.6; // g que ocupan todo ampPx — subido para que el trazo se vea menos exagerado
+        const gRange = 1.4; // g que ocupan todo ampPx — bajado para que el trazo responda mas a movimientos chicos
 
         // 0 justo despues de un commit -> 1 justo antes del siguiente dato
         // esperado. Desplaza todo el trazo ese % de un paso hacia la

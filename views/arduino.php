@@ -11,7 +11,6 @@ ob_start();
       <div>
         <div class="page-eyebrow">Estación Propia · Sensor MPU6050</div>
         <div class="page-title">Centro <span class="acc">Sísmico</span> en Vivo</div>
-        <p class="sec-sub" style="margin-top:6px">Movimiento real capturado por nuestra estación sismológica con acelerómetro — proyecto Centro Sísmico</p>
       </div>
       <div class="rtm-badge active" id="csiStatusBadge"><span class="live-dot"></span>Conectando…</div>
     </div>
