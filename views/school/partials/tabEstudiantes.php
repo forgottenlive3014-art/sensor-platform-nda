@@ -9,7 +9,7 @@
                 <input type="text" id="studentsSearch" class="school-select" placeholder="Buscar por nombre, apellido o código..." oninput="debounceStudentsSearch()" style="max-width:280px;">
             </div>
             <div class="school-table-wrap">
-                <table class="school-table">
+                <table class="school-table school-table-wide">
                     <thead>
                         <tr>
                             <th>#</th>

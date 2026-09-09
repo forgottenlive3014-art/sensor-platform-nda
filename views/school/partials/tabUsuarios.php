@@ -23,7 +23,7 @@
                 </select>
             </div>
             <div class="school-table-wrap">
-                <table class="school-table">
+                <table class="school-table school-table-wide">
                     <thead>
                         <tr>
                             <th>Nombre</th>

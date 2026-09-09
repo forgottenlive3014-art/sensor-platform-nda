@@ -210,7 +210,49 @@ $navDisplayName = $isLoggedIn
     <a href="?url=quehacer">¿Qué hacer AHORA?</a>
     <a href="?url=Acercade">Acerca de NDA</a>
   </div>
-  
+
+  <!-- Menu movil: mismos enlaces que .nav-links de arriba, en lista vertical
+       (se abre con #hamBtn, ver .nav-ham/.mob-nav en style.css). Incluye
+       tambien tema/idioma y las acciones de sesion, que en pantallas
+       angostas se sacan de la barra superior por falta de espacio. -->
+  <div class="mob-nav" id="mobNav">
+    <a href="?url=home">Inicio</a>
+    <div class="mob-nav-group-label">Desastres</div>
+    <?php foreach ($__ddDisItems as $__ddSlug => $__ddLabel): ?>
+    <a class="mob-nav-sub" href="?url=<?= $__ddSlug ?>"><?= $__ddLabel ?></a>
+    <?php endforeach; ?>
+    <div class="mob-nav-group-label">Monitoreo</div>
+    <a class="mob-nav-sub" href="?url=clima">Clima</a>
+    <a class="mob-nav-sub" href="?url=luna">Luna</a>
+    <a class="mob-nav-sub" href="?url=emergencias">Puntos de Emergencia</a>
+    <a href="?url=blog">Blog</a>
+    <a href="?url=juegos">Juegos</a>
+    <a href="?url=resources">Recursos</a>
+    <a href="?url=quehacer">¿Qué hacer AHORA?</a>
+    <a href="?url=Acercade">Acerca de NDA</a>
+    <?php if ($__canSeeSchoolLink): ?>
+    <a href="?url=school">Módulo Colegio</a>
+    <?php endif; ?>
+    <div class="mob-nav-divider"></div>
+    <div class="mob-nav-row">
+      <button type="button" class="mob-nav-icon-btn" id="mobThemeBtn" aria-label="Cambiar tema claro/oscuro">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <span>Tema</span>
+      </button>
+      <button type="button" class="mob-nav-icon-btn" id="mobLangBtn" aria-label="Cambiar idioma">
+        <span id="mobLangBtnLabel">EN</span>
+        <span>Idioma</span>
+      </button>
+    </div>
+    <?php if (isset($_SESSION['user_id']) && isset($_SESSION['user_name'])): ?>
+    <a href="?url=profile">Mi Perfil</a>
+    <div class="mob-nav-link-btn danger" onclick="logout()">Cerrar sesión</div>
+    <?php else: ?>
+    <a class="mob-nav-cta out" href="?url=login">Iniciar sesión</a>
+    <a class="mob-nav-cta acc" href="?url=register">Registrarse</a>
+    <?php endif; ?>
+  </div>
+
   <div class="nav-right">
     <button class="theme-btn" id="themeBtn" title="Cambiar tema" aria-label="Cambiar tema claro/oscuro">
       <svg id="themeIcoMoon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>

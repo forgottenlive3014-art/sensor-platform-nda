@@ -10,7 +10,7 @@
             </div>
             <p class="school-hint">Avisos enviados a la comunidad institucional (o de forma global, si eres Admin General).</p>
             <div class="school-table-wrap">
-                <table class="school-table">
+                <table class="school-table school-table-wide">
                     <thead>
                         <tr>
                             <th>Mensaje</th>

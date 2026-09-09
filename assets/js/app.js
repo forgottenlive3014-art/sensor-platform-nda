@@ -105,6 +105,24 @@ document.getElementById('hamBtn').onclick = () => {
     document.getElementById('mobNav').classList.toggle('open');
 };
 
+// Se cierra solo al navegar (los enlaces son <a href>, la pagina recarga
+// igual, pero asi no queda "abierto" un instante antes de irse) o al tocar
+// afuera, igual que los dropdowns .nav-drop de la barra de arriba.
+document.getElementById('mobNav').addEventListener('click', e => {
+    if (e.target.closest('a')) document.getElementById('mobNav').classList.remove('open');
+});
+document.addEventListener('click', e => {
+    const mobNav = document.getElementById('mobNav');
+    if (mobNav.classList.contains('open') && !mobNav.contains(e.target) && e.target.id !== 'hamBtn' && !e.target.closest('#hamBtn')) {
+        mobNav.classList.remove('open');
+    }
+});
+
+// Los botones de tema/idioma dentro del menu movil reusan los controles
+// reales de la barra superior (evita duplicar la logica de cada uno).
+document.getElementById('mobThemeBtn')?.addEventListener('click', () => document.getElementById('themeBtn').click());
+document.getElementById('mobLangBtn')?.addEventListener('click', () => document.getElementById('langBtn').click());
+
 const nav = document.getElementById('nav');
 const stBtn = document.getElementById('scrollTop');
 

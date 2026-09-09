@@ -12,7 +12,7 @@
                 <input type="text" id="parentsSearch" class="school-select" placeholder="Buscar por nombre o correo..." oninput="debounceParentsSearch()" style="max-width:280px;">
             </div>
             <div class="school-table-wrap">
-                <table class="school-table">
+                <table class="school-table school-table-wide">
                     <thead>
                         <tr>
                             <th>Nombre</th>

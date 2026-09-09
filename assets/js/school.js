@@ -1723,7 +1723,7 @@ async function loadAttendanceSummary(drillId) {
             `;
         });
 
-        box.innerHTML = totalGeneralHtml + `<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;">${seccionesHtml}</div>`;
+        box.innerHTML = totalGeneralHtml + `<div class="attendance-summary-grid">${seccionesHtml}</div>`;
     } catch (e) {
         box.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);">Error al cargar asistencia</div>';
         console.error(e);

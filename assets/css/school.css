@@ -854,11 +854,27 @@ a.school-tab {
     background: var(--card);
     border-radius: 12px;
     border: 1px solid var(--border);
-    overflow: hidden;
+    overflow-x: auto;
 }
 .school-table {
     width: 100%;
     border-collapse: collapse;
+}
+/* Tablas con varias columnas de acciones (Instituciones, Usuarios, etc.)
+   se aprietan hasta ser ilegibles en telefono/tablet si solo se encogen:
+   mejor que .school-table-wrap las deje scrollear de lado. */
+.school-table.school-table-wide { min-width: 640px; }
+
+/* Grid de tarjetas de seccion del pase de lista (vista solo lectura de la
+   directora, ver loadAttendanceSummary() en school.js): 2 columnas en
+   pantallas anchas, 1 sola en telefono/tablet angosta. */
+.attendance-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+@media (max-width: 700px) {
+    .attendance-summary-grid { grid-template-columns: 1fr; }
 }
 .school-table th {
     background: var(--bg3);

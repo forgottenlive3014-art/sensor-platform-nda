@@ -356,6 +356,8 @@ canvas {
     top: var(--nh);
     left: 0;
     right: 0;
+    max-height: calc(100vh - var(--nh));
+    overflow-y: auto;
     background: var(--bg2);
     border-bottom: 1px solid var(--border);
     padding: 12px;
@@ -374,6 +376,87 @@ canvas {
 .mob-nav a:hover {
     background: var(--card2);
     color: var(--text);
+}
+.mob-nav-group-label {
+    padding: 10px 12px 2px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text3);
+}
+.mob-nav-sub {
+    padding-left: 26px !important;
+    font-size: 0.84rem !important;
+}
+.mob-nav-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 10px 4px;
+    flex-shrink: 0;
+}
+.mob-nav-row {
+    display: flex;
+    gap: 8px;
+    padding: 4px 4px 8px;
+}
+.mob-nav-icon-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 9px;
+    background: var(--card2);
+    border: 1px solid var(--border2);
+    border-radius: var(--rs);
+    color: var(--text2);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+.mob-nav-link-btn {
+    padding: 9px 12px;
+    border-radius: var(--rs);
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all var(--tr);
+}
+.mob-nav-link-btn:hover {
+    background: var(--card2);
+}
+.mob-nav-link-btn.danger {
+    color: var(--acc2);
+}
+.mob-nav-cta {
+    display: block;
+    text-align: center;
+    padding: 11px 12px;
+    border-radius: var(--rs);
+    font-size: 0.88rem;
+    font-weight: 700;
+    margin: 4px 4px 0;
+}
+.mob-nav-cta.out {
+    border: 1px solid var(--border2);
+    color: var(--text);
+}
+.mob-nav-cta.acc {
+    background: linear-gradient(135deg, var(--acc), var(--acc3));
+    color: #fff;
+    margin-top: 8px;
+}
+
+/* En telefonos angostos no entran logo + tema + idioma + notificaciones +
+   2 botones de sesion + hamburguesa en una sola fila (se salian de la
+   pantalla). Iniciar sesion/Registrarse ya viven tambien dentro de
+   #mobNav (arriba), asi que se sacan de la barra para que el resto quepa.
+   600px, no 480px: a 504px de ancho (headless Chrome no deja probar mas
+   angosto que eso) ya no entraban, asi que el corte tenia que quedar mas
+   arriba para cubrir telefonos reales de 320-480px tambien. */
+@media (max-width: 600px) {
+    .nav { padding: 0 14px; gap: 0; }
+    .nav-right { gap: 6px; }
+    #navAuthBtns { display: none !important; }
 }
 
 /* ---------- HERO ---------- */

@@ -2,6 +2,7 @@
 (function () {
     var btn = document.getElementById('langBtn');
     var label = document.getElementById('langBtnLabel');
+    var mobLabel = document.getElementById('mobLangBtnLabel');
     if (!btn) return;
 
     var STORAGE_KEY = 'nda-lang';
@@ -10,6 +11,7 @@
     function syncLabel() {
         label.textContent = current === 'en' ? 'ES' : 'EN';
         btn.title = current === 'en' ? 'Volver al español' : 'Switch to English';
+        if (mobLabel) mobLabel.textContent = label.textContent;
     }
 
     function findCombo(callback, attemptsLeft) {
