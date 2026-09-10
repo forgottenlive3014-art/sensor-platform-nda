@@ -151,7 +151,7 @@ $navDisplayName = $isLoggedIn
   <a class="nav-brand" href="?url=home">
     <div class="nda-logo-wave">
       <img src="assets/media/img/logo.png" alt="Logo NDA" style="height:40px; width:auto;">
-      <span class="nda-logo-text">NDA</span>
+      <span class="nda-logo-text" data-no-translate>NDA</span>
     </div>
   </a>
   
@@ -239,7 +239,7 @@ $navDisplayName = $isLoggedIn
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         <span>Tema</span>
       </button>
-      <button type="button" class="mob-nav-icon-btn" id="mobLangBtn" aria-label="Cambiar idioma">
+      <button type="button" class="mob-nav-icon-btn" id="mobLangBtn" aria-label="Cambiar idioma" data-no-translate>
         <span id="mobLangBtnLabel">EN</span>
         <span>Idioma</span>
       </button>
@@ -257,7 +257,7 @@ $navDisplayName = $isLoggedIn
     <button class="theme-btn" id="themeBtn" title="Cambiar tema" aria-label="Cambiar tema claro/oscuro">
       <svg id="themeIcoMoon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </button>
-    <button class="lang-btn" id="langBtn" title="Switch language / Cambiar idioma" aria-label="Cambiar idioma">
+    <button class="lang-btn" id="langBtn" title="Switch language / Cambiar idioma" aria-label="Cambiar idioma" data-no-translate>
       <span id="langBtnLabel">EN</span>
     </button>
 
@@ -392,7 +392,7 @@ $__ndaIsGated = !$isLoggedIn && in_array($__ndaCurrentUrl, $__ndaGatedRoutes, tr
           <div class="nda-logo-wave">
             <img src="assets/media/img/logo.png" alt="Logo NDA" style="height:32px; width:auto;">
           </div>
-          <span class="nda-logo-text">NDA</span>
+          <span class="nda-logo-text" data-no-translate>NDA</span>
         </div>
         <p>Natural Disaster Alert<br>Plataforma educativa para la comunidad escolar de El Salvador. Datos en tiempo real y simulaciones interactivas.</p>
       </div>
@@ -406,15 +406,6 @@ $__ndaIsGated = !$isLoggedIn && in_array($__ndaCurrentUrl, $__ndaGatedRoutes, tr
 <button class="scroll-top" id="scrollTop"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></button>
 
 <?php include __DIR__ . '/_nda_dock.php'; ?>
-
-<!-- Traductor ES/EN -->
-<div id="google_translate_element" style="display:none"></div>
-<script>
-    function googleTranslateElementInit() {
-        new google.translate.TranslateElement({ pageLanguage: 'es', includedLanguages: 'en', autoDisplay: false }, 'google_translate_element');
-    }
-</script>
-<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 

@@ -6168,12 +6168,6 @@ body.has-drill-banner {
     border-color: var(--acc);
     color: var(--acc);
 }
-/* Oculta la barra superior que inyecta Google Translate para no duplicar UI */
-.goog-te-banner-frame, .skiptranslate > iframe { display: none !important; }
-body { top: 0 !important; }
-.goog-tooltip, .goog-tooltip:hover { display: none !important; }
-.goog-text-highlight { background: none !important; box-shadow: none !important; }
-
 /* ---------- DOCK FLOTANTE NDA (Monitor Sismico + Gestion Escolar + Asistente) ---------- */
 /* Un solo componente glassmorphism reemplaza los 3 botones flotantes
    independientes que existian antes. Inspirado en macOS Dock / Arc / Linear:

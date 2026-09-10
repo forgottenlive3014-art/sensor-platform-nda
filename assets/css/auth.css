@@ -9,9 +9,11 @@
 .auth-wrap {
     display: grid;
     grid-template-columns: 420px 1fr 360px;
+    max-width: 1400px;
     min-height: calc(100vh - 90px);
     align-items: center;
     padding: 90px 150px 30px;
+    margin: 0 auto;
     gap: 10px;
     position: relative;
     background: var(--auth-wrap-bg);
@@ -1008,4 +1010,13 @@
 
 @media (max-width: 1100px) {
     .auth-card-wizard { width: 100%; max-width: 460px; }
+}
+/* Telefonos angostos de verdad (320-400px): el paso a paso de 4 columnas
+   ya se achica solo (flex:1), pero el texto de cada paso ("Institución",
+   "Tus datos") puede quedar demasiado apretado — un pelin mas chico y
+   menos gap alcanza para que respire. */
+@media (max-width: 400px) {
+    .wiz-steps { gap: 3px; }
+    .wiz-step { font-size: 9.5px; padding-bottom: 6px; }
+    .auth-card { padding: 22px 16px; }
 }
