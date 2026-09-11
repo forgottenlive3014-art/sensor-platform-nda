@@ -8,6 +8,9 @@ class InteraccionController {
         'noticia'   => ['tabla' => 'noticias_internas', 'pk' => 'noticias_internas_id', 'inst' => 'instituciones_id'],
         'riesgo'    => ['tabla' => 'blog_riesgos',       'pk' => 'blog_riesgos_id',       'inst' => 'instituciones_id'],
         'incidente' => ['tabla' => 'incidentes',         'pk' => 'incidentes_id',         'inst' => 'instituciones_id'],
+        // Blog publico: no pertenece a ninguna institucion, lo puede comentar
+        // cualquier usuario registrado (ver canAccessTipo()).
+        'articulo'  => ['tabla' => 'blog',               'pk' => 'blog_id',               'inst' => null],
     ];
 
     private function canAccessSchool() {
@@ -16,6 +19,13 @@ class InteraccionController {
         if ($u['role'] === 'admin') return true;
         return in_array($u['role'], ['director', 'docente', 'alumno', 'padre', 'administrativo'], true)
             && $u['estado_institucional'] === 'aprobado';
+    }
+
+    // Los articulos del blog publico son de acceso general: basta con tener
+    // cuenta, sin necesidad de pertenecer a una institucion aprobada.
+    private function canAccessTipo($tipo) {
+        if ($tipo === 'articulo') return isLoggedIn();
+        return $this->canAccessSchool();
     }
 
     private function isSchoolAdmin() {
@@ -55,11 +65,11 @@ class InteraccionController {
     }
 
     public function toggleLike() {
-        if (!isLoggedIn() || !$this->canAccessSchool()) {
-            jsonResponse(['error' => 'No autorizado'], 401);
-        }
         $input = json_decode(file_get_contents('php://input'), true);
         $tipo = $input['tipo'] ?? '';
+        if (!isLoggedIn() || !$this->canAccessTipo($tipo)) {
+            jsonResponse(['error' => 'No autorizado'], 401);
+        }
         $id = $input['id'] ?? null;
         $this->resolveContenido($tipo, $id);
 
@@ -86,23 +96,33 @@ class InteraccionController {
     }
 
     public function getSummary() {
-        if (!isLoggedIn() || !$this->canAccessSchool()) {
+        $tipo = $_GET['tipo'] ?? '';
+        if (!isset($this->tablas[$tipo])) {
+            jsonResponse(['error' => 'Tipo de contenido inválido'], 400);
+        }
+        // El conteo es publico (como un contador de "me gusta" cualquiera);
+        // solo hace falta sesion para saber si YO ya di like — y para tipos
+        // de contenido escolar, ni siquiera se expone el conteo a quien no
+        // tiene acceso a esa institucion.
+        if ($tipo !== 'articulo' && (!isLoggedIn() || !$this->canAccessTipo($tipo))) {
             jsonResponse(['error' => 'No autorizado'], 401);
         }
-        $tipo = $_GET['tipo'] ?? '';
         $id = $_GET['id'] ?? null;
         $this->resolveContenido($tipo, $id);
 
-        $u = currentUser();
         $db = getDB();
 
         $stmtL = $db->prepare("SELECT COUNT(*) as total FROM interacciones_likes WHERE tipo_contenido = ? AND contenido_id = ?");
         $stmtL->execute([$tipo, $id]);
         $totalLikes = (int) ($stmtL->fetch()['total'] ?? 0);
 
-        $stmtMe = $db->prepare("SELECT 1 FROM interacciones_likes WHERE tipo_contenido = ? AND contenido_id = ? AND usuarios_id = ?");
-        $stmtMe->execute([$tipo, $id, $u['id']]);
-        $likedByMe = (bool) $stmtMe->fetch();
+        $likedByMe = false;
+        if (isLoggedIn() && $this->canAccessTipo($tipo)) {
+            $u = currentUser();
+            $stmtMe = $db->prepare("SELECT 1 FROM interacciones_likes WHERE tipo_contenido = ? AND contenido_id = ? AND usuarios_id = ?");
+            $stmtMe->execute([$tipo, $id, $u['id']]);
+            $likedByMe = (bool) $stmtMe->fetch();
+        }
 
         $stmtC = $db->prepare("SELECT COUNT(*) as total FROM interacciones_comentarios WHERE tipo_contenido = ? AND contenido_id = ?");
         $stmtC->execute([$tipo, $id]);
@@ -112,16 +132,16 @@ class InteraccionController {
     }
 
     public function listComments() {
-        if (!isLoggedIn() || !$this->canAccessSchool()) {
+        $tipo = $_GET['tipo'] ?? '';
+        if (!isLoggedIn() || !$this->canAccessTipo($tipo)) {
             jsonResponse(['error' => 'No autorizado'], 401);
         }
-        $tipo = $_GET['tipo'] ?? '';
         $id = $_GET['id'] ?? null;
         $this->resolveContenido($tipo, $id);
 
         $db = getDB();
         $stmt = $db->prepare("
-            SELECT c.*, u.nombre as autor, u.role as autor_role
+            SELECT c.*, u.nombre as autor, u.role as autor_role, u.foto_perfil as autor_foto
             FROM interacciones_comentarios c
             JOIN usuarios u ON u.usuarios_id = c.usuarios_id
             WHERE c.tipo_contenido = ? AND c.contenido_id = ?
@@ -132,11 +152,11 @@ class InteraccionController {
     }
 
     public function addComment() {
-        if (!isLoggedIn() || !$this->canAccessSchool()) {
-            jsonResponse(['error' => 'No autorizado'], 401);
-        }
         $input = json_decode(file_get_contents('php://input'), true);
         $tipo = $input['tipo'] ?? '';
+        if (!isLoggedIn() || !$this->canAccessTipo($tipo)) {
+            jsonResponse(['error' => 'No autorizado'], 401);
+        }
         $id = $input['id'] ?? null;
         $this->resolveContenido($tipo, $id);
 
@@ -180,5 +200,175 @@ class InteraccionController {
 
         $db->prepare("DELETE FROM interacciones_comentarios WHERE interacciones_comentarios_id = ?")->execute([$id]);
         jsonResponse(['success' => true]);
+    }
+
+    // ===== GUARDADOS / FAVORITOS (por ahora solo articulos del blog) =====
+
+    public function toggleSave() {
+        $input = json_decode(file_get_contents('php://input'), true);
+        $tipo = $input['tipo'] ?? '';
+        if (!isLoggedIn() || !$this->canAccessTipo($tipo)) {
+            jsonResponse(['error' => 'No autorizado'], 401);
+        }
+        $id = $input['id'] ?? null;
+        $this->resolveContenido($tipo, $id);
+
+        $u = currentUser();
+        $db = getDB();
+        $stmt = $db->prepare("SELECT interacciones_guardados_id FROM interacciones_guardados WHERE tipo_contenido = ? AND contenido_id = ? AND usuarios_id = ?");
+        $stmt->execute([$tipo, $id, $u['id']]);
+        $existing = $stmt->fetch();
+
+        if ($existing) {
+            $db->prepare("DELETE FROM interacciones_guardados WHERE interacciones_guardados_id = ?")->execute([$existing['interacciones_guardados_id']]);
+            $saved = false;
+        } else {
+            $db->prepare("INSERT INTO interacciones_guardados (tipo_contenido, contenido_id, usuarios_id) VALUES (?, ?, ?)")
+               ->execute([$tipo, $id, $u['id']]);
+            $saved = true;
+        }
+
+        jsonResponse(['success' => true, 'saved' => $saved]);
+    }
+
+    public function saveStatus() {
+        $tipo = $_GET['tipo'] ?? '';
+        if (!isLoggedIn() || !$this->canAccessTipo($tipo)) {
+            jsonResponse(['saved' => false]);
+        }
+        $id = $_GET['id'] ?? null;
+        $this->resolveContenido($tipo, $id);
+
+        $u = currentUser();
+        $db = getDB();
+        $stmt = $db->prepare("SELECT 1 FROM interacciones_guardados WHERE tipo_contenido = ? AND contenido_id = ? AND usuarios_id = ?");
+        $stmt->execute([$tipo, $id, $u['id']]);
+        jsonResponse(['saved' => (bool) $stmt->fetch()]);
+    }
+
+    // Articulos guardados por el usuario actual, para la pagina de perfil.
+    public function misGuardados() {
+        if (!isLoggedIn()) {
+            jsonResponse(['error' => 'No autorizado'], 401);
+        }
+        $u = currentUser();
+        $db = getDB();
+        $stmt = $db->prepare("
+            SELECT b.slug, b.titulo, b.imagen, b.color, g.created_at
+            FROM interacciones_guardados g
+            JOIN blog b ON b.blog_id = g.contenido_id
+            WHERE g.tipo_contenido = 'articulo' AND g.usuarios_id = ?
+            ORDER BY g.created_at DESC
+        ");
+        $stmt->execute([$u['id']]);
+        jsonResponse($stmt->fetchAll());
+    }
+
+    // Comentarios recientes del usuario actual en articulos del blog, para
+    // la seccion "Mi actividad" del perfil.
+    public function misComentarios() {
+        if (!isLoggedIn()) {
+            jsonResponse(['error' => 'No autorizado'], 401);
+        }
+        $u = currentUser();
+        $db = getDB();
+        $stmt = $db->prepare("
+            SELECT c.texto, c.created_at, b.slug, b.titulo
+            FROM interacciones_comentarios c
+            JOIN blog b ON b.blog_id = c.contenido_id
+            WHERE c.tipo_contenido = 'articulo' AND c.usuarios_id = ?
+            ORDER BY c.created_at DESC
+            LIMIT 10
+        ");
+        $stmt->execute([$u['id']]);
+        jsonResponse($stmt->fetchAll());
+    }
+
+    // ===== REACCIONES DE SENTIMIENTO (5 opciones excluyentes entre sí) =====
+
+    private $emojisValidos = ['😢', '😮', '🙏', '💪', '❤️'];
+
+    public function toggleReaction() {
+        $input = json_decode(file_get_contents('php://input'), true);
+        $tipo = $input['tipo'] ?? '';
+        if (!isLoggedIn() || !$this->canAccessTipo($tipo)) {
+            jsonResponse(['error' => 'No autorizado'], 401);
+        }
+        $id = $input['id'] ?? null;
+        $emoji = $input['emoji'] ?? '';
+        if (!in_array($emoji, $this->emojisValidos, true)) {
+            jsonResponse(['error' => 'Reacción inválida'], 400);
+        }
+        $this->resolveContenido($tipo, $id);
+
+        $u = currentUser();
+        $db = getDB();
+        $stmt = $db->prepare("SELECT interacciones_reacciones_id, emoji FROM interacciones_reacciones WHERE tipo_contenido = ? AND contenido_id = ? AND usuarios_id = ?");
+        $stmt->execute([$tipo, $id, $u['id']]);
+        $existing = $stmt->fetch();
+
+        if ($existing && $existing['emoji'] === $emoji) {
+            // Repetir la misma reacción la quita.
+            $db->prepare("DELETE FROM interacciones_reacciones WHERE interacciones_reacciones_id = ?")->execute([$existing['interacciones_reacciones_id']]);
+            $myReaction = null;
+        } elseif ($existing) {
+            $db->prepare("UPDATE interacciones_reacciones SET emoji = ? WHERE interacciones_reacciones_id = ?")->execute([$emoji, $existing['interacciones_reacciones_id']]);
+            $myReaction = $emoji;
+        } else {
+            $db->prepare("INSERT INTO interacciones_reacciones (tipo_contenido, contenido_id, usuarios_id, emoji) VALUES (?, ?, ?, ?)")
+               ->execute([$tipo, $id, $u['id'], $emoji]);
+            $myReaction = $emoji;
+        }
+
+        jsonResponse(['success' => true, 'my_reaction' => $myReaction, 'counts' => $this->reactionCounts($tipo, $id)]);
+    }
+
+    public function reactionStatus() {
+        $tipo = $_GET['tipo'] ?? '';
+        $id = $_GET['id'] ?? null;
+        if (!isset($this->tablas[$tipo]) || !$id) {
+            jsonResponse(['error' => 'Solicitud inválida'], 400);
+        }
+
+        $myReaction = null;
+        if (isLoggedIn() && $this->canAccessTipo($tipo)) {
+            $u = currentUser();
+            $db = getDB();
+            $stmt = $db->prepare("SELECT emoji FROM interacciones_reacciones WHERE tipo_contenido = ? AND contenido_id = ? AND usuarios_id = ?");
+            $stmt->execute([$tipo, $id, $u['id']]);
+            $row = $stmt->fetch();
+            $myReaction = $row ? $row['emoji'] : null;
+        }
+
+        jsonResponse(['my_reaction' => $myReaction, 'counts' => $this->reactionCounts($tipo, $id)]);
+    }
+
+    private function reactionCounts($tipo, $id) {
+        $db = getDB();
+        $stmt = $db->prepare("SELECT emoji, COUNT(*) as total FROM interacciones_reacciones WHERE tipo_contenido = ? AND contenido_id = ? GROUP BY emoji");
+        $stmt->execute([$tipo, $id]);
+        $counts = array_fill_keys($this->emojisValidos, 0);
+        foreach ($stmt->fetchAll() as $row) {
+            $counts[$row['emoji']] = (int) $row['total'];
+        }
+        return $counts;
+    }
+
+    // Reacciones del usuario actual en articulos del blog, para el perfil.
+    public function misReacciones() {
+        if (!isLoggedIn()) {
+            jsonResponse(['error' => 'No autorizado'], 401);
+        }
+        $u = currentUser();
+        $db = getDB();
+        $stmt = $db->prepare("
+            SELECT r.emoji, r.created_at, b.slug, b.titulo
+            FROM interacciones_reacciones r
+            JOIN blog b ON b.blog_id = r.contenido_id
+            WHERE r.tipo_contenido = 'articulo' AND r.usuarios_id = ?
+            ORDER BY r.created_at DESC
+        ");
+        $stmt->execute([$u['id']]);
+        jsonResponse($stmt->fetchAll());
     }
 }

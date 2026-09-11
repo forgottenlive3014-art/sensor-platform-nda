@@ -279,7 +279,7 @@ CREATE TABLE notificaciones (
 -- por cada tipo de contenido (noticia/riesgo/incidente).
 CREATE TABLE interacciones_likes (
     interacciones_likes_id INT PRIMARY KEY AUTO_INCREMENT,
-    tipo_contenido ENUM('noticia','riesgo','incidente') NOT NULL,
+    tipo_contenido ENUM('noticia','riesgo','incidente','articulo') NOT NULL,
     contenido_id INT NOT NULL,
     usuarios_id INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -290,11 +290,41 @@ CREATE TABLE interacciones_likes (
 
 CREATE TABLE interacciones_comentarios (
     interacciones_comentarios_id INT PRIMARY KEY AUTO_INCREMENT,
-    tipo_contenido ENUM('noticia','riesgo','incidente') NOT NULL,
+    tipo_contenido ENUM('noticia','riesgo','incidente','articulo') NOT NULL,
     contenido_id INT NOT NULL,
     usuarios_id INT NOT NULL,
     texto VARCHAR(500) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuarios_id) REFERENCES usuarios(usuarios_id) ON DELETE CASCADE,
+    INDEX idx_contenido (tipo_contenido, contenido_id)
+);
+
+-- Articulos del blog publico guardados/marcados como favoritos por un
+-- usuario (ver InteraccionController::toggleSave / misGuardados). Solo
+-- 'articulo' por ahora; se puede ampliar el ENUM igual que arriba si algun
+-- dia se necesita guardar otro tipo de contenido.
+CREATE TABLE interacciones_guardados (
+    interacciones_guardados_id INT PRIMARY KEY AUTO_INCREMENT,
+    tipo_contenido ENUM('articulo') NOT NULL DEFAULT 'articulo',
+    contenido_id INT NOT NULL,
+    usuarios_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uniq_guardado (tipo_contenido, contenido_id, usuarios_id),
+    FOREIGN KEY (usuarios_id) REFERENCES usuarios(usuarios_id) ON DELETE CASCADE,
+    INDEX idx_contenido (tipo_contenido, contenido_id)
+);
+
+-- Reaccion de sentimiento (una por usuario por articulo, se reemplaza al
+-- elegir otra) en el blog publico. Distinta de interacciones_likes (que es
+-- un simple si/no) porque aqui hay 5 opciones mutuamente excluyentes.
+CREATE TABLE interacciones_reacciones (
+    interacciones_reacciones_id INT PRIMARY KEY AUTO_INCREMENT,
+    tipo_contenido ENUM('articulo') NOT NULL DEFAULT 'articulo',
+    contenido_id INT NOT NULL,
+    usuarios_id INT NOT NULL,
+    emoji VARCHAR(10) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uniq_reaccion (tipo_contenido, contenido_id, usuarios_id),
     FOREIGN KEY (usuarios_id) REFERENCES usuarios(usuarios_id) ON DELETE CASCADE,
     INDEX idx_contenido (tipo_contenido, contenido_id)
 );

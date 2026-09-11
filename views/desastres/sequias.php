@@ -60,7 +60,11 @@ ob_start();
 <!-- INFORMACION GENERAL -->
 <section class="sec" id="info-general">
   <div class="wrap">
-    <h3 class="dis-subhead">Información general</h3>
+    <div class="sec-hd">
+      <div class="sec-eyebrow">Fenómeno Climático</div>
+      <h2 class="sec-title">Información <span class="acc">general</span></h2>
+      <p class="sec-sub">Qué es una sequía y cómo se origina</p>
+    </div>
     <div class="dis-info-grid">
       <div class="dis-info-card" style="display:flex;flex-direction:column;justify-content:center">
         <h3>¿Qué es una sequía?</h3>
@@ -74,8 +78,17 @@ ob_start();
         <img src="assets/media/img/Sequia.jpg" alt="Sequía" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block">
       </div>
     </div>
+  </div>
+</section>
 
-    <h3 class="dis-subhead">Información de El Salvador</h3>
+<!-- INFORMACION DE EL SALVADOR -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-hd">
+      <div class="sec-eyebrow">El Salvador</div>
+      <h2 class="sec-title">Información de <span class="acc">El Salvador</span></h2>
+      <p class="sec-sub">Por qué el oriente del país es tan propenso a la sequía</p>
+    </div>
     <div class="dis-info-grid">
       <div class="dis-info-card" style="display:flex;flex-direction:column;justify-content:center">
         <h3>¿Por qué ocurre aquí?</h3>

@@ -60,7 +60,11 @@ ob_start();
 <!-- INFORMACION GENERAL -->
 <section class="sec" id="info-general">
   <div class="wrap">
-    <h3 class="dis-subhead">Información general</h3>
+    <div class="sec-hd">
+      <div class="sec-eyebrow">Amenaza Hidrometeorológica</div>
+      <h2 class="sec-title">Información <span class="acc">general</span></h2>
+      <p class="sec-sub">Qué es una inundación y por qué El Salvador es tan propenso</p>
+    </div>
     <div class="dis-info-grid dis-info-grid-2">
       <div class="dis-info-card">
         <h3>¿Qué es?</h3>

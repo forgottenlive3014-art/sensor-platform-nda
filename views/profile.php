@@ -17,7 +17,7 @@ $roleLabels = [
 $roleLabel = $roleLabels[$profileUser['role']] ?? $profileUser['role'];
 ?>
 
-<div class="wrap profile-page" style="padding-top:100px;padding-bottom:70px;max-width:760px;">
+<div class="wrap profile-page" style="padding-top:100px;padding-bottom:70px;">
 
     <?php if (isset($_SESSION['error'])): ?>
         <div class="profile-alert error"><?= e($_SESSION['error']); unset($_SESSION['error']); ?></div>
@@ -26,6 +26,7 @@ $roleLabel = $roleLabels[$profileUser['role']] ?? $profileUser['role'];
         <div class="profile-alert success"><?= e($_SESSION['success']); unset($_SESSION['success']); ?></div>
     <?php endif; ?>
 
+    <div class="profile-main">
     <div class="profile-head">
         <div class="profile-avatar">
             <?php if (!empty($profileUser['foto_perfil'])): ?>
@@ -44,6 +45,13 @@ $roleLabel = $roleLabels[$profileUser['role']] ?? $profileUser['role'];
                 </span>
             <?php endif; ?>
         </div>
+    </div>
+
+    <div class="profile-stats-row" id="profileStatsRow">
+        <div class="profile-stat"><span class="n" id="statSaved">–</span><span class="l">Guardados</span></div>
+        <div class="profile-stat"><span class="n" id="statComments">–</span><span class="l">Comentarios</span></div>
+        <div class="profile-stat"><span class="n" id="statReactions">–</span><span class="l">Reacciones</span></div>
+        <div class="profile-stat"><span class="n" id="statGames">–</span><span class="l">Juegos jugados</span></div>
     </div>
 
     <div class="profile-card">
@@ -206,14 +214,47 @@ $roleLabel = $roleLabels[$profileUser['role']] ?? $profileUser['role'];
             </div>
         <?php endif; ?>
     </div>
+    </div><!-- /.profile-main -->
+
+    <div class="profile-activity-grid">
+        <div class="profile-card">
+            <h2>Mis artículos guardados</h2>
+            <div id="profileSavedList" class="profile-saved-grid">
+                <p class="profile-hint">Cargando...</p>
+            </div>
+        </div>
+
+        <div class="profile-card">
+            <h2>Mis reacciones</h2>
+            <div id="profileReactionsList">
+                <p class="profile-hint">Cargando...</p>
+            </div>
+        </div>
+
+        <div class="profile-card">
+            <h2>Mi actividad reciente</h2>
+            <div id="profileActivityList">
+                <p class="profile-hint">Cargando...</p>
+            </div>
+        </div>
+
+        <div class="profile-card">
+            <h2>Mis puntajes en Juegos</h2>
+            <div id="profileScoresList" class="profile-scores-grid">
+                <p class="profile-hint">Cargando...</p>
+            </div>
+        </div>
+    </div>
 </div>
 
 <style>
 .profile-alert { padding:12px 16px; border-radius:10px; font-size:.85rem; margin-bottom:18px; }
 .profile-alert.error { background: rgba(255,59,63,.12); border:1px solid rgba(255,59,63,.3); color: var(--red); }
 .profile-alert.success { background: rgba(107,161,90,.12); border:1px solid rgba(107,161,90,.3); color: var(--green); }
-.profile-head { display:flex; align-items:center; gap:18px; margin-bottom:28px; }
-.profile-avatar { width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg,var(--acc),var(--acc3)); color:#fff; display:flex; align-items:center; justify-content:center; font-family:var(--fd); font-size:1.6rem; font-weight:700; flex-shrink:0; overflow:hidden; }
+.profile-page { max-width:1040px; }
+.profile-main { max-width:700px; margin:0 auto; }
+.profile-head { display:flex; align-items:center; gap:20px; margin-bottom:18px; background:linear-gradient(135deg,var(--card),var(--card2)); border:1px solid var(--border); border-radius:var(--rl); padding:24px 28px; }
+.profile-avatar { width:76px; height:76px; border-radius:50%; background:linear-gradient(135deg,var(--acc),var(--acc3)); color:#fff; display:flex; align-items:center; justify-content:center; font-family:var(--fd); font-size:1.9rem; font-weight:700; flex-shrink:0; overflow:hidden; box-shadow:0 8px 24px -8px var(--acc); }
 .profile-avatar img { width:100%; height:100%; object-fit:cover; }
 .profile-photo-row { display:flex; align-items:center; gap:16px; }
 .profile-photo-preview { width:72px; height:72px; border-radius:50%; background:linear-gradient(135deg,var(--acc),var(--acc3)); color:#fff; display:flex; align-items:center; justify-content:center; font-family:var(--fd); font-size:1.7rem; font-weight:700; flex-shrink:0; overflow:hidden; border:2px solid var(--border2); }
@@ -254,6 +295,46 @@ $roleLabel = $roleLabels[$profileUser['role']] ?? $profileUser['role'];
 .profile-inst-tabs { display:flex; gap:8px; margin-bottom:16px; }
 .profile-tab { background:var(--card2); border:1.5px solid var(--border2); color:var(--text2); font-size:.82rem; font-weight:600; padding:8px 16px; border-radius:50px; cursor:pointer; }
 .profile-tab.sel { border-color:var(--acc); color:var(--acc); }
+
+.profile-stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:24px; }
+.profile-stat { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 10px; text-align:center; }
+.profile-stat .n { display:block; font-family:var(--fd); font-size:1.35rem; font-weight:800; color:var(--acc); line-height:1.2; }
+.profile-stat .l { display:block; font-size:.66rem; color:var(--text3); margin-top:4px; text-transform:uppercase; letter-spacing:.04em; }
+
+.profile-activity-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:20px; align-items:start; margin-top:28px; }
+.profile-activity-grid .profile-card { margin-bottom:0; }
+
+.profile-saved-grid, .profile-scores-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+.profile-saved-item { display:flex; gap:12px; background:var(--card2); border:1px solid var(--border2); border-radius:12px; padding:10px; text-decoration:none; transition:border-color .2s; }
+.profile-saved-item:hover { border-color:var(--acc); }
+.profile-saved-thumb { width:56px; height:56px; border-radius:8px; background-size:cover; background-position:center; flex-shrink:0; }
+.profile-saved-info strong { display:block; font-size:.85rem; color:var(--text); line-height:1.35; margin-bottom:4px; }
+.profile-saved-info span { font-size:.72rem; color:var(--text3); }
+
+.profile-activity-item { display:flex; flex-direction:column; gap:4px; padding:12px 0; border-bottom:1px solid var(--border); }
+.profile-activity-item:last-child { border-bottom:none; }
+.profile-activity-item a { font-size:.85rem; font-weight:700; color:var(--acc); text-decoration:none; }
+.profile-activity-item a:hover { text-decoration:underline; }
+.profile-activity-item p { font-size:.82rem; color:var(--text2); line-height:1.5; margin:0; }
+.profile-activity-item span { font-size:.7rem; color:var(--text3); }
+
+.profile-reaction-item { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); }
+.profile-reaction-item:last-child { border-bottom:none; }
+.profile-reaction-item .emoji { font-size:1.3rem; flex-shrink:0; }
+.profile-reaction-item a { font-size:.85rem; font-weight:700; color:var(--acc); text-decoration:none; display:block; }
+.profile-reaction-item a:hover { text-decoration:underline; }
+.profile-reaction-item span { font-size:.7rem; color:var(--text3); }
+
+.profile-score-card { background:var(--card2); border:1px solid var(--border2); border-radius:12px; padding:14px 16px; }
+.profile-score-card strong { display:block; font-size:.85rem; color:var(--text); margin-bottom:6px; }
+.profile-score-card .val { display:block; font-family:var(--fd); font-size:1.4rem; font-weight:800; color:var(--acc); }
+.profile-score-card span.tries { display:block; font-size:.7rem; color:var(--text3); margin-top:4px; }
+
+@media (max-width:520px) {
+    .profile-saved-grid, .profile-scores-grid { grid-template-columns:1fr; }
+    .profile-stats-row { grid-template-columns:repeat(2,1fr); }
+    .profile-head { flex-direction:column; text-align:center; padding:22px 18px; }
+}
 </style>
 
 <script>
@@ -307,6 +388,100 @@ $roleLabel = $roleLabels[$profileUser['role']] ?? $profileUser['role'];
             });
         });
     });
+})();
+</script>
+
+<script>
+(function(){
+    function escapeHtml(str) {
+        var div = document.createElement('div');
+        div.textContent = str == null ? '' : String(str);
+        return div.innerHTML;
+    }
+
+    function setStat(id, value) {
+        var el = document.getElementById(id);
+        if (el) el.textContent = value;
+    }
+
+    var savedList = document.getElementById('profileSavedList');
+    if (savedList) {
+        fetch('?url=blog/my-saved').then(function(r){ return r.json(); }).then(function(items){
+            if (!Array.isArray(items)) items = [];
+            setStat('statSaved', items.length);
+            if (items.length === 0) {
+                savedList.innerHTML = '<p class="profile-hint">Aún no has guardado ningún artículo.</p>';
+                return;
+            }
+            savedList.innerHTML = items.map(function(a){
+                var bg = a.imagen ? "background-image:url('" + escapeHtml(a.imagen) + "')" : 'background-color:' + escapeHtml(a.color || '#f29f05');
+                return '<a class="profile-saved-item" href="?url=blog&post=' + encodeURIComponent(a.slug) + '">' +
+                    '<span class="profile-saved-thumb" style="' + bg + '"></span>' +
+                    '<span class="profile-saved-info"><strong>' + escapeHtml(a.titulo) + '</strong><span>Guardado</span></span>' +
+                    '</a>';
+            }).join('');
+        }).catch(function(){ savedList.innerHTML = '<p class="profile-hint">No se pudieron cargar tus guardados.</p>'; });
+    }
+
+    var reactionsList = document.getElementById('profileReactionsList');
+    if (reactionsList) {
+        fetch('?url=blog/my-reactions').then(function(r){ return r.json(); }).then(function(items){
+            if (!Array.isArray(items)) items = [];
+            setStat('statReactions', items.length);
+            if (items.length === 0) {
+                reactionsList.innerHTML = '<p class="profile-hint">Aún no has reaccionado a ningún artículo.</p>';
+                return;
+            }
+            reactionsList.innerHTML = items.map(function(r){
+                var fecha = new Date(r.created_at).toLocaleDateString('es-SV', { day: 'numeric', month: 'short', year: 'numeric' });
+                return '<div class="profile-reaction-item">' +
+                    '<span class="emoji">' + r.emoji + '</span>' +
+                    '<span><a href="?url=blog&post=' + encodeURIComponent(r.slug) + '">' + escapeHtml(r.titulo) + '</a><span>' + fecha + '</span></span>' +
+                    '</div>';
+            }).join('');
+        }).catch(function(){ reactionsList.innerHTML = '<p class="profile-hint">No se pudieron cargar tus reacciones.</p>'; });
+    }
+
+    var activityList = document.getElementById('profileActivityList');
+    if (activityList) {
+        fetch('?url=blog/my-comments').then(function(r){ return r.json(); }).then(function(items){
+            if (!Array.isArray(items)) items = [];
+            setStat('statComments', items.length);
+            if (items.length === 0) {
+                activityList.innerHTML = '<p class="profile-hint">Aún no has comentado en ningún artículo.</p>';
+                return;
+            }
+            activityList.innerHTML = items.map(function(c){
+                var fecha = new Date(c.created_at).toLocaleDateString('es-SV', { day: 'numeric', month: 'short', year: 'numeric' });
+                return '<div class="profile-activity-item">' +
+                    '<a href="?url=blog&post=' + encodeURIComponent(c.slug) + '">' + escapeHtml(c.titulo) + '</a>' +
+                    '<p>&ldquo;' + escapeHtml(c.texto) + '&rdquo;</p>' +
+                    '<span>' + fecha + '</span>' +
+                    '</div>';
+            }).join('');
+        }).catch(function(){ activityList.innerHTML = '<p class="profile-hint">No se pudo cargar tu actividad.</p>'; });
+    }
+
+    var scoresList = document.getElementById('profileScoresList');
+    if (scoresList) {
+        var isTimeGame = { 'Simulacro Reflejo Sísmico': true };
+        fetch('?url=juegos/my-scores').then(function(r){ return r.json(); }).then(function(items){
+            if (!Array.isArray(items)) items = [];
+            setStat('statGames', items.length);
+            if (items.length === 0) {
+                scoresList.innerHTML = '<p class="profile-hint">Aún no has jugado. <a href="?url=juegos">Ir a Juegos</a></p>';
+                return;
+            }
+            scoresList.innerHTML = items.map(function(s){
+                var val = isTimeGame[s.juego_nombre] ? (s.mejor_real / 1000).toFixed(2) + ' s' : s.mejor_real + ' pts';
+                return '<div class="profile-score-card">' +
+                    '<strong>' + escapeHtml(s.juego_nombre) + '</strong>' +
+                    '<span class="val">' + val + '</span>' +
+                    '<span class="tries">' + s.intentos + ' intento(s)</span>' +
+                    '</div>';
+            }).join('');
+        }).catch(function(){ scoresList.innerHTML = '<p class="profile-hint">No se pudieron cargar tus puntajes.</p>'; });
+    }
 })();
 </script>
 

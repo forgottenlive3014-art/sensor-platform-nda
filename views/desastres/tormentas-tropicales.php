@@ -60,7 +60,11 @@ ob_start();
 <!-- INFORMACION GENERAL -->
 <section class="sec" id="info-general">
   <div class="wrap">
-    <h3 class="dis-subhead">Información general</h3>
+    <div class="sec-hd">
+      <div class="sec-eyebrow">Amenaza Hidrometeorológica</div>
+      <h2 class="sec-title">Información <span class="acc">general</span></h2>
+      <p class="sec-sub">Qué es una tormenta tropical y sus distintas etapas</p>
+    </div>
     <div class="dis-info-grid dis-info-grid-2">
       <div class="dis-info-card">
         <h3>¿Qué es?</h3>
@@ -79,8 +83,17 @@ ob_start();
         <p>Vientos sostenidos entre 63 y 118 km/h. Es la categoría que más ha golpeado a El Salvador en la última década, con lluvias que suelen ser más destructivas que el viento.</p>
       </div>
     </div>
+  </div>
+</section>
 
-    <h3 class="dis-subhead">Información de El Salvador</h3>
+<!-- INFORMACION DE EL SALVADOR -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-hd">
+      <div class="sec-eyebrow">El Salvador</div>
+      <h2 class="sec-title">Información de <span class="acc">El Salvador</span></h2>
+      <p class="sec-sub">Por qué el país recibe sistemas del Pacífico y del Caribe</p>
+    </div>
     <div class="dis-info-card dis-info-card-split">
       <div class="dis-info-card-text">
         <h3>¿Por qué ocurre aquí?</h3>

@@ -62,7 +62,11 @@ ob_start();
 <!-- INFORMACION GENERAL -->
 <section class="sec" id="info-general">
   <div class="wrap">
-    <h3 class="dis-subhead">Información general</h3>
+    <div class="sec-hd">
+      <div class="sec-eyebrow">Amenaza Costera</div>
+      <h2 class="sec-title">Información <span class="acc">general</span></h2>
+      <p class="sec-sub">Qué es un tsunami y cómo se forma</p>
+    </div>
     <div class="dis-info-grid">
       <div class="dis-info-card">
         <h3>¿Qué es un tsunami?</h3>
@@ -76,8 +80,17 @@ ob_start();
         <img src="assets/media/img/tsunami%201.jpg" alt="Tsunami" loading="lazy">
       </div>
     </div>
+  </div>
+</section>
 
-    <h3 class="dis-subhead">Información de El Salvador</h3>
+<!-- INFORMACION DE EL SALVADOR -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-hd">
+      <div class="sec-eyebrow">El Salvador</div>
+      <h2 class="sec-title">Información de <span class="acc">El Salvador</span></h2>
+      <p class="sec-sub">La costa pacífica frente a la zona de subducción Cocos–Caribe</p>
+    </div>
     <div class="dis-info-grid">
       <div class="dis-info-card">
         <h3>Costa salvadoreña</h3>
@@ -85,7 +98,13 @@ ob_start();
       </div>
       <div class="dis-info-card">
         <h3>El mapa de amenaza (MARN)</h3>
-        <p>Es un <strong>mapa agregado</strong>: combina los 23 escenarios "plausibles" más severos que podrían impactar la costa salvadoreña, calculados a partir de 23 fuentes sismotectónicas — fuentes lejanas (Chile 1960/2010, Kamchatka 1952, Alaska 1964, Samoa 2009), intermedias (México 1787, Colombia 1906) y 16 fuentes cercanas en la propia subducción. Para cada punto de la costa muestra la altura máxima de ola y la zona de inundación esperada.</p>
+        <p>Es un <strong>mapa agregado</strong>: combina los 23 escenarios "plausibles" más severos que podrían impactar la costa salvadoreña, calculados a partir de 23 fuentes sismotectónicas.</p>
+        <ul class="dis-info-card-list">
+          <li><strong>Lejanas:</strong> Chile (1960/2010), Kamchatka (1952), Alaska (1964), Samoa (2009)</li>
+          <li><strong>Intermedias:</strong> México (1787), Colombia (1906)</li>
+          <li><strong>Cercanas:</strong> 16 fuentes en la propia subducción Cocos–Caribe</li>
+        </ul>
+        <p>Para cada punto de la costa muestra la altura máxima de ola y la zona de inundación esperada.</p>
       </div>
       <div class="dis-gallery-item filled">
         <img src="assets/media/img/formacion%20tsunami.jpg" alt="Formación de un tsunami" loading="lazy">

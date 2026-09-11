@@ -60,7 +60,11 @@ ob_start();
 <!-- INFORMACION GENERAL -->
 <section class="sec" id="info-general">
   <div class="wrap">
-    <h3 class="dis-subhead">Información general</h3>
+    <div class="sec-hd">
+      <div class="sec-eyebrow">Amenaza Forestal</div>
+      <h2 class="sec-title">Información <span class="acc">general</span></h2>
+      <p class="sec-sub">Qué es un incendio forestal, sus causas y cómo prevenirlo</p>
+    </div>
     <div class="dis-info-grid">
       <div class="dis-info-card">
         <h3>¿Qué es?</h3>
@@ -75,8 +79,17 @@ ob_start();
         <p>Evitar quemas agrícolas y fogatas en época seca, mantener rondas cortafuego alrededor de áreas naturales, y reportar humo sospechoso apenas se detecta.</p>
       </div>
     </div>
+  </div>
+</section>
 
-    <h3 class="dis-subhead">Información de El Salvador</h3>
+<!-- INFORMACION DE EL SALVADOR -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-hd">
+      <div class="sec-eyebrow">El Salvador</div>
+      <h2 class="sec-title">Información de <span class="acc">El Salvador</span></h2>
+      <p class="sec-sub">La época seca y su relación con los incendios forestales</p>
+    </div>
     <div class="dis-info-grid" style="grid-template-columns:1fr">
       <div class="dis-info-card">
         <h3>Época seca</h3>

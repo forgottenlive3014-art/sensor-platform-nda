@@ -231,6 +231,19 @@
     line-height: 1.65;
 }
 .dis-info-card p + p { margin-top: 10px; }
+/* Lista corta dentro de una tarjeta, para no meter enumeraciones largas
+   dentro de un solo parrafo denso (ver dis-info-card-list en tsunamis,
+   sequias, etc.). */
+.dis-info-card-list {
+    margin: 10px 0;
+    padding-left: 18px;
+    color: var(--text2);
+    font-size: .88rem;
+    line-height: 1.6;
+}
+.dis-info-card-list li { margin-bottom: 6px; }
+.dis-info-card-list li:last-child { margin-bottom: 0; }
+.dis-info-card-list strong { color: var(--text); }
 
 /* ---------- ZONAS VULNERABLES ---------- */
 .dis-zones {

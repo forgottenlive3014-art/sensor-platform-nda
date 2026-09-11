@@ -295,6 +295,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }), {threshold:.12});
     document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
+    // Guarda el puntaje en el perfil del usuario si tiene sesión iniciada;
+    // para un visitante sin cuenta el servidor responde 401 y se ignora.
+    function saveGameScore(juego, puntaje) {
+        fetch('?url=juegos/save-score', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ juego, puntaje })
+        }).catch(() => {});
+    }
+
     document.querySelectorAll('.gtab').forEach(tab => {
         tab.addEventListener('click', () => {
             document.querySelectorAll('.gtab').forEach(t => t.classList.remove('active'));
@@ -409,6 +419,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('quizResultEmoji').innerHTML = emo;
         document.getElementById('quizResultTitle').textContent = title;
         document.getElementById('quizResultText').textContent = text;
+        saveGameScore('Quiz de Preparación', Math.round((qscore / QUESTIONS.length) * 100));
     }
     document.getElementById('quizStartBtn').onclick = () => { qi=0; qscore=0; elStart.style.display='none'; elPlay.style.display='block'; showQuestion(); };
     document.getElementById('quizRetry').onclick = () => { qi=0; qscore=0; elEnd.style.display='none'; elPlay.style.display='block'; showQuestion(); };
@@ -439,7 +450,11 @@ document.addEventListener('DOMContentLoaded', function () {
             if (a.dataset.icon === b.dataset.icon) {
                 setTimeout(() => { a.classList.add('matched'); b.classList.add('matched'); memFlipped=[]; memLock=false;
                     memPairs++; document.getElementById('memPairs').textContent = memPairs;
-                    if (memPairs === MEM_ICONS.length) { document.getElementById('memWinTries').textContent = memTries; document.getElementById('memWin').style.display='block'; }
+                    if (memPairs === MEM_ICONS.length) {
+                        document.getElementById('memWinTries').textContent = memTries;
+                        document.getElementById('memWin').style.display='block';
+                        saveGameScore('Memoria de Emergencia', Math.max(10, 100 - (memTries - MEM_ICONS.length) * 8));
+                    }
                 }, 450);
             } else {
                 setTimeout(() => { a.classList.remove('flipped'); b.classList.remove('flipped'); memFlipped=[]; memLock=false; }, 800);
@@ -547,6 +562,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const res = document.getElementById('bpResult');
         if (correct===8 && mistakes===0){ res.style.color='#2e8b7f'; res.innerHTML='<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M17 5h3a2 2 0 0 1-2 4M7 5H4a2 2 0 0 0 2 4"/></svg> ¡Mochila perfecta! Llevas todo lo esencial.'; }
         else { res.style.color='#f29f05'; res.textContent=`Acertaste ${correct}/8 esenciales. ${mistakes? 'Tenías objetos que no sirven (en rojo).':'Te faltaron los que quedaron marcados en rojo.'}`; }
+        saveGameScore('Arma tu Mochila', Math.max(0, Math.round((correct/8)*100) - mistakes*10));
     };
     buildBackpack();
 
@@ -576,6 +592,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (btn.dataset.act === drillTarget.k) {
                 if (drillBest===null || ms<drillBest){ drillBest=ms; document.getElementById('drillBest').textContent = (drillBest/1000).toFixed(2)+' s'; }
                 stage.className='drill-stage'; dmsg.innerHTML=`<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg> ¡Correcto en ${secs} s! Toca "Empezar" otra vez.`;
+                saveGameScore('Simulacro Reflejo Sísmico', ms);
             } else {
                 stage.className='drill-stage'; dmsg.innerHTML='<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> Acción equivocada. La señal pedía otra cosa.';
             }

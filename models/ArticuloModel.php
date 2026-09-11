@@ -58,6 +58,7 @@ class ArticuloModel {
         $out = [];
         foreach ($rows as $r) {
             $out[$r['slug']] = [
+                'id' => $r['blog_id'],
                 'titulo' => $r['titulo'],
                 'cat' => $r['cat'],
                 'tag' => $r['tag'],

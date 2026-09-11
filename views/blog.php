@@ -224,9 +224,11 @@ $icoClock = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-w
 $icoHeart = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l8.8 8.8 8.8-8.8a5.5 5.5 0 0 0 0-7.8z"/></svg>';
 $icoBookmark = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>';
 $icoHighlight = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>';
+$icoSmile = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M8 13.5s1.6 2 4 2 4-2 4-2"/><path d="M9 9.5h.01M15 9.5h.01"/></svg>';
 
 $slug = isset($_GET['post']) ? $_GET['post'] : null;
 $post = ($slug !== null && isset($ARTÍCULOS[$slug])) ? $ARTÍCULOS[$slug] : null;
+$__cu = currentUser();
 if ($post) {
     $title = $post['titulo'] . ' - NDA';
     // El color se inserta sin escapar dentro de un atributo style; se
@@ -289,11 +291,9 @@ ob_start();
           <?= $icoBookmark ?> <span>Guardar</span>
         </button>
         <div class="rtool-divider"></div>
-        <button class="rtool rtool-emoji" data-emoji="😢">😢</button>
-        <button class="rtool rtool-emoji" data-emoji="😮">😮</button>
-        <button class="rtool rtool-emoji" data-emoji="🙏">🙏</button>
-        <button class="rtool rtool-emoji" data-emoji="💪">💪</button>
-        <button class="rtool rtool-emoji" data-emoji="❤️">❤️</button>
+        <button class="rtool" data-action="react" title="Ir a reacciones" id="reactScrollBtn">
+          <?= $icoSmile ?> <span>Reaccionar</span>
+        </button>
       </div>
       <div class="reading-progress">
         <div class="reading-progress-bar" id="readingProgress"></div>
@@ -304,9 +304,9 @@ ob_start();
     <div class="postit-note" id="postitNote">
       <div class="postit-pin"></div>
       <div class="postit-content">
-        <span class="postit-label">📌 DATO CLAVE</span>
+        <span class="postit-label">Dato clave</span>
         <p id="postitText"><?= htmlspecialchars($post['extracto']) ?></p>
-        <span class="postit-tip">💡 Toca para cambiar</span>
+        <span class="postit-tip">Toca para cambiar</span>
       </div>
     </div>
 
@@ -317,17 +317,38 @@ ob_start();
     <div class="reactions-bar reveal">
       <span class="reactions-label">¿Cómo te hizo sentir esta noticia?</span>
       <div class="reactions-list" id="reactionsList">
-        <button class="reaction-btn" data-emoji="😢" data-label="Triste">😢 <span class="reaction-count">0</span></button>
-        <button class="reaction-btn" data-emoji="😮" data-label="Impactante">😮 <span class="reaction-count">0</span></button>
-        <button class="reaction-btn" data-emoji="🙏" data-label="Esperanza">🙏 <span class="reaction-count">0</span></button>
-        <button class="reaction-btn" data-emoji="💪" data-label="Fuerza">💪 <span class="reaction-count">0</span></button>
-        <button class="reaction-btn" data-emoji="❤️" data-label="Amor">❤️ <span class="reaction-count">0</span></button>
+        <button class="reaction-btn" data-emoji="😢" data-label="Triste" title="Triste">😢 <span class="reaction-count">0</span></button>
+        <button class="reaction-btn" data-emoji="😮" data-label="Impactante" title="Impactante">😮 <span class="reaction-count">0</span></button>
+        <button class="reaction-btn" data-emoji="🙏" data-label="Esperanza" title="Esperanza">🙏 <span class="reaction-count">0</span></button>
+        <button class="reaction-btn" data-emoji="💪" data-label="Fuerza" title="Fuerza">💪 <span class="reaction-count">0</span></button>
+        <button class="reaction-btn" data-emoji="❤️" data-label="Amor" title="Amor">❤️ <span class="reaction-count">0</span></button>
       </div>
     </div>
 
+    <!-- ===== COMENTARIOS ===== -->
+    <?php if (!empty($post['id'])): ?>
+    <div class="comments-section reveal" id="commentsSection" data-articulo-id="<?= (int) $post['id'] ?>">
+      <h3 class="comments-title">Comentarios <span class="comments-total" id="commentsTotal"></span></h3>
+
+      <?php if ($__cu): ?>
+      <form class="comment-form" id="commentForm">
+        <textarea id="commentInput" maxlength="500" placeholder="Escribe un comentario..." rows="3"></textarea>
+        <div class="comment-form-actions">
+          <span class="comment-form-hint" id="commentHint"></span>
+          <button type="submit" class="comment-submit-btn">Publicar</button>
+        </div>
+      </form>
+      <?php else: ?>
+      <div class="comment-login-hint"><a href="?url=login">Inicia sesión</a> para dejar un comentario.</div>
+      <?php endif; ?>
+
+      <div class="comments-list" id="commentsList"></div>
+    </div>
+    <?php endif; ?>
+
     <!-- ===== ARTÍCULOS RELACIONADOS ===== -->
     <div class="art-more reveal">
-      <h3>📖 Sigue leyendo</h3>
+      <h3>Sigue leyendo</h3>
       <div class="art-more-grid">
         <?php $shown=0; foreach ($ARTÍCULOS as $s=>$a): if ($s===$slug) continue; if ($shown++>=3) break; ?>
           <a class="art-more-card" href="?url=blog&post=<?= $s ?>" style="--c:<?= $a['color'] ?>;">
@@ -506,36 +527,63 @@ ob_start();
 .art-meta{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; color:var(--text3,#71717a); font-size:.88rem; }
 
 /* ===== READING NAVBAR ===== */
-.reading-navbar{ position:sticky; top:70px; z-index:100; background:var(--card,#15161a); border:1px solid var(--border,#27272a); border-radius:16px; padding:10px 16px; margin-bottom:28px; backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); background:rgba(21,22,26,.88); display:flex; flex-direction:column; gap:8px; }
-.reading-tools{ display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
-.rtool{ background:transparent; border:none; color:var(--text2,#a1a1aa); padding:6px 12px; border-radius:10px; cursor:pointer; font-size:.8rem; display:inline-flex; align-items:center; gap:6px; transition:all .2s; font-family:inherit; }
-.rtool svg{ width:16px; height:16px; }
-.rtool:hover{ color:var(--text1,#fff); background:rgba(255,255,255,.06); }
-.rtool.active{ color:#f29f05; background:rgba(242,159,5,.12); }
-.rtool-divider{ width:1px; height:24px; background:var(--border,#27272a); margin:0 4px; }
-.rtool-emoji{ font-size:1.2rem; padding:4px 8px; }
-.rtool-emoji:hover{ background:rgba(255,255,255,.08); transform:scale(1.15); }
-.reading-progress{ height:3px; background:var(--border,#27272a); border-radius:4px; overflow:hidden; }
-.reading-progress-bar{ height:100%; width:0%; background:linear-gradient(90deg,#f29f05,#c2441c); transition:width .15s ease; border-radius:4px; }
+.reading-navbar{ position:sticky; top:70px; z-index:100; background:color-mix(in srgb, var(--card) 90%, transparent); border:1px solid var(--border2); border-radius:16px; padding:10px 14px; margin-bottom:28px; backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); display:flex; flex-direction:column; gap:8px; box-shadow:var(--sh); }
+.reading-tools{ display:flex; gap:4px; align-items:center; flex-wrap:wrap; }
+.rtool{ background:transparent; border:none; color:var(--text2); padding:7px 14px; border-radius:10px; cursor:pointer; font-size:.8rem; font-weight:600; display:inline-flex; align-items:center; gap:7px; transition:all .2s; font-family:inherit; }
+.rtool svg{ width:16px; height:16px; flex-shrink:0; }
+.rtool:hover{ color:var(--text); background:var(--card2); }
+.rtool.active{ color:var(--acc); background:var(--gA); }
+.rtool-divider{ width:1px; height:22px; background:var(--border2); margin:0 2px; }
+.reading-progress{ height:3px; background:var(--border2); border-radius:4px; overflow:hidden; }
+.reading-progress-bar{ height:100%; width:0%; background:linear-gradient(90deg,var(--acc),var(--acc2)); transition:width .15s ease; border-radius:4px; }
 
 /* ===== POST-IT ===== */
-.postit-note{ position:relative; background:#fef9e7; border-radius:4px; padding:18px 20px 14px; margin:0 0 28px; box-shadow:0 8px 30px rgba(0,0,0,.25), 0 0 0 1px rgba(0,0,0,.05); color:#2d2d2d; cursor:pointer; transition:transform .3s, box-shadow .3s; z-index:2; }
-.postit-note:hover{ transform:rotate(-1deg) scale(1.01); box-shadow:0 12px 40px rgba(0,0,0,.35); }
-.postit-pin{ position:absolute; top:-8px; left:50%; transform:translateX(-50%); width:18px; height:18px; border-radius:50%; background:radial-gradient(circle at 30% 30%, #e74c3c, #c0392b); box-shadow:0 2px 8px rgba(0,0,0,.2); }
+.postit-note{ position:relative; background:var(--card2); border:1px solid var(--border2); border-radius:var(--rs); padding:18px 20px 14px; margin:0 0 28px; box-shadow:var(--sh); color:var(--text); cursor:pointer; transition:transform .3s, box-shadow .3s, background .3s, border-color .3s; z-index:2; }
+.postit-note:hover{ transform:rotate(-1deg) scale(1.01); box-shadow:var(--shl); border-color:var(--acc); }
+.postit-pin{ position:absolute; top:-8px; left:50%; transform:translateX(-50%); width:18px; height:18px; border-radius:50%; background:radial-gradient(circle at 30% 30%, var(--acc2), var(--acc3)); box-shadow:0 2px 8px rgba(0,0,0,.3); }
 .postit-content{ text-align:center; }
-.postit-label{ font-size:.6rem; font-weight:800; letter-spacing:2px; color:#f39c12; text-transform:uppercase; display:block; margin-bottom:6px; }
-.postit-content p{ font-size:.95rem; line-height:1.6; margin:0; color:#2d2d2d; font-weight:500; }
-.postit-tip{ font-size:.65rem; color:#999; display:block; margin-top:8px; opacity:.7; }
+.postit-label{ font-size:.6rem; font-weight:800; letter-spacing:2px; color:var(--acc); text-transform:uppercase; display:block; margin-bottom:6px; }
+.postit-content p{ font-size:.95rem; line-height:1.6; margin:0; color:var(--text); font-weight:500; }
+.postit-tip{ font-size:.65rem; color:var(--text3); display:block; margin-top:8px; opacity:.85; }
 
 /* ===== REACCIONES ===== */
-.reactions-bar{ background:var(--card,#15161a); border:1px solid var(--border,#27272a); border-radius:16px; padding:20px 24px; margin:32px 0; text-align:center; position:relative; z-index:2; }
-.reactions-label{ font-size:.85rem; color:var(--text2,#a1a1aa); display:block; margin-bottom:12px; font-weight:600; }
+.reactions-bar{ background:var(--card); border:1px solid var(--border2); border-radius:16px; padding:20px 24px; margin:32px 0; text-align:center; position:relative; z-index:2; }
+.reactions-label{ font-size:.85rem; color:var(--text2); display:block; margin-bottom:12px; font-weight:600; }
 .reactions-list{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
-.reaction-btn{ background:transparent; border:1px solid var(--border,#27272a); border-radius:30px; padding:8px 16px; cursor:pointer; font-size:1rem; transition:all .25s; color:var(--text2,#a1a1aa); display:inline-flex; align-items:center; gap:8px; font-family:inherit; background:rgba(255,255,255,.02); }
-.reaction-btn:hover{ border-color:rgba(242,159,5,.4); background:rgba(242,159,5,.06); transform:scale(1.05); }
-.reaction-btn.active{ border-color:#f29f05; background:rgba(242,159,5,.12); color:#fff; }
-.reaction-count{ font-size:.7rem; font-weight:700; color:var(--text3,#71717a); min-width:16px; }
-.reaction-btn.active .reaction-count{ color:#f29f05; }
+.reaction-btn{ background:var(--card2); border:1px solid var(--border2); border-radius:30px; padding:8px 16px; cursor:pointer; font-size:1rem; transition:all .25s; color:var(--text2); display:inline-flex; align-items:center; gap:8px; font-family:inherit; }
+.reaction-btn:hover{ border-color:var(--acc); background:var(--gA); transform:scale(1.05); }
+.reaction-btn.active{ border-color:var(--acc); background:var(--gA); color:var(--text); }
+.reaction-count{ font-size:.7rem; font-weight:700; color:var(--text3); min-width:16px; }
+.reaction-btn.active .reaction-count{ color:var(--acc); }
+
+/* ===== COMENTARIOS ===== */
+.comments-section{ margin:32px 0; }
+.comments-title{ font-family:var(--fd,inherit); font-size:1.1rem; color:var(--text); margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+.comments-total{ font-size:.8rem; font-weight:600; color:var(--text3); }
+.comment-form{ background:var(--card); border:1px solid var(--border2); border-radius:14px; padding:14px 16px; margin-bottom:20px; }
+.comment-form textarea{ width:100%; resize:vertical; min-height:64px; background:transparent; border:none; color:var(--text); font-family:inherit; font-size:.9rem; line-height:1.5; outline:none; }
+.comment-form-actions{ display:flex; justify-content:space-between; align-items:center; margin-top:8px; gap:10px; }
+.comment-form-hint{ font-size:.75rem; color:var(--acc2); }
+.comment-submit-btn{ background:var(--acc); color:#fff; border:none; border-radius:10px; padding:8px 20px; font-size:.85rem; font-weight:700; cursor:pointer; transition:all .2s; font-family:inherit; flex-shrink:0; }
+.comment-submit-btn:hover{ background:var(--acc2); }
+.comment-submit-btn:disabled{ opacity:.5; cursor:not-allowed; }
+.comment-login-hint{ background:var(--card2); border:1px solid var(--border2); border-radius:14px; padding:14px 16px; margin-bottom:20px; font-size:.85rem; color:var(--text2); text-align:center; }
+.comment-login-hint a{ color:var(--acc); font-weight:600; text-decoration:none; }
+.comment-login-hint a:hover{ text-decoration:underline; }
+.comment-item{ background:var(--card); border:1px solid var(--border2); border-radius:14px; padding:14px 16px; margin-bottom:12px; }
+.comment-head{ display:flex; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap; }
+.comment-avatar{ width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg, var(--blue), var(--purple)); display:flex; align-items:center; justify-content:center; font-size:.72rem; font-weight:700; color:#fff; overflow:hidden; flex-shrink:0; }
+.comment-avatar img{ width:100%; height:100%; object-fit:cover; display:block; }
+.comment-author{ font-weight:700; font-size:.85rem; color:var(--text); }
+.comment-role{ font-size:.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.04em; padding:2px 8px; border-radius:100px; background:var(--gA); color:var(--acc); }
+.comment-date{ font-size:.72rem; color:var(--text3); margin-left:auto; }
+.comment-text{ font-size:.88rem; color:var(--text2); line-height:1.6; white-space:pre-wrap; word-break:break-word; }
+.comment-del-btn{ background:none; border:none; color:var(--text3); font-size:.72rem; cursor:pointer; padding:0; text-decoration:underline; font-family:inherit; }
+.comment-del-btn:hover{ color:var(--acc2); }
+.comment-empty, .comment-loading, .comment-error{ text-align:center; padding:20px; color:var(--text3); font-size:.85rem; }
+
+/* ===== TOAST ===== */
+.toast-notification{ position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(80px); background:color-mix(in srgb, var(--card2) 95%, transparent); color:var(--text); padding:14px 28px; border-radius:16px; font-size:.9rem; font-weight:600; border:1px solid var(--border2); box-shadow:var(--shl); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); z-index:9999; opacity:0; transition:all .4s cubic-bezier(.16,1,.3,1); font-family:inherit; max-width:90%; text-align:center; }
 
 /* ===== HIGHLIGHT ===== */
 ::selection{ background:#f29f05; color:#fff; }
@@ -582,6 +630,7 @@ ob_start();
   .postit-note{ margin:0 0 20px; }
   .reactions-list{ gap:6px; }
   .reaction-btn{ padding:6px 12px; font-size:.9rem; }
+  .comment-date{ margin-left:0; width:100%; }
   .art-cover{ height:220px; }
   .blog-grid{ grid-template-columns:1fr; }
 }
@@ -629,6 +678,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const postSlug = postId.dataset.post;
   const storageKey = 'nda_blog_' + postSlug;
+  const articuloId = <?= json_encode($post['id'] ?? null) ?>;
+  const isLoggedInUser = <?= json_encode((bool) $__cu) ?>;
 
   // ===== CARGAR DATOS GUARDADOS =====
   let savedData = {};
@@ -683,120 +734,126 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  // Todo lo de abajo (me gusta, guardar, reacciones) se guarda en la cuenta
+  // del usuario y por eso aparece luego en su perfil. Sin sesión iniciada no
+  // se simula un guardado local: se pide iniciar sesión, para no mostrar un
+  // "guardado" que en realidad nunca llegó a la cuenta.
+  function requireLoginToast() {
+    showToast('Inicia sesión para guardar tu actividad en tu perfil');
+  }
+
   // ===== ME GUSTA =====
   const likeBtn = document.getElementById('likeBtn');
   const likeCount = document.getElementById('likeCount');
-  if (likeBtn && likeCount) {
-    let likes = savedData.likes || 0;
-    let liked = savedData.liked || false;
-    likeCount.textContent = likes;
+  if (likeBtn && likeCount && articuloId) {
+    fetch(`?url=blog/like-summary&tipo=articulo&id=${articuloId}`)
+      .then(r => r.json())
+      .then(data => {
+        likeCount.textContent = data.total_likes || 0;
+        likeBtn.classList.toggle('active', !!data.liked_by_me);
+      }).catch(() => {});
 
-    if (liked) likeBtn.classList.add('active');
-
-    likeBtn.addEventListener('click', () => {
-      if (liked) {
-        likes--;
-        liked = false;
-        likeBtn.classList.remove('active');
-      } else {
-        likes++;
-        liked = true;
-        likeBtn.classList.add('active');
+    likeBtn.addEventListener('click', async () => {
+      if (!isLoggedInUser) { requireLoginToast(); return; }
+      try {
+        const res = await fetch('?url=blog/toggle-like', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tipo: 'articulo', id: articuloId })
+        });
+        const result = await res.json();
+        if (!result.success) { showToast(result.error || 'No se pudo procesar tu like'); return; }
+        likeCount.textContent = result.total;
+        likeBtn.classList.toggle('active', result.liked);
+      } catch (e) {
+        showToast('Error de conexión');
       }
-      likeCount.textContent = likes;
-      savedData.likes = likes;
-      savedData.liked = liked;
-      localStorage.setItem(storageKey, JSON.stringify(savedData));
     });
   }
 
   // ===== GUARDAR ARTÍCULO =====
   const saveBtn = document.getElementById('saveBtn');
-  if (saveBtn) {
-    let saved = savedData.saved || false;
-    if (saved) saveBtn.classList.add('active');
+  if (saveBtn && articuloId) {
+    if (isLoggedInUser) {
+      fetch(`?url=blog/save-status&tipo=articulo&id=${articuloId}`)
+        .then(r => r.json())
+        .then(data => saveBtn.classList.toggle('active', !!data.saved))
+        .catch(() => {});
+    }
 
-    saveBtn.addEventListener('click', () => {
-      saved = !saved;
-      saveBtn.classList.toggle('active');
-      savedData.saved = saved;
-      localStorage.setItem(storageKey, JSON.stringify(savedData));
-      const msg = saved ? '📌 Artículo guardado en tu biblioteca' : '🗑️ Artículo eliminado de tu biblioteca';
-      showToast(msg);
+    saveBtn.addEventListener('click', async () => {
+      if (!isLoggedInUser) { requireLoginToast(); return; }
+      try {
+        const res = await fetch('?url=blog/toggle-save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tipo: 'articulo', id: articuloId })
+        });
+        const result = await res.json();
+        if (!result.success) { showToast(result.error || 'No se pudo guardar el artículo'); return; }
+        saveBtn.classList.toggle('active', result.saved);
+        showToast(result.saved ? 'Artículo guardado en tu perfil' : 'Artículo eliminado de tus guardados');
+      } catch (e) {
+        showToast('Error de conexión');
+      }
     });
   }
 
   // ===== REACCIONES CON EMOJIS =====
   const reactionBtns = document.querySelectorAll('.reaction-btn');
-  reactionBtns.forEach(btn => {
-    const emoji = btn.dataset.emoji;
-    let count = savedData.reactions && savedData.reactions[emoji] ? savedData.reactions[emoji] : 0;
-    const countSpan = btn.querySelector('.reaction-count');
-    countSpan.textContent = count;
+  if (reactionBtns.length && articuloId) {
+    function paintReactions(counts, myReaction) {
+      reactionBtns.forEach(btn => {
+        const emoji = btn.dataset.emoji;
+        btn.querySelector('.reaction-count').textContent = (counts && counts[emoji]) || 0;
+        btn.classList.toggle('active', emoji === myReaction);
+      });
+    }
 
-    // Verificar si el usuario ya reaccionó con este emoji
-    const userReaction = savedData.userReaction || null;
-    if (userReaction === emoji) btn.classList.add('active');
+    fetch(`?url=blog/reaction-status&tipo=articulo&id=${articuloId}`)
+      .then(r => r.json())
+      .then(data => paintReactions(data.counts, data.my_reaction))
+      .catch(() => {});
 
-    btn.addEventListener('click', () => {
-      const prevReaction = savedData.userReaction || null;
-
-      // Si ya había una reacción previa del usuario, restarla
-      if (prevReaction) {
-        const prevBtn = document.querySelector(`.reaction-btn[data-emoji="${prevReaction}"]`);
-        if (prevBtn) {
-          let prevCount = savedData.reactions && savedData.reactions[prevReaction] ? savedData.reactions[prevReaction] : 0;
-          prevCount = Math.max(0, prevCount - 1);
-          savedData.reactions[prevReaction] = prevCount;
-          const prevSpan = prevBtn.querySelector('.reaction-count');
-          prevSpan.textContent = prevCount;
-          prevBtn.classList.remove('active');
+    reactionBtns.forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!isLoggedInUser) { requireLoginToast(); return; }
+        try {
+          const res = await fetch('?url=blog/toggle-reaction', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tipo: 'articulo', id: articuloId, emoji: btn.dataset.emoji })
+          });
+          const result = await res.json();
+          if (!result.success) { showToast(result.error || 'No se pudo registrar tu reacción'); return; }
+          paintReactions(result.counts, result.my_reaction);
+        } catch (e) {
+          showToast('Error de conexión');
         }
-      }
-
-      // Si el usuario hace clic en el mismo emoji, desactivar
-      if (prevReaction === emoji) {
-        savedData.userReaction = null;
-        localStorage.setItem(storageKey, JSON.stringify(savedData));
-        btn.classList.remove('active');
-        return;
-      }
-
-      // Agregar nueva reacción
-      if (!savedData.reactions) savedData.reactions = {};
-      count = (savedData.reactions[emoji] || 0) + 1;
-      savedData.reactions[emoji] = count;
-      savedData.userReaction = emoji;
-      countSpan.textContent = count;
-      btn.classList.add('active');
-      localStorage.setItem(storageKey, JSON.stringify(savedData));
+      });
     });
-  });
+  }
 
-  // ===== EMOJIS EN NAVBAR =====
-  document.querySelectorAll('.rtool-emoji').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const emoji = btn.dataset.emoji;
-      // Buscar si existe en la barra de reacciones y hacer clic
-      const reactionBtn = document.querySelector(`.reaction-btn[data-emoji="${emoji}"]`);
-      if (reactionBtn) {
-        reactionBtn.click();
-        showToast(`Reacción ${emoji} agregada`);
-      }
+  // ===== IR A REACCIONES =====
+  const reactScrollBtn = document.getElementById('reactScrollBtn');
+  if (reactScrollBtn) {
+    reactScrollBtn.addEventListener('click', () => {
+      const reactionsBar = document.querySelector('.reactions-bar');
+      if (reactionsBar) reactionsBar.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
-  });
+  }
 
   // ===== POST-IT INTERACTIVO =====
   const postit = document.getElementById('postitNote');
   const postitText = document.getElementById('postitText');
   if (postit && postitText) {
     const facts = [
-      '💡 En los primeros 10 minutos de una emergencia, tus vecinos son tu mejor recurso.',
-      '📌 El 80% de los sobrevivientes son rescatados por personas de su misma comunidad.',
-      '⚠️ Tener un plan familiar reduce en un 60% el riesgo de lesiones graves.',
-      '🔑 La comunicación clara salva más vidas que cualquier equipo de rescate.',
-      '📢 Una colonia organizada puede evacuar en 5 minutos lo que aislada tomaría 30.',
-      '💪 La preparación comunitaria es la clave para sobrevivir a cualquier desastre.'
+      'En los primeros 10 minutos de una emergencia, tus vecinos son tu mejor recurso.',
+      'El 80% de los sobrevivientes son rescatados por personas de su misma comunidad.',
+      'Tener un plan familiar reduce en un 60% el riesgo de lesiones graves.',
+      'La comunicación clara salva más vidas que cualquier equipo de rescate.',
+      'Una colonia organizada puede evacuar en 5 minutos lo que aislada tomaría 30.',
+      'La preparación comunitaria es la clave para sobrevivir a cualquier desastre.'
     ];
 
     postit.addEventListener('click', () => {
@@ -825,27 +882,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const toast = document.createElement('div');
     toast.className = 'toast-notification';
     toast.textContent = message;
-    Object.assign(toast.style, {
-      position: 'fixed',
-      bottom: '30px',
-      left: '50%',
-      transform: 'translateX(-50%) translateY(80px)',
-      background: 'rgba(21,22,26,.95)',
-      color: '#fff',
-      padding: '14px 28px',
-      borderRadius: '16px',
-      fontSize: '.9rem',
-      fontWeight: '600',
-      border: '1px solid var(--border,#27272a)',
-      boxShadow: '0 16px 60px rgba(0,0,0,.6)',
-      backdropFilter: 'blur(16px)',
-      zIndex: '9999',
-      opacity: '0',
-      transition: 'all .4s cubic-bezier(.16,1,.3,1)',
-      fontFamily: 'inherit',
-      maxWidth: '90%',
-      textAlign: 'center'
-    });
     document.body.appendChild(toast);
     requestAnimationFrame(() => {
       toast.style.opacity = '1';
@@ -876,6 +912,101 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       });
     }
+  }
+
+  // ===== COMENTARIOS DEL ARTÍCULO =====
+  const commentsSection = document.getElementById('commentsSection');
+  if (commentsSection) {
+    const commentsList = document.getElementById('commentsList');
+    const commentsTotal = document.getElementById('commentsTotal');
+    const myUserId = <?= json_encode($__cu['id'] ?? null) ?>;
+    const isAdmin = <?= json_encode(($__cu['role'] ?? '') === 'admin') ?>;
+    const roleLabels = { admin: 'Admin General', director: 'Admin Institucional', docente: 'Docente', alumno: 'Estudiante', padre: 'Padre', administrativo: 'Personal', user: 'Usuario registrado' };
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    async function loadArticleComments() {
+      commentsList.innerHTML = '<div class="comment-loading">Cargando comentarios...</div>';
+      try {
+        const res = await fetch(`?url=blog/comments&tipo=articulo&id=${articuloId}`);
+        const comments = await res.json();
+        if (comments.error) {
+          commentsList.innerHTML = `<div class="comment-error">${escapeHtml(comments.error)}</div>`;
+          return;
+        }
+        commentsTotal.textContent = comments.length ? `(${comments.length})` : '';
+        if (!comments.length) {
+          commentsList.innerHTML = '<div class="comment-empty">Sé el primero en comentar.</div>';
+          return;
+        }
+        commentsList.innerHTML = comments.map(c => `
+          <div class="comment-item">
+            <div class="comment-head">
+              <div class="comment-avatar">${c.autor_foto ? `<img src="${escapeHtml(c.autor_foto)}" alt="">` : escapeHtml((c.autor || '?').charAt(0).toUpperCase())}</div>
+              <span class="comment-author">${escapeHtml(c.autor)}</span>
+              <span class="comment-role">${escapeHtml(roleLabels[c.autor_role] || c.autor_role)}</span>
+              <span class="comment-date">${new Date(c.created_at).toLocaleString('es-SV', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
+            </div>
+            <p class="comment-text">${escapeHtml(c.texto)}</p>
+            ${(isAdmin || String(c.usuarios_id) === String(myUserId)) ? `<button type="button" class="comment-del-btn" data-comment-id="${c.interacciones_comentarios_id}">Eliminar</button>` : ''}
+          </div>
+        `).join('');
+      } catch (e) {
+        commentsList.innerHTML = '<div class="comment-error">Error al cargar comentarios</div>';
+      }
+    }
+
+    commentsList.addEventListener('click', async (e) => {
+      const btn = e.target.closest('.comment-del-btn');
+      if (!btn) return;
+      if (!confirm('¿Eliminar este comentario?')) return;
+      try {
+        const res = await fetch(`?url=blog/delete-comment&id=${btn.dataset.commentId}`);
+        const result = await res.json();
+        if (result.success) loadArticleComments();
+        else showToast(result.error || 'No se pudo eliminar el comentario');
+      } catch (e) {
+        showToast('Error de conexión');
+      }
+    });
+
+    const commentForm = document.getElementById('commentForm');
+    if (commentForm) {
+      const commentInput = document.getElementById('commentInput');
+      const commentHint = document.getElementById('commentHint');
+      commentForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const texto = commentInput.value.trim();
+        if (!texto) return;
+        const submitBtn = commentForm.querySelector('.comment-submit-btn');
+        submitBtn.disabled = true;
+        commentHint.textContent = '';
+        try {
+          const res = await fetch('?url=blog/add-comment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tipo: 'articulo', id: articuloId, texto })
+          });
+          const result = await res.json();
+          if (result.success) {
+            commentInput.value = '';
+            loadArticleComments();
+          } else {
+            commentHint.textContent = result.error || 'No se pudo publicar el comentario';
+          }
+        } catch (e) {
+          commentHint.textContent = 'Error de conexión';
+        } finally {
+          submitBtn.disabled = false;
+        }
+      });
+    }
+
+    loadArticleComments();
   }
 
 });
