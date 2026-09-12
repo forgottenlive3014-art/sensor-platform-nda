@@ -62,36 +62,38 @@ ob_start();
       </a>
     </div>
 
-    <!-- MAPA -->
-    <div class="clima-map-card" id="climaMapCard">
-      <div class="clima-card-hdr">
-        <span class="cch-dot"></span>Mapa Meteorológico
-        <div class="clima-map-layers">
-          <button type="button" class="clima-layer-btn active" id="climaLayerRain">Lluvia</button>
-          <button type="button" class="clima-layer-btn" id="climaLayerCloud">Nubosidad</button>
+    <!-- MAPAS: RainViewer y OpenWeatherMap, en 2 columnas cuadradas -->
+    <div class="clima-maps-grid">
+      <div class="clima-map-card" id="climaMapCard">
+        <div class="clima-card-hdr">
+          <span class="cch-dot"></span>Mapa Meteorológico
+          <div class="clima-map-layers">
+            <button type="button" class="clima-layer-btn active" id="climaLayerRain">Lluvia</button>
+            <button type="button" class="clima-layer-btn" id="climaLayerCloud">Nubosidad</button>
+          </div>
+          <button type="button" class="clima-map-expand-btn" id="climaMapExpand" aria-label="Ampliar mapa">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+          </button>
         </div>
-        <button type="button" class="clima-map-expand-btn" id="climaMapExpand" aria-label="Ampliar mapa">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
-        </button>
+        <div id="climaMap"></div>
       </div>
-      <div id="climaMap"></div>
-    </div>
 
-    <!-- MAPA OPENWEATHERMAP: capas independientes del radar de RainViewer de arriba -->
-    <div class="clima-map-card" id="climaMapOwmCard">
-      <div class="clima-card-hdr">
-        <span class="cch-dot"></span>Mapa OpenWeatherMap
-        <div class="clima-map-layers">
-          <button type="button" class="clima-layer-btn active" id="climaOwmLayerPrecip" data-owm-layer="precipitation_new">Precipitación</button>
-          <button type="button" class="clima-layer-btn" id="climaOwmLayerClouds" data-owm-layer="clouds_new">Nubes</button>
-          <button type="button" class="clima-layer-btn" id="climaOwmLayerTemp" data-owm-layer="temp_new">Temperatura</button>
-          <button type="button" class="clima-layer-btn" id="climaOwmLayerWind" data-owm-layer="wind_new">Viento</button>
+      <!-- MAPA OPENWEATHERMAP: capas independientes del radar de RainViewer -->
+      <div class="clima-map-card" id="climaMapOwmCard">
+        <div class="clima-card-hdr">
+          <span class="cch-dot"></span>Mapa OpenWeatherMap
+          <div class="clima-map-layers">
+            <button type="button" class="clima-layer-btn active" id="climaOwmLayerPrecip" data-owm-layer="precipitation_new">Precipitación</button>
+            <button type="button" class="clima-layer-btn" id="climaOwmLayerClouds" data-owm-layer="clouds_new">Nubes</button>
+            <button type="button" class="clima-layer-btn" id="climaOwmLayerTemp" data-owm-layer="temp_new">Temperatura</button>
+            <button type="button" class="clima-layer-btn" id="climaOwmLayerWind" data-owm-layer="wind_new">Viento</button>
+          </div>
+          <button type="button" class="clima-map-expand-btn" id="climaMapOwmExpand" aria-label="Ampliar mapa">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+          </button>
         </div>
-        <button type="button" class="clima-map-expand-btn" id="climaMapOwmExpand" aria-label="Ampliar mapa">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
-        </button>
+        <div id="climaMapOwm"></div>
       </div>
-      <div id="climaMapOwm"></div>
     </div>
 
     <!-- PRONOSTICO POR HORAS -->

@@ -233,6 +233,7 @@ $routeMap = [
     'blog/toggle-reaction' => ['InteraccionController', 'toggleReaction'],
     'blog/reaction-status' => ['InteraccionController', 'reactionStatus'],
     'blog/my-reactions' => ['InteraccionController', 'misReacciones'],
+    'blog/my-likes'     => ['InteraccionController', 'misLikes'],
     'juegos/save-score' => ['JuegoController', 'saveScore'],
     'juegos/my-scores'  => ['JuegoController', 'myScores'],
     'juegos'      => ['MainController', 'juegos'],

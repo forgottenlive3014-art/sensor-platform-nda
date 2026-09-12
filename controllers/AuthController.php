@@ -212,6 +212,12 @@ class AuthController {
         $_SESSION['institucion_id'] = $user['institucion_id'] ?? null;
         $_SESSION['institucion_nombre'] = $user['institucion_nombre'] ?? null;
         $_SESSION['estado_institucional'] = $user['estado_institucional'] ?? 'ninguno';
+
+        // Se guarda el acceso ANTERIOR (antes de pisarlo con el de ahora) para
+        // poder mostrar "Último acceso" en el perfil durante esta sesión.
+        $_SESSION['previous_login_at'] = $user['last_login_at'] ?? null;
+        $db = getDB();
+        $db->prepare("UPDATE usuarios SET last_login_at = NOW() WHERE usuarios_id = ?")->execute([$user['usuarios_id']]);
     }
 
     // Inicio de sesion con Google (Google Identity Services). Inactivo hasta que
@@ -811,14 +817,29 @@ class AuthController {
             'profileUser' => $user,
             'instituciones' => $instituciones,
             'pendingRequest' => $pendingRequest,
+            'previousLoginAt' => $_SESSION['previous_login_at'] ?? $user['last_login_at'] ?? null,
         ]);
     }
 
-    // Guarda una foto de perfil subida en assets/media/uploads/perfiles/ y
-    // devuelve la ruta relativa (o false si el archivo no es una imagen valida).
+    // Avatares predefinidos que el usuario puede elegir con un clic en vez de
+    // subir un archivo (ver updateProfile() -> $_POST['foto_preset']).
+    private $presetAvatars = [
+        'robot' => 'assets/media/img/chatbot.png',
+        'bot1' => 'assets/media/img/bot1.png',
+        'alegre' => 'assets/media/img/alegre.png',
+        'default' => 'assets/media/img/user.png',
+    ];
+
+    // Degradados predefinidos para la portada del perfil (ver profile.php,
+    // clases .cp-* junto a .profile-banner). Se guarda solo el nombre como
+    // "preset:<nombre>" en usuarios.portada_perfil, sin subir ningun archivo.
+    private $presetPortadas = ['sunset', 'ocean', 'forest', 'ember'];
+
+    // Guarda una foto de perfil (o portada) subida en assets/media/uploads/perfiles/
+    // y devuelve la ruta relativa (o false si el archivo no es una imagen valida).
     // Disponible para cualquier rol (a diferencia de DocenteController::storeUploadedPhoto,
     // que solo aplica al flujo especifico de docentes en el modulo escolar).
-    private function storeUploadedPhoto($file) {
+    private function storeUploadedPhoto($file, $prefix = 'perfil_') {
         $allowed = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
         $mime = mime_content_type($file['tmp_name']);
         if (!isset($allowed[$mime])) return false;
@@ -827,7 +848,7 @@ class AuthController {
         $dir = __DIR__ . '/../assets/media/uploads/perfiles';
         if (!is_dir($dir)) mkdir($dir, 0755, true);
 
-        $name = uniqid('perfil_', true) . '.' . $allowed[$mime];
+        $name = uniqid($prefix, true) . '.' . $allowed[$mime];
         move_uploaded_file($file['tmp_name'], $dir . '/' . $name);
 
         return 'assets/media/uploads/perfiles/' . $name;
@@ -845,9 +866,16 @@ class AuthController {
         $name = trim($_POST['name'] ?? '');
         $username = strtolower(trim($_POST['username'] ?? ''));
         $telefono = trim($_POST['telefono'] ?? '');
+        $bio = trim($_POST['bio'] ?? '');
+        $ubicacion = trim($_POST['ubicacion'] ?? '');
 
         if (empty($name) || empty($username)) {
             $_SESSION['error'] = 'El nombre y el nombre de usuario no pueden estar vacíos.';
+            redirect('profile');
+            return;
+        }
+        if (mb_strlen($bio) > 200) {
+            $_SESSION['error'] = 'La biografía no puede superar los 200 caracteres.';
             redirect('profile');
             return;
         }
@@ -858,6 +886,9 @@ class AuthController {
             return;
         }
 
+        // La foto puede venir subida como archivo o elegida de la galeria de
+        // avatares predefinidos; el archivo subido tiene prioridad si llegan
+        // ambos (no deberia pasar desde la UI, pero por si acaso).
         $fotoPath = null;
         if (!empty($_FILES['foto']['name']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
             $fotoPath = $this->storeUploadedPhoto($_FILES['foto']);
@@ -866,17 +897,32 @@ class AuthController {
                 redirect('profile');
                 return;
             }
+        } elseif (!empty($_POST['foto_preset']) && isset($this->presetAvatars[$_POST['foto_preset']])) {
+            $fotoPath = $this->presetAvatars[$_POST['foto_preset']];
         }
 
-        $db = getDB();
-        if ($fotoPath !== null) {
-            $stmt = $db->prepare("UPDATE usuarios SET nombre = ?, username = ?, telefono = ?, foto_perfil = ? WHERE usuarios_id = ?");
-            $stmt->execute([$name, $username, $telefono ?: null, $fotoPath, $_SESSION['user_id']]);
-            $_SESSION['foto_perfil'] = $fotoPath;
-        } else {
-            $stmt = $db->prepare("UPDATE usuarios SET nombre = ?, username = ?, telefono = ? WHERE usuarios_id = ?");
-            $stmt->execute([$name, $username, $telefono ?: null, $_SESSION['user_id']]);
+        $portadaPath = null;
+        if (!empty($_FILES['portada']['name']) && $_FILES['portada']['error'] === UPLOAD_ERR_OK) {
+            $portadaPath = $this->storeUploadedPhoto($_FILES['portada'], 'portada_');
+            if ($portadaPath === false) {
+                $_SESSION['error'] = 'La imagen de portada no es válida (usa JPG, PNG o WEBP, máx. 5MB).';
+                redirect('profile');
+                return;
+            }
+        } elseif (!empty($_POST['portada_preset']) && in_array($_POST['portada_preset'], $this->presetPortadas, true)) {
+            $portadaPath = 'preset:' . $_POST['portada_preset'];
         }
+
+        $sql = "UPDATE usuarios SET nombre = ?, username = ?, telefono = ?, bio = ?, ubicacion = ?";
+        $params = [$name, $username, $telefono ?: null, $bio ?: null, $ubicacion ?: null];
+        if ($fotoPath !== null) { $sql .= ", foto_perfil = ?"; $params[] = $fotoPath; }
+        if ($portadaPath !== null) { $sql .= ", portada_perfil = ?"; $params[] = $portadaPath; }
+        $sql .= " WHERE usuarios_id = ?";
+        $params[] = $_SESSION['user_id'];
+
+        $db = getDB();
+        $db->prepare($sql)->execute($params);
+        if ($fotoPath !== null) { $_SESSION['foto_perfil'] = $fotoPath; }
 
         $_SESSION['user_name'] = $name;
         $_SESSION['username'] = $username;

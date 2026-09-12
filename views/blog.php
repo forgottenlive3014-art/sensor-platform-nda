@@ -921,7 +921,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const commentsTotal = document.getElementById('commentsTotal');
     const myUserId = <?= json_encode($__cu['id'] ?? null) ?>;
     const isAdmin = <?= json_encode(($__cu['role'] ?? '') === 'admin') ?>;
-    const roleLabels = { admin: 'Admin General', director: 'Admin Institucional', docente: 'Docente', alumno: 'Estudiante', padre: 'Padre', administrativo: 'Personal', user: 'Usuario registrado' };
 
     function escapeHtml(str) {
       const div = document.createElement('div');
@@ -948,7 +947,6 @@ document.addEventListener('DOMContentLoaded', function () {
             <div class="comment-head">
               <div class="comment-avatar">${c.autor_foto ? `<img src="${escapeHtml(c.autor_foto)}" alt="">` : escapeHtml((c.autor || '?').charAt(0).toUpperCase())}</div>
               <span class="comment-author">${escapeHtml(c.autor)}</span>
-              <span class="comment-role">${escapeHtml(roleLabels[c.autor_role] || c.autor_role)}</span>
               <span class="comment-date">${new Date(c.created_at).toLocaleString('es-SV', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
             </div>
             <p class="comment-text">${escapeHtml(c.texto)}</p>

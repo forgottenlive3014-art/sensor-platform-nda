@@ -2876,6 +2876,10 @@ async function loadBoard() {
             <div class="sticky-note ${escapeHtml(n.color)}" data-id="${n.corcho_notas_id}" style="left:${n.pos_x}%; top:${n.pos_y}%; transform: rotate(${n.rotacion}deg);">
                 <button class="sticky-note-del" onclick="deleteBoardNote(${n.corcho_notas_id})" title="Quitar nota">&times;</button>
                 <p>${escapeHtml(n.texto)}</p>
+                <button class="sticky-note-like${n.liked_by_me == 1 ? ' active' : ''}" onclick="toggleBoardNoteLike(${n.corcho_notas_id}, this)" title="Me gusta">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l8.8 8.8 8.8-8.8a5.5 5.5 0 0 0 0-7.8z"/></svg>
+                    <span>${n.total_likes || 0}</span>
+                </button>
                 <span class="sticky-note-author">${escapeHtml(n.autor)}${n.visibilidad && n.visibilidad !== 'todos' ? ' · Privado' : ''}</span>
             </div>
         `).join('');
@@ -2893,7 +2897,7 @@ async function loadBoard() {
 function enableStickyNoteDrag(board) {
     board.querySelectorAll('.sticky-note').forEach(note => {
         note.addEventListener('pointerdown', function (e) {
-            if (e.target.closest('.sticky-note-del')) return;
+            if (e.target.closest('.sticky-note-del') || e.target.closest('.sticky-note-like')) return;
             e.preventDefault();
             note.setPointerCapture(e.pointerId);
             note.classList.add('dragging');
@@ -2974,6 +2978,22 @@ document.getElementById('addBoardNoteForm')?.addEventListener('submit', async fu
         ndaAlert('Error de conexión');
     }
 });
+
+async function toggleBoardNoteLike(id, btn) {
+    try {
+        const response = await fetch('?url=school/toggle-like', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tipo: 'nota', id: id })
+        });
+        const result = await response.json();
+        if (!result.success) { ndaAlert('Error: ' + (result.error || 'Desconocido')); return; }
+        btn.classList.toggle('active', result.liked);
+        btn.querySelector('span').textContent = result.total;
+    } catch (e) {
+        ndaAlert('Error de conexión');
+    }
+}
 
 async function deleteBoardNote(id) {
     if (!(await ndaConfirm('¿Quitar esta nota del corcho?'))) return;

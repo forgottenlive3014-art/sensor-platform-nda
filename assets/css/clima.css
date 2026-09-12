@@ -129,13 +129,21 @@
 @keyframes climaScrollBounce { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(6px); } }
 
 /* ---------- MAPA ---------- */
+.clima-maps-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px;
+    margin-bottom: 18px; position: relative; z-index: 2;
+}
+@media (max-width: 760px) {
+    .clima-maps-grid { grid-template-columns: 1fr; }
+}
 .clima-map-card {
     background: var(--card); border: 1px solid var(--border); border-radius: var(--rl);
-    box-shadow: var(--sh); margin-bottom: 18px;
+    box-shadow: var(--sh);
     overflow: hidden; position: relative; z-index: 2;
     display: flex; flex-direction: column;
+    aspect-ratio: 1 / 1;
 }
-.clima-map-card #climaMap, .clima-map-card #climaMapOwm { flex: 1; min-height: 220px; }
+.clima-map-card #climaMap, .clima-map-card #climaMapOwm { flex: 1; min-height: 0; }
 .clima-card-hdr {
     display: flex; align-items: center; gap: 9px; padding: 12px 16px;
     font-family: var(--fn); font-weight: 700; font-size: .84rem; color: var(--text);
@@ -160,6 +168,7 @@
 .clima-map-expanded {
     position: fixed; inset: 16px; z-index: 9999; margin: 0;
     box-shadow: var(--shl);
+    aspect-ratio: auto;
 }
 .clima-map-expanded #climaMap, .clima-map-expanded #climaMapOwm { height: calc(100% - 47px); }
 

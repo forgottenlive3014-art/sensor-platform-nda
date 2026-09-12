@@ -1832,6 +1832,25 @@ a.school-tab {
     color: rgba(0,0,0,0.35);
 }
 .sticky-note-del:hover { color: rgba(0,0,0,0.7); }
+.sticky-note-like {
+    position: absolute;
+    bottom: 8px;
+    left: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: none;
+    border: none;
+    font-size: 0.72rem;
+    font-weight: 700;
+    cursor: pointer;
+    color: rgba(0,0,0,0.45);
+    padding: 0;
+}
+.sticky-note-like svg { width: 13px; height: 13px; }
+.sticky-note-like:hover { color: rgba(0,0,0,0.75); }
+.sticky-note-like.active { color: #c2441c; }
+.sticky-note-like.active svg { fill: #c2441c; }
 .sticky-note.amarillo { background: #fff3a0; }
 .sticky-note.naranja { background: #ffd08a; }
 .sticky-note.verde { background: #c9f2a8; }

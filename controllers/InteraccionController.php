@@ -11,6 +11,7 @@ class InteraccionController {
         // Blog publico: no pertenece a ninguna institucion, lo puede comentar
         // cualquier usuario registrado (ver canAccessTipo()).
         'articulo'  => ['tabla' => 'blog',               'pk' => 'blog_id',               'inst' => null],
+        'nota'      => ['tabla' => 'corcho_notas',        'pk' => 'corcho_notas_id',        'inst' => 'instituciones_id'],
     ];
 
     private function canAccessSchool() {
@@ -370,5 +371,79 @@ class InteraccionController {
         ");
         $stmt->execute([$u['id']]);
         jsonResponse($stmt->fetchAll());
+    }
+
+    // "Me gusta" del usuario actual en todo lo que puede tener like: blog
+    // publico, blog de la institucion (si pertenece a una), noticias,
+    // incidentes y notas del tablero. Cada tipo vive en su propia tabla asi
+    // que se arman por separado y se combinan ordenados por fecha.
+    public function misLikes() {
+        if (!isLoggedIn()) {
+            jsonResponse(['error' => 'No autorizado'], 401);
+        }
+        $u = currentUser();
+        $db = getDB();
+        $out = [];
+
+        $stmtA = $db->prepare("
+            SELECT 'articulo' as tipo, b.titulo, CONCAT('?url=blog&post=', b.slug) as link, b.imagen, b.color, l.created_at
+            FROM interacciones_likes l JOIN blog b ON b.blog_id = l.contenido_id
+            WHERE l.tipo_contenido = 'articulo' AND l.usuarios_id = ?
+        ");
+        $stmtA->execute([$u['id']]);
+        $out = array_merge($out, $stmtA->fetchAll());
+
+        // El resto son de contenido institucional: solo tiene sentido buscarlos
+        // si el usuario pertenece (o perteneció) a una institución. No tienen
+        // columna de color propia (solo el blog publico la tiene) asi que se
+        // les asigna un acento fijo por tipo, para pintar la miniatura cuando
+        // no tienen imagen.
+        if ($u['institucion_id']) {
+            $stmtR = $db->prepare("
+                SELECT 'riesgo' as tipo, r.titulo, CONCAT('?url=school/riesgo-detail&id=', r.blog_riesgos_id) as link, r.imagen, '#a85736' as color, l.created_at
+                FROM interacciones_likes l JOIN blog_riesgos r ON r.blog_riesgos_id = l.contenido_id
+                WHERE l.tipo_contenido = 'riesgo' AND l.usuarios_id = ?
+            ");
+            $stmtR->execute([$u['id']]);
+            $out = array_merge($out, $stmtR->fetchAll());
+
+            $stmtN = $db->prepare("
+                SELECT 'noticia' as tipo, n.titulo, CONCAT('?url=school/news-detail&id=', n.noticias_internas_id) as link, n.imagen, '#3d6f8f' as color, l.created_at
+                FROM interacciones_likes l JOIN noticias_internas n ON n.noticias_internas_id = l.contenido_id
+                WHERE l.tipo_contenido = 'noticia' AND l.usuarios_id = ?
+            ");
+            $stmtN->execute([$u['id']]);
+            $out = array_merge($out, $stmtN->fetchAll());
+
+            $stmtI = $db->prepare("
+                SELECT 'incidente' as tipo, i.tipo as titulo, CONCAT('?url=school/incident-detail&id=', i.incidentes_id) as link, i.imagen, '#b8433f' as color, l.created_at
+                FROM interacciones_likes l JOIN incidentes i ON i.incidentes_id = l.contenido_id
+                WHERE l.tipo_contenido = 'incidente' AND l.usuarios_id = ?
+            ");
+            $stmtI->execute([$u['id']]);
+            $out = array_merge($out, $stmtI->fetchAll());
+
+            $stmtC = $db->prepare("
+                SELECT 'nota' as tipo, LEFT(c.texto, 60) as titulo, '?url=school/panel#board' as link, NULL as imagen, c.color as color, l.created_at
+                FROM interacciones_likes l JOIN corcho_notas c ON c.corcho_notas_id = l.contenido_id
+                WHERE l.tipo_contenido = 'nota' AND l.usuarios_id = ?
+            ");
+            $stmtC->execute([$u['id']]);
+            $out = array_merge($out, $stmtC->fetchAll());
+        }
+
+        // Las notas del tablero guardan su color como nombre ('amarillo',
+        // 'naranja'...) en vez de un hex, para pintar la miniatura igual que
+        // el resto hay que traducirlo.
+        $notaColores = ['amarillo' => '#f2c94c', 'naranja' => '#e86a2a', 'verde' => '#6ba15a', 'azul' => '#3d6f8f', 'rosa' => '#c9a6c9'];
+        foreach ($out as &$item) {
+            if ($item['tipo'] === 'nota' && isset($notaColores[$item['color']])) {
+                $item['color'] = $notaColores[$item['color']];
+            }
+        }
+        unset($item);
+
+        usort($out, fn($a, $b) => strcmp($b['created_at'], $a['created_at']));
+        jsonResponse(array_slice($out, 0, 30));
     }
 }

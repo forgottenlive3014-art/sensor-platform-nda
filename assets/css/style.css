@@ -1298,8 +1298,13 @@ canvas {
     color: #fff;
 }
 .csi-alert-icon {
-    font-size: 3.2rem;
+    color: rgb(var(--csi-alert-rgb));
     margin-bottom: 10px;
+}
+.csi-alert-icon svg {
+    width: 64px;
+    height: 64px;
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3));
 }
 .csi-alert-icon-img {
     width: 110px;

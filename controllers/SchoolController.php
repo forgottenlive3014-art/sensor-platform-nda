@@ -923,7 +923,9 @@ class SchoolController {
         // director/admin (moderacion — el director siempre ve todo lo de
         // su institucion, igual que ya podia borrar cualquier nota).
         $stmt = $db->prepare("
-            SELECT c.*, u.nombre as autor
+            SELECT c.*, u.nombre as autor,
+                (SELECT COUNT(*) FROM interacciones_likes WHERE tipo_contenido = 'nota' AND contenido_id = c.corcho_notas_id) as total_likes,
+                (SELECT COUNT(*) FROM interacciones_likes WHERE tipo_contenido = 'nota' AND contenido_id = c.corcho_notas_id AND usuarios_id = ?) as liked_by_me
             FROM corcho_notas c
             JOIN usuarios u ON u.usuarios_id = c.usuarios_id
             WHERE c.instituciones_id = ?
@@ -936,7 +938,7 @@ class SchoolController {
             ORDER BY c.created_at DESC
             LIMIT 60
         ");
-        $stmt->execute([$instId, $u['role'], $u['id'], $this->isSchoolAdmin() ? 1 : 0]);
+        $stmt->execute([$u['id'], $instId, $u['role'], $u['id'], $this->isSchoolAdmin() ? 1 : 0]);
         jsonResponse($stmt->fetchAll());
     }
 

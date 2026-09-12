@@ -38,9 +38,13 @@ CREATE TABLE usuarios (
     institucion_id INT NULL,
     estado_institucional ENUM('ninguno','pendiente','aprobado','rechazado') DEFAULT 'ninguno',
     telefono VARCHAR(20) NULL,
+    bio VARCHAR(200) NULL,
+    ubicacion VARCHAR(100) NULL,
     materia VARCHAR(100) NULL,
     foto_perfil VARCHAR(255) NULL,
+    portada_perfil VARCHAR(255) NULL, -- imagen de portada del perfil (banner), opcional
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_login_at DATETIME NULL, -- capturado ANTES de sobreescribirlo en cada login (ver AuthController::processLogin), para mostrar la sesion anterior y no la que esta entrando
     FOREIGN KEY (institucion_id) REFERENCES instituciones(instituciones_id) ON DELETE SET NULL
 );
 
@@ -279,7 +283,7 @@ CREATE TABLE notificaciones (
 -- por cada tipo de contenido (noticia/riesgo/incidente).
 CREATE TABLE interacciones_likes (
     interacciones_likes_id INT PRIMARY KEY AUTO_INCREMENT,
-    tipo_contenido ENUM('noticia','riesgo','incidente','articulo') NOT NULL,
+    tipo_contenido ENUM('noticia','riesgo','incidente','articulo','nota') NOT NULL,
     contenido_id INT NOT NULL,
     usuarios_id INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
