@@ -297,7 +297,7 @@ canvas {
 .nav-avatar {
     width: 26px;
     height: 26px;
-    background: linear-gradient(135deg, var(--blue), var(--purple));
+    background: linear-gradient(135deg, var(--acc), var(--acc3));
     border-radius: 50%;
     display: flex;
     align-items: center;

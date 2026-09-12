@@ -471,7 +471,7 @@ if ($portada !== '' && str_starts_with($portada, 'preset:')) {
 .profile-photo-preview { width:72px; height:72px; border-radius:50%; background:linear-gradient(135deg,var(--acc),var(--acc3)); color:#fff; display:flex; align-items:center; justify-content:center; font-family:var(--fd); font-size:1.7rem; font-weight:700; flex-shrink:0; overflow:hidden; border:2px solid var(--border2); }
 .profile-photo-preview img { width:100%; height:100%; object-fit:cover; }
 .profile-avatar-presets { display:flex; gap:8px; flex-wrap:wrap; }
-.profile-avatar-preset { width:40px; height:40px; border-radius:50%; padding:0; border:2px solid var(--border2); background:var(--card2); cursor:pointer; overflow:hidden; transition:border-color .2s; flex-shrink:0; }
+.profile-avatar-preset { width:40px; height:40px; border-radius:50%; padding:0; border:2px solid var(--border2); background:linear-gradient(135deg,var(--acc),var(--acc3)); cursor:pointer; overflow:hidden; transition:border-color .2s; flex-shrink:0; }
 .profile-avatar-preset img { width:100%; height:100%; object-fit:cover; }
 .profile-avatar-preset:hover, .profile-avatar-preset.sel { border-color:var(--acc); }
 .profile-cover-preview { width:96px; height:56px; border-radius:9px; background:linear-gradient(135deg,var(--bg3),var(--bg2)); background-size:cover; background-position:center; flex-shrink:0; border:2px solid var(--border2); }

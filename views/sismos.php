@@ -2,7 +2,7 @@
 $title = $title ?? 'Sismos - NDA';
 $user = $user ?? null;
 $currentSlug = 'sismos';
-$extraCss = ['css/desastres-base.css'];
+$extraCss = ['css/desastres-base.css', 'css/sismos.css'];
 ob_start();
 ?>
 

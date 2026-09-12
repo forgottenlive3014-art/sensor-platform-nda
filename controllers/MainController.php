@@ -103,19 +103,20 @@ class MainController {
 }
 
     // ---------------------------------------------------------------
-    // "Desastres" (dropdown del navbar): Sismos vive aparte (sismos()),
-    // estos 7 comparten la misma plantilla en views/desastres/.
+    // "Desastres" (dropdown del navbar): cada uno tiene su propia
+    // vista y su propio CSS en views/ y assets/css/, y comparten
+    // los parciales _alert_levels.php / _gallery.php de views/.
     // ---------------------------------------------------------------
     public function desastresGaleria() {
-        view('desastres/galeria', ['title' => 'Desastres - NDA', 'user' => currentUser()]);
+        view('galeria-3d', ['title' => 'Desastres - NDA', 'user' => currentUser()]);
     }
 
     public function tsunamis() {
-        view('desastres/tsunamis', ['title' => 'Tsunamis - NDA', 'user' => currentUser()]);
+        view('tsunamis', ['title' => 'Tsunamis - NDA', 'user' => currentUser()]);
     }
 
     public function inundaciones() {
-        view('desastres/inundaciones', ['title' => 'Inundaciones - NDA', 'user' => currentUser()]);
+        view('inundaciones', ['title' => 'Inundaciones - NDA', 'user' => currentUser()]);
     }
 
     public function deslizamientos() {
@@ -123,15 +124,15 @@ class MainController {
     }
 
     public function incendiosForestales() {
-        view('desastres/incendios-forestales', ['title' => 'Incendios forestales - NDA', 'user' => currentUser()]);
+        view('incendios-forestales', ['title' => 'Incendios forestales - NDA', 'user' => currentUser()]);
     }
 
     public function tormentasTropicales() {
-        view('desastres/tormentas-tropicales', ['title' => 'Tormentas tropicales - NDA', 'user' => currentUser()]);
+        view('tormentas-tropicales', ['title' => 'Tormentas tropicales - NDA', 'user' => currentUser()]);
     }
 
     public function sequias() {
-        view('desastres/sequias', ['title' => 'Sequías - NDA', 'user' => currentUser()]);
+        view('sequias', ['title' => 'Sequías - NDA', 'user' => currentUser()]);
     }
 
     public function recursos() {
