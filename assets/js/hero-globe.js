@@ -4,6 +4,7 @@
 // viven en la seccion "Zona Sismica" y en la pagina /sismos.
 (function () {
     const globeEl = document.getElementById('globeViz');
+    const globeGlb = document.getElementById('globeGlb');
     const terrainEl = document.getElementById('terrainViz');
     const heroEl = document.getElementById('home');
     if (!globeEl || !terrainEl || !heroEl || typeof Globe === 'undefined') return;
@@ -23,10 +24,12 @@
         return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
     }
 
+    const isLightMode = currentTheme() === 'light';
+
     // ---------------- Globo lejano (planeta / Centroamerica) ----------------
-    // Textura fotorrealista real (NASA Blue Marble) en ambos temas -- el
-    // globo en si se ve igual de "foto real" que un globo de Google Maps,
-    // el tema claro/oscuro del sitio solo cambia el fondo detras de el.
+    // En modo claro el globo del mundo se renderiza con el GLB del atlas
+    // y el globe.gl queda oculto. En modo oscuro el globe.gl se mantiene
+    // con la textura base del proyecto para no tocar el mapa de terreno.
     const globe = Globe()(globeEl)
         .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
         .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
@@ -35,6 +38,14 @@
         .atmosphereColor('#8fc6ff')
         .atmosphereAltitude(0.2)
         .pointOfView({ lat: 12, lng: -75, altitude: 2.4 }, 0);
+
+    function applyModeVisibility(theme) {
+        const light = theme === 'light';
+        if (globeEl) globeEl.style.display = light ? 'none' : 'block';
+        if (globeGlb) globeGlb.style.display = light ? 'block' : 'none';
+    }
+
+    applyModeVisibility(currentTheme());
 
     globe.controls().autoRotate = true;
     globe.controls().autoRotateSpeed = 0.35;
@@ -67,10 +78,15 @@
                 style: mapStyle(appliedMapTheme),
                 center: [-89.15, 13.75],
                 zoom: 10.8,
-                pitch: 65,
-                bearing: -18,
+                pitch: 62,
+                bearing: -8,
                 interactive: false,
                 attributionControl: false,
+                minZoom: 10.2,
+                maxZoom: 12,
+                dragRotate: false,
+                pitchWithRotate: false,
+                scrollZoom: false,
             });
         }).catch(() => {});
     }
@@ -82,11 +98,23 @@
     }
 
     // Reacciona al boton de tema claro/oscuro (app.js cambia data-theme en <html>).
-    // El globo ya no cambia de textura por tema (siempre fotorrealista); solo
-    // el mapa MapLibre del acercamiento final cambia de estilo claro/oscuro.
+    // El mapa MapLibre del acercamiento final cambia de estilo claro/oscuro y
+    // el visor de la escena global cambia entre globe.gl y el GLB diurno.
     new MutationObserver(() => {
-        applyMapTheme(currentTheme());
+        const theme = currentTheme();
+        applyModeVisibility(theme);
+        applyMapTheme(theme);
     }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+    // Asegura que el GLB del modo claro se muestre centrado con la misma OOTB
+    // la visibilidad del modo oscuro (globeViz) y no se superponga con el mapa.
+    const lightMode = currentTheme() === 'light';
+    if (globeGlb) {
+        globeGlb.style.display = lightMode ? 'block' : 'none';
+    }
+    if (globeEl) {
+        globeEl.style.display = lightMode ? 'none' : 'block';
+    }
 
     ensureMap();
 
@@ -136,6 +164,14 @@
     window.addEventListener('scroll', computeProgress, { passive: true });
     computeProgress();
 
+    function updateGlbFromScroll(p) {
+        if (!globeGlb || currentTheme() !== 'light') return;
+        if (!window.__ndaGlbModel || !window.__ndaGlbBaseScale) return;
+        const travel = Math.min(1, Math.max(0, p));
+        const zoom = 1 + travel * 0.45;
+        window.__ndaGlbModel.scale.setScalar(window.__ndaGlbBaseScale * zoom);
+    }
+
     function setPhaseVisibility(p) {
         const activePhase = p < 0.3 ? 1 : p < 0.62 ? 2 : 3;
         phase1.classList.toggle('active', activePhase === 1);
@@ -147,7 +183,7 @@
         // El mapa con terreno (nitido) toma el relevo bastante antes de que
         // el globo llegue a su zoom mas cercano, para que nunca se alcance
         // a notar que la textura del globo completo se ve borrosa de cerca.
-        const mapT = Math.max(0, Math.min(1, (p - 0.6) / 0.28));
+        const mapT = Math.max(0, Math.min(1, (p - 4.5) / 0.20));
         if (mapT > 0) ensureMap();
         terrainEl.style.opacity = mapT;
         terrainEl.classList.toggle('visible', mapT > 0.5);
@@ -160,6 +196,9 @@
     function raf() {
         requestAnimationFrame(raf);
         progress += (targetProgress - progress) * 0.08;
+        const scrollProgress = Math.min(1, Math.max(0, progress));
+        window.__ndaHeroScrollProgress = scrollProgress;
+        updateGlbFromScroll(scrollProgress);
         globe.pointOfView(lerpPOV(progress), 0);
         setPhaseVisibility(progress);
     }

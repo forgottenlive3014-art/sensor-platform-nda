@@ -10,6 +10,7 @@ ob_start();
 <section class="hero3d" id="home">
   <div class="hero3d-sticky">
     <div id="globeViz"></div>
+    <div id="globeGlb"></div>
     <div id="terrainViz"></div>
     <div class="hero3d-vignette"></div>
 
@@ -252,6 +253,174 @@ ob_start();
 </section>
 
 <script src="https://unpkg.com/globe.gl"></script>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const globeGlb = document.getElementById('globeGlb');
+if (!globeGlb) {
+  console.warn('No existe #globeGlb para el GLB del mundo diurno.');
+} else {
+  // ============================================================
+  // 1) CANVAS RECTANGULAR DEL HERO — ocupa todo el marco del home
+  // ============================================================
+  const width = globeGlb.clientWidth || window.innerWidth;
+  const height = globeGlb.clientHeight || window.innerHeight;
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, width / Math.max(height, 1), 0.1, 1000);
+  camera.position.set(0, 0, 3.4);
+  camera.lookAt(0, 0, 0);
+
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2.5));
+  renderer.setSize(width, height, false);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.setClearColor(0x000000, 0);
+  renderer.domElement.setAttribute('aria-label', 'globe-glb');
+  globeGlb.appendChild(renderer.domElement);
+
+  // ============================================================
+  // 2) ILUMINACIÓN REALISTA — quita el "plano"
+  // ============================================================
+  // Ambient suave (solo relleno)
+  scene.add(new THREE.AmbientLight(0xffffff, 0.45));
+
+  // Sol fuerte y LATERAL → crea terminador día/noche visible
+  const sun = new THREE.DirectionalLight(0xffffff, 2.2);
+  sun.position.set(5, 2, 3);
+  scene.add(sun);
+
+  // Relleno azulado desde el lado opuesto (reflejo atmosférico)
+  const fill = new THREE.DirectionalLight(0x88bbff, 0.55);
+  fill.position.set(-5, -2, -3);
+  scene.add(fill);
+
+  // Rim light: resalta el borde superior
+  const rim = new THREE.DirectionalLight(0xffddaa, 0.4);
+  rim.position.set(0, 5, -5);
+  scene.add(rim);
+
+  // ============================================================
+  // 3) ENVIRONMENT MAP — da reflejos realistas tipo Google Earth
+  // ============================================================
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  pmrem.compileEquirectangularShader();
+  const envTex = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+  // ============================================================
+  // 4) CARGAR EL MODELO
+  // ============================================================
+  const loader = new GLTFLoader();
+  loader.load('assets/modelos3d/earth_globe_-_atlas.glb', (gltf) => {
+    const model = gltf.scene;
+
+    // --- Arreglar materiales ---
+    model.traverse((child) => {
+      if (!child.isMesh) return;
+      const mat = child.material;
+      if (!mat) return;
+
+      // Quitar facetado (crítico para que no se vea "bolsa de polos")
+      if ('flatShading' in mat) mat.flatShading = false;
+
+      // PBR correcto
+      if ('roughness' in mat) mat.roughness = 0.85;
+      if ('metalness' in mat) mat.metalness = 0.05;
+
+      // Aplicar environment map
+      mat.envMap = envTex;
+      mat.envMapIntensity = 0.45;
+      mat.needsUpdate = true;
+
+      child.castShadow = false;
+      child.receiveShadow = false;
+    });
+
+    // --- Escalar PRIMERO ---
+    const box = new THREE.Box3().setFromObject(model);
+    const size3D = box.getSize(new THREE.Vector3()).length();
+    const scale = 3.10 / Math.max(size3D, 1e-6);
+    model.scale.setScalar(scale);
+
+    // --- DESPUÉS centrar (con el box ya escalado) ---
+    box.setFromObject(model);
+    const center = box.getCenter(new THREE.Vector3());
+    model.position.sub(center);
+
+    // Orientación base del GLB claro: se gira hacia la derecha
+    // para ubicar mejor la línea de América Central/El Salvador.
+    model.rotation.y = 2.2;
+
+    // --- Guardar para animación ---
+    window.__ndaGlbModel = model;
+    window.__ndaGlbBaseScale = scale;
+
+    // En el modo claro el GLB debe mantenerse fijo, sin rotar,
+    // pero acercar el modelo al foco de Centroamérica/El Salvador
+    // con el scroll del hero. Por eso fijamos la orientación del
+    // modelo y solo movemos la escala y la cámara a modo de zoom.
+    const baseModelPosition = model.position.clone();
+    const baseCameraZ = camera.position.z;
+
+    scene.add(model);
+
+    // ============================================================
+    // 5) ANIMACIÓN
+    // ============================================================
+    function animate() {
+      requestAnimationFrame(animate);
+
+      const scrollPulse = window.__ndaHeroScrollProgress || 0;
+      const t = Math.min(Math.max(scrollPulse, 0), 1);
+
+      // Zoom del atlas con una curva coherente de scroll: el GLB no gira,
+      // solo se acerca con una escala gradual y una cámara mas cercana.
+      // La curva exponencial hace que el inicio sea suave y el final se note
+      // como un focus de Centroamérica / El Salvador.
+      const zoom = 1 + Math.pow(t, 2) * 0.36;
+      model.scale.setScalar(window.__ndaGlbBaseScale * zoom);
+
+      // Ajuste de rotación leve para abrir el atlas hacia la derecha
+      // sin hacer que el GLB se enrede con el eje del mapa.
+      const steerRight = 2.2 + Math.min(t, 1) * 0.08;
+      model.rotation.y = steerRight;
+
+      // Ajuste de desplazamiento del modelo para que el mapa visual
+      // se centre en la franja de Centroamérica y El Salvador sobre la
+      // proyección del GLB.
+      model.position.set(
+        baseModelPosition.x - t * 0.12,
+        baseModelPosition.y - t * 0.12 + 0.08,
+        baseModelPosition.z
+      );
+
+      // Enfoque de cámara: la cámara se acerca al modelo de forma suave
+      // para evitar un zoom artificial y desproporcionado.
+      camera.position.z = Math.max(2.00, baseCameraZ - t * 1.00);
+      camera.position.y = 0.08 - t * 0.04;
+      camera.lookAt(0, 0.08, 0);
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // ============================================================
+    // 6) RESIZE
+    // ============================================================
+    window.addEventListener('resize', () => {
+      const w = globeGlb.clientWidth || window.innerWidth;
+      const h = globeGlb.clientHeight || window.innerHeight;
+      camera.aspect = w / Math.max(h, 1);
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h, false);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2.5));
+    });
+  }, undefined, (error) => {
+    console.error('No se pudo cargar el GLB del atlas:', error);
+  });
+}
+</script>
 <script src="<?= asset('js/hero-globe.js') ?>"></script>
 <script src="<?= asset('js/home-scroll.js') ?>" defer></script>
 
