@@ -350,18 +350,19 @@ if (!globeGlb) {
 
     // Orientación base del GLB claro: se gira hacia la derecha
     // para ubicar mejor la línea de América Central/El Salvador.
-    model.rotation.y = 2.2;
+    model.rotation.y = 2.12;
+    model.rotation.x = 0.18;
 
     // --- Guardar para animación ---
     window.__ndaGlbModel = model;
     window.__ndaGlbBaseScale = scale;
 
-    // En el modo claro el GLB debe mantenerse fijo, sin rotar,
-    // pero acercar el modelo al foco de Centroamérica/El Salvador
-    // con el scroll del hero. Por eso fijamos la orientación del
-    // modelo y solo movemos la escala y la cámara a modo de zoom.
+    // El GLB claro sigue el mismo recorrido geográfico del globo oscuro:
+    // parte de la vista continental y termina enfocando Centroamérica.
     const baseModelPosition = model.position.clone();
     const baseCameraZ = camera.position.z;
+    const introStart = performance.now();
+    const introDuration = 1200;
 
     scene.add(model);
 
@@ -374,30 +375,34 @@ if (!globeGlb) {
       const scrollPulse = window.__ndaHeroScrollProgress || 0;
       const t = Math.min(Math.max(scrollPulse, 0), 1);
 
-      // Zoom del atlas con una curva coherente de scroll: el GLB no gira,
-      // solo se acerca con una escala gradual y una cámara mas cercana.
-      // La curva exponencial hace que el inicio sea suave y el final se note
-      // como un focus de Centroamérica / El Salvador.
-      const zoom = 1 + Math.pow(t, 2) * 0.36;
+      // Zoom del atlas hacia la zona visible de Centroamérica / El Salvador.
+      // El desplazamiento compensado de abajo mantiene esa zona bajo el foco
+      // mientras el GLB se amplía desde su centro geométrico.
+      const zoom = 1 + Math.pow(t, 2) * 0.62;
       model.scale.setScalar(window.__ndaGlbBaseScale * zoom);
 
-      // Ajuste de rotación leve para abrir el atlas hacia la derecha
-      // sin hacer que el GLB se enrede con el eje del mapa.
-      const steerRight = 2.2 + Math.min(t, 1) * 0.08;
-      model.rotation.y = steerRight;
+      // Mover la región visible como el globe.gl oscuro: el eje Y desplaza
+      // la longitud hacia Centroamérica y el eje X acompaña la latitud.
+      const geographicYaw = THREE.MathUtils.degToRad(10) * t;
+      const geographicPitch = THREE.MathUtils.degToRad(-3) * t;
+      const introProgress = Math.min(1, (performance.now() - introStart) / introDuration);
+      const introEase = 1 - Math.pow(1 - introProgress, 3);
+      const introYaw = (1 - introEase) * THREE.MathUtils.degToRad(24);
+      model.rotation.y = 2.12 + geographicYaw + introYaw;
+      model.rotation.x = 0.18 + geographicPitch;
 
       // Ajuste de desplazamiento del modelo para que el mapa visual
       // se centre en la franja de Centroamérica y El Salvador sobre la
       // proyección del GLB.
       model.position.set(
-        baseModelPosition.x - t * 0.12,
-        baseModelPosition.y - t * 0.12 + 0.08,
+        baseModelPosition.x,
+        baseModelPosition.y + 0.05,
         baseModelPosition.z
       );
 
-      // Enfoque de cámara: la cámara se acerca al modelo de forma suave
-      // para evitar un zoom artificial y desproporcionado.
-      camera.position.z = Math.max(2.00, baseCameraZ - t * 1.00);
+      // Enfoque de cámara hacia la región objetivo, sin cambiar la vista
+      // del terreno MapLibre que aparece después.
+      camera.position.z = Math.max(1.85, baseCameraZ - t * 1.15);
       camera.position.y = 0.08 - t * 0.04;
       camera.lookAt(0, 0.08, 0);
 

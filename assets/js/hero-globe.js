@@ -183,7 +183,7 @@
         // El mapa con terreno (nitido) toma el relevo bastante antes de que
         // el globo llegue a su zoom mas cercano, para que nunca se alcance
         // a notar que la textura del globo completo se ve borrosa de cerca.
-        const mapT = Math.max(0, Math.min(1, (p - 4.5) / 0.20));
+        const mapT = Math.max(0, Math.min(1, (p - 0.45) / 0.28));
         if (mapT > 0) ensureMap();
         terrainEl.style.opacity = mapT;
         terrainEl.classList.toggle('visible', mapT > 0.5);
