@@ -655,6 +655,11 @@ canvas {
     overflow: hidden;
     box-shadow: 0 0 60px rgba(0, 0, 0, 0.45);
 }
+[data-theme="light"] .hero-monitor {
+    background: #ffffff;
+    border-color: var(--border);
+    box-shadow: 0 12px 32px rgba(26, 45, 59, 0.08);
+}
 
 .hm-top {
     display: flex;
@@ -663,6 +668,10 @@ canvas {
     padding: 12px 16px;
     background: var(--card2);
     border-bottom: 1px solid var(--border);
+}
+[data-theme="light"] .hm-top {
+    background: #f3f4f6;
+    border-bottom-color: var(--border);
 }
 .hm-dots span {
     width: 9px;
@@ -698,6 +707,9 @@ canvas {
     border-radius: var(--rs);
     background: var(--bg3);
 }
+[data-theme="light"] #heroSg {
+    background: linear-gradient(180deg, #eef2f5 0%, #e8edf1 100%);
+}
 
 .hm-mini {
     display: grid;
@@ -710,6 +722,9 @@ canvas {
     border-radius: var(--rs);
     padding: 9px;
     text-align: center;
+}
+[data-theme="light"] .hmm {
+    background: #f0f2f5;
 }
 .hmm-v {
     font-family: var(--fd);

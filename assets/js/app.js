@@ -290,11 +290,12 @@ window.ndaGoBack = function () {
     window.addEventListener('resize', resize);
 
     function draw() {
+        const isLight = document.documentElement.getAttribute('data-theme') === 'light';
         ctx.clearRect(0, 0, c.width, c.height);
-        ctx.fillStyle = '#0b1020';
+        ctx.fillStyle = isLight ? '#edf2f5' : '#0b1020';
         ctx.fillRect(0, 0, c.width, c.height);
 
-        ctx.strokeStyle = 'rgba(255,255,255,.03)';
+        ctx.strokeStyle = isLight ? 'rgba(26,45,59,.08)' : 'rgba(255,255,255,.03)';
         ctx.lineWidth = 1;
         for (let y = 0; y < c.height; y += 14) {
             ctx.beginPath();
