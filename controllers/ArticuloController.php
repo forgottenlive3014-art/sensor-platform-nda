@@ -40,6 +40,82 @@ class ArticuloController {
         return preg_match('/^#[0-9a-fA-F]{3,8}$/', $color) ? $color : '#f29f05';
     }
 
+    private function formatPlainTextArticle($text) {
+        $text = trim($text);
+        if ($text === '') return '';
+
+        if (preg_match('/<\s*([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/', $text)) {
+            return $this->sanitizeArticleHtml($text);
+        }
+
+        $lines = preg_split('/\r\n|\r|\n/', $text);
+        $blocks = [];
+        $paragraph = [];
+        $list = [];
+        $blockquote = [];
+
+        $flushParagraph = function () use (&$blocks, &$paragraph) {
+            if (count($paragraph) === 0) return;
+            $blocks[] = '<p>' . implode(' ', array_map('trim', $paragraph)) . '</p>';
+            $paragraph = [];
+        };
+
+        $flushList = function () use (&$blocks, &$list) {
+            if (count($list) === 0) return;
+            $items = array_map(fn($item) => '<li>' . htmlspecialchars(trim($item), ENT_QUOTES, 'UTF-8') . '</li>', $list);
+            $blocks[] = '<ul>' . implode('', $items) . '</ul>';
+            $list = [];
+        };
+
+        $flushQuote = function () use (&$blocks, &$blockquote) {
+            if (count($blockquote) === 0) return;
+            $blocks[] = '<blockquote>' . htmlspecialchars(implode(' ', array_map('trim', $blockquote)), ENT_QUOTES, 'UTF-8') . '</blockquote>';
+            $blockquote = [];
+        };
+
+        foreach ($lines as $line) {
+            $line = rtrim($line);
+            if ($line === '') {
+                $flushParagraph();
+                $flushList();
+                $flushQuote();
+                continue;
+            }
+
+            if (preg_match('/^#+\s+(.*)$/', $line, $m)) {
+                $flushParagraph();
+                $flushList();
+                $flushQuote();
+                $blocks[] = '<h2>' . htmlspecialchars(trim($m[1]), ENT_QUOTES, 'UTF-8') . '</h2>';
+                continue;
+            }
+
+            if (preg_match('/^>\s?(.*)$/', $line, $m)) {
+                $flushParagraph();
+                $flushList();
+                $blockquote[] = $m[1];
+                continue;
+            }
+
+            if (preg_match('/^[-*]\s+(.*)$/', $line, $m)) {
+                $flushParagraph();
+                $flushQuote();
+                $list[] = $m[1];
+                continue;
+            }
+
+            $flushList();
+            $flushQuote();
+            $paragraph[] = $line;
+        }
+
+        $flushParagraph();
+        $flushList();
+        $flushQuote();
+
+        return implode("\n", $blocks);
+    }
+
     // El cuerpo del articulo se guarda como HTML (el editor permite negritas,
     // links, imagenes, etc.), asi que no se puede escapar por completo sin
     // romper el formato. En su lugar se limpia con una lista blanca de tags
@@ -50,8 +126,18 @@ class ArticuloController {
         $html = trim($html);
         if ($html === '') return '';
 
-        $allowedTags = ['p','br','b','strong','i','em','u','a','ul','ol','li','h2','h3','h4','blockquote','img','span'];
-        $allowedAttrs = ['a' => ['href', 'title', 'target', 'rel'], 'img' => ['src', 'alt', 'title']];
+        $allowedTags = ['p', 'br', 'b', 'strong', 'i', 'em', 'u', 'a', 'ul', 'ol', 'li', 'h2', 'h3', 'h4', 'blockquote', 'img', 'div', 'span'];
+        $allowedAttrs = [
+            'a' => ['href', 'title', 'target', 'rel'],
+            'img' => ['src', 'alt', 'title'],
+            'div' => ['class'],
+            'span' => ['class'],
+            'p' => ['class'],
+            'h2' => ['class'],
+            'h3' => ['class'],
+            'h4' => ['class'],
+            'blockquote' => ['class'],
+        ];
 
         $doc = new DOMDocument();
         libxml_use_internal_errors(true);
@@ -76,13 +162,11 @@ class ArticuloController {
                 continue;
             }
             if ($child->nodeType !== XML_ELEMENT_NODE) {
-                continue; // nodo de texto: se deja tal cual
+                continue;
             }
 
             $tag = strtolower($child->nodeName);
             if (!in_array($tag, $allowedTags, true)) {
-                // Tag no permitido (incluye <script>, <iframe>, <svg>...): se
-                // descarta el tag pero se conserva su contenido interno.
                 while ($child->firstChild) {
                     $node->insertBefore($child->firstChild, $child);
                 }
@@ -90,12 +174,28 @@ class ArticuloController {
                 continue;
             }
 
-            $allowed = $allowedAttrs[$tag] ?? [];
             foreach (iterator_to_array($child->attributes) as $attr) {
                 $name = strtolower($attr->nodeName);
                 $value = trim($attr->nodeValue);
                 $isUrlAttr = in_array($name, ['href', 'src'], true);
-                if (!in_array($name, $allowed, true) || ($isUrlAttr && stripos($value, 'javascript:') === 0)) {
+
+                if ($name === 'class') {
+                    $classes = preg_split('/\s+/', $value, -1, PREG_SPLIT_NO_EMPTY);
+                    $safeClasses = [];
+                    foreach ($classes as $className) {
+                        if (preg_match('/^(art-|[A-Za-z0-9_-]+)$/', $className)) {
+                            $safeClasses[] = $className;
+                        }
+                    }
+                    if (empty($safeClasses)) {
+                        $child->removeAttribute($attr->nodeName);
+                    } else {
+                        $child->setAttribute('class', implode(' ', $safeClasses));
+                    }
+                    continue;
+                }
+
+                if ($name === 'style' || $name === 'id' || ($name !== 'href' && $name !== 'title' && $name !== 'target' && $name !== 'rel' && $name !== 'src' && $name !== 'alt') || ($isUrlAttr && stripos($value, 'javascript:') === 0)) {
                     $child->removeAttribute($attr->nodeName);
                 }
             }
@@ -154,8 +254,9 @@ class ArticuloController {
         $destacado = !empty($_POST['destacado']);
         $extracto = trim($_POST['extracto'] ?? '');
         $cuerpo = trim($_POST['cuerpo'] ?? '');
+        $cuerpoHtml = $this->formatPlainTextArticle($cuerpo);
 
-        if (empty($titulo) || empty($extracto) || empty($cuerpo)) {
+        if (empty($titulo) || empty($extracto) || empty($cuerpoHtml)) {
             jsonResponse(['error' => 'Título, extracto y contenido son obligatorios'], 400);
         }
 
@@ -184,7 +285,7 @@ class ArticuloController {
             'destacado' => $destacado,
             'extracto' => $extracto,
             'imagen' => $imagen,
-            'cuerpo' => $this->sanitizeArticleHtml($cuerpo),
+            'cuerpo' => $this->sanitizeArticleHtml($cuerpoHtml),
         ]);
 
         jsonResponse(['success' => true, 'id' => $id, 'slug' => $slug]);
@@ -214,8 +315,9 @@ class ArticuloController {
         $destacado = !empty($_POST['destacado']);
         $extracto = trim($_POST['extracto'] ?? '');
         $cuerpo = trim($_POST['cuerpo'] ?? '');
+        $cuerpoHtml = $this->formatPlainTextArticle($cuerpo);
 
-        if (empty($titulo) || empty($extracto) || empty($cuerpo)) {
+        if (empty($titulo) || empty($extracto) || empty($cuerpoHtml)) {
             jsonResponse(['error' => 'Título, extracto y contenido son obligatorios'], 400);
         }
 
@@ -242,7 +344,7 @@ class ArticuloController {
             'destacado' => $destacado,
             'extracto' => $extracto,
             'imagen' => $imagen,
-            'cuerpo' => $this->sanitizeArticleHtml($cuerpo),
+            'cuerpo' => $this->sanitizeArticleHtml($cuerpoHtml),
         ]);
 
         jsonResponse(['success' => true]);

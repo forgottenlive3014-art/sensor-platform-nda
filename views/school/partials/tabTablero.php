@@ -122,4 +122,16 @@
                     </table>
                 </div>
             </div>
+
+            <?php if (!empty($isGlobalAdmin)): ?>
+            <div class="school-content-group" style="margin-top:24px;">
+                <div class="school-panel-header">
+                    <h3>Reportes globales del administrador</h3>
+                    <button class="school-btn secondary" onclick="showSchoolTab('reports')">Ver reportes completos</button>
+                </div>
+                <div id="globalReportsDashboardContainer">
+                    <div class="text-center" style="padding:40px;color:var(--text3);">Cargando reportes...</div>
+                </div>
+            </div>
+            <?php endif; ?>
         </div>

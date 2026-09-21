@@ -67,7 +67,10 @@ class ContenidoController {
     }
 
     public function saveQuehacer() {
-        $this->saveMerged('quehacer');
+        if (!isLoggedIn() || !$this->isAdminGeneral()) {
+            jsonResponse(['error' => 'No autorizado'], 401);
+        }
+        jsonResponse(['error' => 'El contenido de ¿Qué hacer ahora? no se puede editar desde el panel'], 403);
     }
 
     public function getAcercade() {

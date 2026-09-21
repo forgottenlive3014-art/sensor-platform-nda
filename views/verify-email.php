@@ -11,7 +11,7 @@ ob_start();
     <canvas id="particles"></canvas>
 
     <div class="auth-hero">
-        <div class="auth-verify-bubble">¡Revisa el correo de tu institución! Te enviamos un código para confirmarla.</div>
+        <div class="auth-verify-bubble">¡Revisa el correo de tu institución! Te enviamos un código para confirmar la solicitud.</div>
         <div class="auth-robot-wrap">
             <div class="auth-robot-glow"></div>
             <img src="assets/media/img/alegre.png" class="auth-robot-img" alt="">
@@ -30,7 +30,7 @@ ob_start();
         <p class="auth-subtitle">
             Enviamos un código de 6 dígitos a
             <strong><?= e($institucion['correo'] ?? '') ?></strong>
-            para confirmar <?= e($institucion['nombre'] ?? 'tu institución') ?>.
+            para confirmar el correo de <?= e($institucion['nombre'] ?? 'tu institución') ?>.
         </p>
 
         <?php if (isset($_SESSION['error'])): ?>

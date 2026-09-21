@@ -28,9 +28,17 @@ function ndaToastContainer() {
     return el;
 }
 
+function ndaPlainMessage(message) {
+    return String(message == null ? '' : message)
+        .replace(/[\p{Extended_Pictographic}\uFE0F\u200D]/gu, '')
+        .replace(/\s{2,}/g, ' ')
+        .trim();
+}
+
 // Reemplaza alert(): muestra un aviso no bloqueante dentro de la página.
 function ndaAlert(message, type) {
     type = type || 'info';
+    message = ndaPlainMessage(message);
     var container = ndaToastContainer();
     var toast = document.createElement('div');
     toast.className = 'nda-toast nda-toast-' + type;
@@ -50,6 +58,7 @@ function ndaAlert(message, type) {
 // de la página (no la ventana predeterminada del navegador).
 function ndaConfirm(message) {
     return new Promise(function (resolve) {
+        message = ndaPlainMessage(message);
         var overlay = document.createElement('div');
         overlay.className = 'nda-confirm-overlay';
         overlay.innerHTML =

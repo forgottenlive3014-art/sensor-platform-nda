@@ -7,6 +7,7 @@
                 </button>
             </div>
             <p class="school-hint">Todas las instituciones dadas de alta en el sistema NDA.</p>
+            <div class="institution-list-divider" aria-hidden="true"></div>
             <div class="school-panel-header" style="margin-top:0;">
                 <input type="text" id="institutionsSearch" class="school-select" placeholder="Buscar por nombre o correo..." oninput="debounceInstitutionsSearch()" style="max-width:280px;">
             </div>

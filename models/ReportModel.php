@@ -37,11 +37,12 @@ class ReportModel {
 
     public function getStudentsByClassroom($instId, $filterByInst) {
         $sql = "
-            SELECT a.nombre, COUNT(e.estudiantes_id) as total
+            SELECT a.nombre, i.nombre as institucion, COUNT(e.estudiantes_id) as total
             FROM aulas a
+            LEFT JOIN instituciones i ON i.instituciones_id = a.instituciones_id
             LEFT JOIN estudiantes e ON e.aulas_id = a.aulas_id
         " . ($filterByInst ? " WHERE a.instituciones_id = ?" : "") . "
-            GROUP BY a.aulas_id
+            GROUP BY a.aulas_id, a.nombre, i.nombre
             ORDER BY total DESC
         ";
         $stmt = $this->db->prepare($sql);

@@ -1,7 +1,7 @@
         <!-- ========================================================== -->
         <!--  BLOG PUBLICO: ARTICULOS Y NOTICIAS (solo Admin General) -->
         <!-- ========================================================== -->
-        <div id="tab-articulos" class="school-panel">
+        <div id="tab-quehacer-content" class="school-panel">
             <div class="school-panel-header">
                 <h3>Blog público (artículos y noticias)</h3>
                 <button class="school-btn primary" onclick="openArticuloModal()">
@@ -35,7 +35,7 @@
             <div class="school-modal-content">
                 <div class="school-modal-header">
                     <h3 id="articuloModalTitle">Agregar artículo</h3>
-                    <button class="school-modal-close" onclick="closeModal('articuloModal')">&times;</button>
+                    <button type="button" class="school-modal-close" onclick="closeModal('articuloModal')">&times;</button>
                 </div>
                 <div class="school-modal-body">
                     <form id="articuloForm">
@@ -85,14 +85,53 @@
                             <textarea id="articuloExtracto" rows="2" required></textarea>
                         </div>
                         <div class="school-form-group">
-                            <label>Contenido del artículo (admite HTML) *</label>
-                            <textarea id="articuloCuerpo" rows="10" required></textarea>
+                            <label>Contenido del artículo</label>
+                            <div id="articuloCuerpoEditor"
+                                class="art-editor"
+                                contenteditable="true"
+                                data-placeholder="Escribe aquí el contenido del artículo."></div>
+                            <div class="art-toolbar" role="toolbar" aria-label="Formato">
+                                <button type="button" class="art-tool" data-action="h2" title="Subtítulo">H</button>
+                                <button type="button" class="art-tool" data-action="p" title="Párrafo">¶</button>
+                                <button type="button" class="art-tool" data-action="bold" title="Negrita"><b>B</b></button>
+                                <button type="button" class="art-tool" data-action="italic" title="Cursiva"><i>I</i></button>
+                                <button type="button" class="art-tool" data-action="list" title="Lista">☰</button>
+                                <button type="button" class="art-tool" data-action="quote" title="Cita">“ ”</button>
+                                <button type="button" class="art-tool" data-action="key" title="Dato clave">★</button>
+                                <button type="button" class="art-tool" data-action="link" title="Enlace">🔗</button>
+                            </div>
+                            <input type="hidden" id="articuloCuerpo" name="cuerpo">
                         </div>
                         <div class="school-form-group" style="display:flex;align-items:center;gap:8px;">
                             <input type="checkbox" id="articuloDestacado" style="width:auto;">
                             <label style="margin:0;">Marcar como destacado (portada del blog)</label>
                         </div>
                         <button type="submit" class="school-btn primary">Guardar artículo</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="school-modal" id="articleLinkModal">
+            <div class="school-modal-content article-link-modal-content">
+                <div class="school-modal-header">
+                    <h3>Insertar enlace</h3>
+                    <button type="button" class="school-modal-close" onclick="closeModal('articleLinkModal')">&times;</button>
+                </div>
+                <div class="school-modal-body">
+                    <form id="articleLinkForm">
+                        <div class="school-form-group">
+                            <label>URL del enlace</label>
+                            <input type="url" id="articleLinkUrl" placeholder="https://" required>
+                        </div>
+                        <div class="school-form-group">
+                            <label>Texto visible (opcional)</label>
+                            <input type="text" id="articleLinkText" placeholder="Ej: Ver más">
+                        </div>
+                        <div class="article-link-actions">
+                            <button type="button" class="school-btn secondary" onclick="closeModal('articleLinkModal')">Cancelar</button>
+                            <button type="submit" class="school-btn primary">Aceptar</button>
+                        </div>
                     </form>
                 </div>
             </div>

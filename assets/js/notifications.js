@@ -29,8 +29,11 @@
             return;
         }
         list.innerHTML = items.map(function (n) {
+            var action = n.referencia_tipo === 'solicitud_institucion_aprobada'
+                ? '<a class="nda-notif-action" href="?url=logout&next=login">Iniciar sesión para verificar</a>'
+                : '';
             return '<div class="nda-notif-item' + (n.leida ? '' : ' unread') + '" data-severidad="' + escapeHtml(n.severidad) + '" data-id="' + n.notificaciones_id + '">' +
-                '<div>' + escapeHtml(n.mensaje) + '<br><small style="opacity:.6">' + new Date(n.created_at).toLocaleString('es-SV') + '</small></div>' +
+                '<div>' + escapeHtml(n.mensaje) + '<br><small style="opacity:.6">' + new Date(n.created_at).toLocaleString('es-SV') + '</small>' + action + '</div>' +
                 '</div>';
         }).join('');
     }
@@ -56,6 +59,12 @@
             if (data.notifications && data.notifications.length) {
                 items = data.notifications.reverse().concat(items).slice(0, 30);
                 render();
+                if (data.notifications.some(function (n) {
+                    return n.referencia_tipo === 'institucion_eliminada';
+                }) && !location.search.includes('url=profile')) {
+                    window.location.href = '?url=profile';
+                    return;
+                }
             }
             if (data.last_id) lastId = data.last_id;
             updateBadge();
@@ -110,9 +119,12 @@
                 return;
             }
             inboxList.innerHTML = rows.map(function (n) {
+                var action = n.referencia_tipo === 'solicitud_institucion_aprobada'
+                    ? '<a class="nda-notif-action" href="?url=logout&next=login">Iniciar sesión para verificar</a>'
+                    : '';
                 return '<div class="nda-notif-item' + (n.leida ? '' : ' unread') + '" data-severidad="' + escapeHtml(n.severidad) + '">' +
                     '<div>' + escapeHtml(n.mensaje) +
-                    '<br><small style="opacity:.6">' + escapeHtml(severityLabel(n.severidad)) + ' · ' + new Date(n.created_at).toLocaleString('es-SV') + '</small></div>' +
+                    '<br><small style="opacity:.6">' + escapeHtml(severityLabel(n.severidad)) + ' · ' + new Date(n.created_at).toLocaleString('es-SV') + '</small>' + action + '</div>' +
                     '</div>';
             }).join('');
 

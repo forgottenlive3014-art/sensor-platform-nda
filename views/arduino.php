@@ -3,7 +3,7 @@ $title = $title ?? 'Sismógrafo Arduino - NDA';
 $user = $user ?? null;
 ob_start();
 ?>
-
+ñ
 <!-- CENTRO SISMICO: ESTACION PROPIA EN VIVO (sensor MPU6050) -->
 <section class="sec" id="centro-sismico-vivo">
   <div class="wrap" style="padding-top: 24px;">

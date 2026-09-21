@@ -8,6 +8,7 @@ $routes = $routes ?? [];
 $incidents = $incidents ?? [];
 $isSchoolAdmin = $isSchoolAdmin ?? false;
 $isSchoolStaff = $isSchoolStaff ?? false;
+$isGlobalAdmin = true;
 ob_start();
 ?>
 <link rel="stylesheet" href="<?= asset('css/school.css') ?>">
@@ -19,12 +20,12 @@ ob_start();
 
         <div class="school-content school-content-bnav-pad">
             <?php include __DIR__ . '/../partials/tabTablero.php'; ?>
+            <?php include __DIR__ . '/../partials/tabSolicitudesFundacion.php'; ?>
             <?php include __DIR__ . '/../partials/tabInstituciones.php'; ?>
             <?php include __DIR__ . '/../partials/tabUsuarios.php'; ?>
             <?php include __DIR__ . '/../partials/tabNoticias.php'; ?>
             <?php include __DIR__ . '/../partials/tabNotificaciones.php'; ?>
             <?php include __DIR__ . '/../partials/tabReportes.php'; ?>
-            <?php include __DIR__ . '/../partials/tabArticulos.php'; ?>
             <?php include __DIR__ . '/../partials/tabRecursos.php'; ?>
             <?php include __DIR__ . '/../partials/tabQueHacerContenido.php'; ?>
             <?php include __DIR__ . '/../partials/tabAcercaDeContenido.php'; ?>
@@ -56,24 +57,19 @@ ob_start();
             </button>
         </div>
 
-        <div class="school-bnav-item">
-            <button class="dock-btn dock-blue school-bnav-btn" data-tab="articulos" onclick="showSchoolTab('articulos')" aria-label="Blog público">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-                <span class="dock-tip" aria-hidden="true">Blog público</span>
-            </button>
-        </div>
-
         <div class="school-bnav-item school-bnav-item-main">
             <button class="dock-btn dock-orange school-bnav-btn school-bnav-btn-main active" data-tab="dashboard" onclick="showSchoolTab('dashboard')" aria-label="Tablero">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
+                <span class="school-bnav-badge school-bnav-badge-dot" id="foundationRequestsMainBadge" hidden aria-label="Nuevas solicitudes"></span>
                 <span class="dock-tip" aria-hidden="true">Tablero</span>
             </button>
             <div class="school-bnav-popover">
                 <div class="school-bnav-sub-wrap">
-                    <button class="school-bnav-sub" data-tab="reports" onclick="showSchoolTab('reports')" aria-label="Reportes globales">
-                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
+                    <button class="school-bnav-sub" data-tab="foundation-requests" onclick="showSchoolTab('foundation-requests')" aria-label="Solicitudes para fundar instituciones">
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/></svg>
+                        <span class="school-bnav-badge" id="foundationRequestsBadge" hidden>0</span>
                     </button>
-                    <span class="school-bnav-sub-label">Reportes globales</span>
+                    <span class="school-bnav-sub-label">Solicitudes</span>
                 </div>
                 <div class="school-bnav-sub-wrap">
                     <button class="school-bnav-sub" data-tab="notifications" onclick="showSchoolTab('notifications')" aria-label="Notificaciones">
@@ -92,9 +88,9 @@ ob_start();
         </div>
 
         <div class="school-bnav-item">
-            <button class="dock-btn dock-blue school-bnav-btn" data-tab="quehacer-content" onclick="showSchoolTab('quehacer-content')" aria-label="¿Qué hacer ahora?">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="19.07" y1="19.07" x2="14.83" y2="14.83"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>
-                <span class="dock-tip" aria-hidden="true">¿Qué hacer ahora?</span>
+            <button class="dock-btn dock-blue school-bnav-btn" data-tab="quehacer-content" onclick="showSchoolTab('quehacer-content')" aria-label="Blog público">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                <span class="dock-tip" aria-hidden="true">Blog público</span>
             </button>
         </div>
 

@@ -132,16 +132,32 @@ ob_start();
                         </div>
                     </div>
                     <div class="auth-field">
-                        <label>Teléfono (opcional)</label>
+                        <label>Teléfono *</label>
                         <div class="auth-inp-wrap">
-                            <input type="text" name="inst_phone" placeholder="2233-4455">
+                            <input type="text" name="inst_phone" placeholder="2233-4455" required>
                         </div>
                     </div>
                     <div class="auth-field">
-                        <label>Dirección (opcional)</label>
+                        <label>Dirección *</label>
                         <div class="auth-inp-wrap">
-                            <input type="text" name="inst_address" placeholder="San Salvador, El Salvador">
+                            <input type="text" name="inst_address" placeholder="San Salvador, El Salvador" required>
                         </div>
+                    </div>
+                    <div class="institution-location-field">
+                        <div class="institution-location-heading">
+                            <div>
+                                <label>Ubicación en el mapa</label>
+                                <p class="wiz-hint">Haz clic en el mapa o usa tu ubicación actual para colocar la institución.</p>
+                            </div>
+                            <button type="button" class="institution-location-button" data-location-action="geolocate">Usar mi ubicación</button>
+                        </div>
+                        <div class="institution-location-map" id="registerInstitutionMap"></div>
+                        <label class="institution-location-url-label" for="registerInstitutionMapUrl">O pega un enlace de Google Maps</label>
+                        <input class="institution-location-url" type="url" id="registerInstitutionMapUrl" placeholder="https://maps.google.com/..." data-location-url>
+                        <p class="institution-location-url-hint">Usa un enlace que incluya el punto exacto de la institución.</p>
+                        <input type="hidden" name="inst_lat" id="registerInstitutionLat">
+                        <input type="hidden" name="inst_lng" id="registerInstitutionLng">
+                        <p class="institution-location-coordinates" data-location-coordinates>Sin ubicación seleccionada</p>
                     </div>
                 </div>
 
@@ -313,6 +329,7 @@ ob_start();
 </div>
 
 <script src="<?= asset('js/register-wizard.js') ?>"></script>
+<script src="<?= asset('js/institution-location.js') ?>"></script>
 
 <?php
 $content = ob_get_clean();

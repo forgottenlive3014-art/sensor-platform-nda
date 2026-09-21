@@ -151,6 +151,7 @@ function showSchoolTab(tabId) {
         'incidents': loadIncidents,
         'drills': loadDrills,
         'reports': loadReports,
+        'foundation-requests': loadInstitutionRequests,
         'sections': loadSections,
         'croquis': loadCroquis,
         'board': loadBoard,
@@ -166,7 +167,7 @@ function showSchoolTab(tabId) {
         'blog': loadBlog,
         'articulos': loadArticulos,
         'recursos': loadRecursos,
-        'quehacer-content': () => loadContentForm('quehacer'),
+        'quehacer-content': loadArticulos,
         'acercade-content': () => loadContentForm('acercade')
     };
     if (loaders[tabId]) loaders[tabId]();
@@ -2126,17 +2127,24 @@ async function deleteDrill(id) {
 let __ndaLastReportData = null;
 
 async function loadReports() {
-    const container = document.getElementById('reportsContainer');
-    if (!container) return;
+    const containers = [
+        document.getElementById('reportsContainer'),
+        document.getElementById('globalReportsDashboardContainer')
+    ].filter(Boolean);
+    if (!containers.length) return;
 
-    container.innerHTML = '<div class="text-center" style="padding:40px;color:var(--text3);">Cargando reportes...</div>';
+    containers.forEach(container => {
+        container.innerHTML = '<div class="text-center" style="padding:40px;color:var(--text3);">Cargando reportes...</div>';
+    });
 
     try {
         const response = await fetch('?url=school/reports');
         const data = await response.json();
 
         if (data.error) {
-            container.innerHTML = `<div class="text-center" style="padding:40px;color:var(--text3);">Error: ${data.error}</div>`;
+            containers.forEach(container => {
+                container.innerHTML = `<div class="text-center" style="padding:40px;color:var(--text3);">Error: ${data.error}</div>`;
+            });
             return;
         }
         __ndaLastReportData = data;
@@ -2147,7 +2155,7 @@ async function loadReports() {
         const drillsByStatus = data.drills_by_status || [];
         const drillStatusLabel = { programado: 'Programados', activo: 'En curso', finalizado: 'Finalizados' };
 
-        container.innerHTML = `
+        const reportMarkup = `
             <div class="school-grid-2">
                 <div class="school-report-card">
                     <h4>Estadísticas de Asistencia</h4>
@@ -2176,12 +2184,13 @@ async function loadReports() {
                 </div>
 
                 <div class="school-report-card" style="grid-column:1/-1;">
-                    <h4>Estudiantes por Aula</h4>
+                    <h4>Estudiantes por Aula e Institución</h4>
                     ${studentsByClassroom.length === 0 ? '<p style="color:var(--text3);">No hay datos de estudiantes por aula</p>' :
                         `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;">
                             ${studentsByClassroom.map(c => `
                                 <div style="background:var(--bg3);padding:10px;border-radius:8px;text-align:center;border:1px solid var(--border);">
                                     <div style="font-weight:700;color:var(--text);">${escapeHtml(c.nombre)}</div>
+                                    <div style="font-size:0.72rem;color:var(--text2);margin-top:3px;">${escapeHtml(c.institucion || 'Sin institución')}</div>
                                     <div style="color:var(--acc);font-size:1.2rem;font-weight:800;">${c.total}</div>
                                     <div style="font-size:0.65rem;color:var(--text3);">estudiantes</div>
                                 </div>
@@ -2191,8 +2200,11 @@ async function loadReports() {
                 </div>
             </div>
         `;
+        containers.forEach(container => { container.innerHTML = reportMarkup; });
     } catch (e) {
-        container.innerHTML = '<div class="text-center" style="padding:40px;color:var(--text3);">Error al cargar reportes</div>';
+        containers.forEach(container => {
+            container.innerHTML = '<div class="text-center" style="padding:40px;color:var(--text3);">Error al cargar reportes</div>';
+        });
         console.error(e);
     }
 }
@@ -2229,8 +2241,8 @@ function exportReport() {
     rows.push([]);
 
     rows.push(['Estudiantes por aula']);
-    rows.push(['Aula', 'Total']);
-    (data.students_by_classroom || []).forEach(c => rows.push([c.nombre, c.total]));
+    rows.push(['Institución', 'Aula', 'Total']);
+    (data.students_by_classroom || []).forEach(c => rows.push([c.institucion || 'Sin institución', c.nombre, c.total]));
 
     const csv = rows.map(row => row.map(cell => {
         const v = String(cell ?? '');
@@ -2642,6 +2654,52 @@ function toggleCroquisEditLocation(forceOff) {
     }
 }
 
+function useCurrentInstitutionLocation() {
+    const button = document.getElementById('croquisUseCurrentLocationBtn');
+    const hint = document.getElementById('croquisMapHint');
+    if (!navigator.geolocation) {
+        ndaAlert('Tu navegador no permite obtener la ubicación actual.', 'error');
+        return;
+    }
+    if (button) {
+        button.disabled = true;
+        button.textContent = 'Obteniendo ubicación...';
+    }
+    if (hint) hint.textContent = 'Solicitando permiso de ubicación...';
+    navigator.geolocation.getCurrentPosition(function (position) {
+        saveInstitutionLocation(position.coords.latitude, position.coords.longitude);
+        if (button) {
+            button.disabled = false;
+            button.textContent = 'Usar ubicación actual';
+        }
+    }, function () {
+        if (button) {
+            button.disabled = false;
+            button.textContent = 'Intentar de nuevo';
+        }
+        if (hint) hint.textContent = 'No se pudo obtener la ubicación. Revisa el permiso del navegador.';
+        ndaAlert('No se pudo obtener tu ubicación actual.', 'error');
+    }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 });
+}
+
+function saveInstitutionLocationFromUrl() {
+    const input = document.getElementById('croquisInstitutionMapUrl');
+    const value = input?.value.trim() || '';
+    const match = value.match(/@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/)
+        || value.match(/!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/);
+    if (!match) {
+        ndaAlert('La URL no incluye coordenadas reconocibles. Usa un enlace de Google Maps con el punto exacto.', 'error');
+        return;
+    }
+    const lat = parseFloat(match[1]);
+    const lng = parseFloat(match[2]);
+    if (Math.abs(lat) > 90 || Math.abs(lng) > 180) {
+        ndaAlert('Las coordenadas de la URL no son válidas.', 'error');
+        return;
+    }
+    saveInstitutionLocation(lat, lng);
+}
+
 function showCroquisView(view) {
     document.querySelectorAll('[data-croquis-view]').forEach(btn => {
         btn.style.opacity = btn.dataset.croquisView === view ? '1' : '0.6';
@@ -2791,6 +2849,9 @@ async function saveInstitutionLocation(lat, lng) {
             toggleCroquisEditLocation(true);
             const hint = document.getElementById('croquisMapHint');
             if (hint) hint.textContent = 'Ubicación guardada.';
+            if (__croquisMap) {
+                __croquisMap.flyTo({ center: [lng, lat], zoom: 17, speed: 1.2 });
+            }
             renderCroquisMapMarkers(lat, lng, true, (__croquisLastData && __croquisLastData.puntos) || []);
         } else {
             ndaAlert('Error: ' + (result.error || 'Desconocido'));
@@ -3024,7 +3085,7 @@ async function loadJoinRequests() {
 
         list.innerHTML = requests.map(r => `
             <div class="request-card">
-                <div>
+                <div class="institution-request-info">
                     <strong>${escapeHtml(r.usuario_nombre)}</strong>
                     <span class="request-role">${escapeHtml(roleLabels[r.rol_solicitado] || r.rol_solicitado)}</span>
                     <p class="school-hint" style="margin:4px 0 0;">${escapeHtml(r.usuario_email)}</p>
@@ -3118,6 +3179,104 @@ async function loadInstitutions(page) {
     }
 }
 
+async function loadInstitutionRequests() {
+    const list = document.getElementById('institutionRequestsList');
+    if (!list) return;
+
+    try {
+        const response = await fetch('?url=school/institution-requests');
+        const result = await response.json();
+        if (result.error) {
+            list.innerHTML = `<div class="text-center" style="padding:20px;color:var(--text3);">Error: ${escapeHtml(result.error)}</div>`;
+            return;
+        }
+
+        const requests = result.data || [];
+        const pendingCount = requests.filter(r => r.estado_verificacion === 'pendiente' && !r.codigo_verificacion).length;
+        const badge = document.getElementById('foundationRequestsBadge');
+        const mainBadge = document.getElementById('foundationRequestsMainBadge');
+        if (badge) {
+            badge.textContent = pendingCount;
+            badge.hidden = pendingCount === 0;
+        }
+        if (mainBadge) mainBadge.hidden = pendingCount === 0;
+        if (requests.length === 0) {
+            list.innerHTML = '<div class="text-center" style="padding:16px;color:var(--text3);">No hay solicitudes registradas.</div>';
+            return;
+        }
+
+        list.innerHTML = requests.map(r => `
+            <div class="request-card institution-foundation-request">
+                <div class="institution-request-info">
+                    <div class="institution-request-title">
+                        <strong>${escapeHtml(r.nombre)}</strong>
+                        <span class="request-role">${escapeHtml(r.tipo || 'Institución')}</span>
+                    </div>
+                    <span class="institution-request-status">${r.estado_verificacion === 'verificado' ? 'Aceptada por el usuario' : (r.codigo_verificacion ? 'Aprobada, pendiente de confirmación' : 'Pendiente de revisión')}</span>
+                    <div class="institution-request-list">
+                        <div class="institution-request-row"><span>Solicitante</span><strong>${escapeHtml(r.director_nombre || 'Usuario')}</strong></div>
+                        <div class="institution-request-row"><span>Correo del solicitante</span><strong>${escapeHtml(r.director_email || 'Sin correo')}</strong></div>
+                        <div class="institution-request-row"><span>Correo institucional</span><strong>${escapeHtml(r.correo || 'Sin correo institucional')}</strong></div>
+                        <div class="institution-request-row"><span>Dirección</span><strong>${escapeHtml(r.direccion || 'Sin dirección')}</strong></div>
+                        <div class="institution-request-row"><span>Ubicación en mapa</span><strong>${r.lat !== null && r.lat !== '' && r.lng !== null && r.lng !== '' ? 'Registrada' : 'No seleccionada'}</strong></div>
+                    </div>
+                    ${r.estado_verificacion === 'pendiente' && !r.codigo_verificacion ? `<textarea class="institution-reject-reason" id="institutionRejectReason-${r.instituciones_id}" rows="2" placeholder="Motivo si se rechaza (obligatorio al rechazar)"></textarea>` : ''}
+                </div>
+                ${r.estado_verificacion === 'pendiente' && !r.codigo_verificacion ? `<div class="request-actions"><button class="school-btn primary" onclick="approveInstitutionRequest(${r.instituciones_id})">Aprobar</button><button class="school-btn secondary" onclick="rejectInstitutionRequest(${r.instituciones_id})">Rechazar</button></div>` : ''}
+            </div>
+        `).join('');
+    } catch (e) {
+        list.innerHTML = '<div class="text-center" style="padding:20px;color:var(--text3);">Error al cargar solicitudes.</div>';
+        console.error(e);
+    }
+}
+
+async function approveInstitutionRequest(id) {
+    try {
+        const response = await fetch('?url=school/approve-institution-request', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id })
+        });
+        const result = await response.json();
+        if (!result.success) {
+            ndaAlert('Error: ' + (result.error || 'No se pudo aprobar la solicitud'));
+            return;
+        }
+        ndaAlert('Institución aprobada', 'success');
+        loadInstitutionRequests();
+    } catch (e) {
+        ndaAlert('Error de conexión');
+    }
+}
+
+async function rejectInstitutionRequest(id) {
+    const reasonInput = document.getElementById(`institutionRejectReason-${id}`);
+    const reason = reasonInput?.value.trim() || '';
+    if (!reason) {
+        ndaAlert('Escribe el motivo del rechazo antes de continuar.', 'error');
+        reasonInput?.focus();
+        return;
+    }
+    if (!(await ndaConfirm('¿Rechazar esta solicitud y enviar el motivo al usuario?'))) return;
+    try {
+        const response = await fetch('?url=school/reject-institution-request', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, reason })
+        });
+        const result = await response.json();
+        if (!result.success) {
+            ndaAlert('Error: ' + (result.error || 'No se pudo rechazar la solicitud'));
+            return;
+        }
+        ndaAlert('Solicitud rechazada', 'success');
+        loadInstitutionRequests();
+    } catch (e) {
+        ndaAlert('Error de conexión');
+    }
+}
+
 async function viewInstitutionStats(id, nombre) {
     document.getElementById('institutionStatsTitle').textContent = 'Detalle — ' + nombre;
     const grid = document.getElementById('institutionStatsGrid');
@@ -3153,6 +3312,12 @@ async function viewInstitutionStats(id, nombre) {
 }
 
 const debounceInstitutionsSearch = debounce(() => loadInstitutions(1), 350);
+
+if (document.getElementById('foundationRequestsBadge')) {
+    loadInstitutionRequests();
+    window.setInterval(loadInstitutionRequests, 30000);
+}
+if (document.getElementById('globalReportsDashboardContainer')) loadReports();
 
 document.getElementById('addInstitutionForm')?.addEventListener('submit', async function (e) {
     e.preventDefault();
@@ -3809,6 +3974,133 @@ async function loadArticulos(page) {
 
 const debounceArticulosSearch = debounce(() => loadArticulos(1), 350);
 
+let __articleLinkRange = null;
+
+function insertArticleFormat(type) {
+    const editor = document.getElementById('articuloCuerpoEditor');
+    if (!editor) return;
+    editor.focus();
+
+    const sel = window.getSelection();
+    const hasSelection = sel && sel.rangeCount > 0 && !sel.isCollapsed;
+    const selectedText = hasSelection ? sel.toString() : '';
+
+    const insertHtml = (html) => {
+        document.execCommand('insertHTML', false, html);
+    };
+
+    switch (type) {
+        case 'h2':
+            insertHtml('<h3>' + (selectedText || 'Subtítulo') + '</h3>');
+            break;
+        case 'p':
+            insertHtml('<p>' + (selectedText || 'Escribe aquí el párrafo.') + '</p>');
+            break;
+        case 'bold':
+            document.execCommand('bold');
+            break;
+        case 'italic':
+            document.execCommand('italic');
+            break;
+        case 'list':
+            insertHtml(
+                '<div class="art-takeaway">' +
+                    '<h4>Para recordar</h4>' +
+                    '<ul>' +
+                        '<li>' + (selectedText || 'Primer punto importante.') + '</li>' +
+                        '<li>Segundo punto clave.</li>' +
+                        '<li>Tercer punto para reforzar.</li>' +
+                    '</ul>' +
+                '</div>'
+            );
+            break;
+        case 'quote':
+            insertHtml('<blockquote class="art-quote">' + (selectedText || 'Cita o frase destacada.') + '</blockquote>');
+            break;
+        case 'key':
+            insertHtml('<div class="art-key"><strong>Dato clave</strong>' + (selectedText || 'Texto resaltado importante.') + '</div>');
+            break;
+        case 'link': {
+            const linkUrlInput = document.getElementById('articleLinkUrl');
+            const linkTextInput = document.getElementById('articleLinkText');
+            const selectionText = hasSelection ? selectedText.trim() : '';
+            if (sel && sel.rangeCount > 0) {
+                __articleLinkRange = sel.getRangeAt(0).cloneRange();
+            } else {
+                __articleLinkRange = null;
+            }
+            if (linkUrlInput) {
+                linkUrlInput.value = 'https://';
+                linkTextInput.value = selectionText || '';
+            }
+            openModal('articleLinkModal');
+            break;
+        }
+    }
+}
+
+document.getElementById('articleLinkForm')?.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const editor = document.getElementById('articuloCuerpoEditor');
+    if (!editor) return;
+
+    const url = document.getElementById('articleLinkUrl').value.trim();
+    const text = document.getElementById('articleLinkText').value.trim();
+    if (!url) return;
+
+    const sel = window.getSelection();
+    const range = __articleLinkRange;
+    const hasSelection = range && !range.collapsed;
+    const chosenText = text || (hasSelection ? range.toString() : url);
+
+    const createLinkNode = () => {
+        const link = document.createElement('a');
+        link.href = url;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = chosenText;
+        return link;
+    };
+
+    if (hasSelection) {
+        range.deleteContents();
+        range.insertNode(createLinkNode());
+        if (sel) {
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+    } else {
+        const anchor = createLinkNode();
+        if (range) {
+            range.deleteContents();
+            range.insertNode(anchor);
+        } else {
+            editor.focus();
+            const caret = document.createRange();
+            caret.selectNodeContents(editor);
+            caret.collapse(false);
+            caret.insertNode(anchor);
+        }
+        if (sel) {
+            sel.removeAllRanges();
+            sel.collapseToEnd();
+        }
+    }
+
+    closeModal('articleLinkModal');
+    this.reset();
+    __articleLinkRange = null;
+    editor.focus();
+});
+
+document.addEventListener('click', function (e) {
+    const tool = e.target.closest('.art-tool');
+    if (!tool) return;
+    e.preventDefault();
+    insertArticleFormat(tool.dataset.action);
+});
+
 function openArticuloModal() {
     document.getElementById('articuloForm').reset();
     document.getElementById('articuloId').value = '';
@@ -3816,6 +4108,11 @@ function openArticuloModal() {
     document.getElementById('articuloColor').value = '#f29f05';
     document.getElementById('articuloAutor').value = 'Equipo NDA';
     document.getElementById('articuloTiempo').value = '5 min';
+
+    const editor = document.getElementById('articuloCuerpoEditor');
+    const hidden = document.getElementById('articuloCuerpo');
+    if (editor) editor.innerHTML = '';
+    if (hidden) hidden.value = '';
     openModal('articuloModal');
 }
 
@@ -3832,13 +4129,23 @@ function editArticulo(id) {
     document.getElementById('articuloAutor').value = a.autor_nombre || 'Equipo NDA';
     document.getElementById('articuloTiempo').value = a.tiempo || '5 min';
     document.getElementById('articuloExtracto').value = a.extracto || '';
-    document.getElementById('articuloCuerpo').value = a.cuerpo || '';
     document.getElementById('articuloDestacado').checked = a.destacado == 1;
+
+    const editor = document.getElementById('articuloCuerpoEditor');
+    const hidden = document.getElementById('articuloCuerpo');
+    const contenido = a.cuerpo || '';
+    if (editor) editor.innerHTML = contenido;
+    if (hidden) hidden.value = contenido;
     openModal('articuloModal');
 }
 
 document.getElementById('articuloForm')?.addEventListener('submit', async function (e) {
     e.preventDefault();
+
+    const editor = document.getElementById('articuloCuerpoEditor');
+    const hidden = document.getElementById('articuloCuerpo');
+    if (editor && hidden) hidden.value = editor.innerHTML;
+
     const id = document.getElementById('articuloId').value;
     const formData = new FormData();
     if (id) formData.append('id', id);
@@ -3850,7 +4157,7 @@ document.getElementById('articuloForm')?.addEventListener('submit', async functi
     formData.append('autor_nombre', document.getElementById('articuloAutor').value);
     formData.append('tiempo', document.getElementById('articuloTiempo').value);
     formData.append('extracto', document.getElementById('articuloExtracto').value);
-    formData.append('cuerpo', document.getElementById('articuloCuerpo').value);
+    formData.append('cuerpo', editor ? editor.innerHTML : '');
     if (document.getElementById('articuloDestacado').checked) formData.append('destacado', '1');
     const fileInput = document.getElementById('articuloImagen');
     if (fileInput && fileInput.files[0]) {
@@ -3860,7 +4167,16 @@ document.getElementById('articuloForm')?.addEventListener('submit', async functi
     try {
         const url = id ? '?url=admin/update-articulo' : '?url=admin/add-articulo';
         const response = await fetch(url, { method: 'POST', body: formData });
-        const result = await response.json();
+        const responseText = await response.text();
+        let result;
+        try {
+            result = JSON.parse(responseText);
+        } catch (parseError) {
+            throw new Error(responseText || 'El servidor no devolvió una respuesta válida');
+        }
+        if (!response.ok) {
+            throw new Error(result.error || 'No se pudo guardar el artículo');
+        }
         if (result.success) {
             ndaAlert('✅ Artículo guardado correctamente');
             closeModal('articuloModal');
@@ -3870,7 +4186,7 @@ document.getElementById('articuloForm')?.addEventListener('submit', async functi
             ndaAlert('❌ Error: ' + (result.error || 'Desconocido'));
         }
     } catch (e) {
-        ndaAlert('❌ Error de conexión');
+        ndaAlert('❌ ' + (e.message || 'Error de conexión'));
         console.error(e);
     }
 });

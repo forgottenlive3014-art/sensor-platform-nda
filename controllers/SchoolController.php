@@ -59,8 +59,45 @@ class SchoolController {
         $u = currentUser();
         if (!$u) return false;
         if ($u['role'] === 'admin') return true;
-        return in_array($u['role'], ['director', 'docente', 'alumno', 'padre', 'administrativo'], true)
-            && $u['estado_institucional'] === 'aprobado';
+        $db = getDB();
+        $stmt = $db->prepare("SELECT u.role, u.institucion_id, u.estado_institucional,
+                                     i.estado_verificacion, i.director_id,
+                                     i.codigo_verificacion
+                              FROM usuarios u
+                              LEFT JOIN instituciones i ON i.instituciones_id = u.institucion_id
+                              WHERE u.usuarios_id = ?");
+        $stmt->execute([$u['id']]);
+        $access = $stmt->fetch();
+        if (!$access || empty($access['institucion_id'])) return false;
+
+        $isFounder = (int) ($access['director_id'] ?? 0) === (int) $u['id'];
+        if ($isFounder
+            && $access['estado_institucional'] === 'aprobado'
+            && $access['estado_verificacion'] === 'pendiente'
+            && empty($access['codigo_verificacion'])) {
+            $db->prepare("UPDATE instituciones SET estado_verificacion = 'verificado' WHERE instituciones_id = ?")
+               ->execute([$access['institucion_id']]);
+            $access['estado_verificacion'] = 'verificado';
+        }
+        if ($isFounder && $access['estado_institucional'] === 'aprobado') {
+            if ($access['estado_verificacion'] !== 'verificado') {
+                $db->prepare("UPDATE instituciones SET estado_verificacion = 'verificado' WHERE instituciones_id = ?")
+                   ->execute([$access['institucion_id']]);
+                $access['estado_verificacion'] = 'verificado';
+            }
+            if ($access['role'] !== 'director' || $access['estado_institucional'] !== 'aprobado') {
+                $db->prepare("UPDATE usuarios SET role = 'director', estado_institucional = 'aprobado' WHERE usuarios_id = ?")
+                   ->execute([$u['id']]);
+            }
+            $_SESSION['user_role'] = 'director';
+            $_SESSION['institucion_id'] = $access['institucion_id'];
+            $_SESSION['estado_institucional'] = 'aprobado';
+            return true;
+        }
+
+        return in_array($access['role'], ['director', 'docente', 'alumno', 'padre', 'administrativo'], true)
+            && $access['estado_institucional'] === 'aprobado'
+            && !empty($access['estado_verificacion']);
     }
 
     public function index() {

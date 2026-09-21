@@ -36,9 +36,22 @@
                 <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
                     <p class="school-hint" id="croquisMapHint" style="margin:0;">Cargando mapa...</p>
                     <?php if (!empty($isSchoolAdmin)): ?>
-                    <button type="button" class="school-btn secondary" id="croquisEditLocationBtn" onclick="toggleCroquisEditLocation()">Editar ubicación</button>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                        <button type="button" class="school-btn secondary" id="croquisEditLocationBtn" onclick="toggleCroquisEditLocation()">Editar ubicación</button>
+                        <button type="button" class="school-btn secondary" id="croquisUseCurrentLocationBtn" onclick="useCurrentInstitutionLocation()">Usar ubicación actual</button>
+                    </div>
                     <?php endif; ?>
                 </div>
+                <?php if (!empty($isSchoolAdmin)): ?>
+                <div class="school-location-url-editor">
+                    <label for="croquisInstitutionMapUrl">Cambiar ubicación con URL de Google Maps</label>
+                    <div class="school-location-url-row">
+                        <input type="url" id="croquisInstitutionMapUrl" placeholder="https://maps.google.com/...">
+                        <button type="button" class="school-btn secondary" onclick="saveInstitutionLocationFromUrl()">Guardar URL</button>
+                    </div>
+                    <p class="school-hint">Pega un enlace que contenga el punto exacto de la institución.</p>
+                </div>
+                <?php endif; ?>
                 <div id="croquisMap" style="height:420px;border-radius:10px;overflow:hidden;margin-top:10px;"></div>
             </div>
         </div>

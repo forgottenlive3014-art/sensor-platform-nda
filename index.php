@@ -95,7 +95,10 @@ function currentUser() {
         try {
             $db = getDB();
             $stmt = $db->prepare("
-                SELECT u.role, u.institucion_id, u.estado_institucional, u.foto_perfil, i.nombre AS institucion_nombre
+                  SELECT u.role, u.institucion_id, u.estado_institucional, u.foto_perfil, i.nombre AS institucion_nombre,
+                      i.estado_verificacion AS institucion_estado_verificacion,
+                      i.director_id AS institucion_director_id,
+                      i.codigo_verificacion AS institucion_codigo_verificacion
                 FROM usuarios u
                 LEFT JOIN instituciones i ON i.instituciones_id = u.institucion_id
                 WHERE u.usuarios_id = ?
@@ -103,6 +106,42 @@ function currentUser() {
             $stmt->execute([$_SESSION['user_id']]);
             $row = $stmt->fetch();
             if ($row) {
+                if ($row['role'] !== 'admin'
+                    && $row['institucion_id'] !== null
+                    && $row['institucion_nombre'] === null) {
+                    $db->prepare("UPDATE usuarios SET role = 'user', institucion_id = NULL, estado_institucional = 'ninguno' WHERE usuarios_id = ?")
+                       ->execute([$_SESSION['user_id']]);
+                    $row['role'] = 'user';
+                    $row['institucion_id'] = null;
+                    $row['estado_institucional'] = 'ninguno';
+                }
+                if ($row['role'] !== 'admin'
+                    && $row['institucion_estado_verificacion'] === 'pendiente'
+                    && empty($row['institucion_codigo_verificacion'])
+                    && (int) $row['institucion_director_id'] === (int) $_SESSION['user_id']
+                    && $row['estado_institucional'] === 'aprobado') {
+                    $db->prepare("UPDATE usuarios SET role = 'director' WHERE usuarios_id = ?")
+                       ->execute([$_SESSION['user_id']]);
+                    $row['role'] = 'director';
+                    $db->prepare("UPDATE instituciones SET estado_verificacion = 'verificado' WHERE instituciones_id = ?")
+                       ->execute([$row['institucion_id']]);
+                    $row['institucion_estado_verificacion'] = 'verificado';
+                } elseif ($row['role'] === 'director'
+                    && $row['institucion_estado_verificacion'] === 'pendiente'
+                    && empty($row['institucion_codigo_verificacion'])
+                    && (int) $row['institucion_director_id'] === (int) $_SESSION['user_id']) {
+                    $db->prepare("UPDATE usuarios SET role = 'user' WHERE usuarios_id = ?")
+                       ->execute([$_SESSION['user_id']]);
+                    $row['role'] = 'user';
+                }
+                if ($row['role'] !== 'admin'
+                    && $row['institucion_estado_verificacion'] === 'verificado'
+                    && (int) $row['institucion_director_id'] === (int) $_SESSION['user_id']) {
+                    $db->prepare("UPDATE usuarios SET role = 'director', estado_institucional = 'aprobado' WHERE usuarios_id = ?")
+                       ->execute([$_SESSION['user_id']]);
+                    $row['role'] = 'director';
+                    $row['estado_institucional'] = 'aprobado';
+                }
                 $fresh = $row;
                 $_SESSION['user_role'] = $row['role'];
                 $_SESSION['institucion_id'] = $row['institucion_id'];
@@ -145,7 +184,7 @@ function hasApprovedInstitution() {
 }
 
 function e($text) {
-    return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+    return htmlspecialchars((string) ($text ?? ''), ENT_QUOTES, 'UTF-8');
 }
 
 function jsonResponse($data, $code = 200) {
@@ -309,6 +348,9 @@ $routeMap = [
     'school/update-institution'  => ['InstitucionController', 'update'],
     'school/delete-institution'  => ['InstitucionController', 'delete'],
     'school/institution-stats'   => ['InstitucionController', 'stats'],
+    'school/institution-requests' => ['InstitucionController', 'requests'],
+    'school/approve-institution-request' => ['InstitucionController', 'approveRequest'],
+    'school/reject-institution-request' => ['InstitucionController', 'rejectRequest'],
 
     // Usuarios y roles (CRUD real, Admin General y Admin Institucional)
     'school/users'         => ['UserController', 'list'],

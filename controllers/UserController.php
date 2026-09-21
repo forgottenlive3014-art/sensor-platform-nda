@@ -36,6 +36,12 @@ class UserController {
         if (!isLoggedIn() || !$this->isSchoolAdmin()) {
             jsonResponse(['error' => 'No autorizado'], 401);
         }
+        $db = getDB();
+        $db->exec("UPDATE usuarios u
+                   LEFT JOIN instituciones i ON i.instituciones_id = u.institucion_id
+                   SET u.role = 'user', u.institucion_id = NULL, u.estado_institucional = 'ninguno'
+                   WHERE u.role IN ('director', 'docente', 'alumno', 'padre', 'administrativo')
+                     AND (u.institucion_id IS NULL OR i.instituciones_id IS NULL)");
         $model = new UserModel();
         $search = trim($_GET['q'] ?? '');
         $role = trim($_GET['role'] ?? '');

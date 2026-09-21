@@ -48,6 +48,15 @@ class InstitutionModel {
         return $stmt->fetch();
     }
 
+    public function getPendingFoundations() {
+        $stmt = $this->db->query("SELECT i.*, u.nombre AS director_nombre, u.email AS director_email
+            FROM instituciones i
+            LEFT JOIN usuarios u ON u.usuarios_id = i.director_id
+                        WHERE i.director_id IS NOT NULL
+            ORDER BY i.created_at ASC");
+        return $stmt->fetchAll();
+    }
+
     // Desglose de una institucion para el superadmin: cuantos docentes,
     // alumnos, personal administrativo, padres, rutas de evacuacion e
     // incidentes ("danos") tiene. Una sola consulta con subconsultas,

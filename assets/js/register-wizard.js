@@ -37,7 +37,9 @@
                     inst_email: fInstEmail ? fInstEmail.value : '',
                     inst_director_email: (form.querySelector('input[name="inst_director_email"]') || {}).value || '',
                     inst_phone: (form.querySelector('input[name="inst_phone"]') || {}).value || '',
-                    inst_address: (form.querySelector('input[name="inst_address"]') || {}).value || ''
+                    inst_address: (form.querySelector('input[name="inst_address"]') || {}).value || '',
+                    inst_lat: (form.querySelector('input[name="inst_lat"]') || {}).value || '',
+                    inst_lng: (form.querySelector('input[name="inst_lng"]') || {}).value || ''
                 }
             }));
         } catch (e) { /* sessionStorage puede fallar en modo privado; no es grave */ }
@@ -395,6 +397,8 @@
         setVal('input[name="inst_director_email"]', f.inst_director_email);
         setVal('input[name="inst_phone"]', f.inst_phone);
         setVal('input[name="inst_address"]', f.inst_address);
+        setVal('input[name="inst_lat"]', f.inst_lat);
+        setVal('input[name="inst_lng"]', f.inst_lng);
 
         if (state.accountType) {
             accountType = state.accountType;

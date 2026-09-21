@@ -3,6 +3,18 @@ class ArticuloModel {
 
     private $db;
 
+    private function stripHtmlClasses($html) {
+        if (!is_string($html) || $html === '') {
+            return $html;
+        }
+
+        $html = preg_replace('/\s+on[a-z]+\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s>]+)/i', '', $html);
+        $html = preg_replace('/\s+(href|src)\s*=\s*(?:"\s*javascript:[^"]*"|\'\s*javascript:[^\']*\')/i', '', $html);
+        $html = preg_replace('/\s+style\s*=\s*(?:"[^"]*"|\'[^\']*\')/i', '', $html);
+
+        return $html;
+    }
+
     public function __construct() {
         $this->db = getDB();
     }
@@ -57,6 +69,7 @@ class ArticuloModel {
         $rows = $stmt->fetchAll();
         $out = [];
         foreach ($rows as $r) {
+            $cuerpo = $this->stripHtmlClasses($r['cuerpo'] ?? '');
             $out[$r['slug']] = [
                 'id' => $r['blog_id'],
                 'titulo' => $r['titulo'],
@@ -68,7 +81,7 @@ class ArticuloModel {
                 'destacado' => (bool) $r['destacado'],
                 'img' => $r['imagen'],
                 'extracto' => $r['extracto'],
-                'cuerpo' => $r['cuerpo'],
+                'cuerpo' => $cuerpo,
             ];
         }
         return $out;

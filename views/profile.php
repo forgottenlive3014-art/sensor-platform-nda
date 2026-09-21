@@ -2,6 +2,7 @@
 $title = $title ?? 'Mi perfil · NDA';
 $profileUser = $profileUser ?? [];
 $instituciones = $instituciones ?? [];
+$pendingFoundation = $pendingFoundation ?? false;
 $pendingRequest = $pendingRequest ?? null;
 $previousLoginAt = $previousLoginAt ?? null;
 ob_start();
@@ -152,6 +153,11 @@ if ($portada !== '' && str_starts_with($portada, 'preset:')) {
             </div>
             <a href="?url=school" class="profile-btn profile-btn-out" style="margin-top:14px;display:inline-block;">Ir a Gestión Escolar</a>
 
+        <?php elseif ($pendingFoundation): ?>
+            <div class="profile-institution-status pending">
+                <strong>Solicitud para fundar institución pendiente</strong>
+                <p>Tu correo ya fue confirmado. El Admin debe revisar y aprobar la institución antes de activar tu acceso administrativo.</p>
+            </div>
         <?php elseif ($profileUser['estado_institucional'] === 'pendiente' && $pendingRequest): ?>
             <div class="profile-inst-status pending">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -234,12 +240,28 @@ if ($portada !== '' && str_starts_with($portada, 'preset:')) {
                         <input type="email" name="inst_director_email" placeholder="tunombre@gmail.com">
                     </div>
                     <div class="profile-field">
-                        <label>Teléfono (opcional)</label>
-                        <input type="text" name="inst_phone" placeholder="2233-4455">
+                        <label>Teléfono *</label>
+                        <input type="text" name="inst_phone" placeholder="2233-4455" required>
                     </div>
                     <div class="profile-field">
-                        <label>Dirección (opcional)</label>
-                        <input type="text" name="inst_address" placeholder="San Salvador, El Salvador">
+                        <label>Dirección *</label>
+                        <input type="text" name="inst_address" placeholder="San Salvador, El Salvador" required>
+                    </div>
+                    <div class="institution-location-field">
+                        <div class="institution-location-heading">
+                            <div>
+                                <label>Ubicación en el mapa</label>
+                                <p class="profile-hint">Haz clic en el mapa o usa tu ubicación actual para colocar la institución.</p>
+                            </div>
+                            <button type="button" class="institution-location-button" data-location-action="geolocate">Usar mi ubicación</button>
+                        </div>
+                        <div class="institution-location-map" id="profileInstitutionMap"></div>
+                        <label class="institution-location-url-label" for="profileInstitutionMapUrl">O pega un enlace de Google Maps</label>
+                        <input class="institution-location-url" type="url" id="profileInstitutionMapUrl" placeholder="https://maps.google.com/..." data-location-url>
+                        <p class="institution-location-url-hint">Usa un enlace que incluya el punto exacto de la institución.</p>
+                        <input type="hidden" name="inst_lat" id="profileInstitutionLat">
+                        <input type="hidden" name="inst_lng" id="profileInstitutionLng">
+                        <p class="institution-location-coordinates" data-location-coordinates>Sin ubicación seleccionada</p>
                     </div>
                     <button type="submit" class="profile-btn">Fundar institución</button>
                 </form>
