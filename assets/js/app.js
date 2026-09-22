@@ -1337,8 +1337,8 @@ function ndaRenderTimelineDetail(key, detail) {
                 <div style="font-size:.76rem;color:var(--text3);margin-bottom:12px">${e.region}</div>
                 <div class="tld-stats">${e.stats.map(s => `<div class="tlds"><div class="tlds-v">${s.v}</div><div class="tlds-l">${s.l}</div></div>`).join('')}</div>
                 <div class="tld-nav">
-                    ${active > 0 ? `<button class="tldn-btn" onclick="ndaSetTimeline('${key}', ${active - 1})"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Anterior</button>` : ''}
-                    ${active < data.length - 1 ? `<button class="tldn-btn" onclick="ndaSetTimeline('${key}', ${active + 1})">Siguiente</button>` : ''}
+                    ${active > 0 ? `<button type="button" class="tldn-btn" onclick="ndaSetTimeline('${key}', ${active - 1})"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Anterior</button>` : ''}
+                    ${active < data.length - 1 ? `<button type="button" class="tldn-btn" onclick="ndaSetTimeline('${key}', ${active + 1})">Siguiente <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>` : ''}
                 </div>
             </div>
         </div>

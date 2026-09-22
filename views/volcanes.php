@@ -568,7 +568,6 @@ ob_start();
             <span class="v-magma-card-num">01</span>
             <h4>Magma</h4>
             <p>Roca fundida que permanece bajo la superficie terrestre. Contiene minerales fundidos, cristales y gases disueltos.</p>
-            <a href="#" class="v-magma-card-btn">Explorar</a>
           </div>
         </div>
 
@@ -581,7 +580,6 @@ ob_start();
             <span class="v-magma-card-num">02</span>
             <h4>Lava</h4>
             <p>Cuando el magma alcanza la superficie recibe el nombre de lava. Dependiendo de su composición puede ser más fluida o viscosa.</p>
-            <a href="#" class="v-magma-card-btn">Explorar</a>
           </div>
         </div>
 
@@ -594,7 +592,6 @@ ob_start();
             <span class="v-magma-card-num">03</span>
             <h4>Ceniza volcánica</h4>
             <p>Diminutas partículas de roca y vidrio volcánico transportadas por el viento a grandes distancias.</p>
-            <a href="#" class="v-magma-card-btn">Explorar</a>
           </div>
         </div>
 
@@ -607,7 +604,6 @@ ob_start();
             <span class="v-magma-card-num">04</span>
             <h4>Piroclastos</h4>
             <p>Fragmentos sólidos expulsados durante una erupción: ceniza, lapilli, bombas y bloques volcánicos.</p>
-            <a href="#" class="v-magma-card-btn">Explorar</a>
           </div>
         </div>
 
@@ -620,7 +616,6 @@ ob_start();
             <span class="v-magma-card-num">05</span>
             <h4>Gases volcánicos</h4>
             <p>Vapor de agua, dióxido de carbono, dióxido de azufre y otros gases liberados durante la actividad volcánica.</p>
-            <a href="#" class="v-magma-card-btn">Explorar</a>
           </div>
         </div>
 
@@ -633,7 +628,6 @@ ob_start();
             <span class="v-magma-card-num">06</span>
             <h4>Bombas volcánicas</h4>
             <p>Grandes fragmentos de lava expulsados aún calientes que se solidifican mientras viajan por el aire.</p>
-            <a href="#" class="v-magma-card-btn">Explorar</a>
           </div>
         </div>
 
@@ -646,7 +640,6 @@ ob_start();
             <span class="v-magma-card-num">07</span>
             <h4>Flujos piroclásticos</h4>
             <p>Mezcla de gases extremadamente calientes, ceniza y fragmentos de roca que descienden a gran velocidad.</p>
-            <a href="#" class="v-magma-card-btn">Explorar</a>
           </div>
         </div>
 
@@ -2278,50 +2271,52 @@ document.addEventListener('DOMContentLoaded', function () {
       <div class="v-card v-card-danger">
         <div class="v-card-img"><img src="assets/media/img/cenizaV.png" alt="Ceniza" loading="lazy"></div>
         <div class="v-card-body">
-          <h4>Caída de Ceniza</h4>
-          <p>Afecta cultivos, techos, vías respiratorias y visibilidad a kilómetros del cráter.</p>
+          <h4>Caída de ceniza</h4>
+          <p>Afecta cultivos, viviendas, vías respiratorias y la visibilidad a varios kilómetros del cráter.</p>
         </div>
       </div>
       <div class="v-card v-card-danger">
         <div class="v-card-img"><img src="assets/media/img/gasV.jpg" alt="Gases" loading="lazy"></div>
         <div class="v-card-body">
-          <h4>Gases Volcánicos</h4>
-          <p>SO₂ irrita ojos y pulmones. CO₂ es incoloro e inodoro. H₂S es tóxico.</p>
+          <h4>Gases volcánicos</h4>
+          <p>SO₂ irrita ojos y pulmones; CO₂ puede acumularse en zonas bajas y sin ventilación; H₂S es altamente tóxico.</p>
         </div>
       </div>
       <div class="v-card v-card-danger">
         <div class="v-card-img"><img src="assets/media/img/piroclastosV.png" alt="Piroclásticos" loading="lazy"></div>
         <div class="v-card-body">
-          <h4>Flujos Piroclásticos</h4>
-          <p>Nubes de gas y roca a alta temperatura que descienden rápido por las laderas.</p>
+          <h4>Flujos piroclásticos</h4>
+          <p>Nubes calientes de gas, ceniza y roca que bajan rápidamente por las laderas.</p>
         </div>
       </div>
       <div class="v-card v-card-danger">
         <div class="v-card-img"><img src="assets/media/img/lavaV.png" alt="Lahares" loading="lazy"></div>
         <div class="v-card-body">
           <h4>Lahares</h4>
-          <p>Coladas de lodo volcánico que bajan por quebradas. Mortíferos por su velocidad.</p>
+          <p>Coladas de lodo y rocas que bajan por quebradas y ríos a gran velocidad.</p>
         </div>
       </div>
       <div class="v-card v-card-danger">
         <div class="v-card-img"><img src="assets/media/img/deslizamientoV.jpeg" alt="Deslizamientos" loading="lazy"></div>
         <div class="v-card-body">
           <h4>Deslizamientos</h4>
-          <p>Fragmentos del volcán se derrumban por caída de rocas o deslizamientos.</p>
+          <p>Rocas y materiales del flanco del volcán pueden desprenderse y caer en grandes deslizamientos.</p>
         </div>
       </div>
       <div class="v-card v-card-danger">
         <div class="v-card-img"><img src="assets/media/img/tsunamiV.webp" alt="Tsunamis" loading="lazy"></div>
         <div class="v-card-body">
           <h4>Tsunamis</h4>
-          <p>Olas gigantes generadas por sismos submarinos o deslizamientos en el fondo oceánico.</p>
+          <p>Olas de gran altura provocadas por sismos submarinos o deslizamientos marinos.</p>
         </div>
       </div>
     </div>
 
-    <div class="v-mapa">
-      <img src="assets/media/img/volcan-mapa-amenaza.jpg" alt="Mapa de amenaza volcánica" loading="lazy">
-      <span class="v-mapa-label">Mapa de amenaza volcánica de El Salvador</span>
+    <div class="v-mapa-wrap">
+      <h3 class="v-mapa-title">Mapa de amenaza volcánica de El Salvador</h3>
+      <div class="v-mapa">
+        <img src="assets/media/img/volcan-mapa-amenaza.png" alt="Mapa de amenaza volcánica" loading="lazy">
+      </div>
     </div>
   </div>
 </section>

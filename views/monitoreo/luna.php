@@ -2,7 +2,7 @@
 $title = $title ?? 'Fases de la Luna - NDA';
 $currentSlug = 'luna';
 $user = $user ?? null;
-$extraCss = ['css/luna.css'];
+$extraCss = ['css/volcanes.css', 'css/luna.css'];
 ob_start();
 ?>
 
@@ -30,6 +30,7 @@ ob_start();
     </div>
 
     <!-- TARJETA PRINCIPAL: MODELO 3D -->
+    <section class="luna-block" id="bloque-3d">
     <div class="luna-hero-card">
       <div class="luna-hero-glow" aria-hidden="true"></div>
 
@@ -50,12 +51,29 @@ ob_start();
             <div class="luna-age-big" id="lunaAgeBig">—</div>
           </div>
         </div>
+
+        <div class="luna-hero-description">
+          <div class="luna-desc-card">
+            <div class="luna-desc-kicker">02 · Fase actual</div>
+            <div class="luna-desc-hdr">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              <span>¿Qué significa la fase de <strong id="lunaDescTitle">—</strong>?</span>
+            </div>
+            <p id="lunaDescBody">Calculando la fase lunar actual a partir del ciclo sinódico (29.53 días)…</p>
+            <div class="luna-desc-illum">Iluminación actual: <strong id="lunaDescIllum">—</strong></div>
+          </div>
+        </div>
       </div>
     </div>
+    </section>
 
     <!-- INFORMACION ASTRONOMICA -->
-    <div class="luna-section">
-      <div class="luna-section-title">Información Astronómica</div>
+    <section class="luna-block luna-section v-section" id="informacion-astronomica">
+      <div class="v-header center">
+        <span class="v-tag">01 · Observación</span>
+        <h2 class="v-title">Información <span>astronómica</span></h2>
+        <p class="v-sub">Datos actuales de la Luna y su posición para tu ubicación.</p>
+      </div>
       <div class="luna-astro-grid">
         <div class="luna-astro-card">
           <div class="lac-lbl">Iluminación Lunar</div>
@@ -78,29 +96,25 @@ ob_start();
           <div class="lac-val" id="lunaCardNextFull">—</div>
         </div>
       </div>
-    </div>
-
-    <!-- DESCRIPCION DE LA FASE -->
-    <div class="luna-section">
-      <div class="luna-desc-card">
-        <div class="luna-desc-hdr">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-          <span>¿Qué significa la fase de <strong id="lunaDescTitle">—</strong>?</span>
-        </div>
-        <p id="lunaDescBody">Calculando la fase lunar actual a partir del ciclo sinódico (29.53 días)…</p>
-        <div class="luna-desc-illum">Iluminación actual: <strong id="lunaDescIllum">—</strong></div>
-      </div>
-    </div>
+    </section>
 
     <!-- CALENDARIO DE FASES -->
-    <div class="luna-section">
-      <div class="luna-section-title">Calendario de Fases</div>
+    <section class="luna-block luna-section v-section" id="calendario-fases">
+      <div class="v-header center">
+        <span class="v-tag">02 · Calendario</span>
+        <h2 class="v-title">Calendario de <span>fases</span></h2>
+        <p class="v-sub">Próximos cambios visibles del ciclo lunar.</p>
+      </div>
       <div class="luna-next-cards" id="lunaNextCards"></div>
-    </div>
+    </section>
 
     <!-- MAREAS -->
-    <div class="luna-section">
-      <div class="luna-section-title">Cómo Afecta la Luna a las Mareas</div>
+    <section class="luna-block luna-section v-section v-section-dark" id="mareas">
+      <div class="v-header center">
+        <span class="v-tag">03 · Mareas</span>
+        <h2 class="v-title">Cómo afecta la Luna a las <span>mareas</span></h2>
+        <p class="v-sub">La relación entre el ciclo lunar, el océano y la costa salvadoreña.</p>
+      </div>
       <div class="luna-tide-next" id="lunaTideNext"></div>
       <div class="luna-tide-grid">
         <div class="luna-tide-card spring">
@@ -124,12 +138,15 @@ ob_start();
           <p>Zonas como Los Blancos y El Espino son vulnerables cuando una marea viva coincide con lluvia intensa. El MARN intensifica el monitoreo en temporada de huracanes.</p>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- CURIOSIDADES -->
-    <div class="luna-section">
+    <section class="luna-block luna-section v-section" id="curiosidades">
       <div class="luna-curio-card">
-        <div class="luna-section-title" style="margin-bottom:14px">Curiosidades</div>
+        <div class="v-header center" style="margin-bottom:24px">
+          <span class="v-tag">04 · Exploración</span>
+          <h2 class="v-title">Curiosidades de la <span>Luna</span></h2>
+        </div>
         <div class="luna-curio-grid">
           <div class="luna-curio-item">
             <div class="lci-icon lci-icon-a"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><polyline points="21 3 21 9 15 9"/></svg></div>
@@ -153,7 +170,7 @@ ob_start();
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
   </div>
 </div>

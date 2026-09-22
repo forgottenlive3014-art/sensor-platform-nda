@@ -2,7 +2,7 @@
 $title = $title ?? 'Sequías - NDA';
 $user = $user ?? null;
 $currentSlug = 'sequias';
-$extraCss = ['css/desastres-base.css', 'css/sequias.css'];
+$extraCss = ['css/desastres-base.css', 'css/volcanes.css', 'css/sequias.css'];
 ob_start();
 ?>
 
@@ -58,59 +58,53 @@ ob_start();
 </section>
 
 <!-- INFORMACION GENERAL -->
-<section class="sec" id="info-general">
+<section class="v-section" id="info-general">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Fenómeno Climático</div>
-      <h2 class="sec-title">Información <span class="acc">general</span></h2>
-      <p class="sec-sub">Qué es una sequía y cómo se origina</p>
+    <div class="v-header center">
+      <span class="v-tag">01 · Fenómeno climático</span>
+      <h2 class="v-title">Información <span>general</span></h2>
+      <p class="v-sub">Qué es una sequía y cómo se origina.</p>
     </div>
-    <div class="dis-info-grid">
-      <div class="dis-info-card" style="display:flex;flex-direction:column;justify-content:center">
-        <h3>¿Qué es una sequía?</h3>
-        <p>Es un déficit prolongado de lluvia respecto al patrón normal de una zona, que reduce la disponibilidad de agua para consumo humano, agricultura y ecosistemas.</p>
-      </div>
-      <div class="dis-info-card" style="display:flex;flex-direction:column;justify-content:center">
-        <h3>¿Cómo se produce?</h3>
-        <p>Se origina por variabilidad climática natural —el fenómeno de El Niño reduce las lluvias en Centroamérica— o por una "canícula" (veranillo) más larga de lo normal en medio de la temporada lluviosa.</p>
-      </div>
-      <div class="dis-info-card" style="padding:0;overflow:hidden">
-        <img src="assets/media/img/Sequia.jpg" alt="Sequía" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block">
+    <div class="v-intro-wrapper">
+      <div class="v-intro-image"><img src="assets/media/img/Sequia.jpg" alt="Sequía" loading="lazy"><span class="v-intro-image-label">Suelo seco durante un período prolongado sin lluvias</span></div>
+      <div class="v-intro-content">
+        <div class="v-intro-definition"><p>Una <strong>sequía</strong> es un déficit prolongado de lluvia respecto al patrón normal de una zona, que reduce el agua disponible para consumo, agricultura y ecosistemas.</p></div>
+        <div class="v-fundamentos">
+          <h3 class="v-fundamentos-title">Factores que pueden intensificarla:</h3>
+          <div class="v-fundamentos-grid">
+            <div class="v-fundamento"><span class="v-fundamento-num">01</span><div class="v-fundamento-content"><h4>El fenómeno de El Niño</h4><p>Reduce las lluvias en Centroamérica y prolonga los períodos secos.</p></div></div>
+            <div class="v-fundamento"><span class="v-fundamento-num">02</span><div class="v-fundamento-content"><h4>Canícula prolongada</h4><p>El veranillo se extiende más de lo normal en medio de la temporada lluviosa.</p></div></div>
+            <div class="v-fundamento"><span class="v-fundamento-num">03</span><div class="v-fundamento-content"><h4>Alta demanda de agua</h4><p>El consumo humano, la agricultura y el ganado presionan las fuentes disponibles.</p></div></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- INFORMACION DE EL SALVADOR -->
-<section class="sec">
+<section class="v-section v-section-dark" id="el-salvador">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">El Salvador</div>
-      <h2 class="sec-title">Información de <span class="acc">El Salvador</span></h2>
-      <p class="sec-sub">Por qué el oriente del país es tan propenso a la sequía</p>
+    <div class="v-header center">
+      <span class="v-tag">02 · El Salvador</span>
+      <h2 class="v-title">Información de <span>El Salvador</span></h2>
+      <p class="v-sub">Por qué el oriente del país es tan propenso a la sequía.</p>
     </div>
-    <div class="dis-info-grid">
-      <div class="dis-info-card" style="display:flex;flex-direction:column;justify-content:center">
-        <h3>¿Por qué ocurre aquí?</h3>
-        <p>El oriente del país forma parte del <strong>Corredor Seco Centroamericano</strong>, una franja con lluvias más irregulares. Ahí la agricultura depende en gran parte de granos básicos de secano (sin riego), lo que la hace muy sensible a cualquier retraso o déficit de lluvia.</p>
-      </div>
-      <div class="dis-info-card" style="display:flex;flex-direction:column;justify-content:center">
-        <h3>Impacto en El Salvador</h3>
-        <p>Pérdida de cosechas de maíz y frijol, escasez de agua para consumo humano y ganado, inseguridad alimentaria en familias de subsistencia, y migración rural hacia zonas urbanas o fuera del país.</p>
-      </div>
-      <div class="dis-info-card" style="padding:0;overflow:hidden">
-        <img src="assets/media/img/sequia1.jpg" alt="Impacto de la sequía en El Salvador" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block">
-      </div>
+    <div class="v-grid-3">
+      <div class="v-card"><div class="v-card-img"><img src="assets/media/img/sequia1.jpg" alt="Corredor Seco" loading="lazy"></div><div class="v-card-body"><h4>Corredor Seco</h4><p>El oriente del país presenta lluvias más irregulares y depende de la agricultura de secano.</p></div></div>
+      <div class="v-card"><div class="v-card-img"><img src="assets/media/img/union.jpg" alt="Comunidades del oriente" loading="lazy"></div><div class="v-card-body"><h4>Comunidades rurales</h4><p>Las familias de subsistencia son especialmente sensibles a cualquier retraso o déficit de lluvia.</p></div></div>
+      <div class="v-card"><div class="v-card-img"><img src="assets/media/img/morazan.jpg" alt="Impacto de la sequía" loading="lazy"></div><div class="v-card-body"><h4>Impacto social</h4><p>La pérdida de cosechas aumenta la inseguridad alimentaria y la migración hacia zonas urbanas.</p></div></div>
     </div>
   </div>
 </section>
 
 <!-- ZONAS AFECTADAS -->
-<section class="sec sec-dark">
+<section class="v-section" id="zonas-afectadas">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Mapa de Riesgo</div>
-      <h2 class="sec-title">Zonas más <span class="acc">afectadas</span></h2>
+    <div class="v-header center">
+      <span class="v-tag">03 · Mapa de riesgo</span>
+      <h2 class="v-title">Zonas más <span>afectadas</span></h2>
+      <p class="v-sub">Departamentos y comunidades con mayor exposición al déficit de lluvia.</p>
     </div>
     <div class="in-zone-carousel-wrapper">
       <div class="in-zone-carousel-track" id="zonesCarouselTrack">
@@ -239,11 +233,12 @@ ob_start();
 </script>
 
 <!-- RIESGOS -->
-<section class="sec">
+<section class="v-section v-section-dark" id="riesgos">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Consecuencias</div>
-      <h2 class="sec-title">Riesgos de una <span class="acc">sequía</span></h2>
+    <div class="v-header center">
+      <span class="v-tag">04 · Consecuencias</span>
+      <h2 class="v-title">Riesgos de una <span>sequía</span></h2>
+      <p class="v-sub">Efectos sobre el agua, los cultivos, la alimentación y las familias.</p>
     </div>
     <div class="dis-impact-grid">
       <div class="dis-impact-card"><h4>Pérdida de cosechas</h4><p>Maíz y frijol de secano son los cultivos más golpeados por la falta de lluvia oportuna.</p></div>
@@ -255,59 +250,64 @@ ob_start();
 </section>
 
 <!-- ESCALA DE ALERTAS -->
-<section class="sec sec-dark">
+<section class="v-section" id="alertas">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Sistema oficial</div>
-      <h2 class="sec-title">Escala de <span class="acc">alertas</span></h2>
-      <p class="sec-sub">Los 4 niveles con los que Protección Civil clasifica una amenaza de sequía en desarrollo</p>
+    <div class="v-header center">
+      <span class="v-tag">05 · Sistema oficial</span>
+      <h2 class="v-title">Escala de <span>alertas</span></h2>
+      <p class="v-sub">Los 4 niveles con los que Protección Civil clasifica una amenaza de sequía.</p>
     </div>
     <?php include __DIR__ . '/_alert_levels.php'; ?>
   </div>
 </section>
 
 <!-- ANTES / DURANTE / DESPUES -->
-<section class="sec">
+<section class="v-section v-section-dark" id="prevencion">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Protocolo</div>
-      <h2 class="sec-title">¿Qué hacer <span class="acc">antes, durante y después</span>?</h2>
+    <div class="v-header center">
+      <span class="v-tag">06 · Protocolo</span>
+      <h2 class="v-title">¿Qué hacer <span>antes, durante y después</span>?</h2>
+      <p class="v-sub">Acciones para administrar el agua y proteger los medios de vida.</p>
     </div>
-    <div class="dis-actions">
-      <div class="dis-action-col">
-        <div class="dis-action-hd">Antes</div>
+    <div class="sq-actions-grid">
+      <article class="sq-action-card">
+        <div class="sq-action-image"><img src="assets/media/img/Sequia.jpg" alt="Preparación ante una sequía" loading="lazy"></div>
+        <div class="sq-action-body"><span class="sq-action-step">01</span><h3>Antes: prepárate</h3>
         <ul>
           <li>Instala sistemas de captación de agua de lluvia para la temporada seca.</li>
           <li>Diversifica cultivos con variedades más resistentes a la sequía cuando sea posible.</li>
           <li>Sigue los pronósticos estacionales del MARN sobre El Niño / La Niña.</li>
-        </ul>
-      </div>
-      <div class="dis-action-col">
-        <div class="dis-action-hd">Durante</div>
+        </ul></div>
+      </article>
+      <article class="sq-action-card">
+        <div class="sq-action-image"><img src="assets/media/img/sequia1.jpg" alt="Comunidad afectada por sequía" loading="lazy"></div>
+        <div class="sq-action-body"><span class="sq-action-step">02</span><h3>Durante: administra</h3>
         <ul>
           <li>Racionaliza el uso de agua, priorizando consumo humano sobre otros usos.</li>
           <li>Evita quemas agrícolas: el riesgo de incendio forestal aumenta con la sequía.</li>
           <li>Reporta la pérdida de cosechas a las autoridades locales para acceder a apoyo.</li>
-        </ul>
-      </div>
-      <div class="dis-action-col">
-        <div class="dis-action-hd">Después</div>
+        </ul></div>
+      </article>
+      <article class="sq-action-card">
+        <div class="sq-action-image"><img src="assets/media/img/union.jpg" alt="Recuperación de una comunidad rural" loading="lazy"></div>
+        <div class="sq-action-body"><span class="sq-action-step">03</span><h3>Después: recupera</h3>
         <ul>
           <li>Prioriza la recuperación de suelos antes de la siguiente siembra.</li>
           <li>Busca apoyo alimentario y agrícola a través del MAG o el Programa Mundial de Alimentos.</li>
           <li>Guarda agua y semilla de reserva para reducir el impacto de la próxima sequía.</li>
-        </ul>
-      </div>
+        </ul></div>
+      </article>
     </div>
   </div>
 </section>
 
 <!-- MEMORIA HISTORICA -->
-<section class="sec sec-dark">
+<section class="v-section" id="historia">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Memoria histórica</div>
-      <h2 class="sec-title">Sequías que <span class="acc">golpearon</span> el Corredor Seco</h2>
+    <div class="v-header center">
+      <span class="v-tag">07 · Memoria histórica</span>
+      <h2 class="v-title">Sequías que <span>golpearon</span> el Corredor Seco</h2>
+      <p class="v-sub">Períodos secos que afectaron la agricultura y la seguridad alimentaria.</p>
     </div>
     <div class="tl-wrap"><div class="tl-line"></div><div class="tl-track" id="tlTrack-sequias"></div></div>
     <div class="tl-detail" id="tlDetail-sequias"></div>
@@ -346,12 +346,12 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <!-- GALERIA -->
-<section class="sec">
+<section class="v-section v-section-dark" id="galeria">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Multimedia</div>
-      <h2 class="sec-title">Galería de <span class="acc">imágenes</span></h2>
-      <p class="sec-sub">Espacio reservado para fotografías del Corredor Seco y cultivos afectados</p>
+    <div class="v-header center">
+      <span class="v-tag">08 · Multimedia</span>
+      <h2 class="v-title">Galería de <span>imágenes</span></h2>
+      <p class="v-sub">El Corredor Seco y los cultivos afectados.</p>
     </div>
     <?php $galleryItems = [
         ['img' => 'https://commons.wikimedia.org/wiki/Special:FilePath/Drought%20land%20dry%20mud%20BOUHANIFIA%20Algeria%2002.jpg', 'cap' => 'Suelo agrietado por sequía (referencial, no de El Salvador)', 'credit' => 'Wikimedia Commons'],
@@ -362,11 +362,12 @@ document.addEventListener('DOMContentLoaded', function () {
 </section>
 
 <!-- FUENTES -->
-<section class="sec sec-dark">
+<section class="v-section" id="fuentes">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Transparencia</div>
-      <h2 class="sec-title">Fuentes <span class="acc">oficiales</span> consultadas</h2>
+    <div class="v-header center">
+      <span class="v-tag">09 · Transparencia</span>
+      <h2 class="v-title">Fuentes <span>oficiales</span> consultadas</h2>
+      <p class="v-sub">Información pública utilizada para preparar este contenido.</p>
     </div>
     <div class="dis-sources">
       <a class="dis-source-item" href="https://www.snet.gob.sv/" target="_blank">MARN — DGOA/SNET, Observatorio de Amenazas</a>

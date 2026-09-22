@@ -1,6 +1,139 @@
 /* Tema visual propio de la pagina de Incendios forestales. */
 .dis-page.dis-incendios { --dis-accent: #d9481f; --dis-accent2: #6e1f0a; }
 
+/* ---------- ESTRUCTURA DE SECCIONES: estilo volcanes/sismos ---------- */
+.dis-incendios .v-section {
+    position: relative;
+    padding: 80px 0;
+    border-top: 1px solid rgba(217,72,31,.14);
+    background: var(--bg);
+}
+.dis-incendios .v-section-dark {
+    background: var(--bg2);
+    border-top-color: rgba(255,255,255,.07);
+}
+.dis-incendios .v-header { margin-bottom: 42px; }
+.dis-incendios .v-header.center { text-align: center; }
+.dis-incendios .v-tag {
+    display: inline-block;
+    margin-bottom: 12px;
+    padding: 3px 11px;
+    border: 1px solid rgba(217,72,31,.25);
+    border-radius: 100px;
+    color: var(--dis-accent);
+    background: rgba(217,72,31,.1);
+    font-size: .66rem;
+    font-weight: 700;
+    letter-spacing: .15em;
+    line-height: 1.4;
+    text-transform: uppercase;
+}
+.dis-incendios .v-title {
+    margin-bottom: 8px;
+    color: var(--text);
+    font-family: var(--fd);
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    font-weight: 800;
+    letter-spacing: -.025em;
+    line-height: 1.2;
+}
+.dis-incendios .v-title span { color: var(--dis-accent); }
+.dis-incendios .v-sub {
+    max-width: 600px;
+    margin: 0 auto;
+    color: var(--text2);
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+/* Componentes compartidos con volcanes, usando el acento de incendios. */
+.dis-incendios .v-intro-definition p {
+    border-left-color: var(--dis-accent);
+}
+.dis-incendios .v-intro-definition p strong,
+.dis-incendios .v-fundamento-num,
+.dis-incendios .v-fundamento:hover,
+.dis-incendios .v-card-body h4 {
+    color: var(--dis-accent);
+}
+.dis-incendios .v-fundamento:hover {
+    border-color: var(--dis-accent);
+}
+.dis-incendios .v-card .v-card-img::after {
+    background: linear-gradient(to top, rgba(110,31,10,.72), transparent);
+}
+
+/* ---------- TARJETAS DEL PROTOCOLO ---------- */
+.dis-incendios .fi-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+.dis-incendios .fi-action-card {
+    overflow: hidden;
+    border: 1px solid var(--border2);
+    border-radius: 14px;
+    background: var(--card);
+    box-shadow: 0 8px 24px rgba(0,0,0,.12);
+}
+.dis-incendios .fi-action-image {
+    height: 150px;
+    overflow: hidden;
+    background: var(--bg3);
+}
+.dis-incendios .fi-action-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .5s ease;
+}
+.dis-incendios .fi-action-card:hover .fi-action-image img { transform: scale(1.05); }
+.dis-incendios .fi-action-body { padding: 18px 20px 20px; }
+.dis-incendios .fi-action-step {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--dis-accent);
+    font-family: var(--fd);
+    font-size: .75rem;
+    font-weight: 800;
+    letter-spacing: .12em;
+}
+.dis-incendios .fi-action-body h3 {
+    margin: 0 0 12px;
+    color: var(--text);
+    font-family: var(--fd);
+    font-size: 1.05rem;
+    line-height: 1.25;
+}
+.dis-incendios .fi-action-body ul {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.dis-incendios .fi-action-body li {
+    position: relative;
+    padding-left: 15px;
+    color: var(--text2);
+    font-size: .82rem;
+    line-height: 1.55;
+}
+.dis-incendios .fi-action-body li::before {
+    position: absolute;
+    top: .55em;
+    left: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--dis-accent);
+    content: '';
+}
+
 .dis-incendios .dis-hero {
     background: radial-gradient(ellipse at 30% 0%, rgba(120, 130, 145, .10) 0%, transparent 55%);
 }
@@ -154,4 +287,15 @@
 }
 .dis-incendios .dis-impact-card p {
     margin: 0 16px 16px;
+}
+
+@media (max-width: 900px) {
+    .dis-incendios .fi-actions-grid {
+        grid-template-columns: 1fr;
+        max-width: 620px;
+    }
+}
+
+@media (max-width: 640px) {
+    .dis-incendios .v-section { padding: 62px 0; }
 }

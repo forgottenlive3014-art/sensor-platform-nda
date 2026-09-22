@@ -233,6 +233,9 @@ ob_start();
         </div>
         <div class="foco-canvas">
           <canvas id="focoEpicentroCv"></canvas>
+          <div class="foco-diagram-image-wrap">
+            <img src="assets/media/img/DiagramHeI.png" alt="Diagramade foco y epicentro" loading="lazy" class="foco-diagram-image">
+          </div>
           <div class="foco-legend">
             <div class="foco-legend-item">
               <span class="foco-dot" style="background:var(--acc);"></span>

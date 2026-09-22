@@ -58,12 +58,12 @@ ob_start();
 </section>
 
 <!-- INFORMACION GENERAL -->
-<section class="sec" id="info-general">
+<section class="v-section" id="info-general">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Amenaza Hidrometeorológica</div>
-      <h2 class="sec-title">Información <span class="acc">general</span></h2>
-      <p class="sec-sub">Qué es una inundación y por qué El Salvador es tan propenso</p>
+    <div class="v-header center">
+      <span class="v-tag">01 · Amenaza hidrometeorológica</span>
+      <h2 class="v-title">Información <span>general</span></h2>
+      <p class="v-sub">Qué es una inundación y por qué El Salvador es tan propenso.</p>
     </div>
     <div class="dis-info-grid dis-info-grid-2">
       <div class="dis-info-card">
@@ -85,11 +85,12 @@ ob_start();
 </section>
 
 <!-- ZONAS VULNERABLES -->
-<section class="sec sec-dark">
+<section class="v-section v-section-dark" id="zonas-vulnerables">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Mapa de Riesgo</div>
-      <h2 class="sec-title">Zonas más <span class="acc">propensas</span></h2>
+    <div class="v-header center">
+      <span class="v-tag">02 · Mapa de riesgo</span>
+      <h2 class="v-title">Zonas más <span>propensas</span></h2>
+      <p class="v-sub">Comunidades y cuencas con mayor exposición a desbordamientos.</p>
     </div>
     <div class="in-zone-carousel-wrapper">
       <div class="in-zone-carousel-track" id="zonesCarouselTrack">
@@ -114,10 +115,10 @@ ob_start();
           <div class="in-zone-card-body"><span class="in-zone-card-num">05</span><h4>Zonas costeras</h4><p class="in-zone-card-loc">Desembocaduras de ríos</p></div>
         </div>
       </div>
-      <button class="in-zone-carousel-btn prev" id="zonesPrev">
+      <button type="button" class="in-zone-carousel-btn prev" id="zonesPrev" aria-label="Zona anterior" title="Zona anterior">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
-      <button class="in-zone-carousel-btn next" id="zonesNext">
+      <button type="button" class="in-zone-carousel-btn next" id="zonesNext" aria-label="Siguiente zona" title="Siguiente zona">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
       </button>
     </div>
@@ -196,8 +197,16 @@ ob_start();
         function nextSlide() { goTo(currentIndex + 1); }
         function prevSlide() { goTo(currentIndex - 1); }
 
-        if (prevBtn) prevBtn.addEventListener('click', prevSlide);
-        if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+        if (prevBtn) prevBtn.addEventListener('click', function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          prevSlide();
+        });
+        if (nextBtn) nextBtn.addEventListener('click', function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          nextSlide();
+        });
 
         var resizeTimeout;
         window.addEventListener('resize', function () {
@@ -218,11 +227,12 @@ ob_start();
 </script>
 
 <!-- RIESGOS -->
-<section class="sec">
+<section class="v-section" id="riesgos">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Consecuencias</div>
-      <h2 class="sec-title">Riesgos de una <span class="acc">inundación</span></h2>
+    <div class="v-header center">
+      <span class="v-tag">03 · Consecuencias</span>
+      <h2 class="v-title">Riesgos de una <span>inundación</span></h2>
+      <p class="v-sub">Impactos sobre viviendas, cultivos, vías y salud pública.</p>
     </div>
     <div class="dis-impact-grid">
       <div class="dis-impact-card">
@@ -246,59 +256,64 @@ ob_start();
 </section>
 
 <!-- ESCALA DE ALERTAS -->
-<section class="sec sec-dark">
+<section class="v-section v-section-dark" id="alertas">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Sistema oficial</div>
-      <h2 class="sec-title">Escala de <span class="acc">alertas</span></h2>
-      <p class="sec-sub">Los 4 niveles con los que Protección Civil clasifica una amenaza de inundación en desarrollo</p>
+    <div class="v-header center">
+      <span class="v-tag">04 · Sistema oficial</span>
+      <h2 class="v-title">Escala de <span>alertas</span></h2>
+      <p class="v-sub">Los 4 niveles con los que Protección Civil clasifica una amenaza de inundación.</p>
     </div>
     <?php include __DIR__ . '/_alert_levels.php'; ?>
   </div>
 </section>
 
 <!-- ANTES / DURANTE / DESPUES -->
-<section class="sec">
+<section class="v-section" id="prevencion">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Protocolo</div>
-      <h2 class="sec-title">¿Qué hacer <span class="acc">antes, durante y después</span>?</h2>
+    <div class="v-header center">
+      <span class="v-tag">05 · Protocolo</span>
+      <h2 class="v-title">¿Qué hacer <span>antes, durante y después</span>?</h2>
+      <p class="v-sub">Acciones prácticas para reducir riesgos antes, durante y después de una inundación.</p>
     </div>
-    <div class="dis-actions">
-      <div class="dis-action-col">
-        <div class="dis-action-hd">Antes</div>
+    <div class="in-actions-grid">
+      <article class="in-action-card">
+        <div class="in-action-image"><img src="assets/media/img/inundaciones.jpg" alt="Preparación ante inundaciones" loading="lazy"></div>
+        <div class="in-action-body"><span class="in-action-step">01</span><h3>Antes: prepárate</h3>
         <ul>
           <li>Averigua si tu vivienda está en una zona con historial de inundación.</li>
           <li>Sube documentos importantes y electrodomésticos a partes altas de la casa antes de que suba el agua.</li>
           <li>Sigue las alertas del MARN y Protección Civil, especialmente en alerta naranja o roja.</li>
-        </ul>
-      </div>
-      <div class="dis-action-col">
-        <div class="dis-action-hd">Durante</div>
+        </ul></div>
+      </article>
+      <article class="in-action-card">
+        <div class="in-action-image"><img src="assets/media/img/inundacion%202.jpg" alt="Inundación en una comunidad" loading="lazy"></div>
+        <div class="in-action-body"><span class="in-action-step">02</span><h3>Durante: ponte a salvo</h3>
         <ul>
           <li>Nunca cruces una corriente de agua: 30 cm pueden arrastrar a una persona, 60 cm a un vehículo.</li>
           <li>Desconecta la electricidad de tu vivienda si el agua empieza a subir.</li>
           <li>Muévete a un punto alto y espera ayuda; no intentes cruzar puentes inundados.</li>
-        </ul>
-      </div>
-      <div class="dis-action-col">
-        <div class="dis-action-hd">Después</div>
+        </ul></div>
+      </article>
+      <article class="in-action-card">
+        <div class="in-action-image"><img src="assets/media/img/vivienda.jpg" alt="Vivienda afectada por inundación" loading="lazy"></div>
+        <div class="in-action-body"><span class="in-action-step">03</span><h3>Después: regresa con cuidado</h3>
         <ul>
           <li>No bebas agua de la llave sin hervirla o tratarla hasta confirmación oficial.</li>
           <li>Evita el contacto directo con aguas estancadas: pueden estar contaminadas.</li>
           <li>Reporta daños a Protección Civil y revisa la estructura de tu vivienda antes de reingresar.</li>
-        </ul>
-      </div>
+        </ul></div>
+      </article>
     </div>
   </div>
 </section>
 
 <!-- MEMORIA HISTORICA -->
-<section class="sec sec-dark">
+<section class="v-section v-section-dark" id="historia">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Memoria histórica</div>
-      <h2 class="sec-title">Inundaciones que <span class="acc">marcaron</span> al país</h2>
+    <div class="v-header center">
+      <span class="v-tag">06 · Memoria histórica</span>
+      <h2 class="v-title">Inundaciones que <span>marcaron</span> al país</h2>
+      <p class="v-sub">Eventos que muestran la importancia de la prevención y la respuesta temprana.</p>
     </div>
     <div class="tl-wrap"><div class="tl-line"></div><div class="tl-track" id="tlTrack-inundaciones"></div></div>
     <div class="tl-detail" id="tlDetail-inundaciones"></div>
@@ -332,12 +347,12 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <!-- GALERIA -->
-<section class="sec">
+<section class="v-section" id="galeria">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Multimedia</div>
-      <h2 class="sec-title">Galería de <span class="acc">imágenes</span></h2>
-      <p class="sec-sub">Espacio reservado para fotografías de zonas inundables y ríos monitoreados</p>
+    <div class="v-header center">
+      <span class="v-tag">07 · Multimedia</span>
+      <h2 class="v-title">Galería de <span>imágenes</span></h2>
+      <p class="v-sub">Espacio reservado para fotografías de zonas inundables y ríos monitoreados.</p>
     </div>
     <?php $galleryItems = [
         ['img' => 'https://commons.wikimedia.org/wiki/Special:FilePath/Lo%20que%20dejo%20a%20su%20paso%20el%20huracan%20Ida%20(7%2C8%20Noviembre%202009)%20Playa%20de%20Las%20Hojas.%20-%20panoramio.jpg', 'cap' => 'Playa de Las Hojas tras el huracán Ida (2009), El Salvador', 'credit' => 'Wikimedia Commons'],
@@ -348,11 +363,12 @@ document.addEventListener('DOMContentLoaded', function () {
 </section>
 
 <!-- FUENTES -->
-<section class="sec sec-dark">
+<section class="v-section v-section-dark" id="fuentes">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Transparencia</div>
-      <h2 class="sec-title">Fuentes <span class="acc">oficiales</span> consultadas</h2>
+    <div class="v-header center">
+      <span class="v-tag">08 · Transparencia</span>
+      <h2 class="v-title">Fuentes <span>oficiales</span> consultadas</h2>
+      <p class="v-sub">Información pública utilizada para preparar este contenido.</p>
     </div>
     <div class="dis-sources">
       <a class="dis-source-item" href="https://www.proteccioncivil.gob.sv/?utm_source" target="_blank">Dirección General de Protección Civil</a>

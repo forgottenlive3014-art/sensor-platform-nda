@@ -12,6 +12,437 @@
     50% { transform: translateY(-5px); }
 }
 
+/* ============================================================
+   NUEVA ESTRUCTURA MODERNA: estilo tipo volcanes
+   ============================================================ */
+.dis-tsunamis .v-section {
+    position: relative;
+    padding: 80px 0;
+    border-top: 1px solid rgba(31, 122, 168, 0.12);
+    background: var(--bg);
+}
+
+.dis-tsunamis .v-section-dark {
+    background: var(--bg2);
+    border-top-color: rgba(255, 255, 255, 0.07);
+}
+
+.dis-tsunamis .v-header {
+    margin-bottom: 42px;
+}
+
+.dis-tsunamis .v-header.center {
+    text-align: center;
+}
+
+.dis-tsunamis .v-tag {
+    display: inline-block;
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--dis-accent);
+    background: rgba(31, 122, 168, 0.1);
+    border: 1px solid rgba(31, 122, 168, 0.18);
+    border-radius: 100px;
+    padding: 3px 11px;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.dis-tsunamis .v-title {
+    font-family: var(--fd);
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    margin-bottom: 8px;
+    line-height: 1.2;
+    color: var(--text);
+}
+
+.dis-tsunamis .v-title span {
+    color: var(--dis-accent);
+}
+
+.dis-tsunamis .v-sub {
+    color: var(--text2);
+    font-size: 1rem;
+    max-width: 560px;
+    line-height: 1.7;
+    margin: 0 auto;
+}
+
+.dis-tsunamis .ts-intro-wrapper {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 36px;
+    align-items: stretch;
+}
+
+.dis-tsunamis .ts-intro-image {
+    position: relative;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 18px 45px rgba(0,0,0,0.18);
+    min-height: 420px;
+}
+
+.dis-tsunamis .ts-intro-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: saturate(1.05) contrast(1.04);
+}
+
+.dis-tsunamis .ts-intro-image-label {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 12px 18px;
+    background: linear-gradient(to top, rgba(0,0,0,0.78), transparent);
+    color: #fff;
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+}
+
+.dis-tsunamis .ts-intro-content {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.dis-tsunamis .ts-intro-card {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-left: 4px solid var(--dis-accent);
+    border-radius: 16px;
+    padding: 22px 24px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+
+.dis-tsunamis .ts-intro-card h3,
+.dis-tsunamis .ts-country-card h3,
+.dis-tsunamis .ts-fact-item h4 {
+    font-family: var(--fd);
+    margin: 0 0 8px;
+    line-height: 1.3;
+}
+
+.dis-tsunamis .ts-intro-card p,
+.dis-tsunamis .ts-country-card p,
+.dis-tsunamis .ts-fact-item p {
+    margin: 0;
+    color: var(--text2);
+    line-height: 1.75;
+}
+
+.dis-tsunamis .ts-fact-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.dis-tsunamis .ts-fact-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 14px 16px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.dis-tsunamis .ts-fact-num {
+    display: inline-block;
+    min-width: 32px;
+    font-family: var(--fd);
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--dis-accent);
+    opacity: 0.7;
+    line-height: 1;
+    padding-top: 3px;
+}
+
+.dis-tsunamis .ts-country-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.dis-tsunamis .ts-country-row {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 18px;
+    align-items: start;
+}
+
+.dis-tsunamis .ts-country-row.reverse .ts-country-image {
+    order: 2;
+}
+
+.dis-tsunamis .ts-country-row.reverse {
+    grid-template-columns: minmax(0, 1fr) 220px;
+}
+
+.dis-tsunamis .ts-country-row.reverse .ts-country-card {
+    order: 1;
+}
+
+.dis-tsunamis .ts-country-image {
+    width: 220px;
+    height: 220px;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    background: var(--bg3);
+    box-shadow: 0 8px 22px rgba(0,0,0,0.12);
+}
+
+.dis-tsunamis .ts-country-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .5s ease;
+}
+
+.dis-tsunamis .ts-country-image:hover img {
+    transform: scale(1.04);
+}
+
+.dis-tsunamis .ts-country-row .ts-country-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-self: start;
+    width: 100%;
+    aspect-ratio: auto;
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-left: 4px solid var(--dis-accent);
+    border-radius: 12px;
+    padding: 20px 24px;
+    height: 220px;
+    min-height: 220px;
+    max-height: 220px;
+    box-sizing: border-box;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+.dis-tsunamis .ts-country-number {
+    margin-bottom: 7px;
+    font-family: var(--fd);
+    font-size: .8rem;
+    font-weight: 800;
+    letter-spacing: .12em;
+    color: var(--dis-accent);
+}
+
+.dis-tsunamis .ts-country-card strong,
+.dis-tsunamis .ts-intro-card strong {
+    color: var(--dis-accent);
+}
+
+/* ---------- PROTOCOLO: ANTES / DURANTE / DESPUES ---------- */
+.dis-tsunamis .ts-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.dis-tsunamis .ts-action-card {
+    overflow: hidden;
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+.dis-tsunamis .ts-action-image {
+    height: 150px;
+    overflow: hidden;
+    background: var(--bg3);
+}
+
+.dis-tsunamis .ts-action-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .5s ease;
+}
+
+.dis-tsunamis .ts-action-card:hover .ts-action-image img {
+    transform: scale(1.05);
+}
+
+.dis-tsunamis .ts-action-body {
+    padding: 18px 20px 20px;
+}
+
+.dis-tsunamis .ts-action-step {
+    margin-bottom: 6px;
+    color: var(--dis-accent);
+    font-family: var(--fd);
+    font-size: .75rem;
+    font-weight: 800;
+    letter-spacing: .12em;
+}
+
+.dis-tsunamis .ts-action-body h3 {
+    margin: 0 0 12px;
+    font-family: var(--fd);
+    font-size: 1.05rem;
+    line-height: 1.25;
+    color: var(--text);
+}
+
+.dis-tsunamis .ts-action-body ul {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.dis-tsunamis .ts-action-body li {
+    position: relative;
+    padding-left: 15px;
+    color: var(--text2);
+    font-size: .82rem;
+    line-height: 1.55;
+}
+
+.dis-tsunamis .ts-action-body li::before {
+    position: absolute;
+    top: .55em;
+    left: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--dis-accent);
+    content: '';
+}
+
+/* ---------- FLECHAS DEL CARRUSEL HISTORICO ---------- */
+.dis-tsunamis .ts-timeline-nav {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 16px 0 0;
+}
+
+.dis-tsunamis .ts-timeline-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-width: 38px;
+    min-height: 36px;
+    padding: 8px 12px;
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    background: var(--card);
+    color: var(--text);
+    cursor: pointer;
+    font-family: var(--fd);
+    font-size: .68rem;
+    font-weight: 700;
+    transition: background .2s ease, color .2s ease, border-color .2s ease;
+}
+
+.dis-tsunamis .ts-timeline-btn:hover {
+    background: var(--dis-accent);
+    border-color: var(--dis-accent);
+    color: #fff;
+}
+
+.dis-tsunamis .ts-timeline-btn svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+}
+
+.dis-tsunamis .tl-detail .tld-nav {
+    display: none;
+}
+
+@media (max-width: 900px) {
+    .dis-tsunamis .ts-actions-grid {
+        grid-template-columns: 1fr;
+        max-width: 620px;
+    }
+}
+
+.dis-tsunamis .ts-map-visual {
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--border2);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.12);
+    max-width: 980px;
+    margin: 0 auto;
+}
+
+.dis-tsunamis .ts-map-visual img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+@media (max-width: 900px) {
+    .dis-tsunamis .ts-intro-wrapper {
+        grid-template-columns: 1fr;
+    }
+
+    .dis-tsunamis .ts-country-row {
+        grid-template-columns: 1fr;
+    }
+
+    .dis-tsunamis .ts-country-row.reverse {
+        grid-template-columns: 1fr;
+    }
+
+    .dis-tsunamis .ts-country-image {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1 / 1;
+    }
+
+    .dis-tsunamis .ts-country-row.reverse .ts-country-image,
+    .dis-tsunamis .ts-country-row.reverse .ts-country-card {
+        order: initial;
+    }
+}
+
+@media (max-width: 640px) {
+    .dis-tsunamis .v-section {
+        padding: 62px 0;
+    }
+    .dis-tsunamis .ts-intro-image {
+        min-height: 320px;
+    }
+    .dis-tsunamis .ts-country-row .ts-country-card {
+        padding: 18px 20px;
+        height: auto;
+        min-height: 0;
+        max-height: none;
+    }
+}
+
 /* Imagen a la derecha de las tarjetas en "Informacion general" e "Informacion de El Salvador".
    align-self: start evita que el grid la estire para igualar el alto de las tarjetas de texto;
    asi conserva su relacion de aspecto (heredada de .dis-gallery-item) y se adapta sola. */

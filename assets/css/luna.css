@@ -36,6 +36,51 @@
 
 .luna-page .wrap { position: relative; z-index: 1; }
 
+.luna-block {
+    margin: 64px 0;
+    scroll-margin-top: 100px;
+}
+
+/* Jerarquía compartida con las páginas de volcanes y sismos. */
+.luna-page .v-section {
+    position: relative;
+    margin-bottom: 20px;
+    padding: 58px 0 28px;
+    border-top: 1px solid var(--border);
+    background: transparent;
+}
+.luna-page .v-section-dark {
+    border-radius: var(--rl);
+    background: var(--bg2);
+}
+.luna-page .v-header { margin-bottom: 28px; }
+.luna-page .v-header.center { text-align: center; }
+.luna-page .v-tag {
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 3px 11px;
+    border: 1px solid var(--border2);
+    border-radius: 100px;
+    background: var(--gA);
+    color: var(--purple);
+    font-family: var(--fn);
+    font-size: .64rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    line-height: 1.4;
+    text-transform: uppercase;
+}
+.luna-page .v-title {
+    margin-bottom: 7px;
+    color: var(--text);
+    font-family: var(--fd);
+    font-size: clamp(1.45rem, 3vw, 2.2rem);
+    font-weight: 800;
+    line-height: 1.2;
+}
+.luna-page .v-title span { color: var(--purple); }
+.luna-page .v-sub { max-width: 560px; margin: 0 auto; color: var(--text2); font-family: var(--fn); font-size: .86rem; line-height: 1.65; }
+
 .luna-topnav {
     display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 18px; flex-wrap: wrap; gap: 10px;
@@ -67,7 +112,13 @@
 /* ---------- MODELO 3D — solo el texto y la luna, sin tarjeta ---------- */
 .luna-hero-card {
     position: relative;
-    padding: 10px 24px 26px; margin-bottom: 20px;
+    padding: 28px 30px 32px;
+    margin-bottom: 28px;
+    border: 1px solid var(--border);
+    border-radius: var(--rl);
+    background: linear-gradient(135deg, var(--card), var(--bg2));
+    box-shadow: var(--sh);
+    overflow: hidden;
 }
 .luna-hero-glow {
     position: absolute; top: 10%; left: 50%; width: 340px; height: 340px;
@@ -77,7 +128,14 @@
 }
 .luna-hero-layout {
     position: relative; z-index: 1;
-    display: flex; align-items: center; justify-content: center; gap: 30px;
+    display: grid;
+    grid-template-columns: 190px minmax(300px, 1fr) minmax(260px, 320px);
+    align-items: center;
+    gap: 30px;
+}
+.luna-hero-description {
+    flex: 0 1 320px;
+    min-width: 260px;
 }
 .luna-hero-center {
     flex: 0 1 480px; min-width: 0;
@@ -134,24 +192,45 @@
 }
 
 /* ---------- SECCIONES GENERICAS ---------- */
-.luna-section { margin-bottom: 20px; }
+.luna-section {
+    margin-bottom: 24px;
+}
+.luna-section:not(.v-section) { padding-top: 8px; }
 .luna-section-title { font-family: var(--fd); font-size: 1.02rem; font-weight: 600; color: var(--text); margin-bottom: 10px; }
 
 /* ---------- INFO ASTRONOMICA ---------- */
 .luna-astro-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px;
+    display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px;
 }
+.luna-page .v-section-dark .luna-desc-card,
+.luna-page .v-section-dark .luna-tide-card { background: var(--card2); }
 .luna-astro-card {
-    background: var(--card); border: 1px solid var(--border); border-radius: var(--r);
+    min-height: 104px;
+    display: flex; flex-direction: column; justify-content: center;
+    background: var(--card); border: 1px solid var(--border); border-top: 3px solid var(--purple); border-radius: var(--r);
     padding: 16px;
+    box-shadow: var(--sh);
+    transition: transform var(--tr) var(--ez), border-color var(--tr) var(--ez);
 }
+.luna-astro-card:hover { transform: translateY(-3px); border-color: var(--purple); }
 .lac-lbl { font-family: var(--fn); font-size: .7rem; color: var(--text3); margin-bottom: 6px; }
 .lac-val { font-family: var(--fd); font-size: 1.25rem; font-weight: 700; color: var(--text); }
 
 /* ---------- DESCRIPCION DE FASE ---------- */
 .luna-desc-card {
-    background: var(--card); border: 1px solid var(--border); border-radius: var(--rl);
-    padding: 20px 22px;
+    max-width: 920px; margin: 0 auto;
+    background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--purple); border-radius: var(--rl);
+    padding: 24px 26px; box-shadow: var(--sh);
+}
+.luna-hero-description .luna-desc-card { margin: 0; }
+.luna-desc-kicker {
+    margin-bottom: 12px;
+    color: var(--purple);
+    font-family: var(--fn);
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
 }
 .luna-desc-hdr { display: flex; align-items: center; gap: 9px; font-family: var(--fn); font-size: .95rem; color: var(--text); margin-bottom: 10px; }
 .luna-desc-hdr svg { color: var(--purple); flex-shrink: 0; }
@@ -162,7 +241,9 @@
 .luna-next-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
 .luna-next-card {
     background: var(--card); border: 1px solid var(--border); border-radius: var(--r);
-    padding: 18px 14px; text-align: center;
+    min-height: 154px; padding: 18px 14px; text-align: center;
+    display: flex; flex-direction: column; justify-content: center;
+    box-shadow: var(--sh);
     transition: transform var(--tr) var(--ez), border-color var(--tr) var(--ez);
 }
 .luna-next-card.current { border-color: var(--purple); box-shadow: 0 0 0 1px var(--purple); }
@@ -186,11 +267,13 @@
 .ltn-days { font-family: var(--fn); font-size: .74rem; color: var(--teal); }
 .luna-tide-next-item.neap .ltn-days { color: var(--purple); }
 
-.luna-tide-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+.luna-tide-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
 .luna-tide-card {
     background: var(--card); border: 1px solid var(--border); border-radius: var(--r);
-    padding: 16px 18px;
+    min-height: 190px; padding: 18px 18px; box-shadow: var(--sh);
+    transition: transform var(--tr) var(--ez), border-color var(--tr) var(--ez);
 }
+.luna-tide-card:hover { transform: translateY(-3px); border-color: var(--purple); }
 .ltc-badge {
     display: inline-block; font-family: var(--fn); font-size: .62rem; font-weight: 700;
     padding: 3px 9px; border-radius: 20px; margin-bottom: 8px;
@@ -204,13 +287,12 @@
 
 /* ---------- CURIOSIDADES ---------- */
 .luna-curio-card {
-    background: var(--card); border: 1px solid var(--border); border-radius: var(--rl);
-    padding: 22px;
+    background: transparent; border: 0; border-radius: 0; padding: 0;
 }
 .luna-curio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
 .luna-curio-item {
     background: var(--bg3); border: 1px solid var(--border); border-radius: var(--r);
-    padding: 16px; transition: transform var(--tr) var(--ez), border-color var(--tr) var(--ez);
+    min-height: 180px; padding: 18px; box-shadow: var(--sh); transition: transform var(--tr) var(--ez), border-color var(--tr) var(--ez);
 }
 .luna-curio-item:hover { transform: translateY(-3px); border-color: var(--border3); }
 .lci-icon {
@@ -228,12 +310,29 @@
 
 /* ---------- RESPONSIVE ---------- */
 @media (max-width: 720px) {
-    .luna-hero-layout { flex-direction: column; }
+    .luna-hero-card { padding: 20px 16px 24px; }
+    .luna-hero-layout { display: flex; flex-direction: column; }
     .luna-hero-center { flex: none; width: 100%; }
+    .luna-hero-description { width: 100%; min-width: 0; }
     .luna-phase-selector { width: 100%; flex-direction: row; flex-wrap: wrap; }
     .lps-btn { width: calc(50% - 3px); }
     .luna-next-cards { grid-template-columns: repeat(2, 1fr); }
     .luna-loc-line { font-size: 1.2rem; }
     .luna-moon3d { width: 240px; height: 240px; }
     .luna-phase-name { font-size: 1.35rem; }
+    .luna-astro-grid { grid-template-columns: repeat(2, 1fr); }
+    .luna-tide-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 1024px) {
+    .luna-hero-layout { grid-template-columns: 1fr; }
+    .luna-phase-selector { order: 2; width: 100%; flex-direction: row; flex-wrap: wrap; }
+    .luna-hero-center { order: 1; }
+    .luna-hero-description { order: 3; width: 100%; }
+}
+
+@media (min-width: 721px) and (max-width: 1050px) {
+    .luna-hero-layout { grid-template-columns: 160px minmax(260px, 1fr) 260px; gap: 18px; }
+    .luna-astro-grid { grid-template-columns: repeat(3, 1fr); }
+    .luna-tide-grid { grid-template-columns: repeat(2, 1fr); }
 }

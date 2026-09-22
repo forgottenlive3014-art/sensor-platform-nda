@@ -10,7 +10,7 @@ ob_start();
 <!-- BIG BANNER -->
 <!-- TODO IMAGEN: banner principal. Actualmente usa una foto de la playa de La Libertad (Wikimedia).
      Reemplazar la URL de background-image por una imagen local en assets/media/desastres/tsunamis/ si se quiere una propia. -->
-<section class="dis-bigbanner" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/PLAYA%20SAN%20DIEGO%2C%20LA%20LIBERTAD%2C%20EL%20SALVADOR.%20-%20panoramio.jpg')">
+<section class="dis-bigbanner" style="background-image:url('assets/media/img/tsunami.jpg')">
   <div class="dis-bigbanner-overlay"></div>
   <div class="wrap dis-bigbanner-inner">
     <h2 class="dis-bigbanner-word">Tsunamis</h2>
@@ -59,67 +59,72 @@ ob_start();
   </div>
 </section>
 
-<!-- INFORMACION GENERAL -->
-<section class="sec" id="info-general">
+<!-- ============================================================
+     SECCIÓN 1: INTRODUCCIÓN
+     ============================================================ -->
+<section class="v-section" id="info-general">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Amenaza Costera</div>
-      <h2 class="sec-title">Información <span class="acc">general</span></h2>
-      <p class="sec-sub">Qué es un tsunami y cómo se forma</p>
+    <div class="v-header center">
+      <span class="v-tag">01 · Amenaza costera</span>
+      <h2 class="v-title">Información <span>general</span></h2>
+      <p class="v-sub">Qué es un tsunami y cómo se forma</p>
     </div>
-    <div class="dis-info-grid">
-      <div class="dis-info-card">
-        <h3>¿Qué es un tsunami?</h3>
-        <p>Es una serie de olas de gran longitud de onda generadas por el desplazamiento repentino de una gran masa de agua. A diferencia de una ola normal, mueve toda la columna de agua, no solo la superficie, por eso puede inundar varios kilómetros tierra adentro.</p>
-      </div>
-      <div class="dis-info-card">
-        <h3>Formación</h3>
-        <p>La causa más común es un sismo submarino de gran magnitud (M7+) con desplazamiento vertical del fondo marino. También puede originarse por deslizamientos submarinos o erupciones volcánicas cerca de la costa.</p>
-      </div>
-      <div class="dis-gallery-item filled">
+    <div class="ts-intro-wrapper">
+      <div class="ts-intro-image">
         <img src="assets/media/img/tsunami%201.jpg" alt="Tsunami" loading="lazy">
+        <span class="ts-intro-image-label">Ola de gran longitud y gran energía</span>
+      </div>
+      <div class="ts-intro-content">
+        <div class="ts-intro-card">
+          <h3>¿Qué es un tsunami?</h3>
+          <p>Es una serie de olas de gran longitud de onda generadas por el desplazamiento repentino de una gran masa de agua. A diferencia de una ola normal, mueve toda la columna de agua, no solo la superficie, por eso puede inundar varios kilómetros tierra adentro.</p>
+        </div>
+        <div class="ts-fact-grid">
+          <div class="ts-fact-item"><span class="ts-fact-num">01</span><div><h4>Origen</h4><p>La causa más común es un sismo submarino de magnitud M7+ con desplazamiento vertical del fondo marino.</p></div></div>
+          <div class="ts-fact-item"><span class="ts-fact-num">02</span><div><h4>Velocidad</h4><p>En mar abierto, la ola puede viajar a gran velocidad y llegar a la costa en minutos si el origen es local.</p></div></div>
+          <div class="ts-fact-item"><span class="ts-fact-num">03</span><div><h4>Impacto</h4><p>Puede arrastrar viviendas, embarcaciones y agua salada hacia zonas que normalmente no se inundan.</p></div></div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- INFORMACION DE EL SALVADOR -->
-<section class="sec">
+<!-- ============================================================
+     SECCIÓN 2: EL SALVADOR
+     ============================================================ -->
+<section class="v-section v-section-dark" id="el-salvador">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">El Salvador</div>
-      <h2 class="sec-title">Información de <span class="acc">El Salvador</span></h2>
-      <p class="sec-sub">La costa pacífica frente a la zona de subducción Cocos–Caribe</p>
+    <div class="v-header center">
+      <span class="v-tag">02 · El Salvador</span>
+      <h2 class="v-title">Información de <span>El Salvador</span></h2>
+      <p class="v-sub">La costa pacífica frente a la zona de subducción Cocos–Caribe</p>
     </div>
-    <div class="dis-info-grid">
-      <div class="dis-info-card">
-        <h3>Costa salvadoreña</h3>
-        <p>Toda la costa pacífica está frente a la <strong>zona de subducción Cocos–Caribe</strong>, la misma falla que produce los sismos más fuertes del país. Un sismo submarino grande frente a la costa puede generar un tsunami en cuestión de minutos.</p>
-      </div>
-      <div class="dis-info-card">
-        <h3>El mapa de amenaza (MARN)</h3>
-        <p>Es un <strong>mapa agregado</strong>: combina los 23 escenarios "plausibles" más severos que podrían impactar la costa salvadoreña, calculados a partir de 23 fuentes sismotectónicas.</p>
-        <ul class="dis-info-card-list">
-          <li><strong>Lejanas:</strong> Chile (1960/2010), Kamchatka (1952), Alaska (1964), Samoa (2009)</li>
-          <li><strong>Intermedias:</strong> México (1787), Colombia (1906)</li>
-          <li><strong>Cercanas:</strong> 16 fuentes en la propia subducción Cocos–Caribe</li>
-        </ul>
-        <p>Para cada punto de la costa muestra la altura máxima de ola y la zona de inundación esperada.</p>
-      </div>
-      <div class="dis-gallery-item filled">
-        <img src="assets/media/img/formacion%20tsunami.jpg" alt="Formación de un tsunami" loading="lazy">
-      </div>
+    <div class="ts-country-sections">
+      <article class="ts-country-row">
+        <div class="ts-country-image"><img src="assets/media/img/puerto.jpg" alt="Costa salvadoreña" loading="lazy"></div>
+        <div class="ts-country-card"><span class="ts-country-number">01</span><h3>Costa salvadoreña</h3><p>Toda la costa pacífica está frente a la <strong>zona de subducción Cocos–Caribe</strong>, la misma falla que produce los sismos más fuertes del país. Un sismo submarino grande puede generar un tsunami en cuestión de minutos.</p></div>
+      </article>
+      <article class="ts-country-row reverse">
+        <div class="ts-country-image"><img src="assets/media/img/formacion%20tsunami.jpg" alt="Mapa de amenaza por tsunami" loading="lazy"></div>
+        <div class="ts-country-card"><span class="ts-country-number">02</span><h3>Mapa de amenaza (MARN)</h3><p>Es un <strong>mapa agregado</strong>: combina los 23 escenarios “plausibles” más severos que podrían impactar la costa salvadoreña, calculados a partir de 23 fuentes sismotectónicas.</p></div>
+      </article>
+      <article class="ts-country-row">
+        <div class="ts-country-image"><img src="assets/media/img/tsunami%201.jpg" alt="Impacto de un tsunami en comunidades costeras" loading="lazy"></div>
+        <div class="ts-country-card"><span class="ts-country-number">03</span><h3>Qué muestra el mapa</h3><p>Para cada punto de la costa se estiman la <strong>altura máxima de ola</strong> y la <strong>zona de inundación esperada</strong>, además de la severidad del impacto para comunidades costeras.</p></div>
+      </article>
     </div>
   </div>
 </section>
 
-<!-- COSTA EXPUESTA -->
-<section class="sec sec-dark">
+<!-- ============================================================
+     SECCIÓN 3: COMUNIDADES COSTERAS
+     ============================================================ -->
+<section class="v-section" id="comunidades-costeras">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Mapa de Riesgo · MARN</div>
-      <h2 class="sec-title">Comunidades costeras <span class="acc">expuestas</span></h2>
-      <p class="sec-sub">Las 9 comunidades que el mapa oficial de amenaza identifica como más expuestas, incluyendo los 3 puertos principales del país</p>
+    <div class="v-header center">
+      <span class="v-tag">03 · Mapa de riesgo · MARN</span>
+      <h2 class="v-title">Comunidades costeras <span>expuestas</span></h2>
+      <p class="v-sub">Las 9 comunidades que el mapa oficial de amenaza identifica como más expuestas, incluyendo los 3 puertos principales del país</p>
     </div>
     <div class="ts-coast-carousel-wrapper">
       <div class="ts-coast-carousel-track" id="coastCarouselTrack">
@@ -278,12 +283,15 @@ ob_start();
 })();
 </script>
 
-<!-- RIESGOS -->
-<section class="sec">
+<!-- ============================================================
+     SECCIÓN 4: RIESGOS
+     ============================================================ -->
+<section class="v-section v-section-dark" id="riesgos">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Consecuencias</div>
-      <h2 class="sec-title">Riesgos de un <span class="acc">tsunami</span></h2>
+    <div class="v-header center">
+      <span class="v-tag">04 · Consecuencias</span>
+      <h2 class="v-title">Riesgos de un <span>tsunami</span></h2>
+      <p class="v-sub">Principales impactos sobre las comunidades y ecosistemas costeros.</p>
     </div>
     <div class="dis-riesgos-scrollzone">
     <div class="dis-riesgos-carousel">
@@ -365,63 +373,96 @@ ob_start();
 })();
 </script>
 
-<!-- SISTEMA DE ALERTA -->
-<section class="sec sec-dark">
+<!-- ============================================================
+     SECCIÓN 5: SISTEMA DE ALERTA
+     ============================================================ -->
+<section class="v-section" id="alertas">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Sistema de alerta</div>
-      <h2 class="sec-title">Escala de <span class="acc">alertas</span></h2>
-      <p class="sec-sub">Los 4 niveles con los que Protección Civil clasifica cualquier amenaza, incluida la de tsunami</p>
+    <div class="v-header center">
+      <span class="v-tag">05 · Sistema de alerta</span>
+      <h2 class="v-title">Escala de <span>alertas</span></h2>
+      <p class="v-sub">Los 4 niveles con los que Protección Civil clasifica cualquier amenaza, incluida la de tsunami.</p>
     </div>
     <?php include __DIR__ . '/_alert_levels.php'; ?>
   </div>
 </section>
 
-<!-- ANTES / DURANTE / DESPUES (EVACUACION) -->
-<section class="sec">
+<!-- ============================================================
+     SECCIÓN 6: PREVENCIÓN Y EVACUACIÓN
+     ============================================================ -->
+<section class="v-section v-section-dark" id="prevencion">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Protocolo · Evacuación</div>
-      <h2 class="sec-title">¿Qué hacer <span class="acc">antes, durante y después</span>?</h2>
+    <div class="v-header center">
+      <span class="v-tag">06 · Protocolo · Evacuación</span>
+      <h2 class="v-title">¿Qué hacer <span>antes, durante y después</span>?</h2>
+      <p class="v-sub">Pasos esenciales para actuar ante una amenaza de tsunami.</p>
     </div>
-    <div class="dis-actions">
-      <div class="dis-action-col">
-        <div class="dis-action-hd">Antes</div>
-        <ul>
-          <li>Si vives o visitas la costa, identifica de antemano una ruta a pie hacia terreno alto (o al menos 1-2 km tierra adentro).</li>
-          <li>Aprende las señales naturales: sismo fuerte sintiéndose en la costa, o el mar retirándose de forma anómala.</li>
-          <li>Guarda los contactos de Protección Civil y el número de alerta de tu municipio costero.</li>
-        </ul>
-      </div>
-      <div class="dis-action-col">
-        <div class="dis-action-hd">Durante</div>
-        <ul>
-          <li>Si sientes un sismo fuerte estando en la costa, <strong>no esperes una alerta oficial</strong>: evacúa de inmediato a terreno alto.</li>
-          <li>Nunca vayas hacia la playa a "ver" la ola o a rescatar pertenencias.</li>
-          <li>Un tsunami llega como una serie de olas: la primera no siempre es la más grande.</li>
-        </ul>
-      </div>
-      <div class="dis-action-col">
-        <div class="dis-action-hd">Después</div>
-        <ul>
-          <li>No regreses a la zona costera hasta que Protección Civil confirme que pasó el peligro.</li>
-          <li>Evita el contacto con agua estancada: puede tener contaminación o escombros peligrosos.</li>
-          <li>Revisa el estado de pozos y fuentes de agua antes de usarlos para consumo.</li>
-        </ul>
-      </div>
+    <div class="ts-actions-grid">
+      <article class="ts-action-card">
+        <!-- Cambia esta imagen por la correspondiente a la etapa Antes -->
+        <div class="ts-action-image"><img src="assets/media/img/puerto.jpg" alt="Preparación en una comunidad costera" loading="lazy"></div>
+        <div class="ts-action-body">
+          <div class="ts-action-step">01</div>
+          <h3>Antes: prepárate</h3>
+          <ul>
+            <li>Identifica una ruta a pie hacia terreno alto o al menos 1-2 km tierra adentro.</li>
+            <li>Reconoce las señales naturales: un sismo fuerte o el retiro anormal del mar.</li>
+            <li>Ten listos tus contactos de Protección Civil y una mochila de emergencia.</li>
+          </ul>
+        </div>
+      </article>
+      <article class="ts-action-card">
+        <!-- Cambia esta imagen por la correspondiente a la etapa Durante -->
+        <div class="ts-action-image"><img src="assets/media/img/tsunamiV.webp" alt="Ola de tsunami" loading="lazy"></div>
+        <div class="ts-action-body">
+          <div class="ts-action-step">02</div>
+          <h3>Durante: evacúa</h3>
+          <ul>
+            <li>Si sientes un sismo fuerte en la costa, evacúa de inmediato sin esperar una alerta oficial.</li>
+            <li>Aléjate de la playa y nunca regreses a observar la ola o rescatar pertenencias.</li>
+            <li>Recuerda que un tsunami llega en varias olas y la primera no siempre es la más grande.</li>
+          </ul>
+        </div>
+      </article>
+      <article class="ts-action-card">
+        <!-- Cambia esta imagen por la correspondiente a la etapa Después -->
+        <div class="ts-action-image"><img src="assets/media/img/tsunami 1.jpg" alt="Zona costera después de un tsunami" loading="lazy"></div>
+        <div class="ts-action-body">
+          <div class="ts-action-step">03</div>
+          <h3>Después: regresa con seguridad</h3>
+          <ul>
+            <li>No regreses a la costa hasta recibir la confirmación de Protección Civil.</li>
+            <li>Evita el agua estancada: puede contener contaminación, cables o escombros.</li>
+            <li>Revisa pozos y fuentes de agua antes de utilizarlos para consumo.</li>
+          </ul>
+        </div>
+      </article>
     </div>
   </div>
 </section>
 
-<!-- ANTECEDENTES -->
-<section class="sec sec-dark">
+<!-- ============================================================
+     SECCIÓN 7: HISTORIA
+     ============================================================ -->
+<section class="v-section" id="historia">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Memoria histórica</div>
-      <h2 class="sec-title">Antecedentes en la <span class="acc">costa salvadoreña</span></h2>
+    <div class="v-header center">
+      <span class="v-tag">07 · Memoria histórica</span>
+      <h2 class="v-title">Antecedentes en la <span>costa salvadoreña</span></h2>
+      <p class="v-sub">Eventos históricos que muestran la importancia de la preparación.</p>
     </div>
     <div class="tl-wrap"><div class="tl-line"></div><div class="tl-track" id="tlTrack-tsunamis"></div></div>
     <div class="tl-detail" id="tlDetail-tsunamis"></div>
+    <div class="ts-timeline-nav" aria-label="Navegación de antecedentes">
+      <button type="button" class="ts-timeline-btn" aria-label="Antecedente anterior" title="Antecedente anterior" onclick="ndaSetTimeline('tsunamis', Math.max(0, (window.__ndaTlActive.tsunamis || 0) - 1))">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        <span>Anterior</span>
+      </button>
+      <button type="button" class="ts-timeline-btn" aria-label="Siguiente antecedente" title="Siguiente antecedente" onclick="ndaSetTimeline('tsunamis', Math.min((window.__ndaTlData.tsunamis || []).length - 1, (window.__ndaTlActive.tsunamis || 0) + 1))">
+        <span>Siguiente</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
+    </div>
   </div>
 </section>
 <script>
@@ -461,13 +502,15 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
-<!-- GALERIA -->
-<section class="sec">
+<!-- ============================================================
+     SECCIÓN 8: GALERÍA
+     ============================================================ -->
+<section class="v-section v-section-dark" id="galeria">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Multimedia</div>
-      <h2 class="sec-title">Galería de <span class="acc">imágenes</span></h2>
-      <p class="sec-sub">Espacio reservado para fotografías del mapa de amenaza, señalización de rutas y comunidades costeras</p>
+    <div class="v-header center">
+      <span class="v-tag">08 · Multimedia</span>
+      <h2 class="v-title">Galería de <span>imágenes</span></h2>
+      <p class="v-sub">Fotografías del mapa de amenaza, señalización de rutas y comunidades costeras.</p>
     </div>
     <?php
     // TODO IMAGEN: las 3 imágenes actuales son referenciales de Wikimedia Commons (2 de ellas ni siquiera son de El Salvador).
@@ -482,12 +525,15 @@ document.addEventListener('DOMContentLoaded', function () {
   </div>
 </section>
 
-<!-- FUENTES -->
-<section class="sec sec-dark">
+<!-- ============================================================
+     SECCIÓN 9: FUENTES
+     ============================================================ -->
+<section class="v-section" id="fuentes">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Transparencia</div>
-      <h2 class="sec-title">Fuentes <span class="acc">oficiales</span> consultadas</h2>
+    <div class="v-header center">
+      <span class="v-tag">09 · Transparencia</span>
+      <h2 class="v-title">Fuentes <span>oficiales</span> consultadas</h2>
+      <p class="v-sub">Información pública utilizada para preparar este contenido.</p>
     </div>
     <div class="dis-sources">
       <a class="dis-source-item" href="https://www.snet.gob.sv/ver/oceanografia/amenaza/mapa+de+amenaza+por+tsunami/" target="_blank">MARN — Mapa de amenaza por tsunami</a>

@@ -2,7 +2,7 @@
 $title = $title ?? 'Incendios Forestales - NDA';
 $user = $user ?? null;
 $currentSlug = 'incendios-forestales';
-$extraCss = ['css/desastres-base.css', 'css/incendios-forestales.css'];
+$extraCss = ['css/desastres-base.css', 'css/volcanes.css', 'css/incendios-forestales.css'];
 ob_start();
 ?>
 
@@ -58,53 +58,58 @@ ob_start();
 </section>
 
 <!-- INFORMACION GENERAL -->
-<section class="sec" id="info-general">
+<section class="v-section" id="info-general">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Amenaza Forestal</div>
-      <h2 class="sec-title">Información <span class="acc">general</span></h2>
-      <p class="sec-sub">Qué es un incendio forestal, sus causas y cómo prevenirlo</p>
+    <div class="v-header center">
+      <span class="v-tag">01 · Amenaza forestal</span>
+      <h2 class="v-title">Información <span>general</span></h2>
+      <p class="v-sub">Qué es un incendio forestal, sus causas y cómo prevenirlo.</p>
     </div>
-    <div class="dis-info-grid">
-      <div class="dis-info-card">
-        <h3>¿Qué es?</h3>
-        <p>Un incendio forestal es un fuego no controlado que se propaga sobre vegetación: bosques, matorrales, potreros o cañales, sin que exista una barrera natural o humana que lo detenga a tiempo.</p>
+    <div class="v-intro-wrapper">
+      <div class="v-intro-image">
+        <img src="assets/media/img/bosque.jpg" alt="Bosque en riesgo de incendio forestal" loading="lazy">
+        <span class="v-intro-image-label">Vegetación seca durante la época de mayor riesgo</span>
       </div>
-      <div class="dis-info-card">
-        <h3>Causas</h3>
-        <p>Se necesitan tres elementos: combustible (hojarasca, pasto seco), condiciones cálidas y secas que favorezcan su propagación, y una fuente de ignición. En el país, la mayoría son provocados por quemas agrícolas mal manejadas, fogatas o colillas de cigarro.</p>
-      </div>
-      <div class="dis-info-card">
-        <h3>Prevención</h3>
-        <p>Evitar quemas agrícolas y fogatas en época seca, mantener rondas cortafuego alrededor de áreas naturales, y reportar humo sospechoso apenas se detecta.</p>
+      <div class="v-intro-content">
+        <div class="v-intro-definition">
+          <p>Un <strong>incendio forestal</strong> es un fuego no controlado que se propaga sobre bosques, matorrales, potreros o cañales sin una barrera que lo detenga a tiempo.</p>
+        </div>
+        <div class="v-fundamentos">
+          <h3 class="v-fundamentos-title">Para que un incendio se propague se necesitan:</h3>
+          <div class="v-fundamentos-grid">
+            <div class="v-fundamento"><span class="v-fundamento-num">01</span><div class="v-fundamento-content"><h4>Combustible seco</h4><p>Hojarasca, pasto, ramas y vegetación que pueden arder con facilidad.</p></div></div>
+            <div class="v-fundamento"><span class="v-fundamento-num">02</span><div class="v-fundamento-content"><h4>Calor y baja humedad</h4><p>La época seca facilita que el fuego avance con rapidez y alcance mayor extensión.</p></div></div>
+            <div class="v-fundamento"><span class="v-fundamento-num">03</span><div class="v-fundamento-content"><h4>Fuente de ignición</h4><p>Quemas agrícolas, fogatas o colillas mal apagadas son las causas más comunes.</p></div></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- INFORMACION DE EL SALVADOR -->
-<section class="sec">
+<section class="v-section v-section-dark" id="el-salvador">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">El Salvador</div>
-      <h2 class="sec-title">Información de <span class="acc">El Salvador</span></h2>
-      <p class="sec-sub">La época seca y su relación con los incendios forestales</p>
+    <div class="v-header center">
+      <span class="v-tag">02 · El Salvador</span>
+      <h2 class="v-title">Información de <span>El Salvador</span></h2>
+      <p class="v-sub">La época seca y su relación con los incendios forestales.</p>
     </div>
-    <div class="dis-info-grid" style="grid-template-columns:1fr">
-      <div class="dis-info-card">
-        <h3>Época seca</h3>
-        <p>La estación seca (noviembre a abril) trae altas temperaturas y baja humedad, justo cuando es más común la quema de rastrojos para preparar tierra de cultivo o cosechar caña de azúcar, una práctica muy extendida en el país.</p>
-      </div>
+    <div class="v-grid-3">
+      <div class="v-card"><div class="v-card-img"><img src="assets/media/img/aire.jpg" alt="Época seca" loading="lazy"></div><div class="v-card-body"><h4>Época seca</h4><p>De noviembre a abril hay altas temperaturas y baja humedad, condiciones que favorecen la propagación del fuego.</p></div></div>
+      <div class="v-card"><div class="v-card-img"><img src="assets/media/img/ca%C3%B1era.jpg" alt="Quema agrícola" loading="lazy"></div><div class="v-card-body"><h4>Quemas agrícolas</h4><p>La quema de rastrojos y caña de azúcar puede salirse de control si no se realiza con medidas de seguridad.</p></div></div>
+      <div class="v-card"><div class="v-card-img"><img src="assets/media/img/tres.jpg" alt="Zona natural vulnerable" loading="lazy"></div><div class="v-card-body"><h4>Áreas naturales</h4><p>Parques y bosques con vegetación seca requieren vigilancia y reportes tempranos durante toda la temporada.</p></div></div>
     </div>
   </div>
 </section>
 
 <!-- ZONAS VULNERABLES -->
-<section class="sec sec-dark">
+<section class="v-section" id="zonas-vulnerables">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Mapa de Riesgo</div>
-      <h2 class="sec-title">Zonas más <span class="acc">propensas</span></h2>
+    <div class="v-header center">
+      <span class="v-tag">03 · Mapa de riesgo</span>
+      <h2 class="v-title">Zonas más <span>propensas</span></h2>
+      <p class="v-sub">Áreas naturales y productivas con mayor exposición al fuego.</p>
     </div>
     <div class="in-zone-carousel-wrapper">
       <div class="in-zone-carousel-track" id="zonesCarouselTrack">
@@ -233,11 +238,12 @@ ob_start();
 </script>
 
 <!-- RIESGOS -->
-<section class="sec">
+<section class="v-section v-section-dark" id="riesgos">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Consecuencias</div>
-      <h2 class="sec-title">Riesgos de un <span class="acc">incendio forestal</span></h2>
+    <div class="v-header center">
+      <span class="v-tag">04 · Consecuencias</span>
+      <h2 class="v-title">Riesgos de un <span>incendio forestal</span></h2>
+      <p class="v-sub">Impactos sobre bosques, fauna, suelo y comunidades.</p>
     </div>
     <div class="dis-impact-grid">
       <div class="dis-impact-card">
@@ -261,59 +267,64 @@ ob_start();
 </section>
 
 <!-- ESCALA DE ALERTAS -->
-<section class="sec sec-dark">
+<section class="v-section" id="alertas">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Sistema oficial</div>
-      <h2 class="sec-title">Escala de <span class="acc">alertas</span></h2>
-      <p class="sec-sub">Los 4 niveles con los que Protección Civil clasifica una amenaza de incendio forestal en desarrollo</p>
+    <div class="v-header center">
+      <span class="v-tag">05 · Sistema oficial</span>
+      <h2 class="v-title">Escala de <span>alertas</span></h2>
+      <p class="v-sub">Los 4 niveles con los que Protección Civil clasifica una amenaza en desarrollo.</p>
     </div>
     <?php include __DIR__ . '/_alert_levels.php'; ?>
   </div>
 </section>
 
 <!-- ANTES / DURANTE / DESPUES -->
-<section class="sec">
+<section class="v-section v-section-dark" id="prevencion">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Protocolo</div>
-      <h2 class="sec-title">¿Qué hacer <span class="acc">antes, durante y después</span>?</h2>
+    <div class="v-header center">
+      <span class="v-tag">06 · Protocolo</span>
+      <h2 class="v-title">¿Qué hacer <span>antes, durante y después</span>?</h2>
+      <p class="v-sub">Acciones para prevenir, responder y recuperarse de un incendio forestal.</p>
     </div>
-    <div class="dis-actions">
-      <div class="dis-action-col">
-        <div class="dis-action-hd">Antes</div>
+    <div class="fi-actions-grid">
+      <article class="fi-action-card">
+        <div class="fi-action-image"><img src="assets/media/img/bosque.jpg" alt="Prevención de incendios forestales" loading="lazy"></div>
+        <div class="fi-action-body"><span class="fi-action-step">01</span><h3>Antes: prevén</h3>
         <ul>
           <li>No hagas quemas agrícolas ni fogatas en época seca, sobre todo con viento.</li>
           <li>Si vas a hacer una quema controlada y autorizada, ten una ronda cortafuego y agua cerca.</li>
           <li>Reporta humo sospechoso a Cuerpo de Bomberos o al MARN lo antes posible.</li>
-        </ul>
-      </div>
-      <div class="dis-action-col">
-        <div class="dis-action-hd">Durante</div>
+        </ul></div>
+      </article>
+      <article class="fi-action-card">
+        <div class="fi-action-image"><img src="assets/media/img/aire.jpg" alt="Humo de incendio forestal" loading="lazy"></div>
+        <div class="fi-action-body"><span class="fi-action-step">02</span><h3>Durante: aléjate</h3>
         <ul>
           <li>Aléjate en dirección contraria al viento y cuesta abajo del fuego, nunca cuesta arriba.</li>
           <li>Cúbrete nariz y boca con tela húmeda para reducir la inhalación de humo.</li>
           <li>No intentes combatir un incendio grande por tu cuenta: llama a Bomberos de inmediato.</li>
-        </ul>
-      </div>
-      <div class="dis-action-col">
-        <div class="dis-action-hd">Después</div>
+        </ul></div>
+      </article>
+      <article class="fi-action-card">
+        <div class="fi-action-image"><img src="assets/media/img/suelo.jpg" alt="Zona forestal después de un incendio" loading="lazy"></div>
+        <div class="fi-action-body"><span class="fi-action-step">03</span><h3>Después: recupera</h3>
         <ul>
           <li>Evita caminar por zonas recién quemadas: los árboles debilitados pueden caer.</li>
           <li>Apoya o participa en jornadas de reforestación de las áreas afectadas.</li>
           <li>Denuncia quemas agrícolas ilegales que veas en tu comunidad.</li>
-        </ul>
-      </div>
+        </ul></div>
+      </article>
     </div>
   </div>
 </section>
 
 <!-- MEMORIA HISTORICA -->
-<section class="sec sec-dark">
+<section class="v-section" id="historia">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Memoria histórica</div>
-      <h2 class="sec-title">Un riesgo <span class="acc">estacional recurrente</span></h2>
+    <div class="v-header center">
+      <span class="v-tag">07 · Memoria histórica</span>
+      <h2 class="v-title">Un riesgo <span>estacional recurrente</span></h2>
+      <p class="v-sub">Eventos que muestran el impacto de los incendios en el país.</p>
     </div>
     <div class="tl-wrap"><div class="tl-line"></div><div class="tl-track" id="tlTrack-incendios"></div></div>
     <div class="tl-detail" id="tlDetail-incendios"></div>
@@ -352,12 +363,12 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <!-- GALERIA -->
-<section class="sec">
+<section class="v-section v-section-dark" id="galeria">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Multimedia</div>
-      <h2 class="sec-title">Galería de <span class="acc">imágenes</span></h2>
-      <p class="sec-sub">Espacio reservado para fotografías de áreas naturales afectadas y labores de control</p>
+    <div class="v-header center">
+      <span class="v-tag">08 · Multimedia</span>
+      <h2 class="v-title">Galería de <span>imágenes</span></h2>
+      <p class="v-sub">Áreas naturales afectadas y labores de control.</p>
     </div>
     <?php $galleryItems = [
         ['img' => 'https://commons.wikimedia.org/wiki/Special:FilePath/Forest%20fires.jpg', 'cap' => 'Incendio forestal en época seca (referencial, no de El Salvador)', 'credit' => 'Wikimedia Commons'],
@@ -368,11 +379,12 @@ document.addEventListener('DOMContentLoaded', function () {
 </section>
 
 <!-- FUENTES -->
-<section class="sec sec-dark">
+<section class="v-section" id="fuentes">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Transparencia</div>
-      <h2 class="sec-title">Fuentes <span class="acc">oficiales</span> consultadas</h2>
+    <div class="v-header center">
+      <span class="v-tag">09 · Transparencia</span>
+      <h2 class="v-title">Fuentes <span>oficiales</span> consultadas</h2>
+      <p class="v-sub">Información pública utilizada para preparar este contenido.</p>
     </div>
     <div class="dis-sources">
       <a class="dis-source-item" href="https://www.snet.gob.sv/" target="_blank">MARN — DGOA/SNET, Observatorio de Amenazas</a>

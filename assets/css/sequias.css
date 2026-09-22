@@ -1,6 +1,32 @@
 /* Tema visual propio de la pagina de Sequias. */
 .dis-page.dis-sequias { --dis-accent: #b8862e; --dis-accent2: #5c4315; }
 
+/* ---------- ESTRUCTURA DE SECCIONES: estilo volcanes/sismos ---------- */
+.dis-sequias .v-section { position: relative; padding: 80px 0; border-top: 1px solid rgba(184,134,46,.16); background: var(--bg); }
+.dis-sequias .v-section-dark { background: var(--bg2); border-top-color: rgba(255,255,255,.07); }
+.dis-sequias .v-header { margin-bottom: 42px; }
+.dis-sequias .v-header.center { text-align: center; }
+.dis-sequias .v-tag { display: inline-block; margin-bottom: 12px; padding: 3px 11px; border: 1px solid rgba(184,134,46,.28); border-radius: 100px; color: var(--dis-accent); background: rgba(184,134,46,.1); font-size: .66rem; font-weight: 700; letter-spacing: .15em; line-height: 1.4; text-transform: uppercase; }
+.dis-sequias .v-title { margin-bottom: 8px; color: var(--text); font-family: var(--fd); font-size: clamp(1.8rem,3.5vw,2.8rem); font-weight: 800; letter-spacing: -.025em; line-height: 1.2; }
+.dis-sequias .v-title span { color: var(--dis-accent); }
+.dis-sequias .v-sub { max-width: 600px; margin: 0 auto; color: var(--text2); font-size: 1rem; line-height: 1.7; }
+.dis-sequias .v-intro-definition p { border-left-color: var(--dis-accent); }
+.dis-sequias .v-intro-definition p strong, .dis-sequias .v-fundamento-num, .dis-sequias .v-card-body h4 { color: var(--dis-accent); }
+.dis-sequias .v-fundamento:hover { border-color: var(--dis-accent); }
+
+/* ---------- TARJETAS DEL PROTOCOLO ---------- */
+.dis-sequias .sq-actions-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 18px; max-width: 1100px; margin: 0 auto; }
+.dis-sequias .sq-action-card { overflow: hidden; border: 1px solid var(--border2); border-radius: 14px; background: var(--card); box-shadow: 0 8px 24px rgba(0,0,0,.12); }
+.dis-sequias .sq-action-image { height: 150px; overflow: hidden; background: var(--bg3); }
+.dis-sequias .sq-action-image img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+.dis-sequias .sq-action-card:hover .sq-action-image img { transform: scale(1.05); }
+.dis-sequias .sq-action-body { padding: 18px 20px 20px; }
+.dis-sequias .sq-action-step { display: block; margin-bottom: 6px; color: var(--dis-accent); font-family: var(--fd); font-size: .75rem; font-weight: 800; letter-spacing: .12em; }
+.dis-sequias .sq-action-body h3 { margin: 0 0 12px; color: var(--text); font-family: var(--fd); font-size: 1.05rem; line-height: 1.25; }
+.dis-sequias .sq-action-body ul { display: flex; flex-direction: column; gap: 9px; margin: 0; padding: 0; list-style: none; }
+.dis-sequias .sq-action-body li { position: relative; padding-left: 15px; color: var(--text2); font-size: .82rem; line-height: 1.55; }
+.dis-sequias .sq-action-body li::before { position: absolute; top: .55em; left: 0; width: 6px; height: 6px; border-radius: 50%; background: var(--dis-accent); content: ''; }
+
 .dis-sequias .dis-hero {
     background: radial-gradient(ellipse at 30% 0%, rgba(120, 130, 145, .10) 0%, transparent 55%);
 }
@@ -121,4 +147,11 @@
     .dis-sequias .in-zone-carousel-btn svg { width: 13px; height: 13px; }
     .dis-sequias .in-zone-carousel-btn.prev { left: 2px; }
     .dis-sequias .in-zone-carousel-btn.next { right: 2px; }
+}
+
+@media (max-width: 900px) {
+    .dis-sequias .sq-actions-grid { grid-template-columns: 1fr; max-width: 620px; }
+}
+@media (max-width: 640px) {
+    .dis-sequias .v-section { padding: 62px 0; }
 }

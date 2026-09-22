@@ -2,7 +2,7 @@
 $title = $title ?? 'Tormentas Tropicales - NDA';
 $user = $user ?? null;
 $currentSlug = 'tormentas-tropicales';
-$extraCss = ['css/desastres-base.css', 'css/tormentas-tropicales.css'];
+$extraCss = ['css/desastres-base.css', 'css/volcanes.css', 'css/tormentas-tropicales.css'];
 ob_start();
 ?>
 
@@ -58,60 +58,58 @@ ob_start();
 </section>
 
 <!-- INFORMACION GENERAL -->
-<section class="sec" id="info-general">
+<section class="v-section" id="info-general">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Amenaza Hidrometeorológica</div>
-      <h2 class="sec-title">Información <span class="acc">general</span></h2>
-      <p class="sec-sub">Qué es una tormenta tropical y sus distintas etapas</p>
+    <div class="v-header center">
+      <span class="v-tag">01 · Amenaza hidrometeorológica</span>
+      <h2 class="v-title">Información <span>general</span></h2>
+      <p class="v-sub">Qué es una tormenta tropical y sus distintas etapas.</p>
     </div>
-    <div class="dis-info-grid dis-info-grid-2">
-      <div class="dis-info-card">
-        <h3>¿Qué es?</h3>
-        <p>Es un sistema de baja presión con vientos que giran organizados alrededor de un centro. Se forma sobre aguas oceánicas cálidas (mayores a 26°C): la evaporación lo alimenta de energía y la rotación de la Tierra organiza los vientos en espiral.</p>
+    <div class="v-intro-wrapper">
+      <div class="v-intro-image">
+        <img src="assets/media/img/principal.jpg" alt="Tormenta tropical" loading="lazy">
+        <span class="v-intro-image-label">Sistema tropical organizado sobre aguas cálidas</span>
       </div>
-      <div class="dis-info-card">
-        <h3>Depresión tropical</h3>
-        <p>La etapa inicial: un sistema organizado con vientos sostenidos de hasta 62 km/h. Ya trae lluvias intensas aunque el viento todavía no sea el problema principal.</p>
-      </div>
-      <div class="dis-info-card">
-        <h3>Huracán</h3>
-        <p>Vientos sostenidos superiores a 119 km/h, organizados alrededor de un "ojo" central. El Salvador rara vez recibe un impacto directo, pero sí los remanentes de humedad de huracanes que pasan cerca.</p>
-      </div>
-      <div class="dis-info-card">
-        <h3>Tormenta tropical</h3>
-        <p>Vientos sostenidos entre 63 y 118 km/h. Es la categoría que más ha golpeado a El Salvador en la última década, con lluvias que suelen ser más destructivas que el viento.</p>
+      <div class="v-intro-content">
+        <div class="v-intro-definition">
+          <p>Una <strong>tormenta tropical</strong> es un sistema de baja presión con vientos organizados alrededor de un centro, alimentado por la evaporación de aguas oceánicas cálidas.</p>
+        </div>
+        <div class="v-fundamentos">
+          <h3 class="v-fundamentos-title">Etapas principales del sistema:</h3>
+          <div class="v-fundamentos-grid">
+            <div class="v-fundamento"><span class="v-fundamento-num">01</span><div class="v-fundamento-content"><h4>Depresión tropical</h4><p>Vientos organizados de hasta 62 km/h, acompañados de lluvias intensas.</p></div></div>
+            <div class="v-fundamento"><span class="v-fundamento-num">02</span><div class="v-fundamento-content"><h4>Tormenta tropical</h4><p>Vientos sostenidos entre 63 y 118 km/h y mayor organización del sistema.</p></div></div>
+            <div class="v-fundamento"><span class="v-fundamento-num">03</span><div class="v-fundamento-content"><h4>Huracán</h4><p>Vientos superiores a 119 km/h organizados alrededor de un ojo central.</p></div></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- INFORMACION DE EL SALVADOR -->
-<section class="sec">
+<section class="v-section v-section-dark" id="el-salvador">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">El Salvador</div>
-      <h2 class="sec-title">Información de <span class="acc">El Salvador</span></h2>
-      <p class="sec-sub">Por qué el país recibe sistemas del Pacífico y del Caribe</p>
+    <div class="v-header center">
+      <span class="v-tag">02 · El Salvador</span>
+      <h2 class="v-title">Información de <span>El Salvador</span></h2>
+      <p class="v-sub">Por qué el país recibe sistemas del Pacífico y del Caribe.</p>
     </div>
-    <div class="dis-info-card dis-info-card-split">
-      <div class="dis-info-card-text">
-        <h3>¿Por qué ocurre aquí?</h3>
-        <p>Aunque no está en la ruta directa de los grandes huracanes del Caribe, el país recibe con frecuencia sistemas formados en el Pacífico y remanentes de sistemas del Atlántico/Caribe que cruzan Centroamérica, sobre todo durante la temporada oficial (mayo–noviembre).</p>
-      </div>
-      <div class="dis-info-card-photo">
-        <img src="assets/media/img/tropical.jpeg" alt="Tormenta tropical" loading="lazy">
-      </div>
+    <div class="v-grid-3">
+      <div class="v-card"><div class="v-card-img"><img src="assets/media/img/tropical.jpeg" alt="Sistemas del Pacífico" loading="lazy"></div><div class="v-card-body"><h4>Origen pacífico</h4><p>El Salvador recibe sistemas formados en el Pacífico que aportan lluvias y vientos a la costa.</p></div></div>
+      <div class="v-card"><div class="v-card-img"><img src="assets/media/img/costa.jpg" alt="Costa salvadoreña" loading="lazy"></div><div class="v-card-body"><h4>Remanentes del Caribe</h4><p>Sistemas del Atlántico y el Caribe pueden cruzar Centroamérica y conservar humedad.</p></div></div>
+      <div class="v-card"><div class="v-card-img"><img src="assets/media/img/ladera.jpeg" alt="Laderas saturadas por lluvia" loading="lazy"></div><div class="v-card-body"><h4>Temporada de riesgo</h4><p>Entre mayo y noviembre, la lluvia acumulada puede saturar laderas y cuencas.</p></div></div>
     </div>
   </div>
 </section>
 
 <!-- ZONAS EXPUESTAS -->
-<section class="sec sec-dark">
+<section class="v-section" id="zonas-expuestas">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Mapa de Riesgo</div>
-      <h2 class="sec-title">Zonas más <span class="acc">expuestas</span></h2>
+    <div class="v-header center">
+      <span class="v-tag">03 · Mapa de riesgo</span>
+      <h2 class="v-title">Zonas más <span>expuestas</span></h2>
+      <p class="v-sub">Áreas donde la lluvia, el viento y la saturación del suelo elevan el riesgo.</p>
     </div>
     <div class="in-zone-carousel-wrapper">
       <div class="in-zone-carousel-track" id="zonesCarouselTrack">
@@ -236,11 +234,12 @@ ob_start();
 </script>
 
 <!-- RIESGOS -->
-<section class="sec">
+<section class="v-section v-section-dark" id="riesgos">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Consecuencias</div>
-      <h2 class="sec-title">Riesgos de una <span class="acc">tormenta tropical</span></h2>
+    <div class="v-header center">
+      <span class="v-tag">04 · Consecuencias</span>
+      <h2 class="v-title">Riesgos de una <span>tormenta tropical</span></h2>
+      <p class="v-sub">Impactos sobre viviendas, cultivos, caminos y comunidades.</p>
     </div>
     <div class="dis-impact-grid">
       <div class="dis-impact-card">
@@ -264,59 +263,64 @@ ob_start();
 </section>
 
 <!-- ESCALA DE ALERTAS -->
-<section class="sec sec-dark">
+<section class="v-section" id="alertas">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Sistema oficial</div>
-      <h2 class="sec-title">Escala de <span class="acc">alertas</span></h2>
-      <p class="sec-sub">Los 4 niveles con los que Protección Civil clasifica una tormenta tropical en desarrollo</p>
+    <div class="v-header center">
+      <span class="v-tag">05 · Sistema oficial</span>
+      <h2 class="v-title">Escala de <span>alertas</span></h2>
+      <p class="v-sub">Los 4 niveles con los que Protección Civil clasifica una tormenta tropical.</p>
     </div>
     <?php include __DIR__ . '/_alert_levels.php'; ?>
   </div>
 </section>
 
 <!-- ANTES / DURANTE / DESPUES -->
-<section class="sec">
+<section class="v-section v-section-dark" id="prevencion">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Protocolo</div>
-      <h2 class="sec-title">¿Qué hacer <span class="acc">antes, durante y después</span>?</h2>
+    <div class="v-header center">
+      <span class="v-tag">06 · Protocolo</span>
+      <h2 class="v-title">¿Qué hacer <span>antes, durante y después</span>?</h2>
+      <p class="v-sub">Acciones para prepararte y responder ante un sistema tropical.</p>
     </div>
-    <div class="dis-actions">
-      <div class="dis-action-col">
-        <div class="dis-action-hd">Antes</div>
+    <div class="tt-actions-grid">
+      <article class="tt-action-card">
+        <div class="tt-action-image"><img src="assets/media/img/principal.jpg" alt="Preparación ante tormentas tropicales" loading="lazy"></div>
+        <div class="tt-action-body"><span class="tt-action-step">01</span><h3>Antes: prepárate</h3>
         <ul>
           <li>Sigue el rastreo de sistemas tropicales del MARN desde que se forman, no solo cuando ya están cerca.</li>
           <li>Prepara tu mochila de emergencia y ten un plan familiar de evacuación listo.</li>
           <li>Asegura techos, canaletas y objetos sueltos que el viento pueda arrastrar.</li>
-        </ul>
-      </div>
-      <div class="dis-action-col">
-        <div class="dis-action-hd">Durante</div>
+        </ul></div>
+      </article>
+      <article class="tt-action-card">
+        <div class="tt-action-image"><img src="assets/media/img/tropical.jpeg" alt="Tormenta tropical en desarrollo" loading="lazy"></div>
+        <div class="tt-action-body"><span class="tt-action-step">02</span><h3>Durante: mantente a salvo</h3>
         <ul>
           <li>Evacúa de forma preventiva si Protección Civil lo indica: no esperes a que empeore.</li>
           <li>Mantente alejado de ríos, quebradas y zonas bajas mientras dure el sistema.</li>
           <li>Usa la radio a pilas para seguir los avisos oficiales si se corta la energía.</li>
-        </ul>
-      </div>
-      <div class="dis-action-col">
-        <div class="dis-action-hd">Después</div>
+        </ul></div>
+      </article>
+      <article class="tt-action-card">
+        <div class="tt-action-image"><img src="assets/media/img/costa.jpg" alt="Costa después de una tormenta tropical" loading="lazy"></div>
+        <div class="tt-action-body"><span class="tt-action-step">03</span><h3>Después: regresa con cuidado</h3>
         <ul>
           <li>No regreses a zonas evacuadas hasta que se confirme que es seguro.</li>
           <li>Revisa tu vivienda por daños estructurales antes de reingresar.</li>
           <li>Reporta a Protección Civil los daños para el registro de damnificados.</li>
-        </ul>
-      </div>
+        </ul></div>
+      </article>
     </div>
   </div>
 </section>
 
 <!-- MEMORIA HISTORICA -->
-<section class="sec sec-dark">
+<section class="v-section" id="historia">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Memoria histórica</div>
-      <h2 class="sec-title">Sistemas que <span class="acc">marcaron</span> al país</h2>
+    <div class="v-header center">
+      <span class="v-tag">07 · Memoria histórica</span>
+      <h2 class="v-title">Sistemas que <span>marcaron</span> al país</h2>
+      <p class="v-sub">Eventos tropicales que dejaron huella en El Salvador.</p>
     </div>
     <div class="tl-wrap"><div class="tl-line"></div><div class="tl-track" id="tlTrack-tormentas"></div></div>
     <div class="tl-detail" id="tlDetail-tormentas"></div>
@@ -360,12 +364,12 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <!-- GALERIA -->
-<section class="sec">
+<section class="v-section v-section-dark" id="galeria">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Multimedia</div>
-      <h2 class="sec-title">Galería de <span class="acc">imágenes</span></h2>
-      <p class="sec-sub">Espacio reservado para fotografías de sistemas tropicales y sus efectos</p>
+    <div class="v-header center">
+      <span class="v-tag">08 · Multimedia</span>
+      <h2 class="v-title">Galería de <span>imágenes</span></h2>
+      <p class="v-sub">Sistemas tropicales y sus efectos en el territorio.</p>
     </div>
     <?php $galleryItems = [
         ['img' => 'https://commons.wikimedia.org/wiki/Special:FilePath/Lo%20que%20dejo%20a%20su%20paso%20el%20huracan%20Ida%20(7%2C8%20Noviembre%202009)%20Playa%20de%20Las%20Hojas.%20-%20panoramio%20(4).jpg', 'cap' => 'Daños del huracán Ida en Playa de Las Hojas, El Salvador (2009)', 'credit' => 'Wikimedia Commons'],
@@ -376,11 +380,12 @@ document.addEventListener('DOMContentLoaded', function () {
 </section>
 
 <!-- FUENTES -->
-<section class="sec sec-dark">
+<section class="v-section" id="fuentes">
   <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Transparencia</div>
-      <h2 class="sec-title">Fuentes <span class="acc">oficiales</span> consultadas</h2>
+    <div class="v-header center">
+      <span class="v-tag">09 · Transparencia</span>
+      <h2 class="v-title">Fuentes <span>oficiales</span> consultadas</h2>
+      <p class="v-sub">Información pública utilizada para preparar este contenido.</p>
     </div>
     <div class="dis-sources">
       <a class="dis-source-item" href="https://www.snet.gob.sv/" target="_blank">MARN — DGOA/SNET, Observatorio de Amenazas</a>

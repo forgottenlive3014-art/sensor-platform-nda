@@ -383,10 +383,27 @@
     background: var(--bg3);
 }
 #focoEpicentroCv {
-    width: 100%;
-    height: 220px;
-    background: var(--bg3);
+    display: none !important;
+}
+.foco-diagram-image-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 260px;
+    height: 300px;
     border-radius: var(--rs);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--bg3);
+}
+.foco-diagram-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    margin: 0 auto;
+    background: rgba(255,255,255,0.02);
 }
 .foco-legend {
     display: grid;
