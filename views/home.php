@@ -283,33 +283,56 @@ if (!globeGlb) {
   // ============================================================
   // 2) ILUMINACIÓN REALISTA — quita el "plano"
   // ============================================================
-  // Ambient suave (solo relleno)
   scene.add(new THREE.AmbientLight(0xffffff, 0.45));
 
-  // Sol fuerte y LATERAL → crea terminador día/noche visible
   const sun = new THREE.DirectionalLight(0xffffff, 2.2);
   sun.position.set(5, 2, 3);
   scene.add(sun);
 
-  // Relleno azulado desde el lado opuesto (reflejo atmosférico)
   const fill = new THREE.DirectionalLight(0x88bbff, 0.55);
   fill.position.set(-5, -2, -3);
   scene.add(fill);
 
-  // Rim light: resalta el borde superior
   const rim = new THREE.DirectionalLight(0xffddaa, 0.4);
   rim.position.set(0, 5, -5);
   scene.add(rim);
 
   // ============================================================
-  // 3) ENVIRONMENT MAP — da reflejos realistas tipo Google Earth
+  // 3) ENVIRONMENT MAP — reflejos realistas
   // ============================================================
   const pmrem = new THREE.PMREMGenerator(renderer);
   pmrem.compileEquirectangularShader();
   const envTex = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
 
   // ============================================================
-  // 4) CARGAR EL MODELO
+  // 4) CONSTANTES GEOGRÁFICAS — EL SALVADOR
+  // ------------------------------------------------------------
+  // El Salvador: lat 13.7° N, lon -89.2° W
+  //
+  // Para una esfera THREE.js estándar (meridiano 0 → +Z):
+  //   rotation.y = degToRad(-LON)   → trae esa longitud al frente
+  //   rotation.x = degToRad( LAT)   → trae esa latitud al frente
+  //
+  // Tu GLB tiene el meridiano 0 desplazado. Offset corregido
+  // tras análisis de las capturas previas:
+  //   - Con -11° el frente era África (lon ≈ 0°)
+  //   - Con +78° el frente era Pacífico mexicano (lon ≈ -105°)
+  //   - Interpolación lineal → +18° ≈ El Salvador (lon ≈ -89°)
+  //
+  // AJUSTE FINO con el DEBUG activado (ver más abajo):
+  //   nuevo_offset = offset_actual + (-89.2 - lon_actual)
+  // ============================================================
+  const SV_LON_DEG = -115;
+  const SV_LAT_DEG = 13.7;
+
+  const BASE_OFFSET_Y = THREE.MathUtils.degToRad(18); // alinea la vista a El Salvador
+  const BASE_OFFSET_X = THREE.MathUtils.degToRad(8); // sube un poco la proyección de El Salvador
+
+  const BASE_ROT_Y = THREE.MathUtils.degToRad(-SV_LON_DEG) + BASE_OFFSET_Y;
+  const BASE_ROT_X = THREE.MathUtils.degToRad(SV_LAT_DEG) + BASE_OFFSET_X;
+
+  // ============================================================
+  // 5) CARGAR EL MODELO
   // ============================================================
   const loader = new GLTFLoader();
   loader.load('assets/modelos3d/earth_globe_-_atlas.glb', (gltf) => {
@@ -321,14 +344,10 @@ if (!globeGlb) {
       const mat = child.material;
       if (!mat) return;
 
-      // Quitar facetado (crítico para que no se vea "bolsa de polos")
       if ('flatShading' in mat) mat.flatShading = false;
-
-      // PBR correcto
       if ('roughness' in mat) mat.roughness = 0.85;
       if ('metalness' in mat) mat.metalness = 0.05;
 
-      // Aplicar environment map
       mat.envMap = envTex;
       mat.envMapIntensity = 0.45;
       mat.needsUpdate = true;
@@ -348,17 +367,14 @@ if (!globeGlb) {
     const center = box.getCenter(new THREE.Vector3());
     model.position.sub(center);
 
-    // Orientación base del GLB claro: se gira hacia la derecha
-    // para ubicar mejor la línea de América Central/El Salvador.
-    model.rotation.y = 2.12;
-    model.rotation.x = 0.18;
+    // --- Orientación base: El Salvador al frente ---
+    model.rotation.y = BASE_ROT_Y;
+    model.rotation.x = BASE_ROT_X;
 
     // --- Guardar para animación ---
     window.__ndaGlbModel = model;
     window.__ndaGlbBaseScale = scale;
 
-    // El GLB claro sigue el mismo recorrido geográfico del globo oscuro:
-    // parte de la vista continental y termina enfocando Centroamérica.
     const baseModelPosition = model.position.clone();
     const baseCameraZ = camera.position.z;
     const introStart = performance.now();
@@ -367,43 +383,36 @@ if (!globeGlb) {
     scene.add(model);
 
     // ============================================================
-    // 5) ANIMACIÓN
+    // 6) ANIMACIÓN
     // ============================================================
     function animate() {
       requestAnimationFrame(animate);
 
       const scrollPulse = window.__ndaHeroScrollProgress || 0;
       const t = Math.min(Math.max(scrollPulse, 0), 1);
+      const travel = t;
 
-      // Zoom del atlas hacia la zona visible de Centroamérica / El Salvador.
-      // El desplazamiento compensado de abajo mantiene esa zona bajo el foco
-      // mientras el GLB se amplía desde su centro geométrico.
-      const zoom = 1 + Math.pow(t, 2) * 0.62;
+      // Igual flujo visual que el modo oscuro: misma velocidad y tamaño de
+      // acercamiento para que la transición se sienta consistente.
+      const zoomBoost = 0.45;
+      const zoom = 1 + travel * zoomBoost;
       model.scale.setScalar(window.__ndaGlbBaseScale * zoom);
 
-      // Mover la región visible como el globe.gl oscuro: el eje Y desplaza
-      // la longitud hacia Centroamérica y el eje X acompaña la latitud.
-      const geographicYaw = THREE.MathUtils.degToRad(10) * t;
-      const geographicPitch = THREE.MathUtils.degToRad(-3) * t;
       const introProgress = Math.min(1, (performance.now() - introStart) / introDuration);
       const introEase = 1 - Math.pow(1 - introProgress, 3);
-      const introYaw = (1 - introEase) * THREE.MathUtils.degToRad(24);
-      model.rotation.y = 2.12 + geographicYaw + introYaw;
-      model.rotation.x = 0.18 + geographicPitch;
+      const introYaw = (1 - introEase) * THREE.MathUtils.degToRad(18);
 
-      // Ajuste de desplazamiento del modelo para que el mapa visual
-      // se centre en la franja de Centroamérica y El Salvador sobre la
-      // proyección del GLB.
+      model.rotation.y = BASE_ROT_Y + introYaw;
+      model.rotation.x = BASE_ROT_X;
+
       model.position.set(
         baseModelPosition.x,
         baseModelPosition.y + 0.05,
         baseModelPosition.z
       );
 
-      // Enfoque de cámara hacia la región objetivo, sin cambiar la vista
-      // del terreno MapLibre que aparece después.
-      camera.position.z = Math.max(1.85, baseCameraZ - t * 1.15);
-      camera.position.y = 0.08 - t * 0.04;
+      camera.position.z = Math.max(1.85, baseCameraZ - travel * 1.15);
+      camera.position.y = 0.08 - travel * 0.04;
       camera.lookAt(0, 0.08, 0);
 
       renderer.render(scene, camera);
@@ -411,7 +420,7 @@ if (!globeGlb) {
     animate();
 
     // ============================================================
-    // 6) RESIZE
+    // 7) RESIZE
     // ============================================================
     window.addEventListener('resize', () => {
       const w = globeGlb.clientWidth || window.innerWidth;

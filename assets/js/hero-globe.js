@@ -168,7 +168,8 @@
         if (!globeGlb || currentTheme() !== 'light') return;
         if (!window.__ndaGlbModel || !window.__ndaGlbBaseScale) return;
         const travel = Math.min(1, Math.max(0, p));
-        const zoom = 1 + travel * 0.45;
+        const zoomBoost = currentTheme() === 'light' ? 0.90 : 0.45;
+        const zoom = 1 + travel * zoomBoost;
         window.__ndaGlbModel.scale.setScalar(window.__ndaGlbBaseScale * zoom);
     }
 
@@ -180,10 +181,12 @@
         if (globeWrap) globeWrap.dataset.phase = activePhase;
         globe.controls().autoRotate = activePhase === 1;
 
-        // El mapa con terreno (nitido) toma el relevo bastante antes de que
-        // el globo llegue a su zoom mas cercano, para que nunca se alcance
-        // a notar que la textura del globo completo se ve borrosa de cerca.
-        const mapT = Math.max(0, Math.min(1, (p - 0.45) / 0.28));
+        // Mantener la misma duración y sincronía de transición en ambos modos:
+        // el mapa real debe entrar con el mismo timing aunque el modelo del modo
+        // claro use otra representación inicial.
+        const start = 0.45;
+        const span = 0.28;
+        const mapT = Math.max(0, Math.min(1, (p - start) / span));
         if (mapT > 0) ensureMap();
         terrainEl.style.opacity = mapT;
         terrainEl.classList.toggle('visible', mapT > 0.5);
