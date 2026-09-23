@@ -3,7 +3,7 @@ $title = $title ?? 'Sismógrafo Arduino - NDA';
 $user = $user ?? null;
 ob_start();
 ?>
-ñ
+
 <!-- CENTRO SISMICO: ESTACION PROPIA EN VIVO (sensor MPU6050) -->
 <section class="sec" id="centro-sismico-vivo">
   <div class="wrap" style="padding-top: 24px;">
@@ -105,9 +105,6 @@ ob_start();
       </div>
     </div>
 
-    <p style="text-align:center;margin-top:24px">
-      <a href="?url=monitoreo" class="btn-out">← Volver a Monitoreo</a>
-    </p>
   </div>
 </section>
 

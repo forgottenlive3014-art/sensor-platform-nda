@@ -6,17 +6,9 @@ $extraCss = ['css/volcanes.css', 'css/luna.css'];
 ob_start();
 ?>
 
-<div class="luna-page" id="lunaRoot" style="padding-top: 84px;">
+<div class="luna-page" id="lunaRoot" style="padding-top: 104px;">
   <div class="luna-stars" aria-hidden="true"></div>
   <div class="wrap">
-
-    <div class="luna-topnav">
-      <a href="?url=monitoreo" class="luna-back-link">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-        Monitoreo
-      </a>
-      <a href="?url=clima" class="luna-switch-link">Ver Clima en Tiempo Real →</a>
-    </div>
 
     <!-- ENCABEZADO -->
     <div class="luna-header">
@@ -98,10 +90,67 @@ ob_start();
       </div>
     </section>
 
+    <!-- CONOCE LA LUNA -->
+    <section class="luna-block luna-section v-section v-section-dark" id="conoce-la-luna">
+      <div class="v-header center">
+        <span class="v-tag">02 · Fundamentos</span>
+        <h2 class="v-title">Conoce la <span>Luna</span></h2>
+        <p class="v-sub">El satélite natural de la Tierra y su influencia sobre nuestro planeta.</p>
+      </div>
+      <div class="luna-knowledge-grid">
+        <article class="luna-knowledge-card luna-knowledge-wide">
+          <span class="luna-knowledge-number">01</span>
+          <div class="luna-knowledge-icon">◐</div>
+          <h3>¿Qué es la Luna?</h3>
+          <p>Es el único satélite natural de la Tierra. No produce luz propia: refleja la luz del Sol y es uno de los cuerpos celestes más cercanos a nuestro planeta.</p>
+        </article>
+        <article class="luna-knowledge-card">
+          <span class="luna-knowledge-number">02</span>
+          <div class="luna-knowledge-icon">↔</div>
+          <h3>La Luna y la Tierra</h3>
+          <p>Se encuentra a una distancia media de <strong>384,400 km</strong>. Su gravedad influye especialmente en el movimiento de las mareas.</p>
+        </article>
+        <article class="luna-knowledge-card">
+          <span class="luna-knowledge-number">03</span>
+          <div class="luna-knowledge-icon">◌</div>
+          <h3>Características</h3>
+          <p>Diámetro de <strong>3,474 km</strong>, gravedad equivalente a un sexto de la terrestre y una superficie llena de cráteres, montañas y llanuras.</p>
+        </article>
+      </div>
+      <div class="luna-facts-strip">
+        <div><strong>4,500 M</strong><span>años de antigüedad</span></div>
+        <div><strong>1/6</strong><span>de la gravedad terrestre</span></div>
+        <div><strong>29.5 días</strong><span>duración del ciclo de fases</span></div>
+      </div>
+    </section>
+
+    <!-- FASES Y EXPLORACION -->
+    <section class="luna-block luna-section v-section" id="fases-exploracion">
+      <div class="v-header center">
+        <span class="v-tag">03 · Ciclo y exploración</span>
+        <h2 class="v-title">Un ciclo de <span>fases y descubrimientos</span></h2>
+        <p class="v-sub">La posición de la Luna cambia cómo la vemos y cómo la estudiamos.</p>
+      </div>
+      <div class="luna-cycle-panel">
+        <div class="luna-cycle-visual" aria-hidden="true"><div class="luna-cycle-moon"></div><span>29.5 días</span></div>
+        <div class="luna-cycle-copy">
+          <div class="luna-cycle-line">
+            <span class="luna-phase-dot new"></span><b>Luna nueva</b><i></i><span class="luna-phase-dot first"></span><b>Cuarto creciente</b><i></i><span class="luna-phase-dot full"></span><b>Luna llena</b><i></i><span class="luna-phase-dot last"></span><b>Cuarto menguante</b>
+          </div>
+          <p>Las fases ocurren por el movimiento de la Luna alrededor de la Tierra y su posición respecto al Sol. El ciclo completo dura aproximadamente <strong>29.5 días</strong>.</p>
+        </div>
+      </div>
+      <div class="luna-explore-grid">
+        <article><div class="luna-explore-media"><img src="assets/media/img/exploracionLunar.webp" alt="Exploración de la Luna" loading="lazy"></div><span class="luna-knowledge-number">04</span><h3>Exploración lunar</h3><p>Telescopios, sondas y misiones espaciales han permitido estudiar su origen y su superficie. En <strong>1969</strong>, Apollo 11 llevó a los primeros seres humanos a la Luna.</p></article>
+        <article><div class="luna-explore-media"><img src="assets/media/img/SuperficieLunar.jpg" alt="Superficie de la Luna" loading="lazy"></div><span class="luna-knowledge-number">05</span><h3>Superficie lunar</h3><p>Sus “mares” no son océanos: son zonas oscuras formadas principalmente por antiguas erupciones volcánicas. También conserva cráteres, montañas y valles.</p></article>
+        <article><div class="luna-explore-media"><img src="assets/media/img/laluna.webp" alt="La Luna y su importancia para la Tierra" loading="lazy"></div><span class="luna-knowledge-number">06</span><h3>Importancia</h3><p>Ayuda a comprender la historia del Sistema Solar y, mediante su gravedad, contribuye al funcionamiento de las mareas terrestres.</p></article>
+      </div>
+    </section>
+
     <!-- CALENDARIO DE FASES -->
     <section class="luna-block luna-section v-section" id="calendario-fases">
       <div class="v-header center">
-        <span class="v-tag">02 · Calendario</span>
+        <span class="v-tag">04 · Calendario</span>
         <h2 class="v-title">Calendario de <span>fases</span></h2>
         <p class="v-sub">Próximos cambios visibles del ciclo lunar.</p>
       </div>
@@ -111,31 +160,43 @@ ob_start();
     <!-- MAREAS -->
     <section class="luna-block luna-section v-section v-section-dark" id="mareas">
       <div class="v-header center">
-        <span class="v-tag">03 · Mareas</span>
+        <span class="v-tag">05 · Mareas</span>
         <h2 class="v-title">Cómo afecta la Luna a las <span>mareas</span></h2>
         <p class="v-sub">La relación entre el ciclo lunar, el océano y la costa salvadoreña.</p>
       </div>
       <div class="luna-tide-next" id="lunaTideNext"></div>
       <div class="luna-tide-grid">
-        <div class="luna-tide-card spring">
-          <div class="ltc-badge">Luna Nueva · Luna Llena</div>
-          <div class="ltc-title">Mareas Vivas (Spring Tides)</div>
-          <p>Ocurren cuando el Sol, la Luna y la Tierra se alinean, sumando su fuerza gravitacional. La diferencia entre marea alta y baja puede llegar a <strong>2.4 metros</strong> en el Pacífico de El Salvador.</p>
+        <div class="luna-tide-card spring luna-tide-feature">
+          <div class="luna-tide-media"><img src="assets/media/img/costa.jpg" alt="Costa del Pacífico salvadoreño" loading="lazy"></div>
+          <div class="luna-tide-content">
+            <div class="ltc-badge">Luna Nueva · Luna Llena</div>
+            <div class="ltc-title">Mareas Vivas</div>
+            <p>El Sol, la Luna y la Tierra se alinean y suman su fuerza gravitacional. La diferencia entre marea alta y baja puede llegar a <strong>2.4 metros</strong> en el Pacífico de El Salvador.</p>
+          </div>
         </div>
-        <div class="luna-tide-card neap">
-          <div class="ltc-badge">Cuarto Creciente · Cuarto Menguante</div>
-          <div class="ltc-title">Mareas Muertas (Neap Tides)</div>
-          <p>El Sol y la Luna forman un ángulo de 90°, reduciendo su efecto combinado. La variación entre marea alta y baja es mínima — ideal para navegación costera.</p>
+        <div class="luna-tide-card neap luna-tide-feature">
+          <div class="luna-tide-media"><img src="assets/media/img/puerto.jpg" alt="Puerto en la costa salvadoreña" loading="lazy"></div>
+          <div class="luna-tide-content">
+            <div class="ltc-badge">Cuarto Creciente · Cuarto Menguante</div>
+            <div class="ltc-title">Mareas Muertas</div>
+            <p>El Sol y la Luna forman un ángulo de 90° y reducen su efecto combinado. La variación entre marea alta y baja es mínima, ideal para navegación costera.</p>
+          </div>
         </div>
-        <div class="luna-tide-card fish">
-          <div class="ltc-badge">Alta actividad pesquera</div>
-          <div class="ltc-title">Pesca y Ciclo Lunar</div>
-          <p>Pescadores de La Libertad y Acajutla calendarizan su actividad según el ciclo lunar: las mareas altas de luna llena y nueva suelen traer más peces al litoral.</p>
+        <div class="luna-tide-card fish luna-tide-context">
+          <div class="luna-tide-media"><img src="assets/media/img/costeras.jpg" alt="Comunidades costeras de El Salvador" loading="lazy"></div>
+          <div class="luna-tide-content">
+            <div class="ltc-badge">Alta actividad pesquera</div>
+            <div class="ltc-title">Pesca y ciclo lunar</div>
+            <p>Pescadores de La Libertad y Acajutla organizan su actividad según el ciclo lunar y las mareas altas.</p>
+          </div>
         </div>
-        <div class="luna-tide-card warn">
-          <div class="ltc-badge">Riesgo en mareas vivas</div>
-          <div class="ltc-title">Riesgo Costero en El Salvador</div>
-          <p>Zonas como Los Blancos y El Espino son vulnerables cuando una marea viva coincide con lluvia intensa. El MARN intensifica el monitoreo en temporada de huracanes.</p>
+        <div class="luna-tide-card warn luna-tide-context">
+          <div class="luna-tide-media"><img src="assets/media/img/inundación costera.jpg" alt="Inundación costera" loading="lazy"></div>
+          <div class="luna-tide-content">
+            <div class="ltc-badge">Riesgo en mareas vivas</div>
+            <div class="ltc-title">Riesgo costero</div>
+            <p>Los Blancos y El Espino son vulnerables cuando una marea viva coincide con lluvia intensa.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -144,7 +205,7 @@ ob_start();
     <section class="luna-block luna-section v-section" id="curiosidades">
       <div class="luna-curio-card">
         <div class="v-header center" style="margin-bottom:24px">
-          <span class="v-tag">04 · Exploración</span>
+          <span class="v-tag">06 · Curiosidades</span>
           <h2 class="v-title">Curiosidades de la <span>Luna</span></h2>
         </div>
         <div class="luna-curio-grid">

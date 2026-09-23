@@ -221,6 +221,22 @@
         }).join('');
     }
 
+    function renderMunicipios(results) {
+        const icon = (data) => {
+            const info = wmoInfo(data.current.weather_code);
+            return wxIconSVG(info.cat, data.current.is_day === 1, 34);
+        };
+        document.getElementById('climaMunicipios').innerHTML = results.map(({ name, data }) => {
+            const rain = data.daily.precipitation_probability_max[0];
+            return `<article class="clima-municipio-card">
+                <div class="clima-municipio-top"><strong class="clima-municipio-name">${name}</strong><span class="clima-municipio-icon">${icon(data)}</span></div>
+                <strong class="clima-municipio-temp">${Math.round(data.current.temperature_2m)}°</strong>
+                <span class="clima-municipio-cond">${wmoInfo(data.current.weather_code).label}</span>
+                <span class="clima-municipio-rain">Lluvia: ${rain != null ? rain : '—'}%</span>
+            </article>`;
+        }).join('');
+    }
+
     function renderIndicators(data) {
         const cur = data.current;
         const times = data.hourly.time;
@@ -282,8 +298,9 @@
         }
 
         const wrap = document.getElementById('climaAlerts');
-        if (!alerts.length) { wrap.style.display = 'none'; wrap.innerHTML = ''; return; }
-        wrap.style.display = 'grid';
+        const section = document.getElementById('climaAlertSection');
+        if (!alerts.length) { section.style.display = 'none'; wrap.innerHTML = ''; return; }
+        section.style.display = 'block';
         wrap.innerHTML = alerts.map(a => `
             <div class="clima-alert clima-alert-${a.level}">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
@@ -430,6 +447,15 @@
             renderIndicators(data);
             renderAlerts(data);
             renderRecs(data);
+            const municipios = [
+                ['San Salvador', 13.692, -89.218],
+                ['Santa Ana', 13.994, -89.559],
+                ['San Miguel', 13.483, -88.183],
+                ['La Unión', 13.336, -87.844]
+            ];
+            const municipalityResults = await Promise.allSettled(municipios.map(async ([name, lat, lng]) => ({ name, data: await fetchWeather(lat, lng) })));
+            const municipalityData = municipalityResults.filter(result => result.status === 'fulfilled').map(result => result.value);
+            if (municipalityData.length) renderMunicipios(municipalityData);
             initMap(loc.lat, loc.lng);
             initOwmMap(loc.lat, loc.lng);
         } catch (e) {

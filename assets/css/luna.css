@@ -92,13 +92,14 @@
 }
 .luna-back-link:hover, .luna-switch-link:hover { color: var(--purple); }
 
-.luna-header { margin-bottom: 18px; }
+.luna-header { margin: 0 auto 26px; text-align: center; }
 .luna-eyebrow {
     font-family: var(--fn); font-size: .72rem; font-weight: 700; letter-spacing: .09em;
     text-transform: uppercase; color: var(--purple); margin-bottom: 8px;
 }
 .luna-loc-line {
-    display: flex; align-items: center; gap: 7px;
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    flex-wrap: wrap;
     font-family: var(--fd); font-size: 1.5rem; font-weight: 600; color: var(--text);
 }
 .luna-loc-line svg { color: var(--purple); flex-shrink: 0; }
@@ -131,7 +132,8 @@
     display: grid;
     grid-template-columns: 190px minmax(300px, 1fr) minmax(260px, 320px);
     align-items: center;
-    gap: 30px;
+    column-gap: 46px;
+    row-gap: 30px;
 }
 .luna-hero-description {
     flex: 0 1 320px;
@@ -237,6 +239,112 @@
 .luna-desc-card p { font-family: var(--fn); font-size: .86rem; line-height: 1.6; color: var(--text2); margin: 0 0 10px; }
 .luna-desc-illum { font-family: var(--fn); font-size: .8rem; color: var(--purple); }
 
+/* ---------- FUNDAMENTOS Y EXPLORACION ---------- */
+.luna-knowledge-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr 1fr;
+    gap: 14px;
+}
+.luna-knowledge-card,
+.luna-explore-grid article {
+    position: relative;
+    min-height: 190px;
+    padding: 20px;
+    overflow: hidden;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: var(--rl);
+    box-shadow: var(--sh);
+}
+.luna-knowledge-card:hover,
+.luna-explore-grid article:hover { border-color: var(--purple); transform: translateY(-3px); }
+.luna-knowledge-number {
+    position: absolute;
+    top: 15px;
+    right: 18px;
+    color: var(--purple);
+    font-family: var(--fd);
+    font-size: .75rem;
+    font-weight: 800;
+    letter-spacing: .08em;
+}
+.luna-knowledge-icon {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    margin-bottom: 14px;
+    border-radius: 14px;
+    background: var(--gT);
+    color: var(--purple);
+    font-size: 1.45rem;
+}
+.luna-knowledge-card h3,
+.luna-explore-grid h3 {
+    margin: 0 0 8px;
+    color: var(--text);
+    font-family: var(--fd);
+    font-size: 1rem;
+}
+.luna-knowledge-card p,
+.luna-explore-grid p {
+    margin: 0;
+    color: var(--text2);
+    font-family: var(--fn);
+    font-size: .82rem;
+    line-height: 1.6;
+}
+.luna-facts-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 14px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--rl);
+    background: var(--gT);
+}
+.luna-facts-strip div { text-align: center; }
+.luna-facts-strip strong,
+.luna-facts-strip span { display: block; }
+.luna-facts-strip strong { color: var(--purple); font-family: var(--fd); font-size: 1.15rem; }
+.luna-facts-strip span { margin-top: 3px; color: var(--text3); font-family: var(--fn); font-size: .7rem; }
+.luna-cycle-panel {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    align-items: center;
+    gap: 24px;
+    padding: 22px;
+    border: 1px solid var(--border2);
+    border-radius: var(--rl);
+    background: var(--card);
+    box-shadow: var(--sh);
+}
+.luna-cycle-visual { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.luna-cycle-moon {
+    width: 116px;
+    height: 116px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 32% 28%, #f8e5b4 0 4%, transparent 5%), radial-gradient(circle at 68% 62%, rgba(80, 57, 80, .45) 0 7%, transparent 8%), radial-gradient(circle at 42% 72%, rgba(80, 57, 80, .34) 0 5%, transparent 6%), linear-gradient(135deg, #f4d27b, #9d75a9 72%);
+    box-shadow: inset -12px -8px 22px rgba(42, 31, 62, .38), 0 0 0 8px var(--gT), 0 10px 24px rgba(40, 31, 70, .18);
+}
+.luna-cycle-visual > span { color: var(--purple); font-family: var(--fn); font-size: .7rem; font-weight: 700; }
+.luna-cycle-copy { min-width: 0; }
+.luna-phase-dot { display: inline-block; width: 28px; height: 28px; flex: 0 0 28px; border-radius: 50%; background: #a37ac0; box-shadow: inset -5px -3px 7px rgba(40, 25, 65, .28); }
+.luna-phase-dot.new { background: #3e3554; }
+.luna-phase-dot.first { background: linear-gradient(90deg, #3e3554 0 48%, #e8bd6d 49%); }
+.luna-phase-dot.full { background: radial-gradient(circle at 35% 30%, #ffeaa7, #e5a653 70%); }
+.luna-phase-dot.last { background: linear-gradient(90deg, #e8bd6d 0 48%, #3e3554 49%); }
+.luna-cycle-line { display: flex; align-items: center; gap: 10px; color: var(--text); font-family: var(--fn); font-size: .74rem; }
+.luna-cycle-line b { white-space: nowrap; }
+.luna-cycle-line i { flex: 1; height: 1px; min-width: 12px; background: var(--border2); }
+.luna-cycle-panel p { margin: 18px 0 0; color: var(--text2); font-family: var(--fn); font-size: .84rem; line-height: 1.6; text-align: center; }
+.luna-explore-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 14px; }
+.luna-explore-grid article { min-height: 155px; background: var(--bg3); border-top: 3px solid var(--purple); }
+.luna-explore-media { height: 126px; margin: -20px -20px 16px; overflow: hidden; }
+.luna-explore-media img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .45s ease; }
+.luna-explore-grid article:hover .luna-explore-media img { transform: scale(1.05); }
+
 /* ---------- CALENDARIO DE FASES (proximas 4) ---------- */
 .luna-next-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
 .luna-next-card {
@@ -270,10 +378,19 @@
 .luna-tide-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
 .luna-tide-card {
     background: var(--card); border: 1px solid var(--border); border-radius: var(--r);
-    min-height: 190px; padding: 18px 18px; box-shadow: var(--sh);
+    min-height: 350px; padding: 18px; overflow: hidden; box-shadow: var(--sh);
+    display: flex; flex-direction: column;
     transition: transform var(--tr) var(--ez), border-color var(--tr) var(--ez);
 }
 .luna-tide-card:hover { transform: translateY(-3px); border-color: var(--purple); }
+.luna-tide-media { width: 158px; height: 158px; margin: 0 auto 16px; overflow: hidden; border-radius: 18px; flex-shrink: 0; }
+.luna-tide-media img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .45s ease; }
+.luna-tide-card:hover .luna-tide-media img { transform: scale(1.05); }
+.luna-tide-content { padding: 0; display: flex; flex: 1; flex-direction: column; }
+.luna-tide-content p { flex: 1; }
+.luna-tide-context { display: flex; min-height: 350px; }
+.luna-tide-context .luna-tide-media { height: 158px; min-height: 0; }
+.luna-tide-context .luna-tide-content { padding: 0; }
 .ltc-badge {
     display: inline-block; font-family: var(--fn); font-size: .62rem; font-weight: 700;
     padding: 3px 9px; border-radius: 20px; margin-bottom: 8px;
@@ -322,6 +439,11 @@
     .luna-phase-name { font-size: 1.35rem; }
     .luna-astro-grid { grid-template-columns: repeat(2, 1fr); }
     .luna-tide-grid { grid-template-columns: 1fr; }
+    .luna-knowledge-grid, .luna-explore-grid { grid-template-columns: 1fr; }
+    .luna-facts-strip { grid-template-columns: 1fr; }
+    .luna-cycle-panel { grid-template-columns: 1fr; }
+    .luna-cycle-line { flex-wrap: wrap; justify-content: center; }
+    .luna-cycle-line i { display: none; }
 }
 
 @media (max-width: 1024px) {
@@ -335,4 +457,6 @@
     .luna-hero-layout { grid-template-columns: 160px minmax(260px, 1fr) 260px; gap: 18px; }
     .luna-astro-grid { grid-template-columns: repeat(3, 1fr); }
     .luna-tide-grid { grid-template-columns: repeat(2, 1fr); }
+    .luna-knowledge-grid { grid-template-columns: repeat(2, 1fr); }
+    .luna-knowledge-wide { grid-column: span 2; }
 }

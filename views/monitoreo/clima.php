@@ -106,6 +106,11 @@ ob_start();
       </div>
     </div>
 
+    <div class="clima-section clima-municipios-section">
+      <div class="clima-section-title">Comparador de municipios</div>
+      <div class="clima-municipios" id="climaMunicipios"><div class="loading-s"><div class="spin"></div>Cargando…</div></div>
+    </div>
+
     <!-- PRONOSTICO SEMANAL -->
     <div class="clima-section">
       <div class="clima-section-title">Pronóstico de 7 días</div>
@@ -117,7 +122,10 @@ ob_start();
     </div>
 
     <!-- ALERTAS (solo si existen) -->
-    <div class="clima-alerts" id="climaAlerts" style="display:none"></div>
+    <div class="clima-section clima-alert-section" id="climaAlertSection" style="display:none">
+      <div class="clima-section-title">Alertas meteorológicas</div>
+      <div class="clima-alerts" id="climaAlerts"></div>
+    </div>
 
     <!-- RECOMENDACIONES -->
     <div class="clima-section">
