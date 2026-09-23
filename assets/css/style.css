@@ -1276,6 +1276,188 @@ canvas {
 .csi-nivel-dot.mh { background: var(--acc2); }
 .csi-nivel-dot.mx { background: #b03bff; }
 
+/* ---------- CENTRO SISMICO: estacion propia ---------- */
+#centro-sismico-vivo {
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 8% 8%, rgba(61, 125, 115, .16), transparent 27%),
+        radial-gradient(circle at 92% 22%, rgba(255, 153, 0, .09), transparent 24%),
+        var(--bg);
+}
+#centro-sismico-vivo .wrap { position: relative; z-index: 1; }
+#centro-sismico-vivo .sec-hd {
+    position: relative;
+    display: block !important;
+    padding: 18px 0 2px;
+    text-align: center;
+}
+#centro-sismico-vivo .sec-hd > div:first-child { text-align: center; }
+#centro-sismico-vivo .page-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border: 1px solid rgba(61, 125, 115, .34);
+    border-radius: 100px;
+    background: rgba(61, 125, 115, .1);
+    margin-bottom: 12px;
+}
+#centro-sismico-vivo .page-eyebrow::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--teal);
+    box-shadow: 0 0 0 4px rgba(0, 212, 176, .1);
+}
+#centro-sismico-vivo .page-title {
+    max-width: 620px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: clamp(1.65rem, 3.2vw, 2.65rem);
+    letter-spacing: -.04em;
+    text-align: center;
+}
+#csiStatusBadge {
+    position: absolute;
+    top: 24px;
+    right: 0;
+    padding: 8px 12px;
+    border-radius: 100px;
+    border: 1px solid var(--border2);
+    background: var(--card2);
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+}
+#csiStatusBadge.active {
+    border-color: rgba(34, 197, 94, .35);
+    background: rgba(34, 197, 94, .1);
+}
+#csiStatusBadge.offline {
+    border-color: rgba(230, 57, 70, .35);
+    background: rgba(230, 57, 70, .1);
+}
+#centro-sismico-vivo .pt-rule { opacity: .55; }
+#centro-sismico-vivo .seismo-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(270px, 310px);
+    gap: 22px;
+}
+#centro-sismico-vivo .sg-main-card,
+#centro-sismico-vivo .smc {
+    border-color: rgba(255, 255, 255, .1);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, .16);
+}
+#centro-sismico-vivo .phdr {
+    min-height: 60px;
+    padding: 12px 16px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, .035), transparent);
+}
+#centro-sismico-vivo .sg-wave-area {
+    border-top: 1px solid rgba(255, 255, 255, .06);
+    border-bottom: 1px solid rgba(255, 255, 255, .06);
+}
+#centro-sismico-vivo .sg-depth-badge {
+    top: 14px;
+    left: 16px;
+    z-index: 1;
+    padding: 5px 8px;
+    border: 1px solid rgba(255, 255, 255, .1);
+    border-radius: 4px;
+    background: rgba(0, 0, 0, .18);
+    font-size: .6rem;
+}
+#centro-sismico-vivo #csiWave { height: 340px; }
+#centro-sismico-vivo .sg-stats-bar { gap: 0; background: rgba(255, 255, 255, .08); }
+#centro-sismico-vivo .sgstat { min-height: 94px; padding: 17px 16px; }
+#centro-sismico-vivo .sgstat + .sgstat { border-left: 1px solid rgba(255, 255, 255, .08); }
+#centro-sismico-vivo .sgstat-val { font-size: 1.45rem; }
+#centro-sismico-vivo #csiMag { font-size: 1.8rem; }
+#centro-sismico-vivo .csi-niveles { gap: 7px; padding: 14px 16px; }
+#centro-sismico-vivo .csi-nivel-chip { padding: 6px 9px; font-size: .68rem; }
+#centro-sismico-vivo .side-mini { margin-top: 0; }
+#centro-sismico-vivo .side-mini,
+#centro-sismico-vivo .side-mini .smc {
+    height: 100%;
+}
+#centro-sismico-vivo .side-mini .smc {
+    box-sizing: border-box;
+}
+#centro-sismico-vivo .side-mini .phdr {
+    font-size: .77rem;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+#centro-sismico-vivo #csiFeed {
+    flex: 1;
+    max-height: none;
+    padding: 12px;
+    gap: 7px;
+    background: rgba(0, 0, 0, .08);
+}
+#centro-sismico-vivo #csiFeed .qfi { padding: 10px; border-radius: 6px; }
+#centro-sismico-vivo #csiFeed .qfi:hover { transform: translateX(3px); }
+#centro-sismico-vivo #csiFeed .qfi-mag { min-width: 37px; height: 37px; font-size: .8rem; }
+#centro-sismico-vivo #csiFeed .qfi-place { font-size: .72rem; font-weight: 800; }
+#centro-sismico-vivo #csiFeed .qfi-meta,
+#centro-sismico-vivo #csiFeed .qfi-depth { font-size: .64rem; }
+
+#arduino {
+    background:
+        linear-gradient(180deg, rgba(7, 31, 51, .18), transparent 22%),
+        var(--bg2);
+}
+#arduino .ard-flow { gap: 10px; align-items: center; padding: 6px 0 8px; }
+#arduino .ard-flow-step {
+    position: relative;
+    min-height: 170px;
+    max-width: none;
+    padding: 22px 18px 18px;
+    border-color: rgba(255, 255, 255, .1);
+    background: linear-gradient(145deg, rgba(255, 255, 255, .055), rgba(255, 255, 255, .018));
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .1);
+}
+#arduino .ard-flow-step::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 18px;
+    right: 18px;
+    height: 2px;
+    background: var(--teal);
+    opacity: .7;
+}
+#arduino .ard-flow-step strong { font-size: .8rem; letter-spacing: .02em; }
+#arduino .ard-flow-step span { font-size: .72rem; }
+#arduino .ard-flow-icon { color: var(--teal); }
+#arduino .ard-flow-arrow { color: var(--acc3); font-size: 1.4rem; }
+#arduino > .wrap > .sg-main-card {
+    margin-top: 28px !important;
+    border-color: rgba(0, 212, 176, .16);
+    box-shadow: 0 20px 55px rgba(0, 0, 0, .2);
+}
+#arduino > .wrap > .sg-main-card .phdr { padding: 15px 18px; background: rgba(0, 212, 176, .05); }
+#arduino > .wrap > .sg-main-card > div:last-child { padding: 20px; }
+#arduino .sim-ib { padding: 13px 0; border: 0; }
+#arduino .sib-track { height: 8px; }
+#arduino .sib-val { min-width: 42px; text-align: right; color: var(--text); }
+#arduino > .wrap > .sg-main-card p { max-width: 720px; margin-bottom: 0; line-height: 1.6; }
+
+@media (max-width: 700px) {
+    #centro-sismico-vivo #csiWave {
+        height: 280px;
+    }
+    #centro-sismico-vivo .page-title {
+        white-space: normal;
+    }
+    #csiStatusBadge {
+        position: static;
+        display: inline-flex;
+        margin-top: 12px;
+    }
+}
+
 /* ---------- CSI ALERTA: overlay de pagina completa (LEVE / MODERADO / FUERTE / TERREMOTO) ----------
    El color cambia segun el nivel del sismo (misma paleta que .ml/.mm/.mh/.mx
    en la leyenda del sismografo), via la clase que le agrega centrosismico-alerta.js. */

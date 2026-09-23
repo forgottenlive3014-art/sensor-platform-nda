@@ -17,6 +17,7 @@ class ChatController {
     private function navigationMap() {
         return [
             ['keywords' => ['sismo', 'sismos', 'terremoto', 'temblor'], 'url' => 'sismos', 'label' => 'Monitor Sísmico'],
+            ['keywords' => ['catalogo sismico', 'catálogo sísmico', 'datos sismicos', 'datos sísmicos', 'eventos sismicos', 'eventos sísmicos'], 'url' => 'earthquakes', 'label' => 'Catálogo Sísmico'],
             ['keywords' => ['volcan', 'volcán', 'volcanes', 'erupcion', 'erupción', 'izalco', 'chaparrastique', 'ilamatepec'], 'url' => 'volcanes', 'label' => 'Volcanes'],
             ['keywords' => ['tsunami', 'tsunamis', 'maremoto'], 'url' => 'tsunamis', 'label' => 'Tsunamis'],
             ['keywords' => ['inundacion', 'inundación', 'inundaciones', 'crecida', 'desborde'], 'url' => 'inundaciones', 'label' => 'Inundaciones'],
@@ -37,6 +38,10 @@ class ChatController {
             ['keywords' => ['juego', 'juegos', 'trivia'], 'url' => 'juegos', 'label' => 'Juegos Educativos'],
             ['keywords' => ['noticia', 'noticias'], 'url' => 'blog', 'label' => 'Blog'],
             ['keywords' => ['guia', 'guía', 'guias', 'guías', 'recurso', 'recursos', 'pdf'], 'url' => 'resources', 'label' => 'Guías y Recursos'],
+            ['keywords' => ['inicio', 'pagina principal', 'página principal', 'menu', 'menú', 'secciones', 'que hay aqui', 'qué hay aquí'], 'url' => 'home', 'label' => 'Inicio de NDA'],
+            ['keywords' => ['monitoreo', 'monitorizacion', 'monitorización'], 'url' => 'monitoreo', 'label' => 'Monitoreo'],
+            ['keywords' => ['acerca de nda', 'sobre nda', 'quienes somos', 'quiénes somos'], 'url' => 'Acercade', 'label' => 'Acerca de NDA'],
+            ['keywords' => ['terminos', 'términos', 'condiciones de uso', 'politica de uso', 'política de uso'], 'url' => 'terminos', 'label' => 'Términos y Condiciones'],
             ['keywords' => ['gestion escolar', 'gestión escolar', 'colegio', 'escuela', 'institucion', 'institución', 'simulacro', 'simulacros', 'croquis', 'corcho', 'secciones'], 'url' => 'school', 'label' => 'Gestión Escolar'],
             ['keywords' => ['perfil', 'mi cuenta', 'unirme a', 'unirme a una institucion'], 'url' => 'profile', 'label' => 'Mi Perfil'],
             ['keywords' => ['registrarme', 'registrar', 'crear cuenta', 'quiero registrarme', 'sign up'], 'url' => 'register', 'label' => 'Crear Cuenta'],
@@ -107,6 +112,9 @@ class ChatController {
             ['keywords' => ['registrar', 'registro', 'crear cuenta', 'como me registro', 'como entro'],
                 'reply' => 'Para registrarte, haz clic en "Registrarse" en la barra de navegación. Puedes crear una cuenta general, o vincularte a una institución educativa como docente, estudiante, padre/madre o personal administrativo.',
                 'navigate' => 'register', 'navigateLabel' => 'Crear Cuenta'],
+            ['keywords' => ['crear una institucion', 'crear institucion', 'fundar una institucion', 'fundar institucion', 'como creo una institucion', 'como crear una institucion'],
+                'reply' => 'Primero debes crear una cuenta: haz clic en "Registrarse" y selecciona el rol "Director". Completa tus datos y los de la institución, envía la solicitud y espera la revisión del administrador; después confirma el código que recibirás en el correo institucional. Cuando la institución sea aprobada, podrás entrar al Panel de Gestión para asignar personal y configurar módulos como Gestión Escolar, Simulacros y Rutas.',
+                'navigate' => 'register', 'navigateLabel' => 'Crear Cuenta'],
             ['keywords' => ['rol', 'roles', 'que puede hacer un docente', 'que puede hacer un alumno', 'que puede hacer un estudiante', 'que puede hacer el admin'],
                 'reply' => 'En Gestión Escolar: el Administrador gestiona toda la institución, el Docente pasa lista y reporta incidentes, el Estudiante ve su aula y simulacros, el Padre/Madre ve el estado de sus hijos, y el Personal Administrativo apoya con publicaciones.',
                 'navigate' => 'school', 'navigateLabel' => 'Gestión Escolar'],
@@ -143,15 +151,26 @@ class ChatController {
             ['keywords' => ['modelo 3d', 'modelos 3d', 'galeria 3d', 'galería 3d', 'visualizacion 3d', 'visualización 3d'],
                 'reply' => 'La Galería 3D te deja explorar en tres dimensiones cómo se ve cada amenaza natural (sismos, volcanes, tsunamis, inundaciones, deslizamientos, incendios, tormentas tropicales y sequías), con un carrusel interactivo por cada tipo de desastre.',
                 'navigate' => 'galeria-3d', 'navigateLabel' => 'Galería 3D de Desastres'],
+            ['keywords' => ['video', 'videos', 'vídeo', 'vídeos', 'video educativo', 'videos educativos', 'vídeos educativos'],
+                'reply' => 'Los videos educativos no forman parte de NDA; puedes aprovechar nuestras guías PDF, juegos y simuladores para aprender sobre prevención de desastres.'],
             ['keywords' => ['arduino', 'sensor de vibracion', 'esp32', 'processing'],
                 'reply' => 'La sección de Monitoreo explica cómo se integrará una maqueta de sensor Arduino (MPU-6050): detecta vibración en 3 ejes y, cuando el hardware esté conectado, sus lecturas llegarán en tiempo real a la plataforma.',
                 'navigate' => 'arduino', 'navigateLabel' => 'Sensor de Vibración'],
+            ['keywords' => ['que es monitoreo', 'seccion de monitoreo', 'sección de monitoreo'],
+                'reply' => 'Monitoreo reúne el estado del sensor propio, la señal del acelerómetro MPU-6050, el historial de eventos y la explicación de cómo los datos llegan a la plataforma.',
+                'navigate' => 'monitoreo', 'navigateLabel' => 'Monitoreo'],
             ['keywords' => ['punto de emergencia', 'puntos de emergencia', 'refugio', 'albergue', 'hospital cercano'],
                 'reply' => 'La sección de Puntos de Emergencia ubica en el mapa los refugios, hospitales y centros de atención más cercanos ante un desastre en El Salvador.',
                 'navigate' => 'emergencias', 'navigateLabel' => 'Puntos de Emergencia'],
             ['keywords' => ['trivia', 'juego', 'quiz'],
                 'reply' => 'La Zona de Juegos tiene un quiz de magnitud, un juego de memoria, "arma tu mochila de emergencia" y un simulacro por reflejos, todo sobre desastres naturales.',
                 'navigate' => 'juegos', 'navigateLabel' => 'Juegos Educativos'],
+            ['keywords' => ['acerca de nda', 'sobre nda', 'quienes somos', 'quiénes somos'],
+                'reply' => 'Acerca de NDA explica el propósito de la plataforma, su enfoque educativo y cómo integra información, prevención y herramientas para la comunidad.',
+                'navigate' => 'Acercade', 'navigateLabel' => 'Acerca de NDA'],
+            ['keywords' => ['terminos', 'términos', 'condiciones de uso', 'politica de uso', 'política de uso'],
+                'reply' => 'En Términos y Condiciones puedes consultar las reglas de uso de NDA, el alcance informativo de la plataforma y las responsabilidades de sus usuarios.',
+                'navigate' => 'terminos', 'navigateLabel' => 'Términos y Condiciones'],
             ['keywords' => ['911', 'numero de emergencia', 'numeros de emergencia', 'bomberos', 'cruz roja', 'coen'],
                 'reply' => 'Números de emergencia en El Salvador: 911 (PNC Emergencias), 913 (Bomberos), 2222-5155 (Cruz Roja), 2267-6000 (MARN Alertas), 2231-4000 (COEN Operaciones).',
                 'navigate' => 'quehacer', 'navigateLabel' => '¿Qué hacer AHORA?'],
@@ -228,6 +247,7 @@ class ChatController {
     private function moduleLabel($module) {
         $labels = [
             'sismos' => 'el monitor sísmico',
+            'earthquakes' => 'el catálogo sísmico',
             'volcanes' => 'la sección de volcanes',
             'tsunamis' => 'la sección de tsunamis',
             'inundaciones' => 'la sección de inundaciones',
@@ -241,14 +261,16 @@ class ChatController {
             'zona-sismica' => 'el mapa de peligros',
             'zonas-riesgo' => 'el mapa de riesgos',
             'encontraras' => 'la portada de secciones de NDA',
-            'arduino' => 'el panel del sensor de vibración (Arduino/ESP32)',
             'clima' => 'el panel de clima en tiempo real',
             'luna' => 'las fases lunares',
             'monitoreo' => 'el panel de monitoreo',
+            'terminos' => 'la página de términos y condiciones',
+            'arduino' => 'el panel del sensor de vibración (Arduino/ESP32)',
             'emergencias' => 'los puntos de emergencia',
             'quehacer' => 'la guía de "¿qué hacer ahora?"',
             'juegos' => 'la zona de juegos',
             'school' => 'el módulo de Gestión Escolar',
+            'school/panel' => 'el panel de Gestión Escolar',
             'blog' => 'el blog de NDA',
             'resources' => 'la biblioteca de recursos',
             'profile' => 'su perfil',
@@ -429,10 +451,11 @@ class ChatController {
 
         $response = curl_exec($ch);
         $error = curl_error($ch);
+        $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
-        if ($error) {
-            jsonResponse(['reply' => 'No pude conectarme al asistente de IA en este momento. Intenta de nuevo en unos segundos.']);
+        if ($error || $httpCode < 200 || $httpCode >= 300) {
+            jsonResponse(['reply' => 'El asistente no está disponible en este momento. Aun así puedo llevarte directamente a sismos, clima, recursos, emergencias o Gestión Escolar.']);
             return;
         }
 

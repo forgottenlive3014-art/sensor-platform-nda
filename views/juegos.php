@@ -95,6 +95,7 @@ ob_start();
                 </div>
                 <button class="play-btn" id="bpCheck">Revisar mi mochila</button>
                 <div class="bp-result" id="bpResult"></div>
+                <button class="play-btn bp-retry" id="bpRetry" type="button" hidden>Intentar de nuevo</button>
             </div>
         </section>
 
@@ -255,6 +256,8 @@ ob_start();
 .bp-scene.locked .bp-packed-item{ cursor:default; }
 
 .bp-result{ text-align:center; margin-top:18px; font-size:1.05rem; font-weight:700; min-height:24px; }
+.bp-retry{ display:block; margin:14px auto 0; }
+.bp-retry[hidden]{ display:none; }
 
 @media (max-width:480px){
     .bp-kid-wrap{ max-width:320px; }
@@ -519,6 +522,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const shelf = document.getElementById('bpShelf'); shelf.innerHTML = '';
         document.getElementById('bpPackedList').innerHTML = '';
         document.getElementById('bpScene')?.classList.remove('locked');
+        document.getElementById('bpResult').textContent = '';
+        document.getElementById('bpRetry').hidden = true;
         bpPacked = new Set();
         bpLocked = false;
         BP_ITEMS.map((it,i)=>({it,i})).sort(()=>Math.random()-0.5).forEach(({it,i}) => {
@@ -562,8 +567,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const res = document.getElementById('bpResult');
         if (correct===8 && mistakes===0){ res.style.color='#2e8b7f'; res.innerHTML='<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M17 5h3a2 2 0 0 1-2 4M7 5H4a2 2 0 0 0 2 4"/></svg> ¡Mochila perfecta! Llevas todo lo esencial.'; }
         else { res.style.color='#f29f05'; res.textContent=`Acertaste ${correct}/8 esenciales. ${mistakes? 'Tenías objetos que no sirven (en rojo).':'Te faltaron los que quedaron marcados en rojo.'}`; }
+        document.getElementById('bpRetry').hidden = false;
         saveGameScore('Arma tu Mochila', Math.max(0, Math.round((correct/8)*100) - mistakes*10));
     };
+    document.getElementById('bpRetry').onclick = buildBackpack;
     buildBackpack();
 
     const ACTS = [

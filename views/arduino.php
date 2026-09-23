@@ -31,12 +31,6 @@ ob_start();
             <div class="sg-depth-badge">EJE CON MÁS ACTIVIDAD: <strong id="csiEjeMax">—</strong></div>
             <canvas id="csiWave"></canvas>
           </div>
-          <div class="sg-stats-bar">
-            <div class="sgstat"><div class="sgstat-lbl">Magnitud actual</div><div class="sgstat-val acc" id="csiMag">0.0</div><div class="sgstat-sub" id="csiNivel">Sin actividad</div></div>
-            <div class="sgstat"><div class="sgstat-lbl">Magnitud máx.</div><div class="sgstat-val teal" id="csiMaxMag">—</div><div class="sgstat-sub">histórico de la estación</div></div>
-            <div class="sgstat"><div class="sgstat-lbl">Eventos registrados</div><div class="sgstat-val" id="csiTotal">—</div><div class="sgstat-sub">detectados por el sensor</div></div>
-            <div class="sgstat"><div class="sgstat-lbl">última detección</div><div class="sgstat-val" style="font-size:1rem" id="csiUltimo">—</div><div class="sgstat-sub">fecha y hora local</div></div>
-          </div>
           <div class="csi-niveles" id="csiNiveles">
             <span class="csi-niveles-lbl">Niveles de temblor</span>
             <span class="csi-nivel-chip" data-nivel="MICRO SISMO"><span class="csi-nivel-dot ml"></span>Micro sismo <em>1.0–2.4</em></span>
@@ -49,7 +43,7 @@ ob_start();
       </div>
       <div class="side-mini">
         <div class="smc" style="padding:0;overflow:hidden;display:flex;flex-direction:column">
-          <div class="phdr"><span class="ldot"></span>Eventos destacados <button class="sg-reset" id="csiRefresh" style="margin-left:auto;padding:4px 11px"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></button></div>
+          <div class="phdr"><span class="ldot"></span>Historial de eventos <button class="sg-reset" id="csiRefresh" style="margin-left:auto;padding:4px 11px"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></button></div>
           <div id="csiFeed"><div class="loading-s"><div class="spin"></div>Conectando con la estación…</div></div>
         </div>
       </div>
@@ -76,7 +70,7 @@ ob_start();
       <div class="ard-flow-arrow">→</div>
       <div class="ard-flow-step">
         <div class="ard-flow-icon"><svg width="1.6em" height="1.6em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 1 8 8"/><path d="M4 12v6h6"/></svg></div>
-        <strong>API NDA (sensor/ingest)</strong>
+        <strong>API NDA</strong>
         <span>La lectura se guarda con su intensidad, ejes X/Y/Z y nivel calculado (normal, precaución o alerta).</span>
       </div>
       <div class="ard-flow-arrow">→</div>

@@ -299,14 +299,12 @@
             feed.appendChild(el);
         });
 
-        // Cada tarjeta cambia de alto segun el largo del nivel (LEVE vs
-        // TERREMOTO), asi que en vez de fijar un max-height a ojo en CSS se
-        // mide la posicion real de la 5ta tarjeta: se ven exactamente 4 y de
-        // ahi para abajo entra el scroll.
+        // Se muestran seis eventos y el resto queda disponible mediante
+        // scroll, respetando la altura real de cada tarjeta.
         const filas = feed.children;
-        if (filas.length > 4) {
-            const quinta = filas[4];
-            const alto = quinta.getBoundingClientRect().top - feed.getBoundingClientRect().top + feed.scrollTop;
+        if (filas.length > 6) {
+            const septima = filas[6];
+            const alto = septima.getBoundingClientRect().top - feed.getBoundingClientRect().top + feed.scrollTop;
             feed.style.maxHeight = alto + 'px';
         } else {
             feed.style.maxHeight = '';

@@ -16,7 +16,7 @@
     // Contexto de modulo actual (ruta o ancla del scroll), se envia junto al mensaje
     function currentModule() {
         var params = new URLSearchParams(window.location.search);
-        var url = (params.get('url') || 'home').split('/')[0];
+        var url = params.get('url') || 'home';
         if (url !== 'home') return url;
 
         var hash = (window.location.hash || '').replace('#', '');
@@ -26,8 +26,11 @@
     }
 
     function currentContext() {
+        var module = currentModule();
         return {
-            module: currentModule(),
+            module: module,
+            path: window.location.pathname,
+            title: document.title,
             hasInstitution: !!window.__ndaHasInstitution,
         };
     }
@@ -137,7 +140,9 @@
                     'Content-Type': 'application/json',
                     'X-CSRF-Token': (document.querySelector('meta[name="csrf-token"]') || {}).content || ''
                 },
-                body: JSON.stringify({ message: text, history: history.slice(-8), context: currentContext() })
+                // El mensaje actual viaja en "message"; no lo dupliques en
+                // history porque eso confunde el contexto de la IA.
+                body: JSON.stringify({ message: text, history: history.slice(0, -1).slice(-8), context: currentContext() })
             });
             var data = await res.json();
             typing.remove();
