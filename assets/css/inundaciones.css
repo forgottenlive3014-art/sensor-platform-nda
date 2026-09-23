@@ -48,6 +48,65 @@
     line-height: 1.7;
 }
 
+/* ---------- INFORMACION GENERAL: DOS SECCIONES ---------- */
+.dis-inundaciones .in-general-sections {
+    display: grid;
+    gap: 22px;
+    max-width: 1060px;
+    margin: 0 auto;
+}
+.dis-inundaciones .in-general-section {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, .82fr);
+    align-items: stretch;
+    overflow: hidden;
+    border: 1px solid var(--border2);
+    border-radius: 18px;
+    background: var(--card);
+    box-shadow: 0 10px 28px rgba(0,0,0,.1);
+}
+.dis-inundaciones .in-general-section-reverse {
+    grid-template-columns: minmax(280px, .82fr) minmax(0, 1fr);
+}
+.dis-inundaciones .in-general-section-reverse .in-general-copy { order: 2; }
+.dis-inundaciones .in-general-section-reverse .in-general-image { order: 1; }
+.dis-inundaciones .in-general-copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 34px 38px;
+    border-top: 3px solid var(--dis-accent);
+}
+.dis-inundaciones .in-general-number {
+    margin-bottom: 10px;
+    color: var(--dis-accent);
+    font-family: var(--fd);
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .14em;
+}
+.dis-inundaciones .in-general-copy h3 {
+    margin: 0 0 12px;
+    color: var(--text);
+    font-family: var(--fd);
+    font-size: 1.3rem;
+}
+.dis-inundaciones .in-general-copy p {
+    margin: 0;
+    color: var(--text2);
+    font-size: .94rem;
+    line-height: 1.75;
+}
+.dis-inundaciones .in-general-image { min-height: 260px; overflow: hidden; }
+.dis-inundaciones .in-general-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .5s ease;
+}
+.dis-inundaciones .in-general-section:hover .in-general-image img { transform: scale(1.04); }
+
 /* ---------- TARJETAS DEL PROTOCOLO ---------- */
 .dis-inundaciones .in-actions-grid {
     display: grid;
@@ -328,6 +387,12 @@
         grid-template-columns: 1fr;
         max-width: 620px;
     }
+    .dis-inundaciones .in-general-section,
+    .dis-inundaciones .in-general-section-reverse {
+        grid-template-columns: 1fr;
+    }
+    .dis-inundaciones .in-general-section-reverse .in-general-copy { order: 1; }
+    .dis-inundaciones .in-general-section-reverse .in-general-image { order: 2; }
 }
 
 @media (max-width: 640px) {

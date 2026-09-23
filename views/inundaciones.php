@@ -65,21 +65,27 @@ ob_start();
       <h2 class="v-title">Información <span>general</span></h2>
       <p class="v-sub">Qué es una inundación y por qué El Salvador es tan propenso.</p>
     </div>
-    <div class="dis-info-grid dis-info-grid-2">
-      <div class="dis-info-card">
-        <h3>¿Qué es?</h3>
-        <p>Ocurre cuando el volumen de agua supera la capacidad de un río, quebrada o del suelo para contenerla, cubriendo áreas normalmente secas. Las lluvias intensas y prolongadas saturan el suelo, así que cada nuevo aguacero corre por la superficie en vez de infiltrarse.</p>
-        <div class="dis-info-card-img">
+    <div class="in-general-sections">
+      <article class="in-general-section">
+        <div class="in-general-copy">
+          <span class="in-general-number">01</span>
+          <h3>¿Qué es?</h3>
+          <p>Ocurre cuando el volumen de agua supera la capacidad de un río, quebrada o del suelo para contenerla, cubriendo áreas normalmente secas. Las lluvias intensas y prolongadas saturan el suelo, así que cada nuevo aguacero corre por la superficie en vez de infiltrarse.</p>
+        </div>
+        <div class="in-general-image">
           <img src="assets/media/img/inundaciones.jpg" alt="Inundación" loading="lazy">
         </div>
-      </div>
-      <div class="dis-info-card">
-        <h3>Información de El Salvador</h3>
-        <p>Es un territorio pequeño y montañoso, así que los ríos suben muy rápido, y la alta densidad urbana reduce la infiltración natural del agua. La temporada lluviosa va de mayo a noviembre, con el mayor riesgo entre septiembre y octubre, cuando el suelo ya está saturado.</p>
-        <div class="dis-info-card-img">
+      </article>
+      <article class="in-general-section in-general-section-reverse">
+        <div class="in-general-copy">
+          <span class="in-general-number">02</span>
+          <h3>Información de El Salvador</h3>
+          <p>Es un territorio pequeño y montañoso, así que los ríos suben muy rápido, y la alta densidad urbana reduce la infiltración natural del agua. La temporada lluviosa va de mayo a noviembre, con el mayor riesgo entre septiembre y octubre, cuando el suelo ya está saturado.</p>
+        </div>
+        <div class="in-general-image">
           <img src="assets/media/img/inundacion%202.jpg" alt="Inundación en El Salvador" loading="lazy">
         </div>
-      </div>
+      </article>
     </div>
   </div>
 </section>

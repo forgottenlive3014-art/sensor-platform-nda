@@ -10,11 +10,21 @@ foreach ($quehacerDefs as $def) {
     $C[$def['campo']] = $quehacerSaved[$def['campo']] ?? $def['default'];
 }
 
-$tiposKeys = ['sismo', 'inundacion', 'incendio', 'deslizamiento', 'tormenta'];
+$tiposKeys = ['sismo', 'volcan', 'tsunami', 'inundacion', 'deslizamiento', 'incendio', 'tormenta', 'sequia'];
+$quehacerImages = [
+    'sismo' => 'assets/media/img/Sismo.png',
+    'volcan' => 'assets/media/img/volcan.jpg',
+    'tsunami' => 'assets/media/img/tsunami.jpg',
+    'inundacion' => 'assets/media/img/inundaciones.jpg',
+    'deslizamiento' => 'assets/media/img/deslizamientoTierra.jpg',
+    'incendio' => 'assets/media/img/bosque.jpg',
+    'tormenta' => 'assets/media/img/principal.jpg',
+    'sequia' => 'assets/media/img/sequia1.jpg',
+];
 $fases = ['antes', 'durante', 'despues'];
 $DATA_PHP = [];
 foreach ($tiposKeys as $tipo) {
-    $DATA_PHP[$tipo] = ['title' => $C["$tipo.title"]];
+    $DATA_PHP[$tipo] = ['title' => $C["$tipo.title"], 'image' => $quehacerImages[$tipo]];
     foreach ($fases as $fase) {
         $steps = [];
         for ($i = 0; $i < 3; $i++) {
@@ -52,25 +62,38 @@ ob_start();
 
         <div class="now-selector reveal">
             <button class="now-tab active" data-em="sismo" style="--c:#f29f05;">Sismo</button>
+            <button class="now-tab" data-em="volcan" style="--c:#e0631f;">Volcán</button>
+            <button class="now-tab" data-em="tsunami" style="--c:#1f7aa8;">Tsunami</button>
             <button class="now-tab" data-em="inundacion" style="--c:#2e7da6;">Inundación</button>
-            <button class="now-tab" data-em="incendio" style="--c:#d91a2a;">Incendio</button>
             <button class="now-tab" data-em="deslizamiento" style="--c:#a16207;">Deslizamiento</button>
+            <button class="now-tab" data-em="incendio" style="--c:#d91a2a;">Incendio forestal</button>
             <button class="now-tab" data-em="tormenta" style="--c:#6a6fb5;">Tormenta</button>
+            <button class="now-tab" data-em="sequia" style="--c:#b7791f;">Sequía</button>
         </div>
 
         <div class="now-board reveal">
-            <div class="now-board-head">
-                <span class="now-icon" id="nowIcon"></span>
-                <h2 id="nowTitle">Sismo / Terremoto</h2>
+            <div class="now-visual">
+                <img id="nowImage" src="<?= htmlspecialchars($quehacerImages['sismo']) ?>" alt="Sismo y preparación ante emergencias">
+                <div class="now-visual-shade"></div>
+                <div class="now-visual-caption">
+                    <span class="now-visual-label">Guía práctica</span>
+                    <span id="nowPhaseLabel">Antes de la emergencia</span>
+                </div>
             </div>
+            <div class="now-content">
+                <div class="now-board-head">
+                    <span class="now-icon" id="nowIcon"></span>
+                    <h2 id="nowTitle">Sismo / Terremoto</h2>
+                </div>
 
-            <div class="phase-tabs">
-                <button class="phase-tab active" data-phase="antes">Antes</button>
-                <button class="phase-tab" data-phase="durante">Durante</button>
-                <button class="phase-tab" data-phase="despues">Después</button>
+                <div class="phase-tabs">
+                    <button class="phase-tab active" data-phase="antes">Antes</button>
+                    <button class="phase-tab" data-phase="durante">Durante</button>
+                    <button class="phase-tab" data-phase="despues">Después</button>
+                </div>
+
+                <div class="steps" id="nowSteps"></div>
             </div>
-
-            <div class="steps" id="nowSteps"></div>
         </div>
 
         <div class="contacts reveal">
@@ -127,11 +150,19 @@ ob_start();
 .now-tab.active{ background:color-mix(in srgb, var(--c) 16%, transparent); border-color:var(--c); box-shadow:0 6px 20px color-mix(in srgb, var(--c) 25%, transparent); }
 
 /* BOARD */
-.now-board{ background:var(--card); border:1px solid var(--border); border-radius:24px; padding:30px; margin-bottom:30px; }
-.now-board-head{ display:flex; align-items:center; gap:14px; margin-bottom:20px; }
+.now-board{ max-width:1020px; display:grid; grid-template-columns:minmax(240px, .72fr) minmax(0, 1.28fr); gap:32px; align-items:center; margin:0 auto 30px; background:var(--card); border:1px solid var(--border); border-radius:24px; padding:30px; }
+.now-content{ min-width:0; }
+.now-visual{ position:relative; height:100%; min-height:430px; overflow:hidden; border-radius:18px; background:#dfe7ec; }
+.now-visual img{ width:100%; height:100%; display:block; object-fit:cover; object-position:center; transition:opacity .3s ease, transform .5s ease; }
+.now-visual.is-changing img{ opacity:.35; transform:scale(1.04); }
+.now-visual-shade{ position:absolute; inset:0; background:linear-gradient(180deg,rgba(9,24,39,.05) 20%,rgba(9,24,39,.72) 100%); pointer-events:none; }
+.now-visual-caption{ position:absolute; left:24px; bottom:20px; display:flex; flex-direction:column; gap:4px; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,.35); }
+.now-visual-label{ color:#ffd166; font-size:.7rem; font-weight:800; letter-spacing:2px; text-transform:uppercase; }
+.now-visual-caption > span:last-child{ font-family:var(--fd); font-size:1.05rem; font-weight:800; }
+.now-board-head{ display:flex; align-items:center; justify-content:center; gap:14px; margin-bottom:20px; text-align:center; }
 .now-icon{ font-size:2.6rem; }
 .now-board-head h2{ font-family:var(--fd); font-size:1.6rem; font-weight:900; color:var(--text); margin:0; }
-.phase-tabs{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:24px; }
+.phase-tabs{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:24px; }
 .phase-tab{
     background:var(--card2); border:1px solid var(--border); color:var(--text);
     padding:9px 20px; border-radius:100px; cursor:pointer; font-weight:600; font-size:.88rem; transition:all .2s;
@@ -140,7 +171,7 @@ ob_start();
 .phase-tab.active{ background:#f29f05; color:#fff; border-color:transparent; }
 
 /* STEPS */
-.steps{ display:flex; flex-direction:column; gap:0; }
+.steps{ display:flex; flex-direction:column; gap:0; max-width:720px; margin:0 auto; }
 .step{
     display:flex; gap:18px; padding:18px 0; border-bottom:1px dashed var(--border);
     opacity:0; transform:translateX(-20px); animation:slideIn .5s ease forwards;
@@ -170,6 +201,13 @@ ob_start();
 .contact-card small{ color:var(--text3); font-size:.78rem; }
 .contact-note{ color:var(--text3); font-size:.85rem; margin:18px 0 0; }
 
+@media (max-width:600px){
+    .now-board{ display:block; padding:20px; }
+    .now-visual{ height:155px; min-height:0; margin:0 0 22px; }
+    .now-visual-caption{ left:18px; bottom:16px; }
+    .now-board-head h2{ font-size:1.3rem; }
+}
+
 /* reveal */
 .reveal{ opacity:0; transform:translateY(28px); transition:opacity .7s ease, transform .7s ease; }
 .reveal.in{ opacity:1; transform:none; }
@@ -188,9 +226,17 @@ document.addEventListener('DOMContentLoaded', function () {
     const DATA = <?= json_encode($DATA_PHP, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS) ?>;
 
     let curEm = 'sismo', curPhase = 'antes';
+    const phaseLabels = { antes: 'Antes de la emergencia', durante: 'Durante la emergencia', despues: 'Después de la emergencia' };
     function render() {
         const d = DATA[curEm];
         document.getElementById('nowTitle').textContent = d.title;
+        const visual = document.querySelector('.now-visual');
+        const image = document.getElementById('nowImage');
+        visual.classList.add('is-changing');
+        image.onload = () => visual.classList.remove('is-changing');
+        image.src = d.image;
+        image.alt = d.title + ' y preparación ante emergencias';
+        document.getElementById('nowPhaseLabel').textContent = phaseLabels[curPhase];
         const steps = d[curPhase];
         const box = document.getElementById('nowSteps'); box.innerHTML = '';
         steps.forEach((s, i) => {

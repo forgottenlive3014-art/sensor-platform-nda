@@ -8,7 +8,7 @@ ob_start();
 
 <div class="dis-page dis-sequias">
 <!-- BIG BANNER -->
-<section class="dis-bigbanner" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/Drought%20land%20dry%20mud%20BOUHANIFIA%20Algeria%2002.jpg')">
+<section class="dis-bigbanner" style="background-image:url('assets/media/img/SEQUIASBANNER.jpg')">
   <div class="dis-bigbanner-overlay"></div>
   <div class="wrap dis-bigbanner-inner">
     <h2 class="dis-bigbanner-word">Sequías</h2>
@@ -25,7 +25,7 @@ ob_start();
 </section>
 
 <!-- CONTEXTO RAPIDO -->
-<section class="dis-context" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/Drought%20land%20dry%20mud%20BOUHANIFIA%20Algeria%2002.jpg')">
+<section class="dis-context" style="background-image:url('assets/media/img/SEQUIASBANNER.jpg')">
   <div class="dis-context-overlay"></div>
   <div class="wrap dis-context-inner">
     <div class="dis-context-hd">
@@ -241,10 +241,10 @@ ob_start();
       <p class="v-sub">Efectos sobre el agua, los cultivos, la alimentación y las familias.</p>
     </div>
     <div class="dis-impact-grid">
-      <div class="dis-impact-card"><h4>Pérdida de cosechas</h4><p>Maíz y frijol de secano son los cultivos más golpeados por la falta de lluvia oportuna.</p></div>
-      <div class="dis-impact-card"><h4>Escasez de agua</h4><p>Pozos y fuentes superficiales bajan su nivel, afectando el consumo humano y del ganado.</p></div>
-      <div class="dis-impact-card"><h4>Inseguridad alimentaria</h4><p>Familias de agricultura de subsistencia quedan sin reservas para el resto del año.</p></div>
-      <div class="dis-impact-card"><h4>Migración rural</h4><p>La falta de ingresos agrícolas empuja a familias a migrar hacia zonas urbanas o fuera del país.</p></div>
+      <div class="dis-impact-card"><div class="dis-impact-media"><img src="assets/media/img/cultivo.jpg" alt="Cultivos afectados por sequía" loading="lazy"></div><h4>Pérdida de cosechas</h4><p>Maíz y frijol de secano son los cultivos más golpeados por la falta de lluvia oportuna.</p></div>
+      <div class="dis-impact-card"><div class="dis-impact-media"><img src="assets/media/img/Sequia.jpg" alt="Suelo seco por falta de agua" loading="lazy"></div><h4>Escasez de agua</h4><p>Pozos y fuentes superficiales bajan su nivel, afectando el consumo humano y del ganado.</p></div>
+      <div class="dis-impact-card"><div class="dis-impact-media"><img src="assets/media/img/sequia1.jpg" alt="Comunidad afectada por sequía" loading="lazy"></div><h4>Inseguridad alimentaria</h4><p>Familias de agricultura de subsistencia quedan sin reservas para el resto del año.</p></div>
+      <div class="dis-impact-card"><div class="dis-impact-media"><img src="assets/media/img/union.jpg" alt="Comunidad rural del oriente de El Salvador" loading="lazy"></div><h4>Migración rural</h4><p>La falta de ingresos agrícolas empuja a familias a migrar hacia zonas urbanas o fuera del país.</p></div>
     </div>
   </div>
 </section>

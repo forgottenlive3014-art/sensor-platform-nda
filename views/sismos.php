@@ -6,6 +6,8 @@ $extraCss = ['css/desastres-base.css', 'css/sismos.css'];
 ob_start();
 ?>
 
+<div class="dis-page dis-sismos">
+
 <!-- ============================================================
      BIG BANNER
      ============================================================ -->
@@ -599,83 +601,32 @@ ob_start();
 </section>
 
 <!-- ============================================================
-     SECCIÓN 10: ZONA SÍSMICA - MAPA
-     ============================================================ -->
-<section class="sec sec-dark">
-  <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Mapa de Riesgo · El Salvador</div>
-      <h2 class="sec-title">Zona <span class="acc">Sísmica</span></h2>
-      <p class="sec-sub">Zonas de mayor actividad sísmica, volcanes y riesgos asociados — datos de MARN, USGS, EMSC e IOC-UNESCO</p>
-    </div>
-    <div class="map-container">
-      <div class="map-ctrl-bar">
-        <button class="mc-btn on" data-layer="seismic"><span class="mld" style="background:#e63946"></span>Zonas sísmicas</button>
-        <button class="mc-btn" data-layer="volcanic"><span class="mld" style="background:#ff9500"></span>Volcanes</button>
-        <button class="mc-btn" data-layer="quakes"><span class="mld" style="background:#ff9500"></span>Sismos recientes (USGS+EMSC)</button>
-        <button class="mc-btn" data-layer="flood"><span class="mld" style="background:#3d9bff"></span>Riesgo de tsunami</button>
-        <button class="mc-btn" data-layer="slides"><span class="mld" style="background:#ffcc00"></span>Deslizamientos</button>
-        <button class="mc-btn" data-layer="safe"><span class="mld" style="background:#22c55e"></span>Zonas seguras</button>
-        <button class="mc-btn" data-layer="all">Ver todo</button>
-      </div>
-      <div id="hazardMap"></div>
-    </div>
-  </div>
-</section>
-
-<!-- ============================================================
      SECCIÓN 11: MONITOR SÍSMICO EN TIEMPO REAL
      ============================================================ -->
 <section class="sec" id="monitor-tiempo-real">
   <div class="wrap">
-    <div class="sec-hd" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px">
+    <div class="sec-hd">
       <div>
         <div class="page-eyebrow">Actividad Sísmica · El Salvador</div>
-        <div class="page-title">Sismógrafo <span class="acc">Interactivo</span></div>
+        <div class="page-title">Sismógrafo</div>
       </div>
-      <button class="btn-acc" id="simBtn" style="font-size:.82rem;padding:9px 18px">Simular sismo</button>
     </div>
     <div class="pt-rule"></div>
     <div class="seismo-layout">
       <div>
         <div class="sg-main-card">
           <div class="phdr">
-            <div style="width:32px;height:32px;background:rgba(255,77,26,.15);border-radius:var(--rs);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0">
-              <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em">
-                <path d="M8 21l4-13 4 13"/>
-                <circle cx="12" cy="6" r="1.4"/>
-                <path d="M12 6l-1.5 3M12 6l1.5 3"/>
-              </svg>
-            </div>
             <div style="min-width:0;overflow:hidden">
-              <div style="font-weight:700;color:var(--text);font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Sismógrafo Interactivo — El Salvador</div>
-              <div style="font-size:.7rem;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="sgSubtitle">Estación SSN · San Salvador · 13.692°N, 89.218°W · EN VIVO</div>
+              <div style="font-weight:700;color:var(--text);font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Registro sísmico real — El Salvador</div>
+              <div style="font-size:.7rem;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="sgSubtitle">Estación SSN · San Salvador · 13.692°N, 89.218°W</div>
             </div>
-            <div class="hm-live" style="margin-left:auto;flex-shrink:0"><span class="ldot"></span>EN VIVO</div>
-            <div style="font-size:.72rem;color:var(--text3);background:var(--bg3);padding:4px 10px;border-radius:100px;margin-left:8px;flex-shrink:0;white-space:nowrap" id="sgFreqLabel">Frecuencia media</div>
+            <div class="hm-live" style="margin-left:auto;flex-shrink:0"><span class="ldot"></span>EN VIVO · USGS + EMSC</div>
           </div>
           <div class="sg-wave-area">
             <div class="sg-depth-badge">PROFUNDIDAD: <strong id="sgDepth">— KM</strong></div>
             <canvas id="mainSg"></canvas>
           </div>
-          <div class="sg-controls">
-            <button class="sg-preset m3 on" data-mag="3" data-cls="m3">M3 <span style="font-size:.65rem;opacity:.7">leve</span></button>
-            <button class="sg-preset m6" data-mag="6" data-cls="m6">M6 <span style="font-size:.65rem;opacity:.7">moderado</span></button>
-            <button class="sg-preset m7" data-mag="7" data-cls="m7">M7 <span style="font-size:.65rem;opacity:.7">fuerte</span></button>
-            <button class="sg-preset m85" data-mag="8.5" data-cls="m85">M8.5 <span style="font-size:.65rem;opacity:.7">gran terremoto</span></button>
-            <button class="sg-reset" id="sgReset">
-              <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em">
-                <polyline points="1 4 1 10 7 10"/>
-                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
-              </svg> Reiniciar
-            </button>
-            <div class="sg-mag-slider">
-              <label>Magnitud:</label>
-              <input type="range" class="sg-slider" id="sgMagSlider" min="1" max="9" step=".1" value="3"/>
-              <span class="sg-mag-val" id="sgMagDisp">3</span>
-            </div>
-          </div>
-          <p style="font-size:.7rem;color:var(--text3);padding:0 14px 12px;margin:0;">Los controles de magnitud solo simulan cómo se vería la onda de un sismo de esa magnitud. La <strong>profundidad</strong> y las estadísticas de abajo son datos reales combinados del USGS y del EMSC (European-Mediterranean Seismological Centre) para la región de El Salvador — no se pueden editar, y se actualizan solas cada 30 segundos (o al instante si detectan un sismo nuevo).</p>
+          <p style="font-size:.7rem;color:var(--text3);padding:0 14px 12px;margin:0;">Esta visualización muestra únicamente sismos registrados por USGS y EMSC en la región. Los datos se actualizan automáticamente cada 30 segundos.</p>
           <div class="sg-stats-bar">
             <div class="sgstat"><div class="sgstat-lbl">último Evento</div><div class="sgstat-val acc" id="sg-last-mag">M—</div><div class="sgstat-sub" id="sg-last-loc">—</div></div>
             <div class="sgstat"><div class="sgstat-lbl">Profundidad</div><div class="sgstat-val" id="sg-depth-v">— km</div><div class="sgstat-sub" id="sg-depth-l">—</div></div>
@@ -733,33 +684,7 @@ ob_start();
   </div>
 </section>
 
-<!-- ============================================================
-     SECCIÓN 12: SIMULADOR
-     ============================================================ -->
-<section class="sec sec-dark" id="sim-section">
-  <div class="wrap">
-    <div class="sec-hd">
-      <div class="sec-eyebrow">Simulación Interactiva</div>
-      <h2 class="sec-title">Simulador de <span class="acc2">Movimiento Sísmico</span></h2>
-      <p class="sec-sub">Visualiza cómo un sismo afecta estructuras según magnitud, profundidad y distancia</p>
-    </div>
-    <div class="sim-layout">
-      <div class="sim-ctrl-card">
-        <div class="phdr"><span class="wdot"></span>Parámetros del Sismo</div>
-        <div class="scp"><div class="scp-lbl">Magnitud <span id="simMagV">5.0</span></div><input type="range" class="scp-range" id="simMag" min="1" max="9" step=".1" value="5"/><div class="scp-ticks"><span>1.0</span><span>3.0</span><span>5.0</span><span>7.0</span><span>9.0</span></div></div>
-        <div class="scp"><div class="scp-lbl">Profundidad <span id="simDepV">30 km</span></div><input type="range" class="scp-range" id="simDep" min="5" max="200" step="5" value="30"/><div class="scp-ticks"><span>5km</span><span>50km</span><span>100km</span><span>200km</span></div></div>
-        <div class="scp"><div class="scp-lbl">Distancia <span id="simDistV">50 km</span></div><input type="range" class="scp-range" id="simDist" min="10" max="500" step="10" value="50"/><div class="scp-ticks"><span>10km</span><span>100km</span><span>250km</span><span>500km</span></div></div>
-        <div class="scp"><button class="btn-acc" style="width:100%;justify-content:center" id="runSim">▶ Simular</button></div>
-        <div class="mercalli-box" id="mercalliBox">Ajusta los parámetros y presiona Simular.</div>
-      </div>
-      <div class="sim-scene-card">
-        <div class="ssc-hdr"><span class="wdot"></span><span id="simSceneTitle">Ciudad ficticia — 50km del epicentro</span><div class="chip o" id="simMagChip" style="margin-left:auto">M 5.0</div></div>
-        <canvas id="simCanvas"></canvas>
-        <div class="sim-ib"><span class="sib-lbl">Intensidad</span><div class="sib-track"><div class="sib-fill" id="sibFill" style="width:40%"></div></div><span class="sib-val" id="sibVal">40%</span></div>
-      </div>
-    </div>
-  </div>
-</section>
+</div>
 
 <!-- ============================================================
      GSAP ANIMATIONS - ARCHIVO UNIFICADO

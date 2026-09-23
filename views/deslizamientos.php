@@ -297,32 +297,32 @@ document.addEventListener('DOMContentLoaded', function () {
 
     <div class="des-senales-grid">
       <div class="des-senal-card">
-        <svg class="des-senal-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-5 3 10 2-7 3 5h4"/></svg>
+        <div class="des-senal-media"><img src="assets/media/img/suelo.jpg" alt="Grietas en el suelo" loading="lazy"></div>
         <h4>Grietas en el suelo</h4>
         <p>Grietas en el terreno, caminos o paredes que aparecen sin razón aparente.</p>
       </div>
       <div class="des-senal-card">
-        <svg class="des-senal-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(-16deg)"><path d="M12 3l6 9h-4l3 5H7l3-5H6l6-9z"/><path d="M12 17v4"/></svg>
+        <div class="des-senal-media"><img src="assets/media/img/ladera.jpeg" alt="Árboles inclinados en una ladera" loading="lazy"></div>
         <h4>Árboles inclinados</h4>
         <p>Troncos curvos o inclinados ("pata de palo") que indican movimiento del terreno.</p>
       </div>
       <div class="des-senal-card">
-        <svg class="des-senal-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2s7 7.5 7 12a7 7 0 0 1-14 0c0-4.5 7-12 7-12z"/></svg>
+        <div class="des-senal-media"><img src="assets/media/img/estancada.jpeg" alt="Agua turbia en una quebrada" loading="lazy"></div>
         <h4>Agua turbia</h4>
         <p>Aumento repentino de turbidez en quebradas o ríos cercanos.</p>
       </div>
       <div class="des-senal-card">
-        <svg class="des-senal-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9v6M9 6v12M13 9v6M17 5v14M21 9v6"/></svg>
+        <div class="des-senal-media"><img src="assets/media/img/deslizamientoV.jpeg" alt="Deslizamiento en una ladera" loading="lazy"></div>
         <h4>Estruendos anormales</h4>
         <p>Ruidos como árboles rompiéndose o rocas chocando en la ladera.</p>
       </div>
       <div class="des-senal-card">
-        <svg class="des-senal-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v11"/><path d="M8 10l4 4 4-4"/><path d="M4 21h16"/></svg>
+        <div class="des-senal-media"><img src="assets/media/img/deslizamientoTierra.jpg" alt="Hundimiento del terreno" loading="lazy"></div>
         <h4>Hundimientos</h4>
         <p>Depresiones o abultamientos en la base de laderas.</p>
       </div>
       <div class="des-senal-card">
-        <svg class="des-senal-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 21l-2-16-2 1"/><path d="M6 21h12"/><path d="M9 6l6-1"/></svg>
+        <div class="des-senal-media"><img src="assets/media/img/vias.jpg" alt="Vía afectada por movimiento del terreno" loading="lazy"></div>
         <h4>Postes inclinados</h4>
         <p>Cercas, postes o muros que se inclinan sin razón aparente.</p>
       </div>
@@ -349,6 +349,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     <div class="des-prevencion-grid">
       <div class="des-prevencion-card antes">
+        <div class="des-prevencion-media"><img src="assets/media/img/ladera.jpeg" alt="Ladera preparada para prevenir deslizamientos" loading="lazy"></div>
         <div class="des-prevencion-top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></div>
         <h4>Antes</h4>
         <ul>
@@ -361,6 +362,7 @@ document.addEventListener('DOMContentLoaded', function () {
       </div>
 
       <div class="des-prevencion-card durante">
+        <div class="des-prevencion-media"><img src="assets/media/img/deslizamientoTierra.jpg" alt="Deslizamiento de tierra en curso" loading="lazy"></div>
         <div class="des-prevencion-top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2L12 3z"/><path d="M12 10v4"/><path d="M12 17h.01"/></svg></div>
         <h4>Durante</h4>
         <ul>
@@ -373,6 +375,7 @@ document.addEventListener('DOMContentLoaded', function () {
       </div>
 
       <div class="des-prevencion-card despues">
+        <div class="des-prevencion-media"><img src="assets/media/img/despuesV.png" alt="Zona después de un deslizamiento" loading="lazy"></div>
         <div class="des-prevencion-top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg></div>
         <h4>Después</h4>
         <ul>

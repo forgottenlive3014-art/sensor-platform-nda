@@ -336,11 +336,11 @@ window.ndaGoBack = function () {
 //  4. MAIN SEISMOGRAPH
   
 
-let sgCurrentMag = 3,
-    sgT = 0;
+let sgT = 0;
 
 (function() {
     const c = document.getElementById('mainSg');
+    let realQuakes = [];
     if (!c) return;
     const ctx = c.getContext('2d');
     let data = Array(500).fill(70);
@@ -379,14 +379,21 @@ let sgCurrentMag = 3,
             ctx.stroke();
         }
 
-        const amp = Math.pow(10, (sgCurrentMag - 1) / 3) * 2;
-        const clampAmp = Math.min(amp, c.height * 0.45);
-        const noise = (Math.random() - 0.5) * clampAmp * 2 +
-            Math.sin(sgT * 0.06) * clampAmp * 0.7 +
-            Math.sin(sgT * 0.14) * clampAmp * 0.4;
-
-        data.push(c.height / 2 + noise);
-        data.shift();
+        const center = c.height / 2;
+        const windowMs = 7 * 24 * 60 * 60 * 1000;
+        const now = Date.now();
+        data = data.map((_, i) => {
+            const timestamp = now - windowMs + (i / (data.length - 1)) * windowMs;
+            let value = center;
+            realQuakes.forEach(q => {
+                const distance = timestamp - q.time;
+                const spread = 45 * 60 * 1000;
+                const pulse = Math.exp(-Math.abs(distance) / spread);
+                const amplitude = Math.min(c.height * .42, Math.max(4, Math.pow(10, (q.mag - 1) / 3) * 3));
+                value += Math.sin(distance / 7000) * pulse * amplitude;
+            });
+            return value;
+        });
 
         // Gradient fill
         const fillGrad = ctx.createLinearGradient(0, 0, 0, c.height);
@@ -406,9 +413,10 @@ let sgCurrentMag = 3,
 
         // Wave line
         ctx.beginPath();
-        const col = sgCurrentMag >= 8 ? cols.critical :
-            sgCurrentMag >= 7 ? cols.high :
-            sgCurrentMag >= 5 ? cols.mid : cols.low;
+        const maxMag = realQuakes.reduce((max, q) => Math.max(max, q.mag), 0);
+        const col = maxMag >= 8 ? cols.critical :
+            maxMag >= 7 ? cols.high :
+            maxMag >= 5 ? cols.mid : cols.low;
         ctx.strokeStyle = col;
         ctx.lineWidth = 1.8;
         data.forEach((v, i) => {
@@ -417,7 +425,7 @@ let sgCurrentMag = 3,
         ctx.stroke();
 
         // Glow for strong quakes
-        if (sgCurrentMag >= 6) {
+        if (maxMag >= 6) {
             ctx.shadowColor = col;
             ctx.shadowBlur = 6;
             ctx.beginPath();
@@ -445,51 +453,13 @@ let sgCurrentMag = 3,
         requestAnimationFrame(draw);
     }
     draw();
+    window.ndaRenderRealSeismograph = function (quakes) {
+        realQuakes = (quakes || []).map(q => ({
+            time: Number(q.properties?.time || 0),
+            mag: Number(q.properties?.mag || 0)
+        })).filter(q => q.time > 0 && q.mag > 0);
+    };
 })();
-
-// SG Controls -- estos botones/slider SOLO cambian la simulacion visual de
-// la onda (amplitud, color, velocidad segun magnitud elegida). La profundidad
-// y el resto de estadisticas ("ultimo evento", "sismos hoy", etc.) nunca se
-// tocan aqui: siempre reflejan el ultimo sismo REAL reportado por el USGS,
-// actualizado por loadQuakes() arriba.
-document.querySelectorAll('.sg-preset').forEach(btn => {
-    btn.onclick = () => {
-        document.querySelectorAll('.sg-preset').forEach(b => b.classList.remove('on', 'm3', 'm6', 'm7', 'm85'));
-        document.querySelectorAll('.sg-preset').forEach(b => b.classList.add(b.dataset.cls));
-        btn.classList.add('on');
-        sgCurrentMag = parseFloat(btn.dataset.mag);
-        document.getElementById('sgMagSlider').value = sgCurrentMag;
-        document.getElementById('sgMagDisp').textContent = sgCurrentMag;
-    };
-});
-
-if (document.getElementById('sgMagSlider')) {
-    document.getElementById('sgMagSlider').oninput = function() {
-        sgCurrentMag = parseFloat(this.value);
-        document.getElementById('sgMagDisp').textContent = parseFloat(this.value).toFixed(1);
-        document.querySelectorAll('.sg-preset').forEach(b => b.classList.remove('on'));
-    };
-}
-
-if (document.getElementById('sgReset')) {
-    document.getElementById('sgReset').onclick = () => {
-        sgCurrentMag = 3;
-        document.getElementById('sgMagSlider').value = 3;
-        document.getElementById('sgMagDisp').textContent = '3';
-        document.querySelectorAll('.sg-preset').forEach(b => b.classList.remove('on'));
-        document.querySelector('.sg-preset.m3').classList.add('on');
-    };
-}
-
-if (document.getElementById('simBtn')) {
-    document.getElementById('simBtn').onclick = () => {
-        sgCurrentMag = 8.5;
-        document.getElementById('sgMagSlider').value = 8.5;
-        document.getElementById('sgMagDisp').textContent = '8.5';
-        document.querySelectorAll('.sg-preset').forEach(b => b.classList.remove('on'));
-        document.querySelector('.sg-preset.m85').classList.add('on');
-    };
-}
 
   
 //  5. MICRO SEISMOGRAPH
@@ -685,10 +655,11 @@ async function loadQuakes() {
         }
         if (!qs.length) throw 'empty';
         qs = qs.slice(0, 25);
+        if (window.ndaRenderRealSeismograph) window.ndaRenderRealSeismograph(qs);
 
         ndaSetText('sgSubtitle', regional
-            ? 'Estación SSN · San Salvador · 13.692°N, 89.218°W · Región Centroamérica (USGS+EMSC)'
-            : 'Estación SSN · San Salvador · 13.692°N, 89.218°W · El Salvador (USGS+EMSC) · EN VIVO');
+            ? 'Estación SSN · San Salvador · 13.692°N, 89.218°W · Región Centroamérica'
+            : 'Estación SSN · San Salvador · 13.692°N, 89.218°W');
 
         const now = Date.now();
         const h24 = qs.filter(q => now - q.properties.time < 86400000).length;
@@ -777,7 +748,7 @@ async function loadQuakes() {
         if (window.updateRTMStats) window.updateRTMStats(qs);
 
     } catch (e) {
-        ndaSetHtml('quakeFeed', '<div class="loading-s">⚠️ Error USGS/EMSC — revisa conexión</div>');
+        ndaSetHtml('quakeFeed', '<div class="loading-s">Error USGS/EMSC — revisa conexión</div>');
     }
 }
 
@@ -3030,16 +3001,16 @@ window.setIntensity = function(level, btn) {
     blds.forEach(b => b.classList.remove('shake'));
 
     if (level === 'leve') {
-        if (statusEl) { statusEl.textContent = '✅ SACUDIDA LEVE';
+        if (statusEl) { statusEl.textContent = 'SACUDIDA LEVE';
             statusEl.className = 'shake-status'; }
         if (rangeEl) rangeEl.textContent = 'M 1.0 – 3.4';
     } else if (level === 'moderado') {
-        if (statusEl) { statusEl.textContent = '⚡ SACUDIDA MODERADA';
+        if (statusEl) { statusEl.textContent = 'SACUDIDA MODERADA';
             statusEl.className = 'shake-status warn'; }
         if (rangeEl) rangeEl.textContent = 'M 3.5 – 5.9';
         blds.forEach((b, i) => { if (i % 2 === 0) b.classList.add('shake'); });
     } else {
-        if (statusEl) { statusEl.textContent = '🔔 SISMO FUERTE — EVACUACIÓN';
+        if (statusEl) { statusEl.textContent = 'SISMO FUERTE — EVACUACIÓN';
             statusEl.className = 'shake-status danger'; }
         if (rangeEl) rangeEl.textContent = 'M 6.0+';
         blds.forEach(b => b.classList.add('shake'));

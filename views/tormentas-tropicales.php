@@ -8,7 +8,7 @@ ob_start();
 
 <div class="dis-page dis-tormentas">
 <!-- BIG BANNER -->
-<section class="dis-bigbanner" style="background-image:url('assets/media/img/principal.jpg')">
+<section class="dis-bigbanner" style="background-image:url('assets/media/img/tormentaTropical.jpg')">
   <div class="dis-bigbanner-overlay"></div>
   <div class="wrap dis-bigbanner-inner">
     <h2 class="dis-bigbanner-word">Tormentas</h2>
@@ -25,7 +25,7 @@ ob_start();
 </section>
 
 <!-- CONTEXTO RAPIDO -->
-<section class="dis-context" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/Hurricane%20Katrina%20as%20Seen%20from%20Space%20(20749127551).jpg')">
+<section class="dis-context" style="background-image:url('assets/media/img/tormentaTropical.jpg')">
   <div class="dis-context-overlay"></div>
   <div class="wrap dis-context-inner">
     <div class="dis-context-hd">

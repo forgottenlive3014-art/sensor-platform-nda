@@ -142,7 +142,7 @@ class InteraccionController {
 
         $db = getDB();
         $stmt = $db->prepare("
-            SELECT c.*, u.nombre as autor, u.role as autor_role, u.foto_perfil as autor_foto
+            SELECT c.*, COALESCE(NULLIF(u.username, ''), u.nombre) as autor, u.role as autor_role, u.foto_perfil as autor_foto
             FROM interacciones_comentarios c
             JOIN usuarios u ON u.usuarios_id = c.usuarios_id
             WHERE c.tipo_contenido = ? AND c.contenido_id = ?

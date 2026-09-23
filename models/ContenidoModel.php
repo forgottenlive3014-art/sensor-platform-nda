@@ -146,6 +146,60 @@ class ContenidoModel {
                     ['Mantente alerta', 'Pueden venir nuevas células de tormenta.'],
                 ],
             ],
+            'volcan' => [
+                'title' => 'Erupción volcánica',
+                'antes' => [
+                    ['Conoce las rutas', 'Identifica las rutas de evacuación y los refugios cercanos.'],
+                    ['Prepara una mochila', 'Incluye agua, alimentos, linterna, radio, documentos y mascarillas.'],
+                    ['Protege tu hogar', 'Cierra puertas y ventanas y mantén despejados los techos.'],
+                ],
+                'durante' => [
+                    ['Evacúa si se indica', 'Sigue las instrucciones oficiales y aléjate de ríos y quebradas.'],
+                    ['Protege nariz y ojos', 'Usa mascarilla o un paño húmedo y gafas para evitar la ceniza.'],
+                    ['No te acerques al volcán', 'La lava, los gases y los flujos pueden avanzar rápidamente.'],
+                ],
+                'despues' => [
+                    ['Permanece informado', 'Regresa solo cuando las autoridades indiquen que es seguro.'],
+                    ['Retira la ceniza con cuidado', 'Usa protección y evita levantar polvo al limpiar.'],
+                    ['Revisa el agua', 'No consumas agua o alimentos cubiertos de ceniza sin verificar su seguridad.'],
+                ],
+            ],
+            'tsunami' => [
+                'title' => 'Tsunami',
+                'antes' => [
+                    ['Conoce la zona segura', 'Identifica las rutas hacia terrenos altos y los puntos de reunión.'],
+                    ['Reconoce las señales', 'Un sismo fuerte o el retiro repentino del mar pueden anunciar un tsunami.'],
+                    ['Prepara un plan familiar', 'Acuerda cómo comunicarse y dónde reunirse después de evacuar.'],
+                ],
+                'durante' => [
+                    ['Evacúa de inmediato', 'Después de un sismo fuerte cerca de la costa, aléjate del mar sin esperar una alerta.'],
+                    ['Ve a un lugar alto', 'Camina hacia terreno elevado o tierra adentro por la ruta señalizada.'],
+                    ['No regreses a la costa', 'La primera ola no siempre es la más grande y pueden llegar varias.'],
+                ],
+                'despues' => [
+                    ['Espera la autorización', 'Permanece en el sitio seguro hasta que las autoridades anuncien el fin del peligro.'],
+                    ['Ayuda sin exponerte', 'Apoya a niños, personas mayores y quienes necesiten asistencia.'],
+                    ['Evita aguas contaminadas', 'No toques cables caídos ni uses agua o alimentos que hayan tenido contacto con la inundación.'],
+                ],
+            ],
+            'sequia' => [
+                'title' => 'Sequía',
+                'antes' => [
+                    ['Ahorra agua', 'Repara fugas y reduce el consumo en casa, la escuela y el trabajo.'],
+                    ['Almacena de forma segura', 'Conserva agua potable en recipientes limpios y tapados.'],
+                    ['Protege los cultivos', 'Planifica riego eficiente y elige plantas resistentes a la falta de agua.'],
+                ],
+                'durante' => [
+                    ['Prioriza el agua potable', 'Usa el agua disponible para beber, preparar alimentos y la higiene básica.'],
+                    ['Sigue las indicaciones', 'Respeta horarios de distribución y recomendaciones de las autoridades.'],
+                    ['Cuida tu salud', 'Evita esfuerzos bajo el sol y mantente hidratado con agua segura.'],
+                ],
+                'despues' => [
+                    ['Mantén el ahorro', 'La recuperación puede tomar tiempo; conserva los hábitos de uso responsable.'],
+                    ['Revisa las reservas', 'Desecha agua almacenada que esté sucia o tenga un olor extraño.'],
+                    ['Reporta problemas', 'Informa fugas, daños en tuberías o falta de agua a la institución responsable.'],
+                ],
+            ],
         ];
         $faseLabels = ['antes' => 'Antes', 'durante' => 'Durante', 'despues' => 'Después'];
 

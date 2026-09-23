@@ -56,6 +56,7 @@ $modelos = [
         'slug' => 'inundaciones', 'accent' => '#2e7da6', 'nombre' => 'Inundaciones',
         'desc' => 'Las lluvias intensas saturan el suelo y superan la capacidad de ríos y quebradas, que se desbordan sobre zonas normalmente secas.',
         'riesgo' => 'Territorio pequeño y montañoso: los ríos recorren poca distancia con mucha pendiente, así que suben muy rápido.',
+        'bg' => 'assets/media/img/inundacioness1.jpg',
     ],
     [
         'slug' => 'deslizamientos', 'accent' => '#7a6a4a', 'nombre' => 'Deslizamientos',
@@ -67,16 +68,19 @@ $modelos = [
         'slug' => 'incendios-forestales', 'accent' => '#d9481f', 'nombre' => 'Incendios forestales',
         'desc' => 'Combustible seco, calor y una fuente de ignición: en El Salvador, casi siempre una quema agrícola mal manejada.',
         'riesgo' => 'Estación seca (noviembre–abril): altas temperaturas, baja humedad y quema de rastrojos para preparar tierra de cultivo.',
+        'bg' => 'assets/media/img/incendioForestal.png',
     ],
     [
         'slug' => 'tormentas-tropicales', 'accent' => '#4a6fa5', 'nombre' => 'Tormentas tropicales',
         'desc' => 'Se forma sobre aguas oceánicas cálidas: la evaporación alimenta de energía al sistema y la rotación de la Tierra organiza los vientos en espiral.',
         'riesgo' => 'Recibe sistemas formados en el Pacífico y remanentes del Atlántico/Caribe, sobre todo en temporada oficial (mayo–noviembre).',
+        'bg' => 'assets/media/img/tormentaTropical.jpg',
     ],
     [
         'slug' => 'sequias', 'accent' => '#b8862e', 'nombre' => 'Sequías',
         'desc' => 'Un déficit prolongado de lluvia respecto al patrón normal reduce el agua disponible para consumo, agricultura y ecosistemas.',
         'riesgo' => 'El oriente del país forma parte del Corredor Seco Centroamericano, una franja con lluvias más irregulares.',
+        'bg' => 'assets/media/img/sequia1.jpg',
     ],
 ];
 
@@ -114,7 +118,6 @@ ob_start();
           <div class="sk3d-panel-actions">
             <a class="sk3d-link" href="?url=<?= e($m['infoUrl'] ?? $m['slug']) ?>">Ver información completa →</a>
           </div>
-          <span class="sk3d-credit">Visualización 3D generada con Three.js</span>
         </div>
         <?php endforeach; ?>
       </div>
