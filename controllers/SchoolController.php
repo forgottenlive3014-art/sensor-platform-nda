@@ -968,6 +968,13 @@ class SchoolController {
             WHERE c.instituciones_id = ?
               AND (
                     c.visibilidad = 'todos'
+                    OR c.visibilidad = 'solo_yo' AND c.usuarios_id = ?
+                    OR c.visibilidad = 'mis_hijos' AND EXISTS (
+                        SELECT 1
+                        FROM padres_estudiantes pe
+                        JOIN estudiantes ce ON ce.estudiantes_id = pe.estudiante_id
+                        WHERE pe.padre_usuario_id = c.usuarios_id AND ce.usuarios_id = ?
+                    )
                     OR FIND_IN_SET(?, c.visibilidad)
                     OR c.usuarios_id = ?
                     OR ? = 1
@@ -975,7 +982,7 @@ class SchoolController {
             ORDER BY c.created_at DESC
             LIMIT 60
         ");
-        $stmt->execute([$u['id'], $instId, $u['role'], $u['id'], $this->isSchoolAdmin() ? 1 : 0]);
+        $stmt->execute([$u['id'], $instId, $u['id'], $u['id'], $u['role'], $u['id'], $this->isSchoolAdmin() ? 1 : 0]);
         jsonResponse($stmt->fetchAll());
     }
 
@@ -996,13 +1003,22 @@ class SchoolController {
         if (empty($texto)) jsonResponse(['error' => 'Escribe algo en la nota'], 400);
         if (strlen($texto) > 280) $texto = substr($texto, 0, 280);
 
-        // audiencia: 'todos', o un array de roles (ej. ['docente','alumno']).
+        // Admin General y Director pueden elegir la audiencia institucional.
         $audiencia = $input['visibilidad'] ?? 'todos';
-        if ($audiencia === 'todos' || empty($audiencia)) {
-            $visibilidad = 'todos';
+        $u = currentUser();
+        if (in_array($u['role'], ['admin', 'director'], true) && ($audiencia === 'todos' || is_array($audiencia))) {
+            if ($audiencia === 'todos') {
+                $visibilidad = 'todos';
+            } else {
+                $roles = array_intersect((array) $audiencia, $this->boardVisibilityRoles());
+                $visibilidad = $roles ? implode(',', $roles) : 'todos';
+            }
+        } elseif ($u['role'] === 'padre' && in_array($audiencia, ['solo_yo', 'mis_hijos'], true)) {
+            $visibilidad = $audiencia;
+        } elseif ($u['role'] !== 'admin') {
+            $visibilidad = 'solo_yo';
         } else {
-            $roles = array_intersect((array) $audiencia, $this->boardVisibilityRoles());
-            $visibilidad = $roles ? implode(',', $roles) : 'todos';
+            $visibilidad = 'solo_yo';
         }
 
         $db = getDB();

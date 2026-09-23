@@ -118,6 +118,21 @@ CREATE TABLE padres_estudiantes (
     INDEX idx_padre_est (estudiante_id)
 );
 
+CREATE TABLE solicitudes_padre_hijo (
+    solicitudes_padre_hijo_id INT PRIMARY KEY AUTO_INCREMENT,
+    padre_usuario_id INT NOT NULL,
+    estudiante_id INT NOT NULL,
+    parentesco VARCHAR(30) NOT NULL DEFAULT 'padre/madre',
+    estado ENUM('pendiente','aprobada','rechazada') NOT NULL DEFAULT 'pendiente',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    resolved_at TIMESTAMP NULL,
+    UNIQUE KEY uniq_solicitud_padre_hijo (padre_usuario_id, estudiante_id, estado),
+    FOREIGN KEY (padre_usuario_id) REFERENCES usuarios(usuarios_id) ON DELETE CASCADE,
+    FOREIGN KEY (estudiante_id) REFERENCES estudiantes(estudiantes_id) ON DELETE CASCADE,
+    INDEX idx_solicitud_padre_estado (padre_usuario_id, estado),
+    INDEX idx_solicitud_hijo_estado (estudiante_id, estado)
+);
+
 CREATE TABLE croquis_institucion (
     croquis_institucion_id INT PRIMARY KEY AUTO_INCREMENT,
     instituciones_id INT UNIQUE,
@@ -400,6 +415,38 @@ CREATE TABLE recursos (
     FOREIGN KEY (usuarios_id) REFERENCES usuarios(usuarios_id) ON DELETE SET NULL,
     -- FIX: indice compuesto para ordenar por categoria
     INDEX idx_recurso_categoria_orden (categoria, orden)
+);
+
+CREATE TABLE videos_educativos (
+    videos_educativos_id INT PRIMARY KEY AUTO_INCREMENT,
+    titulo VARCHAR(200) NOT NULL,
+    youtube_id VARCHAR(20) NOT NULL,
+    categoria VARCHAR(30) NOT NULL,
+    descripcion VARCHAR(300) NULL,
+    autor_nombre VARCHAR(150) NOT NULL,
+    autor_url VARCHAR(255) NULL,
+    orden INT NOT NULL DEFAULT 0,
+    activo TINYINT(1) NOT NULL DEFAULT 1,
+    usuarios_id INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuarios_id) REFERENCES usuarios(usuarios_id) ON DELETE SET NULL,
+    UNIQUE KEY uq_video_youtube_id (youtube_id),
+    INDEX idx_video_categoria_activo_orden (categoria, activo, orden)
+);
+
+CREATE TABLE usuarios_contenido_visto (
+    usuarios_contenido_visto_id INT PRIMARY KEY AUTO_INCREMENT,
+    usuarios_id INT NOT NULL,
+    tipo_contenido ENUM('pdf','video') NOT NULL,
+    contenido_clave VARCHAR(191) NOT NULL,
+    titulo VARCHAR(200) NOT NULL,
+    url VARCHAR(500) NOT NULL,
+    categoria VARCHAR(30) NULL,
+    visto_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuarios_id) REFERENCES usuarios(usuarios_id) ON DELETE CASCADE,
+    UNIQUE KEY uq_usuario_contenido_visto (usuarios_id, tipo_contenido, contenido_clave),
+    INDEX idx_visto_usuario_fecha (usuarios_id, visto_at)
 );
 
 CREATE TABLE contenido_paginas (
@@ -728,6 +775,17 @@ INSERT INTO recursos (titulo, descripcion, categoria, tags, archivo, tamano_byte
 ('Creencias y realidades sobre sismos', 'Artículo de divulgación de la UNAM sobre creencias y realidades en torno a los sismos.', 'sismo', 'Sismos,Divulgación', 'assets/media/guias/unamirada_636.pdf', '3590405', '45'),
 ('Los volcanes: preguntas frecuentes', 'Preguntas y respuestas frecuentes sobre los volcanes.', 'volcanes', 'Volcanes,Educativo', 'assets/media/guias/volcan.pdf', '2200283', '64'),
 ('¿Qué es un volcán?', 'Explicación básica sobre qué es un volcán y cómo se forma.', 'volcanes', 'Volcanes,Educativo', 'assets/media/guias/volcanes-5efe192552c19.pdf', '8229644', '66');
+
+INSERT INTO videos_educativos
+    (titulo, youtube_id, categoria, descripcion, autor_nombre, autor_url, orden)
+VALUES
+('¿Qué son los sismos y por qué suceden?', 'AAoTE63s5no', 'sismos', 'Explicación introductoria sobre el origen de los sismos y sus efectos.', 'Riesgos Ecuador', 'https://www.youtube.com/@RiesgosEcuador', 10),
+('Las fuerzas más destructivas de la Tierra', '_n2UZT4Avnw', 'sismos', 'Documental sobre las fuerzas naturales que transforman nuestro planeta.', 'Nat Geo en Español', 'https://www.youtube.com/@NationalGeographicEspanol', 20),
+('¿Qué es un terremoto?', 'sk_x58kM_70', 'sismos', 'Video educativo para comprender los terremotos de forma sencilla.', 'Happy Learning Español', 'https://www.youtube.com/@HappyLearningES', 30),
+('Mega tsunamis: lo inexplicable', 'KWvTSE9L-Ds', 'tsunamis', 'Recorrido audiovisual por los tsunamis y su capacidad destructiva.', 'History Latinoamérica', 'https://www.youtube.com/@HistoryLA', 40),
+('¿Cómo se forma un tsunami?', 'DpKzWOAupCs', 'tsunamis', 'Definición, fases y condiciones que pueden originar un tsunami.', 'EcologíaVerde', 'https://www.youtube.com/@EcologiaVerde', 50),
+('Los volcanes y el fuego del interior', 'COy76Cu8-3M', 'volcanes', 'Documental sobre los volcanes y la actividad del interior de la Tierra.', 'DOCUNAU', 'https://www.youtube.com/@DOCUNAU', 60),
+('Krakatoa, uno de los volcanes más peligrosos', 'NfNEDGN7ONg', 'volcanes', 'Historia y consecuencias de la erupción del volcán Krakatoa.', 'History Latinoamérica', 'https://www.youtube.com/@HistoryLA', 70);
 
 INSERT INTO blog (slug, titulo, cat, tag, color, autor_nombre, tiempo, destacado, extracto, imagen, cuerpo) VALUES
 ('72-horas', 'Cómo preparar a tu familia en 72 horas', 'prevencion', 'Prevención', '#f29f05', 'Equipo NDA', '6 min', 1, 'La regla de las primeras 72 horas puede marcar la diferencia. Qué hacer, paso a paso, antes de que llegue la próxima emergencia.', 'assets/media/blog/Cómo preparar a tu familia en 72 horas.jpg', '<p class=\"art-lead\">Las primeras 72 horas tras un desastre son las más críticas: es el tiempo que puede pasar antes de que la ayuda externa llegue a tu zona. Prepararte para ese lapso no requiere dinero ni equipo especial, solo organización. Aquí tienes el plan completo.</p>\n<h3 class=\"art-h3\">¿Por qué 72 horas?</h3>\n<p>Cuando ocurre un sismo fuerte o una inundación, los servicios de emergencia se saturan y las vías pueden quedar bloqueadas. Protección Civil y el COEN priorizan las zonas más afectadas, y tu colonia podría quedar sola durante uno a tres días. Tener lo básico para ese periodo convierte una crisis en una incomodidad manejable.</p>\n<div class=\"art-key\"><strong>La regla de oro</strong>Agua, comida, luz, información y documentos. Si tu hogar tiene cubiertos esos cinco frentes para tres días, ya estás por delante de la mayoría.</div>\n<h3 class=\"art-h3\">Agua y alimentos</h3>\n<p>Calcula al menos 3 litros de agua por persona al día: uno para beber y dos para higiene y cocina. Para una familia de cuatro, eso son unos 36 litros para tres días. Guarda comida que no necesite refrigeración ni cocción: enlatados, granola, galletas, atún. Revisa las fechas cada seis meses.</p>\n<h3 class=\"art-h3\">Documentos y plan</h3>\n<p>Reúne copias de DUI, partidas de nacimiento, escrituras y carnets médicos en una bolsa plástica sellada. Acuerda con tu familia un punto de reunión y un contacto fuera del país a quien todos puedan llamar si se separan. Escribe los números de emergencia en papel: en una crisis el celular puede quedarse sin batería.</p>\n<h3 class=\"art-h3\">Practica antes de necesitarlo</h3>\n<p>Un plan que nunca se ensaya falla cuando más importa. Haz un simulacro en casa: corta la luz un momento, ubica la mochila a oscuras, repasa la ruta de salida. Diez minutos al mes bastan para que el cuerpo recuerde qué hacer sin pensar.</p>\n<div class=\"art-takeaway\"><h4>Para recordar</h4><ul><li>3 litros de agua por persona al día, para 3 días.</li><li>Comida sin cocción y con fecha vigente.</li><li>Documentos en bolsa sellada + números en papel.</li><li>Punto de reunión y contacto acordados.</li><li>Ensaya el plan una vez al mes.</li></ul></div>'),

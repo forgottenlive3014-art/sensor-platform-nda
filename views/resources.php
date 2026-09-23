@@ -85,7 +85,7 @@ ob_start();
                     </div>
                 </div>
                 <div style="display: flex; gap: 8px;">
-                    <a href="<?= htmlspecialchars($r['archivo']) ?>" target="_blank" onclick="return openPdfPreview(this.href,'<?= htmlspecialchars(addslashes($r['titulo'])) ?>')" style="flex: 1; background: linear-gradient(135deg, #f97316, #ea6c0a); color: #fff; border: none; border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-align: center; text-decoration: none; cursor: pointer; transition: opacity 0.2s;">
+                    <a href="<?= htmlspecialchars($r['archivo']) ?>" target="_blank" data-resource-title="<?= htmlspecialchars($r['titulo']) ?>" data-resource-category="<?= htmlspecialchars($cat) ?>" onclick="return openPdfPreview(this.href, this.dataset.resourceTitle, this.dataset.resourceCategory)" style="flex: 1; background: linear-gradient(135deg, #f97316, #ea6c0a); color: #fff; border: none; border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-align: center; text-decoration: none; cursor: pointer; transition: opacity 0.2s;">
                         <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-0.15em" ><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Previsualizar
                     </a>
                     <a href="<?= htmlspecialchars($r['archivo']) ?>" download style="background: var(--card2); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; text-decoration: none; cursor: pointer; transition: background 0.2s;">
@@ -198,7 +198,14 @@ ob_start();
 </style>
 
 <script>
-function openPdfPreview(url, title) {
+function trackViewedContent(type, key, title, url, category) {
+    const csrf = document.querySelector('meta[name="csrf-token"]');
+    if (!csrf) return;
+    const body = new URLSearchParams({ csrf_token: csrf.content, tipo_contenido: type, contenido_clave: key, titulo: title, url: url, categoria: category || '' });
+    fetch('?url=profile/track-view', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body.toString(), credentials: 'same-origin' }).catch(function() {});
+}
+function openPdfPreview(url, title, category) {
+    trackViewedContent('pdf', url, title || 'Documento', url, category || '');
     const modal = document.getElementById('pdfPreviewModal');
     const frame = document.getElementById('pdfModalFrame');
     const loading = document.getElementById('pdfModalLoading');

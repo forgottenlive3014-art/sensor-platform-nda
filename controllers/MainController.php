@@ -111,6 +111,10 @@ class MainController {
         view('galeria-3d', ['title' => 'Desastres - NDA', 'user' => currentUser()]);
     }
 
+    public function videosEducativos() {
+        view('videos-educativos', ['title' => 'Videos educativos - NDA', 'user' => currentUser()]);
+    }
+
     public function tsunamis() {
         view('tsunamis', ['title' => 'Tsunamis - NDA', 'user' => currentUser()]);
     }

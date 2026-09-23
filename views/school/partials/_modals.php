@@ -433,6 +433,7 @@
                 <div class="school-form-group">
                     <label>¿Quién la puede ver?</label>
                     <div class="note-visibility-picker">
+                        <?php if (in_array(($user['role'] ?? ''), ['admin', 'director'], true)): ?>
                         <label><input type="checkbox" id="noteVisTodos" checked onchange="toggleNoteVisAll(this)"> Todos</label>
                         <span id="noteVisRoles" style="display:none;">
                             <label><input type="checkbox" class="noteVisRole" value="director"> Directores</label>
@@ -441,6 +442,14 @@
                             <label><input type="checkbox" class="noteVisRole" value="padre"> Padres</label>
                             <label><input type="checkbox" class="noteVisRole" value="administrativo"> Personal</label>
                         </span>
+                        <?php elseif (($user['role'] ?? '') === 'padre'): ?>
+                        <select id="noteVisScope">
+                            <option value="solo_yo">Solo para mí</option>
+                            <option value="mis_hijos">Para mis hijos</option>
+                        </select>
+                        <?php else: ?>
+                        <span>Solo tú podrás verla</span>
+                        <?php endif; ?>
                     </div>
                 </div>
                 <button type="submit" class="school-btn primary">Pegar en el corcho</button>

@@ -69,6 +69,14 @@ ob_start();
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                 <span class="dock-tip" aria-hidden="true">Usuarios</span>
             </button>
+            <div class="school-bnav-popover">
+                <div class="school-bnav-sub-wrap">
+                    <button class="school-bnav-sub" data-tab="parents" onclick="showSchoolTab('parents')" aria-label="Padres y Madres">
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M2 21v-2a7 7 0 0 1 14 0v2"/><path d="M16 11a4 4 0 1 0 0-8"/><path d="M22 21v-2a6 6 0 0 0-4.5-5.8"/></svg>
+                    </button>
+                    <span class="school-bnav-sub-label">Padres/Madres</span>
+                </div>
+            </div>
         </div>
 
         <div class="school-bnav-item">

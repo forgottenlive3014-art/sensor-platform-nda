@@ -208,7 +208,13 @@ $navDisplayName = $isLoggedIn
             || (in_array($__navUser['role'], ['director', 'docente'], true) && $__navUser['estado_institucional'] === 'aprobado')
         );
     ?>
-    <a href="?url=resources">Recursos</a>
+    <div class="nav-drop">
+      <button type="button" class="nav-drop-btn" onclick="toggleNavDrop(this)">Recursos <span class="nav-drop-car">▾</span></button>
+      <div class="nav-drop-dd">
+        <a class="ndd-item<?= ($currentSlug ?? '') === 'resources' ? ' sel' : '' ?>" href="?url=resources">Recursos</a>
+        <a class="ndd-item<?= ($currentSlug ?? '') === 'videos-educativos' ? ' sel' : '' ?>" href="?url=videos-educativos">Videos Educativos</a>
+      </div>
+    </div>
     <a href="?url=quehacer">¿Qué hacer AHORA?</a>
     <a href="?url=Acercade">Acerca de NDA</a>
   </div>
@@ -229,7 +235,9 @@ $navDisplayName = $isLoggedIn
     <a class="mob-nav-sub" href="?url=emergencias">Puntos de Emergencia</a>
     <a href="?url=blog">Blog</a>
     <a href="?url=juegos">Juegos</a>
-    <a href="?url=resources">Recursos</a>
+    <div class="mob-nav-group-label">Recursos</div>
+    <a class="mob-nav-sub" href="?url=resources">Recursos</a>
+    <a class="mob-nav-sub" href="?url=videos-educativos">Videos Educativos</a>
     <a href="?url=quehacer">¿Qué hacer AHORA?</a>
     <a href="?url=Acercade">Acerca de NDA</a>
     <?php if ($__canSeeSchoolLink): ?>
@@ -356,6 +364,7 @@ $__ndaCurrentUrl = $_GET['url'] ?? 'home';
 $__ndaGatedRoutes = [
     'galeria-3d', 'sismos', 'volcanes', 'tsunamis', 'inundaciones',
     'deslizamientos', 'incendios-forestales', 'tormentas-tropicales', 'sequias',
+    'videos-educativos',
     'monitoreo', 'clima', 'luna', 'emergencias',
     'blog', 'juegos', 'resources', 'quehacer',
 ];

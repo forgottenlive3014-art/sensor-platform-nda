@@ -733,6 +733,67 @@ async function unlinkChild(linkId, parentId) {
 }
 
 // ─── MIS HIJOS (Padre) ───
+document.getElementById('requestChildLinkForm')?.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const nombres = document.getElementById('requestChildNames').value
+        .split(/[\n,;]+/).map(name => name.trim()).filter(Boolean);
+    try {
+        const response = await fetch('?url=school/request-child-link', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nombres, parentesco: document.getElementById('requestChildRelation').value })
+        });
+        const result = await response.json();
+        if (result.success) {
+            ndaAlert(`✅ ${result.creadas} solicitud(es) enviada(s)` + (result.errores?.length ? `\n${result.errores.join('\n')}` : ''));
+            this.reset();
+        } else {
+            ndaAlert('❌ ' + (result.errores?.join('\n') || result.error || 'No se pudo enviar la solicitud'));
+        }
+    } catch (e) { ndaAlert('❌ Error de conexión'); }
+});
+
+async function loadChildLinkRequests() {
+    const tbody = document.getElementById('childLinkRequestsBody');
+    if (!tbody) return;
+    try {
+        const response = await fetch('?url=school/child-link-requests');
+        const requests = await response.json();
+        if (!Array.isArray(requests) || requests.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center">No hay solicitudes pendientes</td></tr>';
+            return;
+        }
+        tbody.innerHTML = requests.map(r => `
+            <tr>
+                <td><strong>${escapeHtml(r.padre_nombre)}</strong><br><small>${escapeHtml(r.padre_email)}</small></td>
+                <td>${escapeHtml(r.estudiante_nombre)} ${escapeHtml(r.estudiante_apellido)}<br><code>${escapeHtml(r.codigo)}</code></td>
+                <td>${escapeHtml(r.parentesco)}</td>
+                <td>
+                    <button class="school-attendance-btn" onclick="resolveChildLinkRequest(${r.solicitudes_padre_hijo_id}, 'aprobar')">Aprobar</button>
+                    <button class="school-attendance-btn" style="color:var(--acc2);" onclick="resolveChildLinkRequest(${r.solicitudes_padre_hijo_id}, 'rechazar')">Rechazar</button>
+                </td>
+            </tr>
+        `).join('');
+    } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center">Error al cargar solicitudes</td></tr>';
+    }
+}
+
+async function resolveChildLinkRequest(id, accion) {
+    if (accion === 'rechazar' && !(await ndaConfirm('¿Rechazar esta solicitud?'))) return;
+    try {
+        const response = await fetch('?url=school/resolve-child-link', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, accion })
+        });
+        const result = await response.json();
+        if (result.success) {
+            ndaAlert(accion === 'aprobar' ? '✅ Vínculo aprobado' : 'Solicitud rechazada');
+            loadChildLinkRequests();
+            if (typeof loadParents === 'function') loadParents(__parentsPage);
+        } else ndaAlert('❌ ' + (result.error || 'No se pudo resolver la solicitud'));
+    } catch (e) { ndaAlert('❌ Error de conexión'); }
+}
+
 async function loadMyChildren() {
     const tbody = document.getElementById('myChildrenTableBody');
     if (!tbody) return;
@@ -3006,10 +3067,13 @@ function toggleNoteVisAll(checkbox) {
 
 document.getElementById('addBoardNoteForm')?.addEventListener('submit', async function (e) {
     e.preventDefault();
-    const isAll = document.getElementById('noteVisTodos')?.checked ?? true;
-    const visibilidad = isAll
+    const isAll = document.getElementById('noteVisTodos')?.checked ?? false;
+    const parentScope = document.getElementById('noteVisScope')?.value;
+    const visibilidad = parentScope || (isAll
         ? 'todos'
-        : Array.from(document.querySelectorAll('.noteVisRole:checked')).map(el => el.value);
+        : (Array.from(document.querySelectorAll('.noteVisRole:checked')).map(el => el.value).length
+            ? Array.from(document.querySelectorAll('.noteVisRole:checked')).map(el => el.value)
+            : 'solo_yo'));
 
     const data = {
         texto: document.getElementById('noteText').value,

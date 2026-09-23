@@ -123,6 +123,48 @@ class ParentModel {
         return $stmt->fetchAll();
     }
 
+    public function createChildLinkRequest($padreUsuarioId, $estudianteId, $parentesco) {
+        $stmt = $this->db->prepare("\n            INSERT INTO solicitudes_padre_hijo (padre_usuario_id, estudiante_id, parentesco)\n            VALUES (?, ?, ?)\n        ");
+        $stmt->execute([$padreUsuarioId, $estudianteId, $parentesco ?: 'padre/madre']);
+        return $this->db->lastInsertId();
+    }
+
+    public function getPendingChildLinkRequests($institutionId = null) {
+        $sql = "\n            SELECT r.solicitudes_padre_hijo_id, r.parentesco, r.created_at,\n                   p.usuarios_id AS padre_usuario_id, p.nombre AS padre_nombre, p.email AS padre_email,\n                   e.estudiantes_id, e.codigo, e.nombre AS estudiante_nombre, e.apellido AS estudiante_apellido\n            FROM solicitudes_padre_hijo r\n            JOIN usuarios p ON p.usuarios_id = r.padre_usuario_id\n            JOIN estudiantes e ON e.estudiantes_id = r.estudiante_id\n            JOIN usuarios eu ON eu.usuarios_id = e.usuarios_id\n            WHERE r.estado = 'pendiente'";
+        $params = [];
+        if ($institutionId !== null) {
+            $sql .= " AND p.institucion_id = ? AND eu.institucion_id = ?";
+            $params[] = $institutionId;
+            $params[] = $institutionId;
+        }
+        $sql .= " ORDER BY r.created_at DESC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
+    public function resolveChildLinkRequest($requestId, $approved) {
+        $stmt = $this->db->prepare("SELECT * FROM solicitudes_padre_hijo WHERE solicitudes_padre_hijo_id = ? AND estado = 'pendiente'");
+        $stmt->execute([$requestId]);
+        $request = $stmt->fetch();
+        if (!$request) return null;
+
+        $this->db->beginTransaction();
+        try {
+            if ($approved) {
+                $stmt = $this->db->prepare("\n                    INSERT INTO padres_estudiantes (padre_usuario_id, estudiante_id, parentesco)\n                    VALUES (?, ?, ?)\n                    ON DUPLICATE KEY UPDATE parentesco = VALUES(parentesco)\n                ");
+                $stmt->execute([$request['padre_usuario_id'], $request['estudiante_id'], $request['parentesco']]);
+            }
+            $stmt = $this->db->prepare("UPDATE solicitudes_padre_hijo SET estado = ?, resolved_at = NOW() WHERE solicitudes_padre_hijo_id = ?");
+            $stmt->execute([$approved ? 'aprobada' : 'rechazada', $requestId]);
+            $this->db->commit();
+            return $request;
+        } catch (Throwable $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
+    }
+
     // Hijos de un padre con datos enriquecidos (aula, docente) para el
     // panel de solo lectura del propio padre.
     public function getChildrenWithDetails($padreUsuarioId) {

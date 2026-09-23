@@ -127,6 +127,10 @@ class NotificacionController {
             jsonResponse(['error' => 'No autorizado'], 401);
         }
         $input = json_decode(file_get_contents('php://input'), true);
+        $u = currentUser();
+        if ($u['role'] !== 'admin') {
+            jsonResponse(['error' => 'Solo el Admin General puede enviar avisos a toda la comunidad'], 403);
+        }
         $mensaje = trim($input['mensaje'] ?? '');
         $severidad = $input['severidad'] ?? 'informativo';
 
@@ -141,9 +145,8 @@ class NotificacionController {
             jsonResponse(['error' => 'Severidad inválida'], 400);
         }
 
-        $u = currentUser();
-        // El director solo notifica a su institucion; el Admin General
-        // puede enviar una notificacion global a todo el sitio.
+        // El Admin General puede enviar una notificacion global o a una
+        // institucion especifica.
         $isGlobal = $u['role'] === 'admin' && !empty($input['es_global']);
         $instId = $isGlobal ? null : ($u['role'] === 'admin' ? ($input['institucion_id'] ?? null) : $u['institucion_id']);
 
@@ -221,7 +224,6 @@ class NotificacionController {
 
         $input = json_decode(file_get_contents('php://input'), true);
         [$mensaje, $severidad] = $this->validateMensajeYSeveridad($input);
-
         $db = getDB();
         $stmt = $db->prepare("
             SELECT DISTINCT e.usuarios_id
@@ -260,6 +262,8 @@ class NotificacionController {
 
         $input = json_decode(file_get_contents('php://input'), true);
         [$mensaje, $severidad] = $this->validateMensajeYSeveridad($input);
+        $mensaje = 'Mensaje de ' . trim($u['nombre']) . ': ' . $mensaje;
+        $mensaje = function_exists('mb_substr') ? mb_substr($mensaje, 0, 255) : substr($mensaje, 0, 255);
 
         $db = getDB();
         $stmt = $db->prepare("

@@ -2,6 +2,18 @@
         <!--  PADRES / MADRES -->
         <!-- ========================================================== -->
         <div id="tab-parents" class="school-panel">
+            <div class="school-card" style="margin-bottom:16px;">
+                <div class="school-panel-header" style="margin:0;">
+                    <h3>Solicitudes para vincular hijos</h3>
+                    <button class="school-btn secondary" onclick="loadChildLinkRequests()">Actualizar</button>
+                </div>
+                <div class="school-table-wrap">
+                    <table class="school-table">
+                        <thead><tr><th>Padre/Encargado</th><th>Estudiante</th><th>Parentesco</th><th>Acciones</th></tr></thead>
+                        <tbody id="childLinkRequestsBody"><tr><td colspan="4" class="text-center">Cargando...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
             <div class="school-panel-header">
                 <h3>Padres / Madres</h3>
                 <button class="school-btn primary" onclick="openModal('addParentModal')">

@@ -5,6 +5,9 @@ $instituciones = $instituciones ?? [];
 $pendingFoundation = $pendingFoundation ?? false;
 $pendingRequest = $pendingRequest ?? null;
 $previousLoginAt = $previousLoginAt ?? null;
+$viewedContent = $viewedContent ?? [];
+$viewedPdfs = array_values(array_filter($viewedContent, function($item) { return $item['tipo_contenido'] === 'pdf'; }));
+$viewedVideos = array_values(array_filter($viewedContent, function($item) { return $item['tipo_contenido'] === 'video'; }));
 ob_start();
 
 // Formatea fechas en español sin depender de la extension intl (no siempre
@@ -104,6 +107,7 @@ if ($portada !== '' && str_starts_with($portada, 'preset:')) {
         <div class="profile-stat"><span class="n" id="statReactions">–</span><span class="l">Reacciones</span></div>
         <div class="profile-stat"><span class="n" id="statComments">–</span><span class="l">Comentarios</span></div>
         <div class="profile-stat"><span class="n" id="statGames">–</span><span class="l">Juegos jugados</span></div>
+        <div class="profile-stat"><span class="n" id="statViewed"><?= count($viewedContent) ?></span><span class="l">Vistos</span></div>
     </div>
 
     <div class="profile-maintabs">
@@ -122,6 +126,10 @@ if ($portada !== '' && str_starts_with($portada, 'preset:')) {
         <button type="button" class="ptab" data-ptab="actividad">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
             Actividad
+        </button>
+        <button type="button" class="ptab" data-ptab="vistos">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+            Vistos
         </button>
         <button type="button" class="ptab" data-ptab="juegos">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="4"/><line x1="7" y1="9" x2="7" y2="15"/><line x1="4" y1="12" x2="10" y2="12"/><circle cx="16" cy="10" r="1"/><circle cx="18.5" cy="13" r="1"/></svg>
@@ -312,6 +320,48 @@ if ($portada !== '' && str_starts_with($portada, 'preset:')) {
             </div>
         </div>
     </div>
+
+    <div class="profile-tabpanel" data-ptabpanel="vistos">
+        <div class="profile-viewed-scroll-panel">
+            <div class="profile-viewed-column">
+                <h2>PDFs leídos</h2>
+                <?php if (!$viewedPdfs): ?>
+                    <p class="profile-hint">Todavía no has abierto ningún PDF educativo.</p>
+                <?php else: ?>
+                    <div class="profile-viewed-scroll-list profile-viewed-scroll-list-pdf">
+                        <?php foreach ($viewedPdfs as $item): ?>
+                            <a class="profile-viewed-card profile-viewed-card-pdf" href="<?= e($item['url']) ?>" target="_blank" rel="noopener noreferrer">
+                                <span class="profile-viewed-icon">P</span>
+                                <div class="profile-viewed-copy">
+                                    <strong><?= e($item['titulo']) ?></strong>
+                                    <span><?= e($item['visto_at']) ?></span>
+                                </div>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <div class="profile-viewed-column">
+                <h2>Videos vistos</h2>
+                <?php if (!$viewedVideos): ?>
+                    <p class="profile-hint">Todavía no has visto ningún video educativo.</p>
+                <?php else: ?>
+                    <div class="profile-viewed-scroll-list profile-viewed-scroll-list-video">
+                        <?php foreach ($viewedVideos as $item): ?>
+                            <a class="profile-viewed-card profile-viewed-card-video" href="<?= e($item['url']) ?>" target="_blank" rel="noopener noreferrer">
+                                <span class="profile-viewed-icon">▶</span>
+                                <div class="profile-viewed-copy">
+                                    <strong><?= e($item['titulo']) ?></strong>
+                                    <span><?= e($item['visto_at']) ?></span>
+                                </div>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
     </div><!-- /.profile-right -->
     </div><!-- /.profile-layout -->
 
@@ -427,7 +477,7 @@ if ($portada !== '' && str_starts_with($portada, 'preset:')) {
 .profile-banner.cp-ocean { background-image: radial-gradient(ellipse 60% 90% at 50% 30%, color-mix(in srgb, var(--blue) 52%, transparent), transparent 70%), linear-gradient(180deg, var(--bg3), var(--bg2)); }
 .profile-banner.cp-forest { background-image: radial-gradient(ellipse 60% 90% at 50% 30%, color-mix(in srgb, var(--green) 52%, transparent), transparent 70%), linear-gradient(180deg, var(--bg3), var(--bg2)); }
 .profile-banner.cp-ember { background-image: radial-gradient(ellipse 60% 90% at 50% 30%, color-mix(in srgb, var(--red) 52%, transparent), transparent 70%), linear-gradient(180deg, var(--bg3), var(--bg2)); }
-.profile-layout { display:grid; grid-template-columns:300px 1fr; align-items:start; gap:24px; }
+.profile-layout { display:grid; grid-template-columns:300px 1fr; align-items:start; gap:34px; }
 .profile-card-float {
     position:relative;
     margin:-70px 0 0;
@@ -438,7 +488,10 @@ if ($portada !== '' && str_starts_with($portada, 'preset:')) {
     padding:0 22px 22px;
     text-align:left;
 }
-.profile-right { min-width:0; padding-top:36px; }
+.profile-right {
+    min-width:0; padding:36px 12px 0 12px; width:100%; box-sizing:border-box;
+    display:flex; flex-direction:column; align-items:center;
+}
 .profile-edit-toggle {
     display:inline-flex; align-items:center; gap:7px; margin-top:18px;
     background:var(--card2); border:1px solid var(--border2); color:var(--text);
@@ -546,32 +599,95 @@ if ($portada !== '' && str_starts_with($portada, 'preset:')) {
 .profile-tab { background:var(--card2); border:1.5px solid var(--border2); color:var(--text2); font-size:.82rem; font-weight:600; padding:8px 16px; border-radius:50px; cursor:pointer; }
 .profile-tab.sel { border-color:var(--acc); color:var(--acc); }
 
-.profile-stats-row { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-bottom:24px; }
-.profile-stat { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 10px; text-align:center; }
+.profile-stats-row {
+    display:grid; grid-template-columns:repeat(6,1fr); gap:10px; margin-bottom:24px;
+    width:100%; max-width:none;
+}
+.profile-stat {
+    background:var(--card); border:1px solid var(--border); border-radius:9px;
+    min-height:92px; padding:12px 8px; text-align:center;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+}
 .profile-stat .n { display:block; font-family:var(--fd); font-size:1.35rem; font-weight:800; color:var(--acc); line-height:1.2; }
 .profile-stat .l { display:block; font-size:.66rem; color:var(--text3); margin-top:4px; text-transform:uppercase; letter-spacing:.04em; }
 
-.profile-maintabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:2px; }
+.profile-maintabs {
+    display:flex; gap:6px; flex-wrap:nowrap; white-space:nowrap; overflow-x:visible; margin-bottom:20px;
+    padding:0; width:100%; justify-content:space-between; min-width:0;
+}
+.profile-maintabs::-webkit-scrollbar { width:0; height:0; display:none; }
 .ptab {
-    display:inline-flex; align-items:center; gap:7px;
-    background:transparent; border:none; border-bottom:2px solid transparent;
+    display:inline-flex; align-items:center; justify-content:center; gap:7px; flex:1 1 0; min-width:0;
+    background:transparent; border:1px solid transparent; border-radius:10px;
     color:var(--text3); font-size:.86rem; font-weight:600; cursor:pointer;
-    padding:10px 14px; margin-bottom:-2px; transition:color .2s, border-color .2s;
+    padding:10px 14px; transition:color .2s, border-color .2s, background .2s;
 }
 .ptab svg { width:16px; height:16px; }
 .ptab:hover { color:var(--text2); }
-.ptab.active { color:var(--acc); border-color:var(--acc); }
-.profile-tabpanel { display:none; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; align-items:start; }
+.ptab.active {
+    color:var(--acc); border-color:var(--border2); background:rgba(255,255,255,.02);
+}
+.profile-tabpanel {
+    display:none; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; align-items:start;
+    width:min(100%, 780px); justify-items:center;
+}
 .profile-tabpanel.active { display:grid; }
 .profile-tabpanel .profile-card { margin-bottom:0; }
-.profile-tabpanel[data-ptabpanel="actividad"] { grid-template-columns:1fr; }
+.profile-tabpanel[data-ptabpanel="actividad"] .profile-card { border-radius:8px; }
+.profile-tabpanel[data-ptabpanel="actividad"] { grid-template-columns:repeat(2,minmax(0,1fr)); }
 
 .profile-saved-grid, .profile-scores-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
 .profile-saved-item { display:flex; gap:12px; background:var(--card2); border:1px solid var(--border2); border-radius:12px; padding:10px; text-decoration:none; transition:border-color .2s; }
 .profile-saved-item:hover { border-color:var(--acc); }
 .profile-saved-thumb { width:56px; height:56px; border-radius:8px; background-size:cover; background-position:center; flex-shrink:0; }
+.profile-viewed-pdf-thumb, .profile-viewed-video-thumb { display:flex; align-items:center; justify-content:center; background:var(--card3); color:var(--acc); font-size:.72rem; font-weight:800; }
+.profile-viewed-video-thumb { background:rgba(249,115,22,.15); color:#f97316; font-size:1.3rem; }
 .profile-saved-info strong { display:block; font-size:.85rem; color:var(--text); line-height:1.35; margin-bottom:4px; }
 .profile-saved-info span { font-size:.72rem; color:var(--text3); }
+
+.profile-viewed-scroll-panel {
+    display:grid; grid-template-columns:minmax(220px, 300px) minmax(0, 1.6fr); gap:20px; align-items:start; min-width:0;
+    margin-right:12px;
+}
+.profile-viewed-column {
+    background:var(--card); border:1px solid var(--border); border-radius:18px; padding:16px 14px 12px;
+    min-height:300px; min-width:0;
+}
+.profile-viewed-column h2 {
+    margin:0 0 12px; font-family:var(--fd); font-size:1rem; color:var(--text);
+}
+.profile-viewed-scroll-list {
+    display:flex; flex-direction:column; gap:10px;
+    max-height:280px; overflow-y:auto; padding-right:0; scrollbar-width:none;
+}
+.profile-viewed-scroll-list::-webkit-scrollbar { width:0; height:0; display:none; }
+.profile-viewed-card {
+    display:flex; align-items:center; gap:12px; background:rgba(255,255,255,.02);
+    border:1.5px solid rgba(169,180,196,.28); border-radius:14px; padding:10px 12px;
+    text-decoration:none; color:var(--text); min-height:90px; max-width:100%; width:100%;
+    box-sizing:border-box; transition:transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+    overflow:hidden;
+}
+.profile-viewed-card:hover { transform:translateY(-2px); border-color:var(--acc); box-shadow:0 8px 18px rgba(0,0,0,.04); }
+.profile-viewed-card-pdf { background:rgba(17,24,39,.02); }
+.profile-viewed-card-video { background:rgba(249,115,22,.06); }
+.profile-viewed-icon {
+    width:44px; min-width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+    background:rgba(255,255,255,.08); border:1px solid rgba(169,180,196,.35); font-weight:800; font-size:1rem;
+}
+.profile-viewed-card-video .profile-viewed-icon { background:rgba(249,115,22,.18); border-color:rgba(249,115,22,.35); color:#f97316; }
+.profile-viewed-card-pdf .profile-viewed-icon { background:rgba(84,142,95,.12); border-color:rgba(84,142,95,.32); color:#4d8f63; }
+.profile-viewed-copy { min-width:0; display:flex; flex-direction:column; justify-content:center; gap:4px; width:100%; }
+.profile-viewed-copy strong {
+    display:block; font-size:0.84rem; line-height:1.25; font-weight:700; color:var(--text);
+    white-space:normal; overflow-wrap:anywhere; word-break:break-word;
+}
+.profile-viewed-copy span { font-size:.66rem; color:var(--text2); }
+@media (max-width:980px) {
+    .profile-right { padding-left:0; padding-right:0; }
+    .profile-viewed-scroll-panel { grid-template-columns:1fr; }
+}
+
 
 .profile-activity-item, .profile-reaction-item {
     background:var(--card2); border:1px solid var(--border2); border-radius:12px;
@@ -603,6 +719,7 @@ if ($portada !== '' && str_starts_with($portada, 'preset:')) {
 }
 @media (max-width:700px) {
     .profile-stats-row { grid-template-columns:repeat(3,1fr); }
+    .profile-tabpanel[data-ptabpanel="actividad"] { grid-template-columns:1fr; }
 }
 @media (max-width:520px) {
     .profile-saved-grid, .profile-scores-grid { grid-template-columns:1fr; }

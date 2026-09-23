@@ -5,7 +5,28 @@
             <div class="school-panel-header">
                 <h3>Mis Hijos</h3>
             </div>
-            <p class="school-hint">Información de tus hijos vinculados en esta institución. Si falta alguno, pídele al director que lo vincule desde Padres.</p>
+            <p class="school-hint">Información de tus hijos vinculados en esta institución.</p>
+
+            <div class="school-card" style="margin-bottom:16px;">
+                <h3>Solicitar vínculo con mis hijos</h3>
+                <p class="school-hint">Escribe el nombre completo de cada hijo, uno por línea. El director revisará y aprobará la solicitud.</p>
+                <form id="requestChildLinkForm">
+                    <div class="school-form-group">
+                        <label for="requestChildNames">Nombre completo de los hijos *</label>
+                        <textarea id="requestChildNames" rows="3" placeholder="Ejemplo: Alumno Demo&#10;María García" required></textarea>
+                    </div>
+                    <div class="school-form-group">
+                        <label for="requestChildRelation">Parentesco</label>
+                        <select id="requestChildRelation">
+                            <option value="padre/madre">Padre/Madre</option>
+                            <option value="tutor">Tutor legal</option>
+                            <option value="abuelo/a">Abuelo/a</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="school-btn primary">Enviar solicitud</button>
+                </form>
+            </div>
 
             <div class="school-card" style="margin-bottom:16px;">
                 <h3>Notificar a mis hijos</h3>

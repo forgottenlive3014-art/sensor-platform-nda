@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../models/ParentModel.php';
+require_once __DIR__ . '/../models/NotificationModel.php';
 
 class PadreController {
 
@@ -197,6 +198,81 @@ class PadreController {
         }
         $model = new ParentModel();
         jsonResponse($model->getLinksForParent($id));
+    }
+
+    public function requestChildLink() {
+        if (!isLoggedIn()) jsonResponse(['error' => 'No autorizado'], 401);
+        $u = currentUser();
+        if ($u['role'] !== 'padre') jsonResponse(['error' => 'Solo los padres pueden enviar solicitudes'], 403);
+
+        $input = json_decode(file_get_contents('php://input'), true) ?: [];
+        $names = $input['nombres'] ?? [$input['nombre'] ?? ''];
+        if (!is_array($names)) $names = [$names];
+        $names = array_values(array_unique(array_filter(array_map('trim', $names))));
+        if (!$names) jsonResponse(['error' => 'Escribe al menos un nombre de estudiante'], 400);
+
+        $db = getDB();
+        $model = new ParentModel();
+        $notification = new NotificationModel();
+        $created = 0;
+        $errors = [];
+        foreach ($names as $name) {
+            $stmt = $db->prepare("\n                SELECT e.estudiantes_id, e.nombre, e.apellido, eu.institucion_id, i.director_id\n                FROM estudiantes e\n                JOIN usuarios eu ON eu.usuarios_id = e.usuarios_id\n                LEFT JOIN instituciones i ON i.instituciones_id = eu.institucion_id\n                WHERE LOWER(TRIM(CONCAT_WS(' ', e.nombre, e.apellido))) = LOWER(?)\n            ");
+            $stmt->execute([$name]);
+            $student = $stmt->fetch();
+            if (!$student || empty($student['institucion_id']) || $student['institucion_id'] != ($u['institucion_id'] ?? null)) {
+                $errors[] = "No se encontró a {$name} en tu institución";
+                continue;
+            }
+            $stmt = $db->prepare("SELECT 1 FROM padres_estudiantes WHERE padre_usuario_id = ? AND estudiante_id = ?");
+            $stmt->execute([$u['id'], $student['estudiantes_id']]);
+            if ($stmt->fetchColumn()) { $errors[] = "{$name} ya está vinculado"; continue; }
+            $stmt = $db->prepare("SELECT 1 FROM solicitudes_padre_hijo WHERE padre_usuario_id = ? AND estudiante_id = ? AND estado = 'pendiente'");
+            $stmt->execute([$u['id'], $student['estudiantes_id']]);
+            if ($stmt->fetchColumn()) { $errors[] = "{$name} ya tiene una solicitud pendiente"; continue; }
+
+            $model->createChildLinkRequest($u['id'], $student['estudiantes_id'], trim($input['parentesco'] ?? 'padre/madre'));
+            if (!empty($student['director_id'])) {
+                $notification->create([
+                    'tipo' => 'escolar', 'severidad' => 'informativo',
+                    'destinatario_usuario_id' => $student['director_id'],
+                    'mensaje' => $u['nombre'] . ' solicita vincularse con ' . $student['nombre'] . ' ' . $student['apellido'] . '.',
+                ]);
+            }
+            $created++;
+        }
+        jsonResponse(['success' => $created > 0, 'creadas' => $created, 'errores' => $errors]);
+    }
+
+    public function childLinkRequests() {
+        if (!isLoggedIn() || !$this->isSchoolAdmin()) jsonResponse(['error' => 'No autorizado'], 401);
+        jsonResponse((new ParentModel())->getPendingChildLinkRequests($this->scopeInstitutionId()));
+    }
+
+    public function resolveChildLinkRequest() {
+        if (!isLoggedIn() || !$this->isSchoolAdmin()) jsonResponse(['error' => 'No autorizado'], 401);
+        $input = json_decode(file_get_contents('php://input'), true) ?: [];
+        $id = $input['id'] ?? null;
+        $approved = ($input['accion'] ?? '') === 'aprobar';
+        if (!$id || !in_array($input['accion'] ?? '', ['aprobar', 'rechazar'], true)) jsonResponse(['error' => 'Solicitud inválida'], 400);
+        $model = new ParentModel();
+        $allowedRequests = $model->getPendingChildLinkRequests($this->scopeInstitutionId());
+        $belongsToScope = false;
+        foreach ($allowedRequests as $allowedRequest) {
+            if ((int) $allowedRequest['solicitudes_padre_hijo_id'] === (int) $id) {
+                $belongsToScope = true;
+                break;
+            }
+        }
+        if (!$belongsToScope) jsonResponse(['error' => 'Solicitud fuera de tu institución'], 403);
+        $request = $model->resolveChildLinkRequest($id, $approved);
+        if (!$request) jsonResponse(['error' => 'Solicitud no encontrada'], 404);
+        (new NotificationModel())->create([
+            'tipo' => 'escolar', 'severidad' => $approved ? 'seguro' : 'informativo',
+            'destinatario_usuario_id' => $request['padre_usuario_id'],
+            'mensaje' => $approved ? 'Tu solicitud para vincular a tu hijo fue aprobada.' : 'Tu solicitud para vincular a tu hijo fue rechazada.',
+        ]);
+        jsonResponse(['success' => true]);
     }
 
     // El propio padre consulta a sus hijos vinculados.

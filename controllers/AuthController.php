@@ -888,6 +888,13 @@ class AuthController {
 
         $instituciones = $db->query("SELECT instituciones_id, nombre, correo FROM instituciones WHERE estado_verificacion = 'verificado' ORDER BY nombre ASC")->fetchAll();
 
+        $stmtViewed = $db->prepare("SELECT tipo_contenido, contenido_clave, titulo, url, categoria, visto_at
+                                    FROM usuarios_contenido_visto
+                                    WHERE usuarios_id = ?
+                                    ORDER BY visto_at DESC");
+        $stmtViewed->execute([$_SESSION['user_id']]);
+        $viewedContent = $stmtViewed->fetchAll();
+
         $pendingRequest = null;
         $pendingFoundation = false;
         if ($user['estado_institucional'] === 'pendiente') {
@@ -908,8 +915,49 @@ class AuthController {
             'instituciones' => $instituciones,
             'pendingRequest' => $pendingRequest,
             'pendingFoundation' => $pendingFoundation,
+            'viewedContent' => $viewedContent,
             'previousLoginAt' => $_SESSION['previous_login_at'] ?? $user['last_login_at'] ?? null,
         ]);
+    }
+
+    public function trackView() {
+        if (!isLoggedIn() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            jsonResponse(['error' => 'No autorizado.'], 401);
+            return;
+        }
+        if (!csrfValid($_POST['csrf_token'] ?? '')) {
+            jsonResponse(['error' => 'La sesión expiró.'], 419);
+            return;
+        }
+
+        $type = $_POST['tipo_contenido'] ?? '';
+        $key = trim($_POST['contenido_clave'] ?? '');
+        $title = trim($_POST['titulo'] ?? '');
+        $url = trim($_POST['url'] ?? '');
+        $category = trim($_POST['categoria'] ?? '');
+
+        if (!in_array($type, ['pdf', 'video'], true)
+            || $key === '' || $title === '' || $url === ''
+            || !filter_var($url, FILTER_VALIDATE_URL)) {
+            jsonResponse(['error' => 'Datos de contenido inválidos.'], 400);
+            return;
+        }
+
+        $stmt = getDB()->prepare("INSERT INTO usuarios_contenido_visto
+                (usuarios_id, tipo_contenido, contenido_clave, titulo, url, categoria)
+                VALUES (?, ?, ?, ?, ?, ?)
+                ON DUPLICATE KEY UPDATE
+                    titulo = VALUES(titulo), url = VALUES(url), categoria = VALUES(categoria), visto_at = CURRENT_TIMESTAMP");
+        $stmt->execute([
+            $_SESSION['user_id'],
+            $type,
+            substr($key, 0, 191),
+            substr($title, 0, 200),
+            substr($url, 0, 500),
+            $category !== '' ? substr($category, 0, 30) : null,
+        ]);
+
+        jsonResponse(['success' => true]);
     }
 
     // Avatares predefinidos que el usuario puede elegir con un clic en vez de

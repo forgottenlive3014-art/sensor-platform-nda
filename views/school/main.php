@@ -75,6 +75,7 @@ ob_start();
         loadIncidents();
         loadBoard();
         if (document.getElementById('myChildrenTableBody')) loadMyChildren();
+        if (document.getElementById('childLinkRequestsBody')) loadChildLinkRequests();
     });
 </script>
 <script src="<?= asset('js/school.js') ?>"></script>

@@ -1,0 +1,180 @@
+.educational-videos-page {
+    min-height: 70vh;
+    padding: 110px 0 72px;
+    background: radial-gradient(circle at 85% 10%, rgba(249, 115, 22, .12), transparent 32%), var(--bg);
+}
+
+.educational-videos-header {
+    max-width: 720px;
+    margin-bottom: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.videos-kicker {
+    color: #f97316;
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+.educational-videos-header h1 {
+    color: var(--text);
+    font-family: var(--fd);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    margin: 8px 0 12px;
+}
+
+.educational-videos-header p {
+    color: var(--text2);
+    font-size: 1.05rem;
+    margin: 0;
+}
+
+.video-filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.video-filter-btn {
+    background: var(--card2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 9px 18px;
+    cursor: pointer;
+    font-size: .84rem;
+    transition: all .2s ease;
+}
+
+.video-filter-btn:hover,
+.video-filter-btn.active {
+    background: #f97316;
+    border-color: #f97316;
+    color: #fff;
+}
+
+.educational-videos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.educational-video-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.educational-video-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, .28);
+}
+
+.video-frame-wrap {
+    aspect-ratio: 16 / 9;
+    background: #111820;
+}
+
+.video-frame-wrap iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+}
+
+.educational-video-body {
+    padding: 18px;
+}
+
+.educational-video-category {
+    color: #f97316;
+    font-size: .7rem;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.educational-video-body h2 {
+    color: var(--text);
+    font-size: 1.02rem;
+    line-height: 1.35;
+    margin: 8px 0;
+}
+
+.educational-video-body p {
+    color: var(--text2);
+    font-size: .84rem;
+    line-height: 1.5;
+    margin: 0 0 14px;
+    min-height: 3em;
+}
+
+.educational-video-credit {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    color: var(--text3);
+    font-size: .76rem;
+}
+
+.educational-video-credit span {
+    min-width: 0;
+}
+
+.educational-video-credit a,
+.educational-video-link {
+    color: #00d4b0;
+    text-decoration: none;
+}
+
+.educational-video-credit a {
+    white-space: nowrap;
+}
+
+.educational-video-credit a:hover,
+.educational-video-link:hover {
+    text-decoration: underline;
+}
+
+.educational-video-link {
+    display: inline-block;
+    font-size: .8rem;
+    font-weight: 700;
+    margin-top: 14px;
+}
+
+.educational-video-card[hidden] {
+    display: none;
+}
+
+.video-disclaimer {
+    color: var(--text3);
+    font-size: .78rem;
+    margin: 28px 0 0;
+}
+
+@media (max-width: 900px) {
+    .educational-videos-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 560px) {
+    .educational-videos-page {
+        padding-top: 92px;
+    }
+
+    .educational-videos-grid {
+        grid-template-columns: 1fr;
+    }
+}
