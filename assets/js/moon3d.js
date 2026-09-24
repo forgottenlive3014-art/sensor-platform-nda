@@ -1,6 +1,4 @@
-// NDA - Luna 3D en tiempo real (Three.js), con iluminacion real segun la
-// fase actual (mismo calculo del ciclo sinodico que usa app.js). El usuario
-// puede arrastrar para orbitar la camara alrededor de la luna.
+/* NDA - Luna 3D. Muestra la fase lunar y permite girar la vista. */
 (function () {
     const el = document.getElementById('moon3dContainer');
     if (!el || typeof ensureThreeLoaded !== 'function') return;
@@ -8,10 +6,10 @@
     const MOON_TEXTURE = 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/moon_1024.jpg';
 
     function currentMoonPhaseRaw() {
-        // luna.js puede fijar window.__ndaMoonPhaseOverride (0..1) para que el
-        // modelo 3D "explore" una fase elegida por el usuario en vez de la
-        // fase real del momento; null/undefined = tiempo real (comportamiento
-        // original).
+        /*
+         * Si el usuario esta explorando una fase desde luna.js, usamos ese
+         * valor. Si no, calculamos la fase real con el ciclo lunar sinodico.
+         */
         if (typeof window.__ndaMoonPhaseOverride === 'number') return window.__ndaMoonPhaseOverride;
         const synodic = 29.530588853;
         const known = new Date(2000, 0, 6, 18, 14);
@@ -34,7 +32,7 @@
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(32, width / height, 0.1, 100);
 
-        // Camara orbital manual (azimut/elevacion), sin dependencias externas.
+                /* Camara orbital. az gira, el_ sube o baja y dist controla la distancia. */
         let az = 0, el_ = 0.15, dist = 4.3;
         function updateCamera() {
             camera.position.set(
@@ -46,7 +44,7 @@
         }
         updateCamera();
 
-        // Estrellas de fondo
+        /* Fondo de estrellas. */
         const starGeo = new THREE.BufferGeometry();
         const starCount = 400;
         const starPos = new Float32Array(starCount * 3);
@@ -62,10 +60,12 @@
         const moon = new THREE.Mesh(geometry, material);
         scene.add(moon);
 
-        scene.add(new THREE.AmbientLight(0x223344, 0.55)); // "earthshine" tenue en el lado oscuro
+                /* Iluminacion. La luz suave evita que el lado oscuro quede completamente negro. */
+                scene.add(new THREE.AmbientLight(0x223344, 0.55));
         const sun = new THREE.DirectionalLight(0xfff4e0, 1.6);
         scene.add(sun);
 
+        // Mueve la luz del Sol segun la fase que debe mostrar la Luna.
         function applyPhaseLighting() {
             const phase = currentMoonPhaseRaw();
             const theta = phase * Math.PI * 2;
@@ -73,11 +73,12 @@
             sun.position.set(Math.sin(theta) * D, 0.35 * D, -Math.cos(theta) * D);
         }
         applyPhaseLighting();
-        setInterval(applyPhaseLighting, 60000); // recalcula cada minuto, la fase cambia muy despacio
-        // Recalcula al instante cuando luna.js cambia la fase explorada (o vuelve a tiempo real).
+                // La fase cambia despacio, por eso se actualiza una vez por minuto.
+                setInterval(applyPhaseLighting, 60000);
+                // Si luna.js cambia la fase, actualizamos la luz de inmediato.
         window.addEventListener('nda-moon-phase-change', applyPhaseLighting);
 
-        // Arrastre manual para orbitar
+                /* Interaccion. Arrastrar con mouse o dedo gira la camara. */
         let dragging = false, lastX = 0, lastY = 0;
         function pointerDown(x, y) { dragging = true; lastX = x; lastY = y; }
         function pointerMove(x, y) {
@@ -97,6 +98,7 @@
         el.addEventListener('touchmove', (e) => { const t = e.touches[0]; pointerMove(t.clientX, t.clientY); }, { passive: true });
         el.addEventListener('touchend', pointerUp);
 
+        // La rotacion automatica se detiene cuando el usuario empieza a interactuar.
         let autoRotate = true;
         el.addEventListener('mousedown', () => { autoRotate = false; });
         el.addEventListener('touchstart', () => { autoRotate = false; }, { passive: true });
@@ -108,6 +110,7 @@
         }
         raf();
 
+        // Ajusta el renderizado cuando cambia el tamano del contenedor.
         function resize() {
             const w = el.clientWidth || 260;
             const h = el.clientHeight || 260;

@@ -500,7 +500,7 @@ CREATE TABLE puntajes_juegos (
 
 -- Superadmin
 INSERT INTO usuarios (nombre, email, contra, role, email_verificado) VALUES
-('Super Administrador', 'admin@nda.com', SHA2('CambiaEsto2026!', 256), 'admin', 1);
+('Super Administrador', 'admin@nda.com', SHA2('Demo2026!', 256), 'admin', 1);
 
 -- ------------------------------------------------------------
 -- Instituciones demo (1=San José, 2=Santa Ana, 3=Don Bosco)
