@@ -11,7 +11,7 @@ class NewsModel {
         $sql = "SELECT COUNT(*) as total FROM noticias_internas WHERE 1=1";
         $params = [];
         if (!$isGlobalAdmin) {
-            $sql .= " AND (instituciones_id = ? OR instituciones_id IS NULL)";
+            $sql .= " AND instituciones_id = ?";
             $params[] = $instId;
         } elseif ($onlyGlobal) {
             $sql .= " AND instituciones_id IS NULL";
@@ -45,7 +45,7 @@ class NewsModel {
         ";
         $params = [];
         if (!$isGlobalAdmin) {
-            $sql .= " AND (n.instituciones_id = ? OR n.instituciones_id IS NULL)";
+            $sql .= " AND n.instituciones_id = ?";
             $params[] = $instId;
         } elseif ($onlyGlobal) {
             $sql .= " AND n.instituciones_id IS NULL";

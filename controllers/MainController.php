@@ -112,7 +112,17 @@ class MainController {
     }
 
     public function videosEducativos() {
-        view('videos-educativos', ['title' => 'Videos educativos - NDA', 'user' => currentUser()]);
+        $db = getDB();
+        $videos = $db->query("SELECT youtube_id AS id, categoria, titulo, autor_nombre AS autor,
+                                     autor_url, descripcion
+                              FROM videos_educativos
+                              WHERE activo = 1
+                              ORDER BY orden ASC, videos_educativos_id ASC")->fetchAll();
+        view('videos-educativos', [
+            'title' => 'Videos educativos - NDA',
+            'user' => currentUser(),
+            'videos' => $videos,
+        ]);
     }
 
     public function tsunamis() {

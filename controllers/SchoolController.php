@@ -356,14 +356,12 @@ class SchoolController {
     //  InteraccionController.
     // ============================================================
 
-    // Corta la ejecucion (redirect) si el usuario no puede ver esta fila:
-    // debe ser admin, o la fila debe pertenecer a su institucion, o (para
-    // noticias) ser un comunicado global (instituciones_id NULL).
+    // Corta la ejecucion si el usuario no puede ver esta fila: el Admin
+    // General puede ver todo; el resto solo ve contenido de su institución.
     private function ensureCanViewContenido($row, $instColumn = 'instituciones_id') {
         $u = currentUser();
         $contenidoInstId = $row[$instColumn] ?? null;
-        $esGlobal = $contenidoInstId === null;
-        if ($u['role'] !== 'admin' && !$esGlobal && (int) $contenidoInstId !== (int) $u['institucion_id']) {
+        if ($u['role'] !== 'admin' && ($contenidoInstId === null || (int) $contenidoInstId !== (int) $u['institucion_id'])) {
             redirect('school');
             exit;
         }
@@ -896,8 +894,6 @@ class SchoolController {
     }
 
     public function addCroquisPoint() {
-        // Solo el director/admin edita los puntos del croquis (antes
-        // isSchoolStaff() tambien dejaba al docente).
         if (!isLoggedIn() || !$this->isSchoolAdmin()) {
             jsonResponse(['error' => 'No autorizado'], 401);
         }
@@ -908,10 +904,13 @@ class SchoolController {
         $tipo = $input['tipo'] ?? 'otro';
         $nombre = trim($input['nombre'] ?? '');
         $descripcion = trim($input['descripcion'] ?? '');
-        $x = $input['pos_x'] ?? 50;
-        $y = $input['pos_y'] ?? 50;
+        $x = (float) ($input['pos_x'] ?? 50);
+        $y = (float) ($input['pos_y'] ?? 50);
 
         if (empty($nombre)) jsonResponse(['error' => 'El punto necesita un nombre'], 400);
+        if ($x < 0 || $x > 100 || $y < 0 || $y > 100) {
+            jsonResponse(['error' => 'La posición del punto no es válida'], 400);
+        }
 
         $db = getDB();
         $stmt = $db->prepare("
@@ -921,6 +920,40 @@ class SchoolController {
         $stmt->execute([$instId, $tipo, $nombre, $descripcion, $x, $y, $_SESSION['user_id']]);
 
         jsonResponse(['success' => true, 'id' => $db->lastInsertId()]);
+    }
+
+    public function updateCroquisPoint() {
+        if (!isLoggedIn() || !$this->isSchoolAdmin()) {
+            jsonResponse(['error' => 'No autorizado'], 401);
+        }
+        $instId = $this->myInstitutionId();
+        if (!$instId) jsonResponse(['error' => 'No tienes una institución asociada'], 400);
+
+        $id = (int) ($_GET['id'] ?? 0);
+        $input = json_decode(file_get_contents('php://input'), true) ?: [];
+        $tipo = $input['tipo'] ?? 'otro';
+        $nombre = trim($input['nombre'] ?? '');
+        $descripcion = trim($input['descripcion'] ?? '');
+        $x = (float) ($input['pos_x'] ?? 50);
+        $y = (float) ($input['pos_y'] ?? 50);
+
+        if (!$id || empty($nombre)) jsonResponse(['error' => 'ID y nombre son obligatorios'], 400);
+        if ($x < 0 || $x > 100 || $y < 0 || $y > 100) {
+            jsonResponse(['error' => 'La posición del punto no es válida'], 400);
+        }
+
+        $db = getDB();
+        $stmt = $db->prepare("UPDATE puntos_croquis
+            SET tipo = ?, nombre = ?, descripcion = ?, pos_x = ?, pos_y = ?
+            WHERE puntos_croquis_id = ? AND instituciones_id = ?");
+        $stmt->execute([$tipo, $nombre, $descripcion, $x, $y, $id, $instId]);
+
+        if ($stmt->rowCount() === 0) {
+            $check = $db->prepare("SELECT puntos_croquis_id FROM puntos_croquis WHERE puntos_croquis_id = ? AND instituciones_id = ?");
+            $check->execute([$id, $instId]);
+            if (!$check->fetch()) jsonResponse(['error' => 'Punto no encontrado'], 404);
+        }
+        jsonResponse(['success' => true]);
     }
 
     public function deleteCroquisPoint() {

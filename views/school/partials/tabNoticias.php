@@ -18,9 +18,7 @@
             </div>
             <?php else: ?>
             <div class="school-filters" id="newsFilters">
-                <button class="sfilter active" data-cat="all">Todas</button>
-                <button class="sfilter" data-cat="institucion">Mi institución</button>
-                <button class="sfilter" data-cat="global">Global</button>
+                <button class="sfilter active" data-cat="institucion">Mi institución</button>
             </div>
             <?php endif; ?>
             <div id="newsList" class="school-card-grid">

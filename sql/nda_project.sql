@@ -508,7 +508,7 @@ INSERT INTO usuarios (nombre, email, contra, role, email_verificado) VALUES
 INSERT INTO instituciones (nombre, correo, telefono, logo) VALUES
 ('Colegio San José',  'info@colegiosanjose.edu.sv',  '2233-4455', 'logo_sanjose.png'),
 ('Colegio Santa Ana', 'info@colegiosantaana.edu.sv', '2244-5566', 'logo_santaana.png'),
-('Colegio Don Bosco', 'info@donbosco.edu.sv',        '2255-6677', 'logo_donbosco.png');
+('Colegio Don Bosco', 'info@donbosco.edu.sv',        '2255-6677', 'assets/media/img/1_ColegioDonBosco.png');
 
 -- ------------------------------------------------------------
 -- Aulas demo (mismas que antes)
@@ -651,7 +651,7 @@ INSERT INTO puntajes_juegos (usuarios_id, juego_nombre, puntaje) VALUES
 -- Password para todas: Demo2026!
 -- ------------------------------------------------------------
 INSERT INTO instituciones (nombre, correo, telefono, direccion) VALUES
-('Instituto Nacional Demostración NDA', 'contacto@demo-nda.edu.sv', '2200-0000', 'San Salvador, El Salvador');
+('Colegio Don Bosco, NDA', 'contacto@demo-nda.edu.sv', '2200-0000', 'San Salvador, El Salvador');
 SET @inst_id = LAST_INSERT_ID();
 
 INSERT INTO aulas (nombre, grado, nivel, seccion, instituciones_id) VALUES
@@ -706,6 +706,63 @@ VALUES ('Ruta Pabellón A → Cancha Central', 'Salida principal por el pasillo 
 INSERT INTO corcho_notas (instituciones_id, usuarios_id, texto, color, pos_x, pos_y, rotacion)
 SELECT @inst_id, usuarios_id, 'Bienvenidos al tablero de la comunidad. Aquí puedes dejar avisos para todos.', 'amarillo', 15, 20, -3
 FROM usuarios WHERE email = 'director.demo@nda.com';
+
+-- ------------------------------------------------------------
+-- Contenido demo institucional: autores de distintos roles
+-- ------------------------------------------------------------
+INSERT INTO noticias_internas
+    (instituciones_id, usuarios_id, titulo, resumen, contenido, imagen)
+VALUES
+(@inst_id, (SELECT usuarios_id FROM usuarios WHERE email = 'director.demo@nda.com'),
+ 'Simulacro de evacuación institucional',
+ 'La dirección convoca a toda la comunidad educativa a participar en el próximo simulacro.',
+ 'El simulacro se realizará en todas las aulas. Sigue las instrucciones de tu docente, conserva la calma y dirígete al punto de encuentro asignado.',
+ 'assets/media/guias/Afiche-Sismos.png'),
+(@inst_id, (SELECT usuarios_id FROM usuarios WHERE email = 'docente.demo@nda.com'),
+ 'Recomendaciones para la temporada de lluvias',
+ 'Recordatorio para revisar rutas, mochilas y zonas seguras antes de las lluvias intensas.',
+ 'Revisa las rutas de evacuación, mantén despejados los accesos y reporta cualquier cambio en el terreno o acumulación de agua.',
+ 'assets/media/img/inundaciones.jpg'),
+(@inst_id, (SELECT usuarios_id FROM usuarios WHERE email = 'padre.demo@nda.com'),
+ 'Reunión con las familias sobre prevención',
+ 'Las familias podrán conocer el plan de respuesta y los puntos de reunión del colegio.',
+ 'Invitamos a madres, padres y encargados a participar en la reunión informativa sobre preparación familiar y comunicación durante una emergencia.',
+ 'assets/media/img/alerta_roja.png');
+
+INSERT INTO blog_riesgos
+    (instituciones_id, usuarios_id, titulo, descripcion, ubicacion, imagen)
+VALUES
+(@inst_id, (SELECT usuarios_id FROM usuarios WHERE email = 'docente.demo@nda.com'),
+ 'Ladera con señales de deslizamiento',
+ 'Se observan grietas y suelo saturado después de varios días de lluvia. Mantener distancia y reportar cualquier cambio.',
+ 'Límite norte del terreno escolar',
+ 'assets/media/img/deslizamientoTierra.jpg'),
+(@inst_id, (SELECT usuarios_id FROM usuarios WHERE email = 'alumno.demo@nda.com'),
+ 'Acumulación de agua junto a la cancha',
+ 'El agua se acumula cerca del acceso lateral cuando llueve. Evitar cruzar por esa zona hasta que sea revisada.',
+ 'Acceso lateral de la cancha',
+ 'assets/media/img/inundaciones.jpg'),
+(@inst_id, (SELECT usuarios_id FROM usuarios WHERE email = 'administrativo.demo@nda.com'),
+ 'Vegetación seca cerca del muro',
+ 'La vegetación seca puede facilitar la propagación de un incendio durante la época calurosa. Se recomienda retirarla.',
+ 'Muro perimetral poniente',
+ 'assets/media/img/incendioForestal.png');
+
+INSERT INTO incidentes
+    (tipo, descripcion, ubicacion, imagen, usuario_id, instituciones_id, prioridad)
+VALUES
+('Inundación', 'Se reportó acumulación de agua y paso reducido durante la lluvia.', 'Acceso lateral',
+ 'assets/media/img/inundacion 2.jpg',
+ (SELECT usuarios_id FROM usuarios WHERE email = 'alumno.demo@nda.com'), @inst_id, 'media'),
+('Deslizamiento', 'Se desprendió tierra de una zona inclinada sin afectar aulas.', 'Límite norte',
+ 'assets/media/img/deslizamientoTierra.jpg',
+ (SELECT usuarios_id FROM usuarios WHERE email = 'padre.demo@nda.com'), @inst_id, 'alta'),
+('Incendio forestal', 'Se detectó humo en vegetación seca fuera del muro perimetral.', 'Muro poniente',
+ 'assets/media/img/incendioForestal.png',
+ (SELECT usuarios_id FROM usuarios WHERE email = 'director.demo@nda.com'), @inst_id, 'alta'),
+('Sismo', 'Se sintió movimiento leve; no se observaron daños en las aulas.', 'Edificio 2',
+ 'assets/media/img/SISMOS2.png',
+ (SELECT usuarios_id FROM usuarios WHERE email = 'administrativo.demo@nda.com'), @inst_id, 'baja');
 
 -- ------------------------------------------------------------
 -- Seed: contenido real del CMS (blog publico y recursos PDF)
@@ -786,6 +843,24 @@ VALUES
 ('¿Cómo se forma un tsunami?', 'DpKzWOAupCs', 'tsunamis', 'Definición, fases y condiciones que pueden originar un tsunami.', 'EcologíaVerde', 'https://www.youtube.com/@EcologiaVerde', 50),
 ('Los volcanes y el fuego del interior', 'COy76Cu8-3M', 'volcanes', 'Documental sobre los volcanes y la actividad del interior de la Tierra.', 'DOCUNAU', 'https://www.youtube.com/@DOCUNAU', 60),
 ('Krakatoa, uno de los volcanes más peligrosos', 'NfNEDGN7ONg', 'volcanes', 'Historia y consecuencias de la erupción del volcán Krakatoa.', 'History Latinoamérica', 'https://www.youtube.com/@HistoryLA', 70);
+
+INSERT INTO videos_educativos
+    (titulo, youtube_id, categoria, descripcion, autor_nombre, autor_url, orden)
+VALUES
+('Video educativo de prevención 01', 'wAaV8rV2bRw', 'prevencion', 'Material audiovisual complementario sobre prevención y preparación ante emergencias.', 'NDA', 'https://www.youtube.com/', 80),
+('Video educativo de prevención 02', 'LUBgbWfokGs', 'prevencion', 'Material audiovisual complementario sobre prevención y preparación ante emergencias.', 'NDA', 'https://www.youtube.com/', 90),
+('Video educativo de prevención 03', 'yj6ZFzhcUJs', 'prevencion', 'Material audiovisual complementario sobre prevención y preparación ante emergencias.', 'NDA', 'https://www.youtube.com/', 100),
+('Video educativo de prevención 04', 'OGX2Xkqmggc', 'prevencion', 'Material audiovisual complementario sobre prevención y preparación ante emergencias.', 'NDA', 'https://www.youtube.com/', 110),
+('Video educativo de prevención 05', 'g2PjQoIlUFc', 'prevencion', 'Material audiovisual complementario sobre prevención y preparación ante emergencias.', 'NDA', 'https://www.youtube.com/', 120),
+('Video educativo de prevención 06', '3KMv8casJuY', 'prevencion', 'Material audiovisual complementario sobre prevención y preparación ante emergencias.', 'NDA', 'https://www.youtube.com/', 130),
+('Video educativo de prevención 07', 'OjhI7pHzBkc', 'prevencion', 'Material audiovisual complementario sobre prevención y preparación ante emergencias.', 'NDA', 'https://www.youtube.com/', 140),
+('Video educativo de prevención 08', 'SSk6CA8Tm1s', 'prevencion', 'Material audiovisual complementario sobre prevención y preparación ante emergencias.', 'NDA', 'https://www.youtube.com/', 150),
+('Video educativo de prevención 09', 'uFsumimqTLg', 'prevencion', 'Material audiovisual complementario sobre prevención y preparación ante emergencias.', 'NDA', 'https://www.youtube.com/', 160),
+('Video educativo de prevención 10', 'GQIQimggXfk', 'prevencion', 'Material audiovisual complementario sobre prevención y preparación ante emergencias.', 'NDA', 'https://www.youtube.com/', 170),
+('Video educativo de prevención 11', 'QfnI41VbQwU', 'prevencion', 'Material audiovisual complementario sobre prevención y preparación ante emergencias.', 'NDA', 'https://www.youtube.com/', 180),
+('Video educativo de prevención 12', 'C4yrlGBDIJs', 'prevencion', 'Material audiovisual complementario sobre prevención y preparación ante emergencias.', 'NDA', 'https://www.youtube.com/', 190),
+('Video educativo de prevención 13', 'IhWRot4JXyI', 'prevencion', 'Material audiovisual complementario sobre prevención y preparación ante emergencias.', 'NDA', 'https://www.youtube.com/', 200),
+('Video educativo de prevención 14', '8D_OSqNnZ1A', 'prevencion', 'Material audiovisual complementario sobre prevención y preparación ante emergencias.', 'NDA', 'https://www.youtube.com/', 210);
 
 INSERT INTO blog (slug, titulo, cat, tag, color, autor_nombre, tiempo, destacado, extracto, imagen, cuerpo) VALUES
 ('72-horas', 'Cómo preparar a tu familia en 72 horas', 'prevencion', 'Prevención', '#f29f05', 'Equipo NDA', '6 min', 1, 'La regla de las primeras 72 horas puede marcar la diferencia. Qué hacer, paso a paso, antes de que llegue la próxima emergencia.', 'assets/media/blog/Cómo preparar a tu familia en 72 horas.jpg', '<p class=\"art-lead\">Las primeras 72 horas tras un desastre son las más críticas: es el tiempo que puede pasar antes de que la ayuda externa llegue a tu zona. Prepararte para ese lapso no requiere dinero ni equipo especial, solo organización. Aquí tienes el plan completo.</p>\n<h3 class=\"art-h3\">¿Por qué 72 horas?</h3>\n<p>Cuando ocurre un sismo fuerte o una inundación, los servicios de emergencia se saturan y las vías pueden quedar bloqueadas. Protección Civil y el COEN priorizan las zonas más afectadas, y tu colonia podría quedar sola durante uno a tres días. Tener lo básico para ese periodo convierte una crisis en una incomodidad manejable.</p>\n<div class=\"art-key\"><strong>La regla de oro</strong>Agua, comida, luz, información y documentos. Si tu hogar tiene cubiertos esos cinco frentes para tres días, ya estás por delante de la mayoría.</div>\n<h3 class=\"art-h3\">Agua y alimentos</h3>\n<p>Calcula al menos 3 litros de agua por persona al día: uno para beber y dos para higiene y cocina. Para una familia de cuatro, eso son unos 36 litros para tres días. Guarda comida que no necesite refrigeración ni cocción: enlatados, granola, galletas, atún. Revisa las fechas cada seis meses.</p>\n<h3 class=\"art-h3\">Documentos y plan</h3>\n<p>Reúne copias de DUI, partidas de nacimiento, escrituras y carnets médicos en una bolsa plástica sellada. Acuerda con tu familia un punto de reunión y un contacto fuera del país a quien todos puedan llamar si se separan. Escribe los números de emergencia en papel: en una crisis el celular puede quedarse sin batería.</p>\n<h3 class=\"art-h3\">Practica antes de necesitarlo</h3>\n<p>Un plan que nunca se ensaya falla cuando más importa. Haz un simulacro en casa: corta la luz un momento, ubica la mochila a oscuras, repasa la ruta de salida. Diez minutos al mes bastan para que el cuerpo recuerde qué hacer sin pensar.</p>\n<div class=\"art-takeaway\"><h4>Para recordar</h4><ul><li>3 litros de agua por persona al día, para 3 días.</li><li>Comida sin cocción y con fecha vigente.</li><li>Documentos en bolsa sellada + números en papel.</li><li>Punto de reunión y contacto acordados.</li><li>Ensaya el plan una vez al mes.</li></ul></div>'),

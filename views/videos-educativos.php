@@ -3,64 +3,7 @@ $title = $title ?? 'Videos Educativos - NDA';
 $currentSlug = 'videos-educativos';
 $extraCss = ['css/videos-educativos.css'];
 
-$videos = [
-    [
-        'id' => 'AAoTE63s5no',
-        'categoria' => 'sismos',
-        'titulo' => '¿Qué son los sismos y por qué suceden?',
-        'autor' => 'Riesgos Ecuador',
-        'autor_url' => 'https://www.youtube.com/@RiesgosEcuador',
-        'descripcion' => 'Explicación introductoria sobre el origen de los sismos y sus efectos.',
-    ],
-    [
-        'id' => '_n2UZT4Avnw',
-        'categoria' => 'sismos',
-        'titulo' => 'Las fuerzas más destructivas de la Tierra',
-        'autor' => 'Nat Geo en Español',
-        'autor_url' => 'https://www.youtube.com/@NationalGeographicEspanol',
-        'descripcion' => 'Documental sobre las fuerzas naturales que transforman nuestro planeta.',
-    ],
-    [
-        'id' => 'sk_x58kM_70',
-        'categoria' => 'sismos',
-        'titulo' => '¿Qué es un terremoto?',
-        'autor' => 'Happy Learning Español',
-        'autor_url' => 'https://www.youtube.com/@HappyLearningES',
-        'descripcion' => 'Video educativo para comprender los terremotos de forma sencilla.',
-    ],
-    [
-        'id' => 'KWvTSE9L-Ds',
-        'categoria' => 'tsunamis',
-        'titulo' => 'Mega tsunamis: lo inexplicable',
-        'autor' => 'History Latinoamérica',
-        'autor_url' => 'https://www.youtube.com/@HistoryLA',
-        'descripcion' => 'Recorrido audiovisual por los tsunamis y su capacidad destructiva.',
-    ],
-    [
-        'id' => 'DpKzWOAupCs',
-        'categoria' => 'tsunamis',
-        'titulo' => '¿Cómo se forma un tsunami?',
-        'autor' => 'EcologíaVerde',
-        'autor_url' => 'https://www.youtube.com/@EcologiaVerde',
-        'descripcion' => 'Definición, fases y condiciones que pueden originar un tsunami.',
-    ],
-    [
-        'id' => 'COy76Cu8-3M',
-        'categoria' => 'volcanes',
-        'titulo' => 'Los volcanes y el fuego del interior',
-        'autor' => 'DOCUNAU',
-        'autor_url' => 'https://www.youtube.com/@DOCUNAU',
-        'descripcion' => 'Documental sobre los volcanes y la actividad del interior de la Tierra.',
-    ],
-    [
-        'id' => 'NfNEDGN7ONg',
-        'categoria' => 'volcanes',
-        'titulo' => 'Krakatoa, uno de los volcanes más peligrosos',
-        'autor' => 'History Latinoamérica',
-        'autor_url' => 'https://www.youtube.com/@HistoryLA',
-        'descripcion' => 'Historia y consecuencias de la erupción del volcán Krakatoa.',
-    ],
-];
+$videos = $videos ?? [];
 
 ob_start();
 ?>
@@ -78,6 +21,7 @@ ob_start();
             <button type="button" class="video-filter-btn" data-video-filter="sismos">Sismos</button>
             <button type="button" class="video-filter-btn" data-video-filter="tsunamis">Tsunamis</button>
             <button type="button" class="video-filter-btn" data-video-filter="volcanes">Volcanes</button>
+            <button type="button" class="video-filter-btn" data-video-filter="prevencion">Prevención</button>
         </div>
 
         <div class="educational-videos-grid">

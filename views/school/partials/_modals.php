@@ -461,11 +461,12 @@
 <div class="school-modal" id="addCroquisPointModal">
     <div class="school-modal-content">
         <div class="school-modal-header">
-            <h3>Nuevo punto en el croquis</h3>
+            <h3 id="croquisPointModalTitle">Nuevo punto en el croquis</h3>
             <button class="school-modal-close" onclick="closeModal('addCroquisPointModal')">&times;</button>
         </div>
         <div class="school-modal-body">
             <form id="addCroquisPointForm">
+                <input type="hidden" id="croquisPointId">
                 <input type="hidden" id="croquisPointX">
                 <input type="hidden" id="croquisPointY">
                 <div class="school-form-group">
@@ -487,7 +488,7 @@
                     <label>Descripción</label>
                     <input type="text" id="croquisPointDesc" placeholder="Detalles adicionales (opcional)">
                 </div>
-                <button type="submit" class="school-btn primary">Agregar punto</button>
+                <button type="submit" class="school-btn primary" id="croquisPointSubmit">Agregar punto</button>
             </form>
         </div>
     </div>

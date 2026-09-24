@@ -2666,10 +2666,13 @@ async function loadCroquis() {
         (data.puntos || []).forEach(p => {
             const dot = document.createElement('div');
             dot.className = 'croquis-marker ' + p.tipo;
-            dot.style.left = p.pos_x + '%';
-            dot.style.top = p.pos_y + '%';
+            const rawX = parseFloat(p.pos_x), rawY = parseFloat(p.pos_y);
+            const px = Number.isFinite(rawX) ? Math.max(0, Math.min(100, rawX)) : 50;
+            const py = Number.isFinite(rawY) ? Math.max(0, Math.min(100, rawY)) : 50;
+            dot.style.left = px + '%';
+            dot.style.top = py + '%';
             dot.title = p.nombre;
-            dot.innerHTML = `<span class="croquis-marker-tooltip"><strong>${escapeHtml(p.nombre)}</strong><br>${escapeHtml(CROQUIS_LABELS[p.tipo] || p.tipo)}${p.descripcion ? '<br>' + escapeHtml(p.descripcion) : ''}${window.__ndaIsSchoolAdmin ? `<br><a href="#" onclick="deleteCroquisPoint(${p.puntos_croquis_id});return false;">Eliminar</a>` : ''}</span>`;
+            dot.innerHTML = `<span class="croquis-marker-tooltip"><strong>${escapeHtml(p.nombre)}</strong><br>${escapeHtml(CROQUIS_LABELS[p.tipo] || p.tipo)}${p.descripcion ? '<br>' + escapeHtml(p.descripcion) : ''}${window.__ndaIsSchoolAdmin ? `<br><a href="#" onclick="event.preventDefault();event.stopPropagation();editCroquisPoint(${p.puntos_croquis_id});return false;">Editar</a> · <a href="#" onclick="event.preventDefault();event.stopPropagation();deleteCroquisPoint(${p.puntos_croquis_id});return false;">Eliminar</a>` : ''}</span>`;
             wrap.appendChild(dot);
         });
 
@@ -2681,8 +2684,11 @@ async function loadCroquis() {
                 const rect = wrap.getBoundingClientRect();
                 const x = ((e.clientX - rect.left) / rect.width) * 100;
                 const y = ((e.clientY - rect.top) / rect.height) * 100;
+                document.getElementById('croquisPointId').value = '';
                 document.getElementById('croquisPointX').value = x.toFixed(2);
                 document.getElementById('croquisPointY').value = y.toFixed(2);
+                document.getElementById('croquisPointModalTitle').textContent = 'Nuevo punto en el croquis';
+                document.getElementById('croquisPointSubmit').textContent = 'Agregar punto';
                 openModal('addCroquisPointModal');
             });
         }
@@ -2879,8 +2885,10 @@ function renderCroquisMapMarkers(lat, lng, hasLoc, puntos) {
     puntos.forEach(p => {
         const px = parseFloat(p.pos_x), py = parseFloat(p.pos_y);
         if (isNaN(px) || isNaN(py)) return;
-        const offsetXm = ((px - 50) / 50) * RADIUS_M;
-        const offsetYm = ((50 - py) / 50) * RADIUS_M;
+        const safeX = Math.max(0, Math.min(100, px));
+        const safeY = Math.max(0, Math.min(100, py));
+        const offsetXm = ((safeX - 50) / 50) * RADIUS_M;
+        const offsetYm = ((50 - safeY) / 50) * RADIUS_M;
         const dLat = offsetYm / 111320;
         const dLng = offsetXm / (111320 * Math.cos(lat * Math.PI / 180));
 
@@ -2888,7 +2896,10 @@ function renderCroquisMapMarkers(lat, lng, hasLoc, puntos) {
         const el = document.createElement('div');
         el.className = 'croquis-map-marker';
         el.style.cssText = `width:20px;height:20px;border-radius:50%;background:${color};border:3px solid #fff;box-shadow:0 0 0 2px ${color},0 2px 8px rgba(0,0,0,.5);cursor:pointer;`;
-        const popup = registerCroquisPopup(new maplibregl.Popup({ maxWidth: '240px' }).setHTML(`<strong>${escapeHtml(p.nombre)}</strong><br>${escapeHtml(CROQUIS_LABELS[p.tipo] || p.tipo)}`));
+        const editLink = window.__ndaIsSchoolAdmin
+            ? `<br><a href="#" onclick="event.preventDefault();event.stopPropagation();editCroquisPoint(${p.puntos_croquis_id});return false;">Editar punto</a>`
+            : '';
+        const popup = registerCroquisPopup(new maplibregl.Popup({ maxWidth: '240px' }).setHTML(`<strong>${escapeHtml(p.nombre)}</strong><br>${escapeHtml(CROQUIS_LABELS[p.tipo] || p.tipo)}${editLink}`));
         const marker = new maplibregl.Marker({ element: el })
             .setLngLat([lng + dLng, lat + dLat])
             .setPopup(popup)
@@ -2942,6 +2953,7 @@ async function uploadCroquisImage(input) {
 
 document.getElementById('addCroquisPointForm')?.addEventListener('submit', async function (e) {
     e.preventDefault();
+    const pointId = document.getElementById('croquisPointId').value;
     const data = {
         tipo: document.getElementById('croquisPointType').value,
         nombre: document.getElementById('croquisPointName').value,
@@ -2950,7 +2962,10 @@ document.getElementById('addCroquisPointForm')?.addEventListener('submit', async
         pos_y: document.getElementById('croquisPointY').value
     };
     try {
-        const response = await fetch('?url=school/croquis-add-point', {
+        const endpoint = pointId
+            ? `?url=school/croquis-update-point&id=${encodeURIComponent(pointId)}`
+            : '?url=school/croquis-add-point';
+        const response = await fetch(endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -2959,6 +2974,8 @@ document.getElementById('addCroquisPointForm')?.addEventListener('submit', async
         if (result.success) {
             closeModal('addCroquisPointModal');
             this.reset();
+            document.getElementById('croquisPointModalTitle').textContent = 'Nuevo punto en el croquis';
+            document.getElementById('croquisPointSubmit').textContent = 'Agregar punto';
             loadCroquis();
             if (document.getElementById('inicioMap')) initInicioMap();
         } else {
@@ -2969,8 +2986,27 @@ document.getElementById('addCroquisPointForm')?.addEventListener('submit', async
     }
 });
 
+function editCroquisPoint(id) {
+    const point = (__croquisLastData?.puntos || []).find(p => String(p.puntos_croquis_id) === String(id));
+    if (!point) {
+        ndaAlert('No se encontró el punto del croquis.');
+        return;
+    }
+    document.getElementById('croquisPointId').value = point.puntos_croquis_id;
+    document.getElementById('croquisPointX').value = point.pos_x;
+    document.getElementById('croquisPointY').value = point.pos_y;
+    document.getElementById('croquisPointType').value = point.tipo || 'otro';
+    document.getElementById('croquisPointName').value = point.nombre || '';
+    document.getElementById('croquisPointDesc').value = point.descripcion || '';
+    document.getElementById('croquisPointModalTitle').textContent = 'Editar punto del croquis';
+    document.getElementById('croquisPointSubmit').textContent = 'Guardar cambios';
+    if (__croquisOpenPopup) __croquisOpenPopup.remove();
+    openModal('addCroquisPointModal');
+}
+
 async function deleteCroquisPoint(id) {
     if (!(await ndaConfirm('¿Quitar este punto del croquis?'))) return;
+    if (__croquisOpenPopup) __croquisOpenPopup.remove();
     try {
         await fetch(`?url=school/croquis-del-point&id=${id}`);
         loadCroquis();

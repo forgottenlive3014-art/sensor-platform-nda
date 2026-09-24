@@ -1754,7 +1754,7 @@ a.school-tab {
 .croquis-marker-tooltip {
     display: none;
     position: absolute;
-    bottom: 130%;
+    bottom: 100%;
     left: 50%;
     transform: translateX(-50%);
     background: var(--card);
@@ -1773,7 +1773,7 @@ a.school-tab {
     width: 200px;
     box-shadow: var(--shl);
     z-index: 10;
-    pointer-events: none;
+    pointer-events: auto;
 }
 .croquis-marker-tooltip strong { display: block; margin-bottom: 2px; color: var(--text); font-size: 0.78rem; }
 .croquis-marker-tooltip a { display: inline-block; margin-top: 4px; color: var(--red); font-size: 0.68rem; pointer-events: auto; }

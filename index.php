@@ -411,6 +411,7 @@ $routeMap = [
     'school/croquis'            => ['SchoolController', 'getCroquis'],
     'school/croquis-upload'     => ['SchoolController', 'uploadCroquisImage'],
     'school/croquis-add-point'  => ['SchoolController', 'addCroquisPoint'],
+    'school/croquis-update-point' => ['SchoolController', 'updateCroquisPoint'],
     'school/croquis-del-point'  => ['SchoolController', 'deleteCroquisPoint'],
     'school/institution-location' => ['SchoolController', 'updateInstitutionLocation'],
 
